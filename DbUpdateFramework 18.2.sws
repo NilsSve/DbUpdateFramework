@@ -1,0 +1,8 @@
+[Properties]
+Version=18.2
+[WorkspacePaths]
+ConfigFile=.\Programs\Config.ws
+[Projects]
+Project1=SQLConnections.src
+Project2=CreateDbVersionTable.src
+Project3=DbUpdateFrameworkTests.src

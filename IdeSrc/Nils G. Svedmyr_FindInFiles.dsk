@@ -1,0 +1,13 @@
+[Header]
+Mask=*.src;*.vw;*.sl;*.dg;*.rv;*.bp;*.pkg;*.wo;*.dd;*.inc;*.tpl;*.dfo;*.asp;*.asa;*.html;*.css;*.js
+Active=1
+SubDirectories=1
+WholeWordOnly=0
+SearchWhere=1
+Location=C:\Projects\DF18\DbUpdateFramework\IdeSrc\Nils G. Svedmyr_FindInFiles.dsk
+[C:\Projects\DF18\DbUpdateFramework\AppSrc]
+IsEnabled=0
+[C:\Projects\DF18\DbUpdateFramework\DDSrc]
+IsEnabled=0
+[C:\Projects\DF18\]
+IsEnabled=1

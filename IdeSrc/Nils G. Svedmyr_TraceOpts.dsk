@@ -1,0 +1,84 @@
+[SQLMaintainConnection.src]
+0=msg_paint
+1=msg_notify_application_activation
+2=set_focus
+3=msg_onwmpaint
+[SQLMaintainConnection.src [file not found]]
+0=msg_paint
+[SQLMaintainConnection.src [file not found]]
+1=msg_notify_application_activation
+[SQLMaintainConnection.src [file not found]]
+2=set_focus
+[SQLMaintainConnection.src [file not found]]
+3=msg_onwmpaint
+[SQLMaintainConnection.src [file not found]]
+0=msg_paint
+[SQLMaintainConnection.src [file not found]]
+1=msg_notify_application_activation
+[SQLMaintainConnection.src [file not found]]
+2=set_focus
+[SQLMaintainConnection.src [file not found]]
+3=msg_onwmpaint
+[SQLMaintainConnections.src]
+0=msg_paint
+1=msg_notify_application_activation
+2=set_focus
+3=msg_onwmpaint
+[StatusPanelExample.src]
+0=msg_paint
+1=msg_notify_application_activation
+2=set_focus
+3=msg_onwmpaint
+[DoTouchExeFile.src]
+0=msg_paint
+1=msg_notify_application_activation
+2=set_focus
+3=msg_onwmpaint
+[ManageSQLConnections.src]
+0=msg_paint
+1=msg_notify_application_activation
+2=set_focus
+3=msg_onwmpaint
+[SQLConnectionsManager.src]
+0=msg_paint
+1=msg_notify_application_activation
+2=set_focus
+3=msg_onwmpaint
+[SQLConnectionsManager.src [file not found]]
+0=msg_paint
+[SQLConnectionsManager.src [file not found]]
+1=msg_notify_application_activation
+[SQLConnectionsManager.src [file not found]]
+2=set_focus
+[SQLConnectionsManager.src [file not found]]
+3=msg_onwmpaint
+[flx2sql.src]
+0=msg_paint
+1=msg_notify_application_activation
+2=set_focus
+3=msg_onwmpaint
+[Tests.src]
+0=msg_paint
+1=msg_notify_application_activation
+2=set_focus
+3=msg_onwmpaint
+[DbUpdateTests.src]
+0=msg_paint
+1=msg_notify_application_activation
+2=set_focus
+3=msg_onwmpaint
+[SQLConnections.src]
+0=msg_paint
+1=msg_notify_application_activation
+2=set_focus
+3=msg_onwmpaint
+[CreateDbVersionTable.src]
+0=msg_paint
+1=msg_notify_application_activation
+2=set_focus
+3=msg_onwmpaint
+[DbUpdateFrameworkTests.src]
+0=msg_paint
+1=msg_notify_application_activation
+2=set_focus
+3=msg_onwmpaint
