@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+
+<html>
+	
+<head>
+	<title>API Make Database Changes</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="description" content="Help for the DataFlex Database Update Framework" />
+    <meta name="generator" content="HelpNDoc Professional Edition 7.1.0.253" />
+	
+	
+	
+	<link type="text/css" rel="stylesheet" media="all" href="css/reset.css" />
+	<link type="text/css" rel="stylesheet" media="all" href="css/base.css" />
+	<link type="text/css" rel="stylesheet" media="all" href="css/hnd.css" />
+	<!--[if lte IE 8]>
+		<link type="text/css" rel="stylesheet" media="all" href="css/ielte8.css" />
+	<![endif]-->
+
+	<style type="text/css">
+		#topic_header
+		{
+			background-color: #EFEFEF;
+		}
+	</style>
+
+	
+
+	<script type="text/javascript" src="js/chmRelative.js"></script>
+	
+	
+</head>
+
+<body>
+
+
+
+	
+	
+	<div id="topic_content">
+		
+<p></p>
+<h1 class="rvps7"><span class="rvts0"><span class="rvts23">API Make Database Changes - </span></span><span class="rvts0"><a class="rvts72" href="cDbUpdateFunctionLibrary.htm">cDbUpdateFunctionLibrary</a></span></h1>
+<div class="rvps2">
+<table width="100%" border="0" cellpadding="1" cellspacing="2" style="border-width: 0px; border-spacing: 2px;">
+ <tr valign="top">
+  <td width="176" valign="middle" style="padding: 1px; background-color: #c0c0c0;">
+   <p class="rvps3"><span class="rvts71">Name</span></p>
+  </td>
+  <td width="98" valign="middle" style="padding: 1px; background-color: #c0c0c0;">
+   <p class="rvps3"><span class="rvts71">Type</span></p>
+  </td>
+  <td width="400" valign="middle" style="padding: 1px; background-color: #c0c0c0;">
+   <p class="rvps3"><span class="rvts71">Description</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="176" valign="middle" style="padding: 1px; background-color: #e2e2e2;">
+   <p class="rvps2"><a class="rvts22" href="ApiTableAttachtToSQL.htm">ApiTableAttachToSQL</a></p>
+  </td>
+  <td width="98" valign="middle" style="padding: 1px; background-color: #e2e2e2;">
+   <p class="rvps2"><span class="rvts65">Function</span></p>
+  </td>
+  <td width="400" valign="middle" style="padding: 1px; background-color: #e2e2e2;">
+   <p class="rvps2"><span class="rvts65">Attaches a table in Filelist.cfg to an existing SQL table. It checks that the passed handle (hTable) table name in filelist.cfg is the same as at the SQL end. If True, it creates an .int file and changes filelist.cfg to point to the SQL table.</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="176" valign="middle" style="padding: 1px; background-color: #ffffff;">
+   <p class="rvps2"><a class="rvts22" href="ApiTableChangeAttribute.htm">ApiTableChangeAttribute</a></p>
+  </td>
+  <td width="98" valign="middle" style="padding: 1px; background-color: #ffffff;">
+   <p class="rvps2"><span class="rvts65">Function</span></p>
+  </td>
+  <td width="400" valign="middle" style="padding: 1px; background-color: #ffffff;">
+   <p class="rvps2"><span class="rvts65">To change table attributes. Mostly for embedded DataFlex tables.</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="176" valign="middle" style="padding: 1px; background-color: #e2e2e2;">
+   <p class="rvps2"><a class="rvts22" href="ApiTableConvertToSQL.htm">ApiTableConvertToSQL</a></p>
+  </td>
+  <td width="98" valign="middle" style="padding: 1px; background-color: #e2e2e2;">
+   <p class="rvps2"><span class="rvts65">Function</span></p>
+  </td>
+  <td width="400" valign="middle" style="padding: 1px; background-color: #e2e2e2;">
+   <p class="rvps2"><span class="rvts65">Converts an embedded table to SQL. You may need to set a series of properties in the cDbUpdateVersion object for this function to work, unless you have set them up with the SQLConnections tool for the current workspace. This is a more OOP directed function. To instead pass a series of parameters see the </span><a class="rvts22" href="ApiTableConvertToSQL_Ex.htm">ApiTableConvertToSQL_Ex</a><a class="rvts21" href="ApiTableConvertToSQL_Ex.htm"> </a><a class="rvts20" href="ApiTableConvertToSQL_Ex.htm">function.</a></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="176" valign="middle" style="padding: 1px; background-color: #ffffff;">
+   <p class="rvps2"><a class="rvts22" href="ApiTableConvertToSQL_Ex.htm">ApiTableConvertToSQL_Ex</a></p>
+  </td>
+  <td width="98" valign="middle" style="padding: 1px; background-color: #ffffff;">
+   <p class="rvps2"><span class="rvts65">Function</span></p>
+  </td>
+  <td width="400" valign="middle" style="padding: 1px; background-color: #ffffff;">
+   <p class="rvps2"><span class="rvts65">Converts a whole embedded table to SQL. Pass a table handle, a driver ID, bToANSI=True (if data should be saved in ANSI format) and bCopyData=True, if data should be copied from the embedded table to the SQL side.</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="176" valign="middle" style="padding: 1px; background-color: #e2e2e2;">
+   <p class="rvps2"><a class="rvts22" href="ApiTableCreate.htm">ApiTableCreate</a></p>
+  </td>
+  <td width="98" valign="middle" style="padding: 1px; background-color: #e2e2e2;">
+   <p class="rvps2"><span class="rvts65">Function</span></p>
+  </td>
+  <td width="400" valign="middle" style="padding: 1px; background-color: #e2e2e2;">
+   <p class="rvps2"><span class="rvts65">Creates a new database table.</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="176" valign="middle" style="padding: 1px; background-color: #ffffff;">
+   <p class="rvps2"><a class="rvts22" href="ApiTableCreateAlias.htm">ApiTableCreateAlias</a></p>
+  </td>
+  <td width="98" valign="middle" style="padding: 1px; background-color: #ffffff;">
+   <p class="rvps2"><span class="rvts65">Function</span></p>
+  </td>
+  <td width="400" valign="middle" style="padding: 1px; background-color: #ffffff;">
+   <p class="rvps2"><span class="rvts65">To create a table alias in filelist.cfg.</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="176" valign="middle" style="padding: 1px; background-color: #e2e2e2;">
+   <p class="rvps2"><a class="rvts22" href="ApiTableRelate.htm">ApiTableRelate</a></p>
+  </td>
+  <td width="98" valign="middle" style="padding: 1px; background-color: #e2e2e2;">
+   <p class="rvps2"><span class="rvts65">Function</span></p>
+  </td>
+  <td width="400" valign="middle" style="padding: 1px; background-color: #e2e2e2;">
+   <p class="rvps2"><span class="rvts11">Creates a relation between two tables.&nbsp;</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="176" valign="middle" style="padding: 1px; background-color: #ffffff;">
+   <p class="rvps2"><a class="rvts22" href="ApiTableRemove.htm">ApiTableRemove</a></p>
+  </td>
+  <td width="98" valign="middle" style="padding: 1px; background-color: #ffffff;">
+   <p class="rvps2"><span class="rvts65">Function</span></p>
+  </td>
+  <td width="400" valign="middle" style="padding: 1px; background-color: #ffffff;">
+   <p class="rvps2"><span class="rvts65">Deletes the .dat file or data cache file and .int file, then drops the passed data table name.</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="176" valign="middle" style="padding: 1px; background-color: #e2e2e2;">
+   <p class="rvps2"><a class="rvts22" href="ApiTableRemoveRelation.htm">ApiTableRemoveRelation</a></p>
+  </td>
+  <td width="98" valign="middle" style="padding: 1px; background-color: #e2e2e2;">
+   <p class="rvps2"><span class="rvts65">Function</span></p>
+  </td>
+  <td width="400" valign="middle" style="padding: 1px; background-color: #e2e2e2;">
+   <p class="rvps2"><span class="rvts31">Use it to delete/remove a relationship between two tables.</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="176" valign="middle" style="padding: 1px; background-color: #ffffff;">
+   <p class="rvps2"><a class="rvts22" href="ApiTableRename.htm">ApiTableRename</a></p>
+  </td>
+  <td width="98" valign="middle" style="padding: 1px; background-color: #ffffff;">
+   <p class="rvps2"><span class="rvts65">Function</span></p>
+  </td>
+  <td width="400" valign="middle" style="padding: 1px; background-color: #ffffff;">
+   <p class="rvps2"><span class="rvts65">To rename a table.</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="176" valign="middle" style="padding: 1px; background-color: #e2e2e2;">
+   <p class="rvps2"><a class="rvts22" href="ApiTableRenameAlias.htm">ApiTableRenameAlias</a></p>
+  </td>
+  <td width="98" valign="middle" style="padding: 1px; background-color: #e2e2e2;">
+   <p class="rvps2"><span class="rvts65">Procedure</span></p>
+  </td>
+  <td width="400" valign="middle" style="padding: 1px; background-color: #e2e2e2;">
+   <p class="rvps2"><span class="rvts65">To rename a table alias.</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="176" valign="middle" style="padding: 1px; background-color: #ffffff;">
+   <p class="rvps2"><a class="rvts22" href="ApiColumnAdd.htm">ApiColumnAdd</a></p>
+  </td>
+  <td width="98" valign="middle" style="padding: 1px; background-color: #ffffff;">
+   <p class="rvps2"><span class="rvts65">Function</span></p>
+  </td>
+  <td width="400" valign="middle" style="padding: 1px; background-color: #ffffff;">
+   <p class="rvps2"><span class="rvts65">To add a new column to a table.</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="176" valign="middle" style="padding: 1px; background-color: #e2e2e2;">
+   <p class="rvps2"><a class="rvts22" href="ApiColumnChange.htm">ApiColumnChange</a></p>
+  </td>
+  <td width="98" valign="middle" style="padding: 1px; background-color: #e2e2e2;">
+   <p class="rvps2"><span class="rvts65">Function</span></p>
+  </td>
+  <td width="400" valign="middle" style="padding: 1px; background-color: #e2e2e2;">
+   <p class="rvps2"><span class="rvts65">To change the length or type of an existing column.</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="176" valign="middle" style="padding: 1px; background-color: #ffffff;">
+   <p class="rvps2"><a class="rvts22" href="ApiColumnChangeMainIndex.htm">ApiColumnChangeMainIndex</a></p>
+  </td>
+  <td width="98" valign="middle" style="padding: 1px; background-color: #ffffff;">
+   <p class="rvps2"><span class="rvts65">Function</span></p>
+  </td>
+  <td width="400" valign="middle" style="padding: 1px; background-color: #ffffff;">
+   <p class="rvps2"><span class="rvts65">To change the main index for a field/column.</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="176" valign="middle" style="padding: 1px; background-color: #e2e2e2;">
+   <p class="rvps2"><a class="rvts22" href="ApiColumnMove.htm">ApiColumnMove</a></p>
+  </td>
+  <td width="98" valign="middle" style="padding: 1px; background-color: #e2e2e2;">
+   <p class="rvps2"><span class="rvts65">Function</span></p>
+  </td>
+  <td width="400" valign="middle" style="padding: 1px; background-color: #e2e2e2;">
+   <p class="rvps2"><span class="rvts65">To move a column within a table to a new position.</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="176" valign="middle" style="padding: 1px; background-color: #ffffff;">
+   <p class="rvps2"><a class="rvts22" href="ApiColumnRemove.htm">ApiColumnRemove</a></p>
+  </td>
+  <td width="98" valign="middle" style="padding: 1px; background-color: #ffffff;">
+   <p class="rvps2"><span class="rvts65">Function</span></p>
+  </td>
+  <td width="400" valign="middle" style="padding: 1px; background-color: #ffffff;">
+   <p class="rvps2"><span class="rvts65">To remove an existing table column. Note that all data will be gone too.</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="176" valign="middle" style="padding: 1px; background-color: #e2e2e2;">
+   <p class="rvps2"><a class="rvts22" href="ApiColumnRename.htm">ApiColumnRename</a></p>
+  </td>
+  <td width="98" valign="middle" style="padding: 1px; background-color: #e2e2e2;">
+   <p class="rvps2"><span class="rvts65">Function</span></p>
+  </td>
+  <td width="400" valign="middle" style="padding: 1px; background-color: #e2e2e2;">
+   <p class="rvps2"><span class="rvts65">Renames a column name.</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="176" valign="middle" style="padding: 1px; background-color: #ffffff;">
+   <p class="rvps2"><a class="rvts22" href="ApiIndexCreate.htm">ApiIndexCreate</a></p>
+  </td>
+  <td width="98" valign="middle" style="padding: 1px; background-color: #ffffff;">
+   <p class="rvps2"><span class="rvts65">Function</span></p>
+  </td>
+  <td width="400" valign="middle" style="padding: 1px; background-color: #ffffff;">
+   <p class="rvps2"><span class="rvts65">Function for creating a new index. The first four arguments are required, the rest are optional (depending on how many index segments your index consist of) It does not set Ascending/Descending attributes. Use the ApiIndexChangeDirection to do that.</span></p>
+   <p class="rvps2"><span class="rvts65"><br/></span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="176" valign="middle" style="padding: 1px; background-color: #e2e2e2;">
+   <p class="rvps2"><a class="rvts22" href="ApiIndexCreateByFieldNames.htm">ApiIndexCreateByFieldNames</a></p>
+  </td>
+  <td width="98" valign="middle" style="padding: 1px; background-color: #e2e2e2;">
+   <p class="rvps2"><span class="rvts65">Function</span></p>
+  </td>
+  <td width="400" valign="middle" style="padding: 1px; background-color: #e2e2e2;">
+   <p class="rvps2"><span class="rvts65">Function for creating a new index. Instead of as with the ApiIndexCreate function, it can be used by passing one or more field/column names as a comma separated string as the third parameter.</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="176" valign="middle" style="padding: 1px; background-color: #ffffff;">
+   <p class="rvps2"><span class="rvts6"><br/></span></p>
+  </td>
+  <td width="98" valign="middle" style="padding: 1px; background-color: #ffffff;">
+   <p class="rvps2"><span class="rvts65"><br/></span></p>
+  </td>
+  <td width="400" valign="middle" style="padding: 1px; background-color: #ffffff;">
+   <p class="rvps2"><span class="rvts65"><br/></span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="176" valign="middle" style="padding: 1px; background-color: #e2e2e2;">
+   <p class="rvps2"><a class="rvts22" href="ApiIndexChangeDirection.htm">ApiIndexChangeDirection</a></p>
+  </td>
+  <td width="98" valign="middle" style="padding: 1px; background-color: #e2e2e2;">
+   <p class="rvps2"><span class="rvts65">Function</span></p>
+  </td>
+  <td width="400" valign="middle" style="padding: 1px; background-color: #e2e2e2;">
+   <p class="rvps2"><span class="rvts65">To change the index direction of an index. The sort direction of an index segment.</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="176" valign="middle" style="padding: 1px; background-color: #ffffff;">
+   <p class="rvps2"><a class="rvts22" href="ApiIndexChangeUppercase.htm">ApiIndexChangeUppercase</a></p>
+  </td>
+  <td width="98" valign="middle" style="padding: 1px; background-color: #ffffff;">
+   <p class="rvps2"><span class="rvts65">Function</span></p>
+  </td>
+  <td width="400" valign="middle" style="padding: 1px; background-color: #ffffff;">
+   <p class="rvps2"><span class="rvts65">The case sensitivity of an index segment.</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="176" valign="middle" style="padding: 1px; background-color: #e2e2e2;">
+   <p class="rvps2"><a class="rvts22" href="ApiIndexRemove.htm">ApiIndexRemove</a></p>
+  </td>
+  <td width="98" valign="middle" style="padding: 1px; background-color: #e2e2e2;">
+   <p class="rvps2"><span class="rvts65">Function</span></p>
+  </td>
+  <td width="400" valign="middle" style="padding: 1px; background-color: #e2e2e2;">
+   <p class="rvps2"><span class="rvts65">To delete an index.</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="176" valign="middle" style="padding: 1px; background-color: #ffffff;">
+   <p class="rvps2"><a class="rvts22" href="ApiTableConvertAllAddException.htm">ApiTableConvertAllAddException</a></p>
+  </td>
+  <td width="98" valign="middle" style="padding: 1px; background-color: #ffffff;">
+   <p class="rvps2"><span class="rvts65">Procedure</span></p>
+  </td>
+  <td width="400" valign="middle" style="padding: 1px; background-color: #ffffff;">
+   <p class="rvps2"><span class="rvts65">Adds a table to the exception array for tables that should not be converted with the ApiTableConvertALLToSQL.</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="176" valign="middle" style="padding: 1px; background-color: #e2e2e2;">
+   <p class="rvps2"><a class="rvts22" href="ApiTableConvertALLToSQL.htm">ApiTableConvertALLToSQL</a></p>
+  </td>
+  <td width="98" valign="middle" style="padding: 1px; background-color: #e2e2e2;">
+   <p class="rvps2"><span class="rvts65">Procedure</span></p>
+  </td>
+  <td width="400" valign="middle" style="padding: 1px; background-color: #e2e2e2;">
+   <p class="rvps2"><span class="rvts65">Converts ALL tables in Filelist.cfg - except "CodeMast", "CodeType" &amp; "DbVersion" to SQL. See also ApiTableConvertAllAddException for adding other tables that should not be converted.</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="176" valign="middle" style="padding: 1px; background-color: #ffffff;">
+   <p class="rvps2"><a class="rvts22" href="ApiTableCopyData.htm">ApiTableCopyData</a></p>
+  </td>
+  <td width="98" valign="middle" style="padding: 1px; background-color: #ffffff;">
+   <p class="rvps2"><span class="rvts65">Function</span></p>
+  </td>
+  <td width="400" valign="middle" style="padding: 1px; background-color: #ffffff;">
+   <p class="rvps2"><span class="rvts65">To copy all data from an Embedded .Dat table to an existing SQL table.</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="176" valign="middle" style="padding: 1px; background-color: #e2e2e2;">
+   <p class="rvps2"><a class="rvts22" href="ApiColumnUpdateValue.htm">ApiColumnUpdateValue</a></p>
+  </td>
+  <td width="98" valign="middle" style="padding: 1px; background-color: #e2e2e2;">
+   <p class="rvps2"><span class="rvts65">Function</span></p>
+  </td>
+  <td width="400" valign="middle" style="padding: 1px; background-color: #e2e2e2;">
+   <p class="rvps2"><span class="rvts65">To populate all current rows with a value.</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="176" height="16" valign="middle" style="padding: 1px; background-color: #e2e2e2;">
+   <p class="rvps2"><a class="rvts22" href="ApiTableAttachALLToSQL.htm">ApiTableAttachALLToSQL</a></p>
+  </td>
+  <td width="98" height="16" valign="middle" style="padding: 1px; background-color: #e2e2e2;">
+   <p class="rvps2"><span class="rvts65">Procedure</span></p>
+  </td>
+  <td width="400" height="16" valign="middle" style="padding: 1px; background-color: #e2e2e2;">
+   <p class="rvps2"><span class="rvts65">Similar to ApiTableConvertALLToSQL, except that it depends on that the SQL tables already exists but the Filelist.cfg entries points to embedded .Dat tables.</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="176" height="16" valign="middle" style="padding: 1px; background-color: #e2e2e2;">
+   <p class="rvps2"><a class="rvts22" href="ApiTableChangeFileListSlot.htm">ApiTableChangeFileListSlot</a></p>
+  </td>
+  <td width="98" height="16" valign="middle" style="padding: 1px; background-color: #e2e2e2;">
+   <p class="rvps2"><span class="rvts65">Function</span></p>
+  </td>
+  <td width="400" height="16" valign="middle" style="padding: 1px; background-color: #e2e2e2;">
+   <p class="rvps2"><span class="rvts65">To use a filelist slot for the passed table number (Filelist.cfg slot number). Or to change the filelist slot names. Note: If you pass empty strings ("") for the three parameters "sRootName", "sLogicalName" and "sDisplayName", the table will be removed from Filelist.cfg.</span></p>
+  </td>
+ </tr>
+</table>
+</div>
+<p class="rvps2"><span class="rvts54"><br/></span></p>
+<p class="rvps2"><span class="rvts70">Note:</span><span class="rvts31"> All of the above functions uses Structure_Start - Structure_End commands. For some of the functions above there are faster SqlXXX functions available - see </span><a class="rvts22" href="SQLBasedMethods.htm">SQL Based Methods</a><span class="rvts31">.</span></p>
+<p></p>
+
+	</div>
+	
+	
+		<div id="topic_footer">
+
+			<div id="topic_footer_content">
+				Copyright &copy; 2016-2020 RDC Tools International. All Rights Reserved. Portions Copyright Data Access Worldwide, Mertech Data Systems, Inc.
+			</div>
+		</div>
+	
+
+	
+	
+
+	
+</body>
+	
+</html>
+

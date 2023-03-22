@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<DOCUMENT Type="Advanced Installer" CreateVersion="16.3" version="16.3" Modules="update" RootPath="." Language="en" Id="{F2CF401E-75B3-49D7-9446-FDB98AEBAF0A}">
+  <COMPONENT cid="caphyon.advinst.msicomp.ProjectOptionsComponent">
+    <ROW Name="HiddenItems" Value="TilesComponent"/>
+  </COMPONENT>
+  <COMPONENT cid="caphyon.advinst.msicomp.DictionaryComponent">
+    <ROW Path="&lt;AI_DICTS&gt;aiu-ue.ail"/>
+    <ROW Path="&lt;AI_DICTS&gt;aiu-ue_en.ail"/>
+  </COMPONENT>
+  <COMPONENT cid="caphyon.advinst.msicomp.UpdaterEditorComponent">
+    <ROW Section="Update" Key="Name" Value="DbUpdateFramework 2.1.3"/>
+    <ROW Section="Update" Key="Category" Value="Maintenance release" ValueLocId="-"/>
+    <ROW Section="Update" Key="ProductVersion" Value="2.1.1.0" ValueLocId="-"/>
+    <ROW Section="Update" Key="URL" Value="https://www.rdctools.com/Products/duf/InstallDUF2.exe" ValueLocId="-"/>
+    <ROW Section="Update" Key="Size" Value="InstallDUF2.exe" ValueLocId="-"/>
+    <ROW Section="Update" Key="MD5" Value="InstallDUF2.exe" ValueLocId="-"/>
+    <ROW Section="Update" Key="ServerFileName" Value="InstallDUF2.exe" ValueLocId="-"/>
+    <ROW Section="Update" Key="RegistryKey" Value="HKUD\Software\RDC Tools International\DbUpdateFramework\Version" ValueLocId="-"/>
+    <ROW Section="Update" Key="Version" Value="2.1.1.0" ValueLocId="-"/>
+    <ROW Section="Update" Key="UpdatedApplications" Value="DbUpdateFramework 2.1.1[2.0-2.1.3]" ValueLocId="-"/>
+    <ROW Section="Update" Key="AutoCloseApplication" Value="[APPDIR]DUFCodeGenerator.exe&#13;&#10;[APPDIR]DUFSQLConnections.exe" ValueLocId="-"/>
+    <ATTRIBUTE name="OutputFileName" value="updater.txt"/>
+    <ATTRIBUTE name="OutputFolder" value="."/>
+  </COMPONENT>
+</DOCUMENT>

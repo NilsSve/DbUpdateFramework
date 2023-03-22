@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+
+<html>
+	
+<head>
+	<title>How to Add SQL Keywords</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="description" content="Help for the DataFlex Database Update Framework" />
+    <meta name="generator" content="HelpNDoc Professional Edition 7.1.0.253" />
+	
+	
+	
+	<link type="text/css" rel="stylesheet" media="all" href="css/reset.css" />
+	<link type="text/css" rel="stylesheet" media="all" href="css/base.css" />
+	<link type="text/css" rel="stylesheet" media="all" href="css/hnd.css" />
+	<!--[if lte IE 8]>
+		<link type="text/css" rel="stylesheet" media="all" href="css/ielte8.css" />
+	<![endif]-->
+
+	<style type="text/css">
+		#topic_header
+		{
+			background-color: #EFEFEF;
+		}
+	</style>
+
+	
+
+	<script type="text/javascript" src="js/chmRelative.js"></script>
+	
+	
+</head>
+
+<body>
+
+
+
+	
+	
+	<div id="topic_content">
+		
+<p></p>
+<h1 class="rvps7"><span class="rvts0"><span class="rvts23">How to Add SQL Keywords - </span></span><span class="rvts0"><a class="rvts72" href="cDbUpdateFunctionLibrary.htm">cDbUpdateFunctionLibrary</a></span></h1>
+<p class="rvps2"><span class="rvts55">SQL Keywords can be added to the framework and can then be used with e.g the SqlUtilExecuteQuery message.</span></p>
+<p class="rvps2"><span class="rvts55"><br/></span></p>
+<p class="rvps2"><span class="rvts31">The framework uses an array of SQL keywords to construct SQL statements to be executed with e.g. the SqlUtilExecuteQuery message. This is how it works;</span></p>
+<p class="rvps2"><span class="rvts31"><br/></span></p>
+<p class="rvps2"><span class="rvts31">The helper function </span><span class="rvts70">_SqlFindKeyWord</span><span class="rvts31"> can be used to find an SQL keyword for the current psDriverID and piDbType (SQL database type). It takes one argument that is a constant integer and returns the SQL keyword as a string. The constant integer must be one of the constants in the enum_list of the cDbUpdateFunctionsLibray.inc file. They all have a prefix of "CI_SQL". Example: CI_SQLAterTable.</span></p>
+<p class="rvps2"><span class="rvts31"><br/></span></p>
+<p class="rvps2"><span class="rvts31">The Procedure SetupSQLKeywordArray in the cDbUpdateFunctionLibrary_Mixin.pkg is used to add new keywords. In the SetupSQLKeywordArray message use the syntax: E.g. "Send Add_Element CI_SQLMyNewSQLKeyWord EN_dbTypeXXX "NEW SQL KEYWORD(s)". Note: When adding a new keyword it must be added for all the five supported SQL back-ends; MS-SQL, MySQL, Oracle, DB2 &amp; PostgreSQL. The same constant integer will be used for all five added Add_Element, only the EN_dbTypeXXX will vary.</span></p>
+<p class="rvps2"><span class="rvts31"><br/></span></p>
+<p class="rvps2"><span class="rvts31">All of these keywords are automatically added to an array and sorted with a special sorting function when the framework is initialized. This makes it efficient when finding an SQL keyword for a particular SQL back-end with the _SqlFindKeyWord function. Of course this has been done because SQL back-ends uses different wordings for ESQL statement execution.</span></p>
+<p class="rvps2"><span class="rvts31"><br/></span></p>
+<p></p>
+
+	</div>
+	
+	
+		<div id="topic_footer">
+
+			<div id="topic_footer_content">
+				Copyright &copy; 2016-2020 RDC Tools International. All Rights Reserved. Portions Copyright Data Access Worldwide, Mertech Data Systems, Inc.
+			</div>
+		</div>
+	
+
+	
+	
+
+	
+</body>
+	
+</html>
+

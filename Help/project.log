@@ -1,0 +1,11 @@
+Microsoft HTML Help Compiler 4.74.8702
+
+Compiling c:\Projects\DF18\DbUpdateFramework2.0\Help\Developer5.chm
+
+HHC5003: Error: Compilation failed while compiling https:\support.dataaccess.com\Forums\forumdisplay.php?4-Code-Library.
+HHC5003: Error: Compilation failed while compiling https:\www.rdctools.com.
+
+
+The following files were not compiled:
+https:\support.dataaccess.com\Forums\forumdisplay.php?4-Code-Library
+https:\www.rdctools.com

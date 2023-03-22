@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+
+<html>
+	
+<head>
+	<title>tSQLConnection</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="description" content="Help for the DataFlex Database Update Framework" />
+    <meta name="generator" content="HelpNDoc Professional Edition 7.1.0.253" />
+	
+	
+	
+	<link type="text/css" rel="stylesheet" media="all" href="css/reset.css" />
+	<link type="text/css" rel="stylesheet" media="all" href="css/base.css" />
+	<link type="text/css" rel="stylesheet" media="all" href="css/hnd.css" />
+	<!--[if lte IE 8]>
+		<link type="text/css" rel="stylesheet" media="all" href="css/ielte8.css" />
+	<![endif]-->
+
+	<style type="text/css">
+		#topic_header
+		{
+			background-color: #EFEFEF;
+		}
+	</style>
+
+	
+
+	<script type="text/javascript" src="js/chmRelative.js"></script>
+	
+	
+</head>
+
+<body>
+
+
+
+	
+	
+	<div id="topic_content">
+		
+<p></p>
+<h1 class="rvps7"><span class="rvts0"><span class="rvts23">tSQLConnection - The Database Update Framework</span></span></h1>
+<p class="rvps13"><span class="rvts65">See Also: </span><a class="rvts96" href="LanguageGuide.chm::/Declaring_Variables.htm">Declaring Variables</a><span class="rvts65">, </span><a class="rvts96" href="Struct.htm">Struct</a><span class="rvts65">&nbsp;</span></p>
+<h3 class="rvps24"><span class="rvts0"><span class="rvts55">Purpose</span></span></h3>
+<p class="rvps13"><span class="rvts65">tSQLConnection is a </span><a class="rvts96" href="LanguageGuide.chm::/Struct_Type.htm">structured type</a><span class="rvts65"> used by some members of the </span><a class="rvts22" href="cDbUpdateFunctionLibrary.htm">cDbUpdateFunctionLibrary</a><span class="rvts65"> class, but mainly by the </span><a class="rvts22" href="cSQLConnectionHandler.htm">cSQLConnectionHandler</a><span class="rvts65"> and </span><a class="rvts22" href="cSQLConnectionIniFile.htm">cSQLConnectionIniFile</a><span class="rvts65"> classes.</span></p>
+<p class="rvps13"><span class="rvts65">&nbsp;</span></p>
+<h3 class="rvps24"><span class="rvts0"><span class="rvts55">Type Declaration</span></span></h3>
+<p class="rvps22"><span class="rvts35">Struct tSQLConnection</span></p>
+<p class="rvps22"><span class="rvts35">&nbsp; &nbsp; Boolean bEnabled &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;// 1. There can only be one active/enabled connection at a time.</span></p>
+<p class="rvps22"><span class="rvts35">&nbsp; &nbsp; String sConnectionID &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;// 2. The name of the connection ID. &nbsp; &nbsp; &nbsp;</span></p>
+<p class="rvps22"><span class="rvts35">&nbsp; &nbsp; Integer iDbType &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; // 3. Database type; "MS-SQL Server", "DB2", "Oracle", "MySQL", "PostgreSQL"</span></p>
+<p class="rvps22"><span class="rvts35">&nbsp; &nbsp; String sDriverID &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;// 4. Name of the driver. E.g. MSSQLDRV_ID, DB2_DRV_ID, ODBC_DRV_ID,</span></p>
+<p class="rvps22"><span class="rvts65">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;// &nbsp; &nbsp; &nbsp; &nbsp;ORAFLEX, SQLFLEX, MDSPgSQL or MDSMySQL.</span></p>
+<p class="rvps22"><span class="rvts35">&nbsp; &nbsp; String sServer &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;// 5. SQL Server/DSN/ODBC source name</span></p>
+<p class="rvps22"><span class="rvts35">&nbsp; &nbsp; String sDatabase &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;// 6. SQL Database</span></p>
+<p class="rvps22"><span class="rvts35">&nbsp; &nbsp; String sConnectionString &nbsp; &nbsp; &nbsp; &nbsp;// 7. Full connection string as is needed by e.g. the login command.</span></p>
+<p class="rvps22"><span class="rvts35">&nbsp; &nbsp; Boolean bTrusted &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;// 8. Trusted connection (then is UID &amp; PWD not used) &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</span></p>
+<p class="rvps22"><span class="rvts35">&nbsp; &nbsp; String sUserID &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;// 9. User ID</span></p>
+<p class="rvps22"><span class="rvts35">&nbsp; &nbsp; String sPassword &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;// 10. Password</span></p>
+<p class="rvps22"><span class="rvts35">&nbsp; &nbsp; String sSchema &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;// 11. DB2 (and perhaps ODBC specific)</span></p>
+<p class="rvps22"><span class="rvts35">&nbsp; &nbsp; String sBaseTableSpace &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;// 12. DB2 specific</span></p>
+<p class="rvps22"><span class="rvts35">&nbsp; &nbsp; String sLongTableSpace &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;// 13. DB2 specific</span></p>
+<p class="rvps22"><span class="rvts35">&nbsp; &nbsp; String sIndexTableSpace &nbsp; &nbsp; &nbsp; &nbsp; // 14. DB2 specific&nbsp;</span></p>
+<p class="rvps22"><span class="rvts35">&nbsp; &nbsp; Boolean bSilentLogin &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;// 15. True=Silent login. (i.e. don't show Database login</span></p>
+<p class="rvps22"><span class="rvts35">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; // &nbsp; &nbsp; dialog if program login to fails). Same as driver "Options" parameter.</span></p>
+<p class="rvps22"><span class="rvts35">&nbsp; &nbsp; Boolean bError &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;// 16. Is set to true on any error when reading values to the struct.</span></p>
+<p class="rvps22"><span class="rvts35">End_Struct &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</span></p>
+<p class="rvps22"><span class="rvts35"><br/></span></p>
+<h4 class="rvps25"><span class="rvts0"><span class="rvts58">&nbsp;</span></span></h4>
+<h3 class="rvps24"><span class="rvts0"><span class="rvts55">Syntax</span></span></h3>
+<p class="rvps22"><span class="rvts35">Use cDbUpdateFunctionLibrary.pkg</span></p>
+<p class="rvps22"><span class="rvts35">:</span></p>
+<p class="rvps22"><span class="rvts35">tSQLConnection {variableName}</span></p>
+<p class="rvps13"><span class="rvts65">&nbsp;</span></p>
+<h3 class="rvps24"><span class="rvts0"><span class="rvts55">Declaring variables</span></span></h3>
+<p class="rvps13"><span class="rvts65">To declare tSQLIniFileConnection variables, use the name of the type (tSQLIniFileConnection) followed by the variable name.</span></p>
+<p class="rvps22"><span class="rvts35">tSQLIniFileConnection SQLConnection</span></p>
+<p class="rvps13"><span class="rvts65">See </span><a class="rvts96" href="LanguageGuide.chm::/Struct_Variables.htm">struct variables</a><span class="rvts65"> for more details of instantiating struct types.</span></p>
+<h3 class="rvps24"><span class="rvts0"><span class="rvts55"><br/></span></span></h3>
+<h3 class="rvps24"><span class="rvts0"><span class="rvts55">Example</span></span></h3>
+<p class="rvps11"><span class="rvts74"><br/></span></p>
+<p class="rvps11"><span class="rvts74"><br/></span></p>
+<p class="rvps2"><span class="rvts6"><br/></span></p>
+<p></p>
+
+	</div>
+	
+	
+		<div id="topic_footer">
+
+			<div id="topic_footer_content">
+				Copyright &copy; 2016-2020 RDC Tools International. All Rights Reserved. Portions Copyright Data Access Worldwide, Mertech Data Systems, Inc.
+			</div>
+		</div>
+	
+
+	
+	
+
+	
+</body>
+	
+</html>
+

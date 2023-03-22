@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+
+<html>
+	
+<head>
+	<title>Properties for cDbUpdateHandler</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="description" content="Help for the DataFlex Database Update Framework" />
+    <meta name="generator" content="HelpNDoc Professional Edition 7.1.0.253" />
+	
+	
+	
+	<link type="text/css" rel="stylesheet" media="all" href="css/reset.css" />
+	<link type="text/css" rel="stylesheet" media="all" href="css/base.css" />
+	<link type="text/css" rel="stylesheet" media="all" href="css/hnd.css" />
+	<!--[if lte IE 8]>
+		<link type="text/css" rel="stylesheet" media="all" href="css/ielte8.css" />
+	<![endif]-->
+
+	<style type="text/css">
+		#topic_header
+		{
+			background-color: #EFEFEF;
+		}
+	</style>
+
+	
+
+	<script type="text/javascript" src="js/chmRelative.js"></script>
+	
+	
+</head>
+
+<body>
+
+
+
+	
+	
+	<div id="topic_content">
+		
+<p></p>
+<h1 class="rvps7"><span class="rvts0"><span class="rvts23">Properties for </span></span><span class="rvts0"><a class="rvts72" href="cDbUpdateHandler.htm">cDbUpdateHandler</a></span></h1>
+<div class="rvps2">
+<table width="100%" border="0" cellpadding="1" cellspacing="2" style="border-width: 0px; border-spacing: 2px;">
+ <tr valign="top">
+  <td width="169" valign="middle" style="padding: 1px; background-color: #c0c0c0;">
+   <p class="rvps3"><span class="rvts71">Name</span></p>
+  </td>
+  <td width="391" valign="middle" style="padding: 1px; background-color: #c0c0c0;">
+   <p class="rvps3"><span class="rvts71">Description</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="169" valign="middle" style="padding: 1px; background-color: #e2e2e2;">
+   <p class="rvps2"><span class="rvts56">pbContinueOnError</span></p>
+  </td>
+  <td width="391" valign="middle" style="padding: 1px; background-color: #e2e2e2;">
+   <p class="rvps2"><span class="rvts65">Determines if database update should continue after an error has occurred. If an error occurs in one </span><a class="rvts22" href="cDbUpdateVersion.htm">cDbUpdateVersion</a><span class="rvts65"> object, the </span><a class="rvts22" href="EventsforcDbUpdateVersion.htm">OnUpdate</a><span class="rvts65"> </span><span class="rvts66">event in succeeding </span><a class="rvts62" href="cDbUpdateVersion.htm">cDbUpdateVersion</a><span class="rvts66"> objects will not get called</span><span class="rvts65">.</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="169" valign="middle" style="padding: 1px;">
+   <p class="rvps2"><span class="rvts56">pbShowErrorLogPostRun</span></p>
+  </td>
+  <td width="391" valign="middle" style="padding: 1px;">
+   <p class="rvps2"><span class="rvts65">Determines if the error log should be shown after the update has finished. Note: If </span><a class="rvts22" href="PropertiesforcDbUpdateHandler.htm">pbSilentMode</a><span class="rvts65"> = True, the log will not be shown. The error log file will always be created in the Data folder.</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="169" valign="middle" style="padding: 1px; background-color: #e2e2e2;">
+   <p class="rvps2"><span class="rvts56">pbSilentMode</span></p>
+  </td>
+  <td width="391" valign="middle" style="padding: 1px; background-color: #e2e2e2;">
+   <p class="rvps2"><span class="rvts65">If True No questions will be asked prior starting a database update. Be careful to set this property to True. Can be useful when used with a Webapp.exe program to avoid any user interaction.</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="169" valign="middle" style="padding: 1px;">
+   <p class="rvps2"><span class="rvts56">pbStopOnFirstError</span></p>
+  </td>
+  <td width="391" valign="middle" style="padding: 1px;">
+   <p class="rvps2"><span class="rvts65">Stops update execution after the current cVersionUpdate object if errors occurred. Great for testing purposes. As soon as an error has occurred the update logic is stopped from further execution. You do </span><span class="rvts66">not</span><span class="rvts65"> want this property to be True in production.</span></p>
+  </td>
+ </tr>
+</table>
+</div>
+<div class="rvps2">
+<table width="100%" border="0" cellpadding="1" cellspacing="2" style="border-width: 0px; border-spacing: 2px;">
+ <tr valign="top">
+  <td width="167" valign="middle" style="padding: 1px; background-color: #e2e2e2;">
+   <p class="rvps2"><span class="rvts56">pbDatabaseWasUpdated</span></p>
+  </td>
+  <td width="393" valign="middle" style="padding: 1px; background-color: #e2e2e2;">
+   <p class="rvps2"><span class="rvts65">This is actually a Procedure Set that is send by the cDbUpdateVersion when an update has been done by that object. So it can be called from each cDbUpdateVersion object, if there has been an update in that object's OnUpdate.</span></p>
+  </td>
+ </tr>
+</table>
+</div>
+<p class="rvps2"><span class="rvts54"><br/></span></p>
+<p class="rvps2"><span class="rvts54"><br/></span></p>
+<p></p>
+
+	</div>
+	
+	
+		<div id="topic_footer">
+
+			<div id="topic_footer_content">
+				Copyright &copy; 2016-2020 RDC Tools International. All Rights Reserved. Portions Copyright Data Access Worldwide, Mertech Data Systems, Inc.
+			</div>
+		</div>
+	
+
+	
+	
+
+	
+</body>
+	
+</html>
+

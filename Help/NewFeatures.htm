@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+
+<html>
+	
+<head>
+	<title>New Features</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="description" content="Help for the DataFlex Database Update Framework" />
+    <meta name="generator" content="HelpNDoc Professional Edition 7.1.0.253" />
+	
+	
+	
+	<link type="text/css" rel="stylesheet" media="all" href="css/reset.css" />
+	<link type="text/css" rel="stylesheet" media="all" href="css/base.css" />
+	<link type="text/css" rel="stylesheet" media="all" href="css/hnd.css" />
+	<!--[if lte IE 8]>
+		<link type="text/css" rel="stylesheet" media="all" href="css/ielte8.css" />
+	<![endif]-->
+
+	<style type="text/css">
+		#topic_header
+		{
+			background-color: #EFEFEF;
+		}
+	</style>
+
+	
+
+	<script type="text/javascript" src="js/chmRelative.js"></script>
+	
+	
+</head>
+
+<body>
+
+
+
+	
+	
+	<div id="topic_content">
+		
+<p></p>
+<h1 class="rvps7"><span class="rvts0"><span class="rvts23">New Features in Version 2.0.0</span></span></h1>
+<ul style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: disc;">
+ <ul style="text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: circle;">
+  <li class="rvps2"><span class="rvts11">This version contains a lot of changes and most of them (but not all) are covered here.</span></li>
+  <li class="rvps2"><span class="rvts43">Important! The interface for the DbVersion table has been changed</span><span class="rvts11">. The old syntax;&nbsp;</span></li>
+ </ul>
+</ul>
+<p class="rvps2"><span class="rvts35">&nbsp; &nbsp; &nbsp; &nbsp;Set Data_File_Field to File_Field DbVersion.DatabaseVersion</span><span class="rvts11"> </span><span class="rvts49">has been depreciated</span><span class="rvts11">.&nbsp;</span></p>
+<p class="rvps2"><span class="rvts11"><br/></span></p>
+<p class="rvps12"><span class="rvts11">If not changed you will get compile errors. </span><span class="rvts43">The new interface consists of setting a couple of properties</span><span class="rvts11">;</span></p>
+<p class="rvps2"><span class="rvts11">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;</span><span class="rvts11"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts36">Set piDbVersionFileNumber to iSomeFreeFilelistNumber</span></p>
+<p class="rvps2"><span class="rvts11">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;</span><span class="rvts11"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts35">Set piDbVersionFieldNumber to 1 // Only change if pbUseCustomDbVersion = True</span></p>
+<p class="rvps2"><span class="rvts36">&nbsp; &nbsp; &nbsp;&nbsp;</span><span class="rvts36"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts35">// This will create the DbVersion table automatically;</span></p>
+<p class="rvps2"><span class="rvts11">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;</span><span class="rvts11"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts36">Set pbAutoCreatDbVersiontable to True&nbsp;</span></p>
+<p class="rvps2"><span class="rvts11">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;</span><span class="rvts11"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts35">Set pbUseCustomDbVersion to False // Default = False. True = Use a custom DbVersion table</span><span class="rvts36">&nbsp;</span></p>
+<p class="rvps2"><span class="rvts36"><br/></span></p>
+<ul style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: disc;">
+ <ul style="text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: circle;">
+  <li class="rvps2"><span class="rvts43">There is also a new tool </span><a class="rvts44" href="DUFCodeGenerator.htm">DUF Code Generator</a><span class="rvts43"> that can be used to take a snap-shot of the current development database and generate DUF code as a package file (*.pkg).</span></li>
+ </ul>
+</ul>
+<p class="rvps2"><span class="rvts43"><br/></span></p>
+<p class="rvps2"><span class="rvts36"><br/></span></p>
+<p class="rvps12"><span class="rvts52">The easiest way to use the new interface is to remark your current cDbUpdateHandler object code. Then drag &amp; drop a cDbUpdateHandler object from the Studio's Class Palette.</span></p>
+<p class="rvps12"><span class="rvts50"><br/></span></p>
+<ul style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: disc;">
+ <ul style="text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: circle;">
+  <li class="rvps2"><span class="rvts43">The most important addition</span><span class="rvts11"> is the new </span><span class="rvts49">"DUF Code Generator"</span><span class="rvts11"> utility. It will generate code for your entire development database and save it to a package file. Compile that file into your program. When your program is run at customer site, the framework will compare it's content to the customer's current database and perform all necessary database changes automatically. </span><span class="rvts14">The utility can also be used to generate code for just one or a selection of tables that has been changed. The file can then e.g. be send to other developers that work on the same system to make their databases identical.</span></li>
+ </ul>
+</ul>
+<p class="rvps2"><span class="rvts51"><br/></span></p>
+<p></p>
+
+	</div>
+	
+	
+		<div id="topic_footer">
+
+			<div id="topic_footer_content">
+				Copyright &copy; 2016-2020 RDC Tools International. All Rights Reserved. Portions Copyright Data Access Worldwide, Mertech Data Systems, Inc.
+			</div>
+		</div>
+	
+
+	
+	
+
+	
+</body>
+	
+</html>
+

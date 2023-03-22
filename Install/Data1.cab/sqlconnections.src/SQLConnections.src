@@ -1,0 +1,176 @@
+Use DFAllEnt.pkg
+Use cCJStandardCommandBarSystem.pkg
+Use vWin32fh.pkg
+Use cCJSkinFramework.pkg
+
+Object oHtmlHelp is a cHtmlHelp
+End_Object
+
+Object oApplication is a cApplication
+    Set peHelpType to htHtmlHelp
+    Set psHelpFile to "DataFlex.chm"
+    Set psCompany to "RDC Tools International"
+    Set psProduct to "SQL Connections Manager"
+    Set psVersion to (String(piVersionMajor(phoVersionInfo(Self))) + "." + String(piVersionMinor(phoVersionInfo(Self))))
+    Set psAutoOpenWorkspace to ""
+
+    Property String psCommandLineIniFilePath ""
+    Property Boolean pbIniFileExists False
+
+    Procedure OnCreate
+        Integer eOpened
+        Handle hoCmdLine
+        String sArgument sPath sFileName sWsFile
+        Integer iRetval
+        Boolean bExists
+
+        Get phoCommandLine to hoCmdLine
+        Get Argument of hoCmdLine 1 to sArgument
+        If (sArgument <> "") Begin
+            Get ParseFolderName sArgument to sPath
+            Get vFolderExists sPath to iRetval
+            If (iRetval = True) Begin
+                Set psCommandLineIniFilePath to sPath
+                Get vFilePathExists (sPath + "SQLConnections.ini") to bExists
+                Set pbIniFileExists to bExists
+            End
+        End
+
+        Get OpenWorkspaceFile of (phoWorkspace(Self)) "config.ws" to eOpened
+        If (eOpened <> wsWorkspaceOpened) Begin
+            Get GetApplicationPath to sPath
+            Get vSelect_File "Workspace Files (*.ws)|*.ws|All Files (*.*)|*.*" "Please select a Workspace file (*.ws)" sPath to sWsFile
+            Get vFilePathExists sWsFile to bExists
+            If (bExists = False) Begin
+                Send Stop_Box "No Workspace file selected. Cannot continue!"
+                Send Exit_Application
+            End
+            Get OpenWorkspaceFile of (phoWorkspace(Self)) sWsFile to eOpened
+            If (eOpened <> wsWorkspaceOpened) Begin
+                Set psHome          of (phoWorkspace(Self)) to sPath
+                Set psProgramPath   of (phoWorkspace(Self)) to sPath
+                Set psDataPath      of (phoWorkspace(Self)) to sPath
+                Set psFileList      of (phoWorkspace(Self)) to sPath
+                Set psHelpPath      of (phoWorkspace(Self)) to sPath
+                Set psBitmapPath    of (phoWorkspace(Self)) to sPath
+            End
+        End
+    End_Procedure
+
+    #IFDEF cConnection
+    Object oConnection is a cConnection
+        Use LoginEncryption.pkg
+        Use DatabaseLoginDialog.dg
+    End_Object
+    #ENDIF
+
+End_Object
+
+// Unmark these Define lines if using Mertech drivers!
+Define DUF_Use_Mertech_Drivers
+
+Use cSQLConnectionHandler.pkg
+Object oSQLConnectionHandler is a cSQLConnectionHandler
+    // If a file was passed on the command line - which can be done from the Studio -
+    // we change the ini-file path here. (The name is always the same)
+    Procedure End_Construct_Object
+        String sPath
+        Boolean bExists
+        Get psCommandLineIniFilePath of ghoApplication to sPath
+        If (sPath <> "") Begin
+            Set psIniFilePath to sPath
+        End
+        Else Begin
+            Get psProgramPath of (phoWorkspace(ghoApplication)) to sPath
+            Set psIniFilePath to sPath
+            Get vFolderFormat sPath to sPath
+            Get vFilePathExists (sPath + CS_SQLIniFileName) to bExists
+            Set pbIniFileExists of ghoApplication to bExists
+        End
+        Forward Send End_Construct_Object
+    End_Procedure
+End_Object
+
+Use cDbUpdateFunctionLibrary.pkg
+// Needs to be after the cSQLConnectionHandler object
+Object oDbUpdateFunctionLibrary is a cDbUpdateFunctionLibrary
+End_Object
+
+Object oToolTipController is a cToolTipController
+    Move Self to ghoToolTipController
+    Set pbBalloonStyle to False
+    Set piIcon to TTI_INFO
+    Set psTitle to "Information"
+    Set piMaxWidth to 400
+    Set piDurationPopup to 14000    // 14 seconds, needed for long tooltips.
+End_Object
+
+Use oEditContextMenu.pkg
+Use oDEOEditContextMenu17.pkg
+
+Object oMain is a Panel
+    Set Label to (psProduct(ghoApplication))
+    Set Location to 105 166
+    Set Size to 196 493
+    Set piMinSize to (Hi(Size(Self))) (Low(Size(Self)))
+    Set Icon to "SQLConnections.ico"
+
+    Object oCommandBarSystem is a cCJCommandBarSystem
+        Set pbTimerUpdate to True
+        #IF (Required_RT_Version > 18)
+            Set pbAutoResizeIcons to True
+        #ENDIF
+
+        Procedure OnCreateCommandBars
+            Handle hoOptions
+            Get OptionsObject to hoOptions
+            Forward Send OnCreateCommandBars
+        End_Procedure
+
+        Object oStatusBar is a cCJStatusBar
+
+            Object oStatusPane1 is a cCJStatusBarPane
+                Set pbStyleStretch to True
+            End_Object
+
+            Object oStatusPane2 is a cCJStatusBarPane
+                Set phoViewPane to Self
+                Set pbStyleStretch to True
+                Set piTextColor to clRed
+            End_Object
+
+        End_Object
+
+    End_Object
+
+    Object oClientArea is a ClientArea
+        Use StdAbout.pkg
+        Use ManageSQLConnections.vw
+        Use ManageSQLConnections.dg
+        Use AddToStudio.dg
+
+        Procedure Activate_About
+            Send DoAbout "" "" ("Copyright 2016-2018" * psCompany(ghoApplication)) "Author: Nils Svedmyr" "SQLConnections.bmp" "E-mail: mailto:support@rdctools.com" "Web-site: www.rdctools.com"
+        End_Procedure
+
+    End_Object
+
+    Procedure ShowProgramHelp
+        Send DoDisplayKeyword of ghoHtmlHelp "SQLConnections Tool"
+    End_Procedure
+
+    On_Key Key_F1 Send ShowProgramHelp
+End_Object
+
+// Check if a SQLConnections.ini file exists;
+// else the user needs to setup a Connection ID and login info & save the new connection file.
+Procedure CheckIfConnectionExists
+    Boolean bIniFileExists
+    Get pbIniFileExists of ghoApplication to bIniFileExists
+    If (bIniFileExists = False) Begin
+        Send ConnectionDoesNotExist of (oSQLMaintainConnection(Client_Id(phoMainPanel(ghoApplication))))
+    End
+End_Procedure
+Send CheckIfConnectionExists
+
+Start_UI

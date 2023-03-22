@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+
+<html>
+	
+<head>
+	<title>Events for cDbUpdateHandler</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="description" content="Help for the DataFlex Database Update Framework" />
+    <meta name="generator" content="HelpNDoc Professional Edition 7.1.0.253" />
+	
+	
+	
+	<link type="text/css" rel="stylesheet" media="all" href="css/reset.css" />
+	<link type="text/css" rel="stylesheet" media="all" href="css/base.css" />
+	<link type="text/css" rel="stylesheet" media="all" href="css/hnd.css" />
+	<!--[if lte IE 8]>
+		<link type="text/css" rel="stylesheet" media="all" href="css/ielte8.css" />
+	<![endif]-->
+
+	<style type="text/css">
+		#topic_header
+		{
+			background-color: #EFEFEF;
+		}
+	</style>
+
+	
+
+	<script type="text/javascript" src="js/chmRelative.js"></script>
+	
+	
+</head>
+
+<body>
+
+
+
+	
+	
+	<div id="topic_content">
+		
+<p></p>
+<h1 class="rvps7"><span class="rvts0"><span class="rvts23">Events for </span></span><span class="rvts0"><a class="rvts72" href="cDbUpdateHandler.htm">cDbUpdateHandler</a></span></h1>
+<div class="rvps2">
+<table width="100%" border="0" cellpadding="1" cellspacing="2" style="border-width: 0px; border-spacing: 2px;">
+ <tr valign="top">
+  <td valign="middle" style="padding: 1px; background-color: #c0c0c0;">
+   <p class="rvps3"><span class="rvts71">Name</span></p>
+  </td>
+  <td valign="middle" style="padding: 1px; background-color: #c0c0c0;">
+   <p class="rvps3"><span class="rvts71">Description</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td valign="middle" style="padding: 1px; background-color: #e2e2e2;">
+   <p class="rvps2"><span class="rvts56">OnPreUpdate</span></p>
+  </td>
+  <td valign="middle" style="padding: 1px; background-color: #e2e2e2;">
+   <p class="rvps2"><span class="rvts65">Event called before any update of the database is started. This is a programmer's hook event. Can be used to create an SQL database (not table).</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td valign="middle" style="padding: 1px;">
+   <p class="rvps2"><span class="rvts56">OnPostUpdate</span></p>
+  </td>
+  <td valign="middle" style="padding: 1px;">
+   <p class="rvps2"><span class="rvts65">Event that is called after all database updates have finished. This is a programmer's hook event.</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td valign="middle" style="padding: 1px; background-color: #e2e2e2;">
+   <p class="rvps2"><span class="rvts56">OnFindVersionRecord</span></p>
+  </td>
+  <td valign="middle" style="padding: 1px; background-color: #e2e2e2;">
+   <p class="rvps2"><span class="rvts65">Hook message for custom DbVersion record find. The programmer can use this event for putting code that needs to be executed to find a *custom* DbVersion table record - aka when another table should be used in place of the standard DbVersion table. By default the DbVersion table is used but this can be customized by adding this line to the code;</span></p>
+   <p class="rvps2"><span class="rvts65">"Define DUF_Use_Custom_DbVersion"</span></p>
+   <p class="rvps2"><span class="rvts65">above the line;</span></p>
+   <p class="rvps2"><span class="rvts65">"Use cDbUpdateHandler.pkg"</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td valign="middle" style="padding: 1px; background-color: #ffffff;">
+   <p class="rvps2"><span class="rvts56">OnErrorWriteHeader_DataTable</span></p>
+  </td>
+  <td valign="middle" style="padding: 1px; background-color: #ffffff;">
+   <p class="rvps2"><span class="rvts65">Hook event for writing header error text (pre-update) to a data table, instead of the default text-log file. Only called if the pbUseDataTable property = True. Don't forget to Open the table first (!) as all tables have been closed at this stage. The start date &amp; time is passed.</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td valign="middle" style="padding: 1px; background-color: #e2e2e2;">
+   <p class="rvps2"><span class="rvts56">OnErrorWriteRow_DataTable</span></p>
+  </td>
+  <td valign="middle" style="padding: 1px; background-color: #e2e2e2;">
+   <p class="rvps2"><span class="rvts65">Hook event to log errors to a database table. Only called if the pbUseDataTable = True. Don't forget to Open the table first (!) as all tables have been closed at this stage. If pbQuickWrite = True the passed DbUpdateErrorArray will contain just one row, as it is called for each error that occurred. Else it is called once at the end after all updates have run and contains all errors.</span></p>
+  </td>
+ </tr>
+</table>
+</div>
+<p class="rvps2"><span class="rvts54"><br/></span></p>
+<p class="rvps2"><span class="rvts55">Sample Code</span></p>
+<p class="rvps12"><span class="rvts58"><br/></span></p>
+<p class="rvps11"><span class="rvts35">Object oDbUpdateHandler is an cDbUpdateHandler&nbsp;</span><br/><span class="rvts35">&nbsp; &nbsp; Set Data_File_Field to File_Field DbVersion.DatabaseVersion</span></p>
+<p class="rvps11"><span class="rvts35"><br/></span></p>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; </span><span class="rvts63">// You can create a database prior making any updates in case it doesn't exist:</span></p>
+<p class="rvps11"><span class="rvts63">&nbsp; &nbsp; // Note: This option is only available for MS-SQL.</span></p>
+<p class="rvps11"><span class="rvts73">&nbsp; &nbsp; Procedure OnPreUpdate</span></p>
+<p class="rvps11"><span class="rvts63">&nbsp; &nbsp; &nbsp; &nbsp; Boolean bOK</span></p>
+<p class="rvps11"><span class="rvts63">&nbsp; &nbsp; &nbsp; &nbsp; Get SqlDatabaseCreate MSSQLDRV_ID "OrderEntry" True True to bOK</span></p>
+<p class="rvps11"><span class="rvts63">&nbsp; &nbsp; &nbsp; &nbsp; If (bOK = False) Begin</span></p>
+<p class="rvps11"><span class="rvts63">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Send Info_Box "Nope, that didn't work. Program will now exit."</span></p>
+<p class="rvps11"><span class="rvts63">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Send Exit_Application</span></p>
+<p class="rvps11"><span class="rvts63">&nbsp; &nbsp; &nbsp; &nbsp; End</span></p>
+<p class="rvps11"><span class="rvts63">&nbsp; &nbsp; End_Procedure</span><span class="rvts35"> &nbsp; &nbsp; &nbsp; &nbsp;</span></p>
+<p class="rvps11"><span class="rvts35"><br/></span></p>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; // To find a database version record if the standard DbVersion table&nbsp;</span></p>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; // should *not* be used. You can here use your own table logic.</span></p>
+<p class="rvps11"><span class="rvts73">&nbsp; &nbsp; Procedure OnFindVersionRecord</span></p>
+<p class="rvps11"><span class="rvts63">&nbsp; &nbsp; &nbsp; &nbsp; Open MyTable</span></p>
+<p class="rvps11"><span class="rvts63">&nbsp; &nbsp; &nbsp; &nbsp; Move xx to MyTable.Column1</span></p>
+<p class="rvps11"><span class="rvts63">&nbsp; &nbsp; &nbsp; &nbsp; Move yy to MyTable.Column2</span></p>
+<p class="rvps11"><span class="rvts63">&nbsp; &nbsp; &nbsp; &nbsp; Find LE MyTable by Index.1</span></p>
+<p class="rvps11"><span class="rvts63">&nbsp; &nbsp; End_Procedure</span><span class="rvts35"> &nbsp; &nbsp; &nbsp; &nbsp;</span><br/><span class="rvts35"><br/></span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; // Called once when the update begins.</span></p>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; Procedure OnErrorWriteHeader_DataTable DateTime dtUpdateStart</span></p>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; &nbsp; &nbsp; Open MyLogTable</span></p>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; &nbsp; &nbsp; Move dtUpdateStart to MyLogTable.UpdateStart</span></p>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; &nbsp; &nbsp; Saverecord MyLogTable</span></p>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; End_Procedure</span></p>
+<p class="rvps11"><span class="rvts35"><br/></span></p>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; // Called once after all updates have finished if </span><span class="rvts65">pbQuickWrite=False. If pbQuickWrite=True it is called once for each error.</span></p>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; Procedure OnErrorWriteRow_DataTable tDbUpdateError[] DbUpdateErrorArray</span></p>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; &nbsp; &nbsp; Integer iSize iCount</span></p>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; &nbsp; &nbsp; Open MyLogTable</span></p>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; &nbsp; &nbsp; Move (SizeOfArray(DbUpdateErrorArray)) to iSize</span></p>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; &nbsp; &nbsp; Decrement iSize</span></p>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; &nbsp; &nbsp; For iCount from 0 to iSize</span></p>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Clear MyLogTable</span></p>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Move DbUpdateErrorArray[iCount].iError to MyLogTable.ErrorNo</span></p>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Move DbUpdateErrorArray[iCount].sErrorText to MyLogTable.ErrorText</span></p>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; SaveRecord MyLogTable</span></p>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; &nbsp; &nbsp; Loop</span></p>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; End_Procedure</span></p>
+<p class="rvps11"><span class="rvts35"></span><br/><span class="rvts35">...</span></p>
+<p class="rvps11"><span class="rvts35"><br/></span></p>
+<p class="rvps11"><span class="rvts35">NOTE:</span></p>
+<p class="rvps11"><span class="rvts35">Struct tDbUpdateError</span></p>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; Number &nbsp;nUpdateVersion</span></p>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; Integer iError</span></p>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; String &nbsp;sErrorText</span></p>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; Integer iErrorLine</span></p>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; Boolean bError</span></p>
+<p class="rvps11"><span class="rvts35">End_Struct</span></p>
+<p class="rvps11"><span class="rvts35"><br/></span></p>
+<p></p>
+
+	</div>
+	
+	
+		<div id="topic_footer">
+
+			<div id="topic_footer_content">
+				Copyright &copy; 2016-2020 RDC Tools International. All Rights Reserved. Portions Copyright Data Access Worldwide, Mertech Data Systems, Inc.
+			</div>
+		</div>
+	
+
+	
+	
+
+	
+</body>
+	
+</html>
+

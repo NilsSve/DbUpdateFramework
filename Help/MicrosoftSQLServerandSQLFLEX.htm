@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+
+<html>
+	
+<head>
+	<title>Microsoft SQL Server and SQLFLEX</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="description" content="Help for the DataFlex Database Update Framework" />
+    <meta name="generator" content="HelpNDoc Professional Edition 7.1.0.253" />
+	
+	
+	
+	<link type="text/css" rel="stylesheet" media="all" href="css/reset.css" />
+	<link type="text/css" rel="stylesheet" media="all" href="css/base.css" />
+	<link type="text/css" rel="stylesheet" media="all" href="css/hnd.css" />
+	<!--[if lte IE 8]>
+		<link type="text/css" rel="stylesheet" media="all" href="css/ielte8.css" />
+	<![endif]-->
+
+	<style type="text/css">
+		#topic_header
+		{
+			background-color: #EFEFEF;
+		}
+	</style>
+
+	
+
+	<script type="text/javascript" src="js/chmRelative.js"></script>
+	
+	
+</head>
+
+<body>
+
+
+
+	
+	
+	<div id="topic_content">
+		
+<p></p>
+<h1 class="rvps7"><span class="rvts0"><span class="rvts23">Microsoft SQL Server Data Types and SQLFLEX Driver - </span></span><span class="rvts0"><a class="rvts72" href="cDbUpdateFunctionLibrary.htm">cDbUpdateFunctionLibrary</a></span></h1>
+<p class="rvps2"><span class="rvts81"></span><br/><span class="rvts11">The table show how SQL data types maps to DataFlex native types and the max capacity of each type. &nbsp;The capacity shown is the highest possible value for the DataFlex side - or if the SQL side max value is lower - the SQL side capacity. Mostly it is the DataFlex side that has the lower capacity value.</span></p>
+<p class="rvps2"><span class="rvts14"><br/></span></p>
+<div class="rvps2">
+<table border="2" cellpadding="2" cellspacing="0" style="border-color: #ff99cc; border-style: solid; background-color: #ffffff; border-spacing: 0px;">
+ <tr valign="middle">
+  <td width="131" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts98">SQL Type Name</span></p>
+  </td>
+  <td width="206" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts98">SQL Type Constant</span></p>
+  </td>
+  <td width="112" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts98">DataFlex Type</span></p>
+  </td>
+  <td width="117" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts98">DataFlex Type</span></p>
+   <p class="rvps2"><span class="rvts98">Constant</span></p>
+  </td>
+  <td width="74" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts98">Capacity</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="131" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11"><br/></span></p>
+  </td>
+  <td width="206" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11"><br/></span></p>
+  </td>
+  <td width="112" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11"><br/></span></p>
+  </td>
+  <td width="117" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11"><br/></span></p>
+  </td>
+  <td width="74" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11"><br/></span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="131" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">bigint</span></p>
+  </td>
+  <td width="206" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">eSQLServer_BIGINT</span></p>
+  </td>
+  <td width="112" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">Numeric</span></p>
+  </td>
+  <td width="117" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">DF_BCD</span></p>
+  </td>
+  <td width="74" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">14.0</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="131" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">binary</span></p>
+  </td>
+  <td width="206" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">eSQLServer_BINARY</span></p>
+  </td>
+  <td width="112" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">Binary</span></p>
+  </td>
+  <td width="117" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">DF_BINARY</span></p>
+  </td>
+  <td width="74" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">8000</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="131" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">bit</span></p>
+  </td>
+  <td width="206" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">eSQLServer_BIT</span></p>
+  </td>
+  <td width="112" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">ASCII</span></p>
+  </td>
+  <td width="117" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">DF_ASCII</span></p>
+  </td>
+  <td width="74" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">1.0</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="131" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">char</span></p>
+  </td>
+  <td width="206" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">eSQLServer_CHAR</span></p>
+  </td>
+  <td width="112" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">Text</span></p>
+  </td>
+  <td width="117" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">DF_TEXT</span></p>
+  </td>
+  <td width="74" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">8000</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="131" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">date</span></p>
+  </td>
+  <td width="206" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">eSQLServer_DATE</span></p>
+  </td>
+  <td width="112" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">Date</span></p>
+  </td>
+  <td width="117" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">DF_DATE</span></p>
+  </td>
+  <td width="74" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">6.0</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="131" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">datetime</span></p>
+  </td>
+  <td width="206" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">eSQLServer_DATETIME</span></p>
+  </td>
+  <td width="112" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">DateTime</span></p>
+  </td>
+  <td width="117" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">DF_DATETIME</span></p>
+  </td>
+  <td width="74" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">23.3</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="131" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">datetime2</span></p>
+  </td>
+  <td width="206" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">eSQLServer_DATETIME2</span></p>
+  </td>
+  <td width="112" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">DateTime</span></p>
+  </td>
+  <td width="117" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">DF_DATETIME</span></p>
+  </td>
+  <td width="74" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">23.6</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="131" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">datetimeoffset</span></p>
+  </td>
+  <td width="206" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">eSQLServer_DATETIMEOFFSET</span></p>
+  </td>
+  <td width="112" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">DateTime</span></p>
+  </td>
+  <td width="117" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">DF_DATETIME</span></p>
+  </td>
+  <td width="74" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">23.0</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="131" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">decimal</span></p>
+  </td>
+  <td width="206" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">eSQLServer_DECIMAL</span></p>
+  </td>
+  <td width="112" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">Numeric</span></p>
+  </td>
+  <td width="117" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">DF_BCD</span></p>
+  </td>
+  <td width="74" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">14.8</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="131" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">double</span></p>
+  </td>
+  <td width="206" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">eSQLServer_DOUBLE</span></p>
+  </td>
+  <td width="112" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">Numeric</span></p>
+  </td>
+  <td width="117" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">DF_BCD</span></p>
+  </td>
+  <td width="74" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">14.8</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="131" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">float</span></p>
+  </td>
+  <td width="206" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">eSQLServer_FLOAT</span></p>
+  </td>
+  <td width="112" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">Numeric</span></p>
+  </td>
+  <td width="117" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">DF_BCD</span></p>
+  </td>
+  <td width="74" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">14.8</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="131" height="18" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">int</span></p>
+  </td>
+  <td width="206" height="18" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">eSQLServer_INTEGER</span></p>
+  </td>
+  <td width="112" height="18" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">Numeric</span></p>
+  </td>
+  <td width="117" height="18" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">DF_BCD</span></p>
+  </td>
+  <td width="74" height="18" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">11.0</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="131" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">nchar</span></p>
+  </td>
+  <td width="206" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">eSQLServer_NCHAR</span></p>
+  </td>
+  <td width="112" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">Text</span></p>
+  </td>
+  <td width="117" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">DF_TEXT</span></p>
+  </td>
+  <td width="74" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">4000</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="131" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">ntext</span></p>
+  </td>
+  <td width="206" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">eSQLServer_NTEXT</span></p>
+  </td>
+  <td width="112" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">Text</span></p>
+  </td>
+  <td width="117" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">DF_TEXT</span></p>
+  </td>
+  <td width="74" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">16384</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="131" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">numeric</span></p>
+  </td>
+  <td width="206" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">eSQLServer_NUMERIC</span></p>
+  </td>
+  <td width="112" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">Numeric</span></p>
+  </td>
+  <td width="117" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">DF_BCD</span></p>
+  </td>
+  <td width="74" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">14.8</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="131" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">nvarchar</span></p>
+  </td>
+  <td width="206" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">eSQLServer_NVARCHAR</span></p>
+  </td>
+  <td width="112" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">Text</span></p>
+  </td>
+  <td width="117" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">DF_TEXT</span></p>
+  </td>
+  <td width="74" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">4000</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="131" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">nvarchar(max)</span></p>
+  </td>
+  <td width="206" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">eSQLServer_NVARCHARMAX</span></p>
+  </td>
+  <td width="112" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">Text</span></p>
+  </td>
+  <td width="117" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">DF_TEXT</span></p>
+  </td>
+  <td width="74" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">16384</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="131" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">real</span></p>
+  </td>
+  <td width="206" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">eSQLServer_REAL</span></p>
+  </td>
+  <td width="112" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">Numeric</span></p>
+  </td>
+  <td width="117" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">DF_BCD</span></p>
+  </td>
+  <td width="74" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">14.8</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="131" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">smalldatetime</span></p>
+  </td>
+  <td width="206" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">eSQLServer_SMALLDATETIME</span></p>
+  </td>
+  <td width="112" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">DateTime</span></p>
+  </td>
+  <td width="117" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">DF_DATETIME</span></p>
+  </td>
+  <td width="74" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">23.0</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="131" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">smallint</span></p>
+  </td>
+  <td width="206" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">eSQLServer_SMALLINT</span></p>
+  </td>
+  <td width="112" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">Numeric</span></p>
+  </td>
+  <td width="117" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">DF_BCD</span></p>
+  </td>
+  <td width="74" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">6.0</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="131" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">text</span></p>
+  </td>
+  <td width="206" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">eSQLServer_TEXT</span></p>
+  </td>
+  <td width="112" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">Text</span></p>
+  </td>
+  <td width="117" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">DF_TEXT</span></p>
+  </td>
+  <td width="74" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">8000</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="131" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">time</span></p>
+  </td>
+  <td width="206" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">eSQLServer_TIME</span></p>
+  </td>
+  <td width="112" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">ASCII</span></p>
+  </td>
+  <td width="117" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">DF_ASCII</span></p>
+  </td>
+  <td width="74" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">16.0</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="131" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">timestamp</span></p>
+  </td>
+  <td width="206" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">eSQLServer_TIMESTAMP</span></p>
+  </td>
+  <td width="112" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">ASCII</span></p>
+  </td>
+  <td width="117" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">DF_ASCII</span></p>
+  </td>
+  <td width="74" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">8.0</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="131" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">tinyint</span></p>
+  </td>
+  <td width="206" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">eSQLServer_TINYINT</span></p>
+  </td>
+  <td width="112" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">Numeric</span></p>
+  </td>
+  <td width="117" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">DF_BCD</span></p>
+  </td>
+  <td width="74" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">3.0</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="131" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">uniqueidentifier</span></p>
+  </td>
+  <td width="206" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">eSQLServer_GUID</span></p>
+  </td>
+  <td width="112" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">ASCII</span></p>
+  </td>
+  <td width="117" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">DF_ASCII</span></p>
+  </td>
+  <td width="74" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">38</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="131" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">varbinary</span></p>
+  </td>
+  <td width="206" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">eSQLServer_VARBINARY</span></p>
+  </td>
+  <td width="112" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">Binary</span></p>
+  </td>
+  <td width="117" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">DF_BINARY</span></p>
+  </td>
+  <td width="74" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">8000</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="131" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">varbinary(max)</span></p>
+  </td>
+  <td width="206" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">eSQLServer_VARBINARYMAX</span></p>
+  </td>
+  <td width="112" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">Binary</span></p>
+  </td>
+  <td width="117" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">DF_BINARY</span></p>
+  </td>
+  <td width="74" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">16384</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="131" height="17" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">varchar</span></p>
+  </td>
+  <td width="206" height="17" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">eSQLServer_VARCHAR</span></p>
+  </td>
+  <td width="112" height="17" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">Text</span></p>
+  </td>
+  <td width="117" height="17" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">DF_TEXT</span></p>
+  </td>
+  <td width="74" height="17" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">8000</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="131" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">varchar(max)</span></p>
+  </td>
+  <td width="206" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">eSQLServer_VARCHARMAX</span></p>
+  </td>
+  <td width="112" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">Text</span></p>
+  </td>
+  <td width="117" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">DF_TEXT</span></p>
+  </td>
+  <td width="74" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">16384</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="131" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">sql_variant</span></p>
+  </td>
+  <td width="206" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">eSQLServer_SQLVARIANT</span></p>
+  </td>
+  <td width="112" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">Binary</span></p>
+  </td>
+  <td width="117" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">DF_BINARY</span></p>
+  </td>
+  <td width="74" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">16384</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="131" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">xml</span></p>
+  </td>
+  <td width="206" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">eSQLServer_XML</span></p>
+  </td>
+  <td width="112" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">Text</span></p>
+  </td>
+  <td width="117" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">DF_TEXT</span></p>
+  </td>
+  <td width="74" style="border-color: #ff99cc; border-style: solid; padding: 1px 4px;">
+   <p class="rvps2"><span class="rvts11">16384</span></p>
+  </td>
+ </tr>
+</table>
+</div>
+<p class="rvps2"><span class="rvts6"><br/></span></p>
+<p class="rvps2"><span class="rvts6"><br/></span></p>
+<p></p>
+
+	</div>
+	
+	
+		<div id="topic_footer">
+
+			<div id="topic_footer_content">
+				Copyright &copy; 2016-2020 RDC Tools International. All Rights Reserved. Portions Copyright Data Access Worldwide, Mertech Data Systems, Inc.
+			</div>
+		</div>
+	
+
+	
+	
+
+	
+</body>
+	
+</html>
+

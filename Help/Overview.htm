@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+
+<html>
+	
+<head>
+	<title>Overview</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="description" content="Help for the DataFlex Database Update Framework" />
+    <meta name="generator" content="HelpNDoc Professional Edition 7.1.0.253" />
+	
+	
+	
+	<link type="text/css" rel="stylesheet" media="all" href="css/reset.css" />
+	<link type="text/css" rel="stylesheet" media="all" href="css/base.css" />
+	<link type="text/css" rel="stylesheet" media="all" href="css/hnd.css" />
+	<!--[if lte IE 8]>
+		<link type="text/css" rel="stylesheet" media="all" href="css/ielte8.css" />
+	<![endif]-->
+
+	<style type="text/css">
+		#topic_header
+		{
+			background-color: #EFEFEF;
+		}
+	</style>
+
+	
+
+	<script type="text/javascript" src="js/chmRelative.js"></script>
+	
+	
+</head>
+
+<body>
+
+
+
+	
+	
+	<div id="topic_content">
+		
+<p></p>
+<h1 class="rvps7"><span class="rvts0"><span class="rvts23">Overview</span></span></h1>
+<p class="rvps5"><img width="96" height="96" alt="" style="vertical-align: middle; padding : 1px;" src="lib/DbUpdateFrameworkDF19_9697.png"><span class="rvts54"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts54">The Database Update Framework</span></p>
+<p class="rvps2"><span class="rvts55"><br/></span></p>
+<p class="rvps2"><span class="rvts55"><br/></span></p>
+<p class="rvps2"><span class="rvts12">If you haven't seen the introduction video, it is suggested to see it first: </span><a class="rvts33" href="https://www.youtube.com/watch?v=VD4eN9oP0_U&feature=youtu.be" target="_blank">Help video</a></p>
+<p class="rvps2"><span class="rvts12"><br/></span></p>
+<p class="rvps2"><span class="rvts12"><br/></span></p>
+<p class="rvps4"><span class="rvts12"><br/></span></p>
+<p class="rvps2"><span class="rvts55">What is it?</span></p>
+<p class="rvps2"><span class="rvts6"><br/></span></p>
+<p class="rvps2"><span class="rvts11">It is a </span><span class="rvts49">code based framework for automated database updates</span><span class="rvts11">. The framework consists of a series of classes, a function library and two tool programs. The function library has messages that makes it easy to update databases for both the DataFlex Embedded and SQL databases. When a new version of your software is started at client site the database update starts automatically and all other users are locked out from using the program while the update is in progress. A series of checks are done prior starting the database update to ensure that nobody else is using it. All activities are automatically logged.</span></p>
+<p class="rvps2"><span class="rvts11"><br/></span></p>
+<p class="rvps2"><span class="rvts14">Note that all "Make Database Changes" functions are re-entrance enabled. That means that even if a function is called again to e.g. convert a table from Embedded (.dat) to SQL, and is called again - nothing will happen. All "Make Database Changes" functions first checks if the action has been called before and if so, does nothing.</span></p>
+<p class="rvps2"><span class="rvts14"><br/></span></p>
+<p class="rvps2"><span class="rvts11">To aid in making structural database changes the library class </span><a class="rvts22" href="cDbUpdateFunctionLibrary.htm">cDbUpdateFunctionLibrary</a><span class="rvts43"> </span><span class="rvts11">was created</span><span class="rvts43">. </span><span class="rvts11">It has specialized SQL functions that avoids the need to drop and rebuild a table, as often can be the case when using the DataFlex database API Structure_End command. Embedded SQL (ESQL) is used to make changes directly at the SQL back end and changes are then synced back with the table's .int file(s).</span></p>
+<p class="rvps2"><span class="rvts11"><br/></span></p>
+<p class="rvps2"><span class="rvts14">Things the library can do is to create a new database, convert a table from embedded to SQL or attach to an existing SQL table, add a new column and populate it with a default value and lots more. One and each of these actions can be made with a single line of code.</span></p>
+<p class="rvps2"><span class="rvts11"><br/></span></p>
+<p class="rvps2"><span class="rvts11">You can also include SQL script files made by e.g. the 'Microsoft SQL Server Management Studio" to create an entire database complete with data, with a few lines of code, or whatever your needs are. This usage of "embedded SQL scripts" is a very powerful feature of the framework and can be used for all sorts of things. The script files are compiled into the program which makes them more secure from tampering from end users.</span></p>
+<p class="rvps2"><span class="rvts6"><br/></span></p>
+<p class="rvps2"><span class="rvts11">The </span><a class="rvts22" href="cDbUpdateFunctionLibrary.htm">cDbUpdateFunctionLibrary</a><span class="rvts11"> also have functions that has been build on top of the DataFlex database API (that uses Structure_Start/Structure_End) and they are best used with the DataFlex Embedded database, but are also available for SQL back-ends depending on the needs. It is important to understand that the full DataFlex language can be used to make whatever database updates that is needed, but "high level" functions are available to make your work easier. This makes the framework both flexible and versatile.</span></p>
+<p class="rvps2"><span class="rvts11"><br/></span></p>
+<p class="rvps2"><span class="rvts11">The container class </span><a class="rvts22" href="cDbUpdateHandler.htm">cDbUpdateHandler</a><span class="rvts11"> is the foundation for the automated database update logic. All messages of the </span><a class="rvts22" href="cDbUpdateFunctionLibrary.htm">cDbUpdateFunctionLibrary</a><span class="rvts11"> are readily available as it has been imported to the </span><a class="rvts22" href="cDbUpdateHandler.htm">cDbUpdateHandler</a><span class="rvts11"> class.</span></p>
+<p class="rvps2"><span class="rvts6"><br/></span></p>
+<p class="rvps2"><span class="rvts11">Inside the </span><a class="rvts22" href="cDbUpdateHandler.htm">cDbUpdateHandler</a><span class="rvts43"> </span><span class="rvts11">container object a series of </span><a class="rvts22" href="cDbUpdateVersion.htm">cDbUpdateVersion</a><span class="rvts11"> objects are placed, - as siblings - one object for each new database revision update. The </span><a class="rvts22" href="cDbUpdateVersion.htm">cDbUpdateVersion</a><span class="rvts11"> </span><a class="rvts22" href="EventsforcDbUpdateVersion.htm">OnUpdate</a><span class="rvts11"> event is automatically called when the object is created and it in the OnUpdate event any database update code is written.</span></p>
+<p class="rvps2"><span class="rvts11"><br/></span></p>
+<p class="rvps2"><span class="rvts11">Before an update begins, three different checks are performed to make sure the database is not in use. When the update process is under way all errors are temporarily "muted" and collected by the cDbUpdateHandler object to not interrupt the update. Properties can be set to use a text based log file or database table, and if the log should be displayed after updates have been run or not.&nbsp;</span></p>
+<p class="rvps2"><span class="rvts11"><br/></span></p>
+<p class="rvps2"><span class="rvts11">After the database update(s) is/are completed the program will continue to run as normal. The next time the program is started all update code will be ignored, granted all cDbUpdateVersion objects OnUpdate events have been run successfully.</span></p>
+<p class="rvps2"><span class="rvts11"><br/></span></p>
+<p class="rvps2"><span class="rvts6">&nbsp;</span></p>
+<p class="rvps2"><span class="rvts55">Start Here</span></p>
+<p class="rvps2"><span class="rvts6"><br/></span></p>
+<ul style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: disc;">
+ <li class="rvps2"><span class="rvts11">Start by reading the </span><a class="rvts22" href="FirstTimeSetup.htm">First Time Usage</a><span class="rvts11"> if the DataFlex Update Framework has never been used before.</span></li>
+ <li class="rvps2"><span class="rvts11">Setup your workspace by adding the DataFlex Update Framework as a library. See: </span><a class="rvts22" href="WorkspaceSetup.htm">Workspace Setup</a></li>
+ <li class="rvps2"><span class="rvts11">Follow the instructions in the chapter </span><a class="rvts22" href="HowToUseItImportant.htm">How To Use It</a><span class="rvts11">.</span></li>
+</ul>
+<p class="rvps2"><span class="rvts6"><br/></span></p>
+<p class="rvps2"><span class="rvts55">Class Hierarchy</span></p>
+<p class="rvps13"><a class="rvts57" href="VdfClassRef.chm::/cObject.htm">cObject</a><br/><span class="rvts56">---</span><a class="rvts22" href="cDbUpdateHandler.htm">cDbUpdateHandler</a><br/><span class="rvts56">------</span><a class="rvts22" href="cDbUpdateVersion.htm">cDbUpdateVersion</a><br/><span class="rvts56">------</span><a class="rvts22" href="cDbUpdateFunctionLibrary.htm">cDbUpdateFunctionLibrary</a><br/><span class="rvts56">------</span><a class="rvts22" href="cDbUpdateLogFile.htm">cDbUpdateLogFile</a><br/><span class="rvts56">------</span><a class="rvts22" href="cDbUpdateUserCount.htm">cDbUpdateUserCount</a><br/><span class="rvts56">------</span><a class="rvts22" href="cSQLConnectionHandler.htm">cSQLConnectionHandler</a><br/><span class="rvts56">---------</span><a class="rvts22" href="cSQLConnectionIniFile.htm">cSQLConnectionIniFile</a><br/><span class="rvts56">---------</span><a class="rvts22" href="cDbUpdateDatabaseDriver.htm">cDbUpdateDatabaseDriver</a></p>
+<p class="rvps13"><span class="rvts11"><br/></span></p>
+<p class="rvps13"><span class="rvts31">Note: The class hierarchy above is really a "pseudo" hierarchy because the only two classes that needs to be instantiated are the cDbUpdateHandler and cDbUpdateVersion. All the rest are automatically created/instantiated by the cDbUpdateHandler container object.</span></p>
+<p class="rvps2"><span class="rvts31"><br/></span></p>
+<p class="rvps2"><span class="rvts55"><br/></span></p>
+<p class="rvps2"><span class="rvts11"><br/></span></p>
+<p class="rvps2"><span class="rvts55">Schematic Code Overview</span></p>
+<div class="rvps2">
+<table border="0" cellpadding="0" cellspacing="0" style="border-width: 0px; border-spacing: 0px;">
+ <tr valign="top">
+  <td width="81" height="40" valign="middle" style="padding: 0px;">
+   <br/>
+  </td>
+  <td style="padding: 0px;">
+   <br/>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td valign="middle" style="padding: 0px;">
+   <br/>
+  </td>
+  <td valign="middle" style="padding: 0px;">
+   <p class="rvps2"><img width="496" height="414" alt="cApplication Object,cDbUpdateHandler Container Object,oDbUpdateVersion Object 1,oDbUpdateVersion Object 2,oDbUpdateVersion Object n,oMain Object" style="vertical-align: text-bottom;" src="lib/cDbUpdateFramework_filesimage001.png"></p>
+  </td>
+ </tr>
+</table>
+</div>
+<p class="rvps2"><span class="rvts59"><br/></span></p>
+<p class="rvps4"><span class="rvts11"><br/></span></p>
+<p class="rvps4"><span class="rvts11"><br/></span></p>
+<p class="rvps4"><span class="rvts11"><br/></span></p>
+<p class="rvps2"><span class="rvts55">Sample Code</span></p>
+<p class="rvps12"><span class="rvts58"><br/></span></p>
+<p class="rvps11"><span class="rvts35">Object oDbUpdateHandler is an cDbUpdateHandler</span><br/><span class="rvts35">&nbsp; &nbsp; Set Data_File_Field to File_Field DbVersion.DatabaseVersion</span></p>
+<p class="rvps11"><span class="rvts35"><br/></span></p>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; Object oDbUpdateVersion1 is a cDbUpdateVersion</span></p>
+<p class="rvps11"><span class="rvts36">&nbsp; &nbsp; &nbsp; &nbsp; </span><span class="rvts35">Set pnVersionNumber to 1</span></p>
+<p class="rvps11"><span class="rvts36"><br/></span></p>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; &nbsp; &nbsp; Declare_Datafile SalesP</span></p>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; &nbsp; &nbsp; Declare_Datafile Customer&nbsp;</span></p>
+<p class="rvps11"><span class="rvts36">&nbsp; &nbsp; &nbsp; &nbsp; // Put code in the OnUpdate event</span></p>
+<p class="rvps11"><span class="rvts36">&nbsp; &nbsp; &nbsp; &nbsp; </span><span class="rvts35">Procedure OnUpdate</span></p>
+<p class="rvps11"><span class="rvts36">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="rvts35">Boolean bOK</span></p>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Get ApiTableConvertToSQL_Ex SalesP.File_Number MSSQLDRV_ID True True True True to bOK</span></p>
+<p class="rvps11"><span class="rvts36">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="rvts35">Get SQLColumnRename Customer.File_Number "Purchases" "YearlyPurchases" MSSQLDRV_ID to bOK</span></p>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Get SQLColumnAdd Customer.File_Number "WebSite" DF_ASCII_DUF 30 0 True "www.rdctools.com" to bOK</span></p>
+<p class="rvps11"><span class="rvts36">&nbsp; &nbsp; &nbsp; &nbsp; </span><span class="rvts35">End_Procedure</span><br/><span class="rvts36">&nbsp; &nbsp; </span><span class="rvts35">End_Object</span><br/><span class="rvts35">&nbsp;</span><br/><span class="rvts35">&nbsp;</span><span class="rvts36"> &nbsp; </span><span class="rvts35">Object oDbUpdateVersion2 is a cDbUpdateVersion</span><br/><span class="rvts36">&nbsp; &nbsp; &nbsp; &nbsp; </span><span class="rvts35">Set pnVersionNumber to 2</span></p>
+<p class="rvps11"><span class="rvts36">&nbsp; &nbsp; &nbsp; &nbsp; // ...or put your update code in a separate package:</span><br/><span class="rvts36">&nbsp; &nbsp; &nbsp; &nbsp; </span><span class="rvts35">Use DbUpdateVersion2.pkg</span><br/><span class="rvts36">&nbsp; &nbsp; &nbsp; &nbsp; :</span><br/><span class="rvts36">&nbsp; &nbsp; </span><span class="rvts35">End_Object</span><br/><span class="rvts35">&nbsp;</span><br/><span class="rvts35">End_Object</span></p>
+<p class="rvps2"><span class="rvts11"><br/></span></p>
+<p class="rvps2"><span class="rvts55"><br/></span></p>
+<p class="rvps2"><span class="rvts55">User interaction</span></p>
+<p class="rvps2"><span class="rvts11"><br/></span></p>
+<p class="rvps2"><span class="rvts11">By default the user is presented with a YesNo box when the program is started that asks if it is OK to start the database update. If No is selected the program will exit. A status panel is shown while the update is taking place informing the user what is going on. After the update(s) is done a message informs how the update finished. If any errors occurred a log file is displayed, with a message that informs the user that the update was unsuccessful and that the program will exit.</span></p>
+<p class="rvps2"><span class="rvts11"><br/></span></p>
+<p class="rvps2"><span class="rvts11">The </span><a class="rvts22" href="PropertiesforcDbUpdateHandler.htm">pbSilentMode</a><span class="rvts11"> property of the </span><a class="rvts22" href="cDbUpdateHandler.htm">cDbUpdateHandler</a><span class="rvts11"> class controls if user interaction should take place or not. It is False by default and it is </span><span class="rvts14">not</span><span class="rvts11"> advised to set it to True. But that can be useful in e.g. a webapp program.</span></p>
+<p class="rvps2"><span class="rvts6"><br/></span></p>
+<p class="rvps2"><span class="rvts55">Safety precautions</span></p>
+<p class="rvps2"><span class="rvts6"><br/></span></p>
+<p class="rvps2"><span class="rvts11">First of all you need to ensure that the user running the program has sufficient rights to make structural changes to the database, this is particularly true with SQL databases.</span></p>
+<p class="rvps2"><span class="rvts11"><br/></span></p>
+<p class="rvps2"><span class="rvts11">Two different </span><a class="rvts22" href="cDbUpdateUserCount.htm">cDbUpdateUserCount</a><span class="rvts11"> objects are created and maintained by the cDbUpdateHandler class to make it as safe as possible to start a database update. One is used to </span><span class="rvts14">lock all other users out from running the program while an update is in progress</span><span class="rvts11">. The second is used to count users that concurrently uses/runs </span><span class="rvts14">this</span><span class="rvts11"> program. If number of users is greater than 1 (the user that runs the update) the update will not start and the program will exit. The logic used by the </span><a class="rvts22" href="cDbUpdateUserCount.htm">cDbUpdateUserCount</a><span class="rvts11"> is bit-locking and two files are automatically created in the workspace Programs folder. These bits will automatically be released when the program ends. Windows will release the bit-locking in the event the program should crash or end unpredictably.</span></p>
+<p class="rvps2"><span class="rvts11"><br/></span></p>
+<p class="rvps2"><span class="rvts11">Three different checks are performed before any database update work is started. In addition to the described bit-locking user count, the DataFlex license is queried for how may persons that currently is using the license. The third and last check only applies to the DataFlex embedded database; but it is sufficient that at least one table in Filelist.cfg is a DataFlex embedded table, like CodeMast or CodeType. The logic checks that all table can be opened exclusively, aka not opened by any other program.</span></p>
+<p class="rvps2"><span class="rvts11"><br/></span></p>
+<p class="rvps2"><span class="rvts49">If any of these three tests fails the database is in use and the program is prevented to continue.&nbsp;</span></p>
+<p class="rvps2"><span class="rvts60"><br/></span></p>
+<p class="rvps2"><span class="rvts11">Note that it is not possible to run the program until all scheduled database updates has taken place (aka all OnUpdate procedures have been executed successfully. So even if one of a series of cDbVersion object's OnUpdate events was unsuccessful, the program will not continue to run. In addition to - what was said above - no one can run the program while an update is taking place. Such users will be presented with a message that the database is being updated and asked to check in later.</span></p>
+<p class="rvps2"><span class="rvts6"><br/></span></p>
+<p class="rvps2"><span class="rvts49">Important:</span><span class="rvts14"> Even though three different tests are being carried out before an update starts </span><span class="rvts49">this is not a guarantee</span><span class="rvts14"> that the database is not in use by somebody else. For instance a SQL database might be open in e.g. Microsoft SQL Server Management Studio and there is simply no way to tell. &nbsp;</span><span class="rvts49">So take great care and check that it is OK to begin a database update!</span></p>
+<p class="rvps2"><span class="rvts14"><br/></span></p>
+<p class="rvps2"><span class="rvts55"><br/></span></p>
+<h3 class="rvps14"><span class="rvts0"><span class="rvts61">SQL Connections</span></span></h3>
+<p class="rvps2"><span class="rvts55"><br/></span></p>
+<p class="rvps2"><span class="rvts31">If an SQL back-end will be used, at least one SQL connection must be setup that consists of a Connection ID and login details to the Server/DSN. This information will automatically be read and applied when the Database Update Framework is initialized. The</span><span class="rvts37"> </span><a class="rvts22" href="DUFSQLConnectionsTool.htm">SQLConnections</a><span class="rvts37"> </span><span class="rvts31">tool is used to maintain SQL connections</span><span class="rvts37">.</span></p>
+<p class="rvps2"><span class="rvts37"><br/></span></p>
+<p class="rvps2"><span class="rvts37"><br/></span></p>
+<h3 class="rvps14"><span class="rvts0"><span class="rvts61">The </span></span><span class="rvts0"><span class="rvts61">SQLConnections</span></span><span class="rvts0"><span class="rvts61"> tool</span></span></h3>
+<p class="rvps2"><span class="rvts11"><br/></span></p>
+<p class="rvps2"><span class="rvts11">The </span><a class="rvts22" href="DUFSQLConnectionsTool.htm">SQLConnections.exe</a><span class="rvts11"> tool was made to maintain SQL connections for a workspace. Multiple connection ID's can be managed, but only one can be enabled/active at a time. Use the tool to add/edit/delete connections for the current workspace. The SQLConnections.ini is created in the workspace Programs folder and the info is automatically read when the Database Update Framework is initialized. Connection passwords are automatically encrypted/decrypted to/from the ini file. The program can easily be setup to run from the Studio's Tools menu, just start the program and press the "Add to Studio" button.</span></p>
+<p class="rvps2"><span class="rvts11"><br/></span></p>
+<p class="rvps2"><span class="rvts49">Note: If DataFlex 19 or later is used and a cConnection object has been placed inside the cApplication object those settings will be picked up automatically by the framework. Note though that with the SQLConnection program one can set more properties then what is possible with the DF19 cConnection class/tools. So it is quite possible to use both; setup the standard cConnection parameters with the tools provided by Data Access Worldwide and using the same Connection ID, add the other settings with the SQLConnection tool.</span></p>
+<p class="rvps2"><span class="rvts11"><br/></span></p>
+<p class="rvps2"><span class="rvts55"><br/></span></p>
+<h3 class="rvps14"><span class="rvts0"><span class="rvts61">Next Topic</span></span></h3>
+<p class="rvps5"><span class="rvts11"><br/></span></p>
+<p class="rvps5"><a class="rvts22" href="FirstTimeSetup.htm">First Time Usage</a><span class="rvts11">&nbsp;</span></p>
+<p></p>
+
+	</div>
+	
+	
+		<div id="topic_footer">
+
+			<div id="topic_footer_content">
+				Copyright &copy; 2016-2020 RDC Tools International. All Rights Reserved. Portions Copyright Data Access Worldwide, Mertech Data Systems, Inc.
+			</div>
+		</div>
+	
+
+	
+	
+
+	
+</body>
+	
+</html>
+

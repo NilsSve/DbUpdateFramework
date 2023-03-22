@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+
+<html>
+	
+<head>
+	<title>Events for cDbUpdateVersion</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="description" content="Help for the DataFlex Database Update Framework" />
+    <meta name="generator" content="HelpNDoc Professional Edition 7.1.0.253" />
+	
+	
+	
+	<link type="text/css" rel="stylesheet" media="all" href="css/reset.css" />
+	<link type="text/css" rel="stylesheet" media="all" href="css/base.css" />
+	<link type="text/css" rel="stylesheet" media="all" href="css/hnd.css" />
+	<!--[if lte IE 8]>
+		<link type="text/css" rel="stylesheet" media="all" href="css/ielte8.css" />
+	<![endif]-->
+
+	<style type="text/css">
+		#topic_header
+		{
+			background-color: #EFEFEF;
+		}
+	</style>
+
+	
+
+	<script type="text/javascript" src="js/chmRelative.js"></script>
+	
+	
+</head>
+
+<body>
+
+
+
+	
+	
+	<div id="topic_content">
+		
+<p></p>
+<h1 class="rvps7"><span class="rvts0"><span class="rvts23">Events for </span></span><span class="rvts0"><a class="rvts72" href="cDbUpdateVersion.htm">cDbUpdateVersion</a></span></h1>
+<div class="rvps2">
+<table width="100%" border="0" cellpadding="1" cellspacing="2" style="border-width: 0px; border-spacing: 2px;">
+ <tr valign="top">
+  <td valign="middle" style="padding: 1px; background-color: #c0c0c0;">
+   <p class="rvps3"><span class="rvts71">Name</span></p>
+  </td>
+  <td valign="middle" style="padding: 1px; background-color: #c0c0c0;">
+   <p class="rvps3"><span class="rvts71">Type</span></p>
+  </td>
+  <td valign="middle" style="padding: 1px; background-color: #c0c0c0;">
+   <p class="rvps3"><span class="rvts71">Description</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td valign="middle" style="padding: 1px; background-color: #e2e2e2;">
+   <p class="rvps2"><span class="rvts56">OnUpdate</span></p>
+  </td>
+  <td valign="middle" style="padding: 1px; background-color: #e2e2e2;">
+   <p class="rvps2"><span class="rvts65">Procedure</span></p>
+  </td>
+  <td valign="middle" style="padding: 1px; background-color: #e2e2e2;">
+   <p class="rvps2"><span class="rvts65">Automatically called when object is created. This is where the programmer places any code to update the database.</span></p>
+  </td>
+ </tr>
+</table>
+</div>
+<p class="rvps2"><span class="rvts54"><br/></span></p>
+<p class="rvps2"><span class="rvts54"><br/></span></p>
+<p class="rvps2"><span class="rvts55">Sample</span></p>
+<p class="rvps12"><span class="rvts58"><br/></span></p>
+<p class="rvps11"><span class="rvts35">// </span><span class="rvts63">These are needed to keep the compiler happy;</span></p>
+<p class="rvps11"><span class="rvts35">Declare_Datafile Customer</span></p>
+<p class="rvps11"><span class="rvts35">Declare_Datafile Invt</span></p>
+<p class="rvps11"><span class="rvts35">Declare_Datafile OrderDtl</span></p>
+<p class="rvps11"><span class="rvts35">Declare_Datafile OrderHea</span></p>
+<p class="rvps11"><span class="rvts35">Declare_Datafile OrdSys</span></p>
+<p class="rvps11"><span class="rvts35">Declare_Datafile SalesP</span></p>
+<p class="rvps11"><span class="rvts35">Declare_Datafile Users</span></p>
+<p class="rvps11"><span class="rvts35">Declare_Datafile Vendor</span></p>
+<p class="rvps11"><span class="rvts35"><br/></span></p>
+<p class="rvps11"><span class="rvts35">Object oDbUpdateHandler is an cDbUpdateHandler&nbsp;</span><br/><span class="rvts35">&nbsp; &nbsp; Set Data_File_Field to File_Field DbVersion.DatabaseVersion</span></p>
+<p class="rvps11"><span class="rvts35"></span><br/><span class="rvts35">&nbsp; &nbsp; </span><span class="rvts36">Object oUpdateVersion1.1 is a cDbUpdateVersion</span><br/><span class="rvts35">&nbsp; &nbsp; &nbsp; &nbsp; </span><span class="rvts36">Set pnVersionNumber to 1.1</span><br/><span class="rvts35">&nbsp; &nbsp; &nbsp; &nbsp; Set pbUseConnectionID to True // Default = True</span></p>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; &nbsp; &nbsp; Set pbCopyData to True &nbsp; &nbsp; &nbsp; &nbsp;// Default = True</span></p>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; &nbsp; &nbsp; Set pbRecnum to True &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;// Default = True</span></p>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; &nbsp; &nbsp; Set pbToANSI to True &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;// Default = True</span></p>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; &nbsp; &nbsp; // If the psDriverID is not set it is read from the SQLConnections.ini file.</span></p>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; &nbsp; &nbsp;&nbsp;</span></p>
+<p class="rvps11"><span class="rvts36">&nbsp; &nbsp; &nbsp; &nbsp; Procedure OnUpdate</span></p>
+<p class="rvps11"><span class="rvts36">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Boolean bOK</span></p>
+<p class="rvps11"><span class="rvts36">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Get ApiTableConvertToSQL Invt.File_Number &nbsp; &nbsp; &nbsp; to bOK</span></p>
+<p class="rvps11"><span class="rvts36">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Get ApiTableConvertToSQL OrderHea.File_Number &nbsp; to bOK</span></p>
+<p class="rvps11"><span class="rvts36">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Get ApiTableConvertToSQL OrderDtl.File_Number &nbsp; to bOK</span></p>
+<p class="rvps11"><span class="rvts36">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Get ApiTableConvertToSQL OrdSys.File_Number &nbsp; &nbsp; to bOK</span></p>
+<p class="rvps11"><span class="rvts36">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Get ApiTableConvertToSQL SalesP.File_Number &nbsp; &nbsp; to bOK</span></p>
+<p class="rvps11"><span class="rvts36">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Get ApiTableConvertToSQL Vendor.File_Number &nbsp; &nbsp; to bOK</span></p>
+<p class="rvps11"><span class="rvts36">&nbsp; &nbsp; &nbsp; &nbsp; End_Procedure</span></p>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; End_Object</span><br/><span class="rvts35">&nbsp;</span><br/><span class="rvts35">&nbsp; &nbsp; Object oDbUpdateVersion1.2 is a cDbUpdateVersion</span></p>
+<p class="rvps11"><span class="rvts36">&nbsp; &nbsp; &nbsp; &nbsp; Set pnVersionNumber to 1.2</span></p>
+<p class="rvps11"><span class="rvts36"><br/></span></p>
+<p class="rvps11"><span class="rvts36">&nbsp; &nbsp; &nbsp; &nbsp; Procedure OnUpdate</span></p>
+<p class="rvps11"><span class="rvts36">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Boolean bOK</span></p>
+<p class="rvps11"><span class="rvts36">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Get SQLColumnRename Customer.File_Number "Purchases" "YearlyPurchases" MSSQLDRV_ID to bOK</span></p>
+<p class="rvps11"><span class="rvts36">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Get SQLColumnAdd Customer.File_Number "IsPrinted" DF_BCD_DUF 4 0 True "1" to bOK</span></p>
+<p class="rvps11"><span class="rvts36">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;</span></p>
+<p class="rvps11"><span class="rvts36">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; // Alternate table conversion function that instead of setting properties like in&nbsp;</span></p>
+<p class="rvps11"><span class="rvts36">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; // above passes a series of parameters.</span></p>
+<p class="rvps11"><span class="rvts36">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Get ApiTableConvertToSQL_Ex Users.File_Number MSSQLDRV_ID True True True True to bOK</span></p>
+<p class="rvps11"><span class="rvts36">&nbsp; &nbsp; &nbsp; &nbsp; End_Procedure</span><br/><span class="rvts36">&nbsp; &nbsp; </span><span class="rvts35">End_Object</span></p>
+<p class="rvps11"><span class="rvts35"><br/></span></p>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; Object oUpdateVersion1.3 is a cDbUpdateVersion</span><br/><span class="rvts35">&nbsp; &nbsp; &nbsp; &nbsp; </span><span class="rvts36">Set pnVersionNumber to 1.3</span><br/><span class="rvts35">&nbsp; &nbsp; &nbsp; &nbsp; Use VersionUpdate3.pkg</span><br/><span class="rvts35">&nbsp; &nbsp; &nbsp; &nbsp; :</span><br/><span class="rvts35">&nbsp; &nbsp; End_Object</span><br/><span class="rvts36">&nbsp;</span><br/><span class="rvts35">End_Object</span></p>
+<p class="rvps2"><span class="rvts55"><br/></span></p>
+<p></p>
+
+	</div>
+	
+	
+		<div id="topic_footer">
+
+			<div id="topic_footer_content">
+				Copyright &copy; 2016-2020 RDC Tools International. All Rights Reserved. Portions Copyright Data Access Worldwide, Mertech Data Systems, Inc.
+			</div>
+		</div>
+	
+
+	
+	
+
+	
+</body>
+	
+</html>
+

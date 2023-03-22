@@ -1,0 +1,9 @@
+[Properties]
+Version=18.2
+[WorkspacePaths]
+ConfigFile=.\Programs\Config.ws
+[Projects]
+Project0=DUFCodeGenerator.src
+Project1=DUFCreateDbVersionTable.src
+Project2=DUFTestProgram.src
+Project3=DUFSQLConnections.src

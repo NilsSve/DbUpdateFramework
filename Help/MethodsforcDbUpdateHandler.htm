@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+
+<html>
+	
+<head>
+	<title>Methods for cDbUpdateHandler</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="description" content="Help for the DataFlex Database Update Framework" />
+    <meta name="generator" content="HelpNDoc Professional Edition 7.1.0.253" />
+	
+	
+	
+	<link type="text/css" rel="stylesheet" media="all" href="css/reset.css" />
+	<link type="text/css" rel="stylesheet" media="all" href="css/base.css" />
+	<link type="text/css" rel="stylesheet" media="all" href="css/hnd.css" />
+	<!--[if lte IE 8]>
+		<link type="text/css" rel="stylesheet" media="all" href="css/ielte8.css" />
+	<![endif]-->
+
+	<style type="text/css">
+		#topic_header
+		{
+			background-color: #EFEFEF;
+		}
+	</style>
+
+	
+
+	<script type="text/javascript" src="js/chmRelative.js"></script>
+	
+	
+</head>
+
+<body>
+
+
+
+	
+	
+	<div id="topic_content">
+		
+<p></p>
+<h1 class="rvps7"><span class="rvts0"><span class="rvts23">Methods for </span></span><span class="rvts0"><a class="rvts72" href="cDbUpdateHandler.htm">cDbUpdateHandler</a></span></h1>
+<div class="rvps2">
+<table width="100%" border="0" cellpadding="1" cellspacing="2" style="border-width: 0px; border-spacing: 2px;">
+ <tr valign="top">
+  <td valign="middle" style="padding: 1px; background-color: #c0c0c0;">
+   <p class="rvps3"><span class="rvts71">Name</span></p>
+  </td>
+  <td valign="middle" style="padding: 1px; background-color: #c0c0c0;">
+   <p class="rvps3"><span class="rvts71">Type</span></p>
+  </td>
+  <td valign="middle" style="padding: 1px; background-color: #c0c0c0;">
+   <p class="rvps3"><span class="rvts71">Description</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td valign="middle" style="padding: 1px; background-color: #e2e2e2;">
+   <p class="rvps2"><span class="rvts56">Data_File_Field</span></p>
+  </td>
+  <td valign="middle" style="padding: 1px; background-color: #e2e2e2;">
+   <p class="rvps2"><span class="rvts65">Procedure Set</span></p>
+  </td>
+  <td valign="middle" style="padding: 1px; background-color: #e2e2e2;">
+   <p class="rvps2"><span class="rvts11">Specify which table and field/column should be used to keep the current version of the database. It is automatically updated by the cDbUpdateVersion class pnVersionNumber.</span></p>
+   <p class="rvps2"><span class="rvts11">"Set Data_File_Field to File_Field DbVersion.DatabaseVersion"</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td valign="middle" style="padding: 1px; background-color: #ffffff;">
+   <p class="rvps2"><span class="rvts56">SetupConnectionString</span></p>
+  </td>
+  <td valign="middle" style="padding: 1px; background-color: #ffffff;">
+   <p class="rvps2"><span class="rvts65">Procedure</span></p>
+  </td>
+  <td valign="middle" style="padding: 1px; background-color: #ffffff;">
+   <p class="rvps2"><span class="rvts11">Called when the object is created. It searches the psDriver for a valid connection strings and sets the psConnectionString, which is used to login to the database. If no such connection has been setup prior to this object, you need manually to set the psConnectionString property.</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td valign="middle" style="padding: 1px; background-color: #e2e2e2;">
+   <p class="rvps2"><span class="rvts56">Error_Report</span></p>
+  </td>
+  <td valign="middle" style="padding: 1px; background-color: #e2e2e2;">
+   <p class="rvps2"><span class="rvts65">Procedure</span></p>
+  </td>
+  <td valign="middle" style="padding: 1px; background-color: #e2e2e2;">
+   <p class="rvps2"><span class="rvts65">The standard error handler is replaced with a custom one while the update is doing its job. While the database is updated all errors are collected in the struct array paDbUpdateErrorArray property.</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td valign="middle" style="padding: 1px; background-color: #ffffff;">
+   <p class="rvps2"><span class="rvts56">CreateSQLConnection</span></p>
+  </td>
+  <td valign="middle" style="padding: 1px; background-color: #ffffff;">
+   <p class="rvps2"><span class="rvts65">Procedure</span></p>
+  </td>
+  <td valign="middle" style="padding: 1px; background-color: #ffffff;">
+   <p class="rvps2"><span class="rvts65">Can be used to create a connection ID (of the cCLIHandle class) if not previously done before this object is created, or to override the Connection ID info that is specified in the driver .int file.</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td valign="middle" style="padding: 1px; background-color: #e2e2e2;">
+   <p class="rvps2"><span class="rvts56">OpenErrorLogFile</span></p>
+  </td>
+  <td valign="middle" style="padding: 1px; background-color: #e2e2e2;">
+   <p class="rvps2"><span class="rvts65">Procedure</span></p>
+  </td>
+  <td valign="middle" style="padding: 1px; background-color: #e2e2e2;">
+   <p class="rvps2"><span class="rvts11">Opens the error log file if one was created, in Notepad.exe.</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td valign="middle" style="padding: 1px;">
+   <p class="rvps2"><span class="rvts56">ReinitializeFramework</span></p>
+  </td>
+  <td valign="middle" style="padding: 1px;">
+   <p class="rvps2"><span class="rvts65">Procedure</span></p>
+  </td>
+  <td valign="middle" style="padding: 1px;">
+   <p class="rvps2"><span class="rvts11">Use it from your code to start processing the cDbUpdateVersion object's OnUpdate events again. Perhaps after psDataPath and psFileListPath of the cWorkspace object has been changed while running your program.</span></p>
+  </td>
+ </tr>
+</table>
+</div>
+<p class="rvps2"><span class="rvts54"><br/></span></p>
+<p class="rvps2"><span class="rvts28">For all other methods see: </span><a class="rvts75" href="cDbUpdateFunctionLibrary.htm">cDbUpdateFunctionLibrary</a><span class="rvts28">. All of those functions are available from a cDbUpdateHandler object.</span></p>
+<p></p>
+
+	</div>
+	
+	
+		<div id="topic_footer">
+
+			<div id="topic_footer_content">
+				Copyright &copy; 2016-2020 RDC Tools International. All Rights Reserved. Portions Copyright Data Access Worldwide, Mertech Data Systems, Inc.
+			</div>
+		</div>
+	
+
+	
+	
+
+	
+</body>
+	
+</html>
+

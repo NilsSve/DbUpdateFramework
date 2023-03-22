@@ -1,0 +1,469 @@
+//==============================================================================
+//           P R O G R A M   D O C U M E N T A T I O N
+//==============================================================================
+//
+// Package Name: flx2sql.src
+//
+// Proof of concept to migrate embedded tables to a MS-SQL demonstrating the
+// following:
+//   - create a database
+//   - API's structure_copy
+//   - Driver's bluk copy command (CLI_BCP)
+//
+//==============================================================================
+//           E D I T   H I S T O R Y
+//==============================================================================
+//
+//Ref.  Date        Who Type    Defect No.
+//      Comments
+//
+//[02]  20-Oct-16   apc Upd
+//      Include changes from Raveen to help support DB2.
+//
+//[01]  12-Oct-16   apc Upd
+//      Modified for DAPCON presentation.
+//
+//[00]  9-Dec-15    apc New
+//      Proof of concept.
+//
+
+Use Windows.pkg
+Use cApplication.pkg
+Use MSSqldrv.pkg
+Use db2_drv.pkg
+
+
+
+Define C_DF_EMBEDDED_DRIVER     for "DATAFLEX"
+Declare_Datafile Flexerrs
+
+
+Object oApplication is a cApplication
+    Set pbPreserveEnvironment to False
+    Set peHelpType to htNoHelp
+
+    Property String psDatabase_Driver           MSSQLDRV_ID
+    Property String psDatabase_Server           ".\SQLEXPRESS"
+    Property String psDatabase_Database         "Order Entry DAPCON"
+    Property String psDatabase_Owner            "dbo"
+    Property String psDatabase_Connection       (SFormat("SERVER=%1;Trusted_Connection=yes;DATABASE=%2", psDatabase_Server(Self), psDatabase_Database(Self)))
+    Property String psTable_Character_Format   "ANSI"
+
+//ToDo: DB2:
+//    Property String psDatabase_Driver           DB2_DRV_ID
+//    Property String psDatabase_Server           "db2dev.xls.local"
+//    Property String psDatabase_Port             "50004"
+//    Property String psDatabase_Database         "ORDER"
+//    Property String psDatabase_Owner            "DAW"
+//    Property String psDatabase_Connection       (SFormat("Driver={IBM DB2 ODBC DRIVER};Hostname=%1;Port=%2;Database=%3;Protocol=TCPIP;CurrentSchema=%4; UID=%5; PWD=%6", ;
+//                                                psDatabase_Server(Self), psDatabase_Port(Self), psDatabase_Database(Self), psDatabase_Owner(Self), ;
+//                                                psDatabase_UID(Self), psDatabase_PWD(Self)))
+//    Property String psTable_Character_Format   "OEM"
+End_Object // oApplication
+
+
+/SQL_Create_Database
+If EXISTS (SELECT  [name]
+            FROM   [master].[sys].[databases]
+            WHERE  [name] = '%DATABASE%')
+BEGIN
+    Print '- database already exists.'
+END
+Else Begin
+    CREATE DATABASE [%DATABASE%]
+	If @@ERROR <> 0
+		Print 'ERR'
+	Else
+		Print '- database %DATABASE% created.'
+End
+/*
+
+//ToDo: DB2:
+// "CREATE DATABASE [%DATABASE%] AUTOMATIC STORAGE YES ON /usr/rp/db2/ USING CODESET ISO8859-1 TERRITORY NZ COLLATE USING SYSTEM PAGESIZE 8192"
+
+
+Object oFlexToSQL is a cObject
+    Property Integer piFirst_Empty_Filelist_Slot    0
+
+    // Callback:
+    //
+    Function Callback String sMessage Integer iType Returns Integer
+        Showln sMessage
+
+        Function_Return DF_SUCCESS
+    End_Function // Callback
+
+
+    // Overlap_Columns:
+    // Returns a list of overlap columns and their start / ending columns
+    //
+    Function Overlap_Columns Handle hTable Integer[][] ByRef irgOverlaps Returns Boolean
+        Integer iColumn iNoOfColumns iColumnType iStartColumn iEndColumn
+        Integer iOverlap iOverlapColumn
+        Boolean bOverlap
+
+        Move -1 to iOverlap
+        Get_Attribute DF_FILE_NUMBER_FIELDS of hTable to iNoOfColumns
+        For iOverlapColumn from 1 to iNoOfColumns
+            Get_Attribute DF_FIELD_TYPE of hTable iOverlapColumn to iColumnType
+            If (iColumnType = DF_OVERLAP) Begin
+
+                // For each overlap check which column, or columns, are overlapped
+                // and record the starting and end columns.
+
+                Move 0 to iStartColumn
+                Move 0 to iEndColumn
+                For iColumn from 1 to iNoOfColumns
+                    Get_Attribute DF_FIELD_TYPE of hTable iColumn to iColumnType
+                    If (iColumnType <> DF_OVERLAP) Begin
+
+                        // Does the overlap column overlap a real column
+
+                        Get_Attribute DF_FIELD_OVERLAP of hTable iOverlapColumn iColumn to bOverlap
+                        If (bOverlap) Begin
+                            If (iStartColumn = 0) Move iColumn to iStartColumn
+                            Else Move iColumn to iEndColumn
+                        End
+                        Else Begin
+
+                            // Reverse check for columns that might be underlaps.
+                            //
+                            // NB: While CK can handle underlaps the API does not using
+                            //     DF_FIELD_OVERLAP. Final changes must be made manually
+                            //     via editing the table's .int.
+
+                            If (iStartColumn = 0) Begin
+                                Get_Attribute DF_FIELD_OVERLAP of hTable iColumn iOverlapColumn to bOverlap
+                                If (bOverlap) Move iColumn to iStartColumn
+                            End
+                        End
+                    End
+                Loop
+
+                // Record the overlap details
+
+                If (iStartColumn > 0) Begin
+
+                    // If an overlap has a starting column but no ending column we
+                    // can assume it is an overlap for a single column.
+
+                    If (iEndColumn = 0) Move iStartColumn to iEndColumn
+
+                    Increment iOverlap
+                    Move iOverlapColumn to irgOverlaps[iOverlap][0]     // overlap column
+                    Move iStartColumn to irgOverlaps[iOverlap][1]       // overlap's starting column
+                    Move iEndColumn to irgOverlaps[iOverlap][2]         // overlap's ending column
+                End
+            End
+        Loop
+
+        Move (iOverlap >= 0) to bOverlap
+
+        Function_Return bOverlap
+    End_Function // Overlap_Columns
+
+
+    // Update_Overlaps_Size_Offset:
+    // 0 - overlap column
+    // 1 - starts at column
+    // 2 - ends at column
+    //
+    Procedure Update_Overlaps_Size_Offset String sDriver Handle hTable Integer[][] irgOverlaps
+        Integer iOverlap iOverlapCount iStartOffset iEndOffset iSize
+
+        Move (SizeOfArray(irgOverlaps) - 1) to iOverlapCount
+        For iOverlap from 0 to iOverlapCount
+            Get_Attribute DF_FIELD_OFFSET of hTable irgOverlaps[iOverlap][1] to iStartOffset
+            Get_Attribute DF_FIELD_OFFSET of hTable irgOverlaps[iOverlap][2] to iEndOffset
+            If (sDriver = C_DF_EMBEDDED_DRIVER) Get_Attribute DF_FIELD_NATIVE_LENGTH of hTable irgOverlaps[iOverlap][2] to iSize
+            Else Get_Attribute DF_FIELD_LENGTH of hTable irgOverlaps[iOverlap][2] to iSize
+            Move ((iEndOffset + iSize) - iStartOffset) to iSize
+
+            Set_Attribute DF_FIELD_OFFSET of hTable irgOverlaps[iOverlap][0] to iStartOffset
+            Set_Attribute DF_FIELD_LENGTH of hTable irgOverlaps[iOverlap][0] to iSize
+        Loop
+    End_Procedure // Update_Overlaps_Size_Offset
+
+
+    // First_Available_Filelist_Slot:
+    // We assume there is at least 1 slot available in 4096!
+    //
+    Function First_Available_Filelist_Slot Returns Handle
+        Handle hFirstAvailable
+
+        Get piFirst_Empty_Filelist_Slot to hFirstAvailable
+        If (hFirstAvailable = 0) Get_Attribute DF_FILE_NEXT_EMPTY of hFirstAvailable to hFirstAvailable
+
+        Function_Return hFirstAvailable
+    End_Function // First_Available_Filelist_Slot
+
+
+    // DoMigrateTable:
+    //
+    Procedure DoMigrateTable Handle hFLXTable String sTableName
+        Integer[][] irgOverlaps
+        String sDriver sOwner sConnection sPhysicalName sEmpty sErrorFile sCharFmt
+        Integer iNoOfIdxs iIndex iVoid iUsed iBCPFails iIdxFails iRTFreq
+        Boolean bOpen bOverlaps
+        Handle hSQLTable
+
+        Showln sTableName
+
+        Open hFLXTable
+        Get_Attribute DF_FILE_OPENED of hFLXTable to bOpen
+        If (bOpen) Begin
+            Get Overlap_Columns hFLXTable (&irgOverlaps) to bOverlaps
+            Get_Attribute DF_FILE_RECORDS_USED of hFLXTable to iUsed
+
+            Get psDatabase_Driver of ghoApplication to sDriver
+            Get psDatabase_Owner of ghoApplication to sOwner
+            Get psDatabase_Connection of ghoApplication to sConnection
+            Get psTable_Character_Format of ghoApplication to sCharFmt
+
+            Move (sTableName+".int") to sPhysicalName
+            Move (sTableName+".err") to sErrorFile
+            EraseFile sErrorFile
+
+            Move 0 to hSQLTable
+            Structure_Start hSQLTable sDriver
+                Structure_Copy hFLXTable to hSQLTable
+
+                If (bOverlaps) Begin
+                    Send Update_Overlaps_Size_Offset sDriver hSQLTable irgOverlaps
+                End
+
+                // set primary key
+
+                Get_Attribute DF_FILE_LAST_INDEX_NUMBER of hFLXTable to iNoOfIdxs
+                If (iNoOfIdxs > 0) Set_Attribute DF_INDEX_SQL_PRIMARY_KEY of hSQLTable 1 to True
+
+                // set table properties
+
+                Set_Attribute DF_FILE_PHYSICAL_NAME          of hSQLTable to sPhysicalName
+                Set_Attribute DF_FILE_TABLE_NAME             of hSQLTable to sTableName
+                Set_Attribute DF_FILE_RECNUM_TABLE           of hSQLTable to False
+                Set_Attribute DF_FILE_LOGIN                  of hSQLTable to sConnection
+                Set_Attribute DF_FILE_OWNER                  of hSQLTable to sOwner
+                Set_Attribute DF_FILE_TABLE_CHARACTER_FORMAT of hSQLTable to sCharFmt
+                Set_Attribute DF_FILE_USE_DUMMY_ZERO_DATE    of hSQLTable to True
+                Set_Attribute DF_FILE_JIT_BINDING            of hSQLTable to True
+            Structure_End hSQLTable (DF_STRUCTEND_OPT_NONE) "" Self
+
+            If (not(ERR)) Begin
+                Move 0 to iBCPFails
+                Move 0 to iIdxFails
+
+                // only transfer the data if there is something to do
+
+                If (iUsed > 0) Begin
+                    Case Begin
+                        Case (sDriver = MSSQLDRV_ID)
+                            Get First_Available_Filelist_Slot to hSQLTable
+                            Open sPhysicalName as hSQLTable
+                            Get_Attribute DF_FILE_OPENED of hSQLTable to bOpen
+                            If (bOpen) Begin
+
+                                // NB: BCP is done in blocks of 1000 records at a time. So frequency
+                                //     must be set relative to this.
+
+                                Get_Attribute DF_RUNTIME_PROGRESS_FREQUENCY to iRTFreq
+                                If (iUsed <= 10000) Set_Attribute DF_RUNTIME_PROGRESS_FREQUENCY to 1
+                                Else Set_Attribute DF_RUNTIME_PROGRESS_FREQUENCY to (Round((iUsed / 1000.0) * 0.05))
+
+                                // Temporary delete all indices on the new table to speed up copying data
+
+                                Call_Driver hSQLTable sDriver Function CLI_DROPINDICES ;
+                                    CallBack Self ;
+                                    Passing sEmpty sEmpty iVoid ;
+                                    Result iVoid
+
+                                // Copy data using index 0
+
+                                Move RECNUM to iIndex
+                                Call_Driver hSQLTable sDriver Function CLI_BCP ;
+                                    CallBack Self ;
+                                    Passing iIndex sErrorFile hFLXTable ;
+                                    Result iBCPFails
+
+                                // Recreate indices
+
+                                Call_Driver hSQLTable sDriver Function CLI_CREATEINDICES ;
+                                    CallBack Self ;
+                                    Passing sEmpty sEmpty iVoid ;
+                                    Result iIdxFails
+
+                                Close hSQLTable hFLXTable
+
+                                // Report & Clean up possible unneed error files
+
+                                If (iBCPFails > 0) Showln (SFormat("Failed to copy all data. Review details in file %1", sErrorFile))
+                                Else EraseFile sErrorFile
+                                If (iIdxFails > 0) Showln (sFormat("Failed to re-create %1 %2", iIdxFails, If((iIdxFails = 1), "index", "indexes")))
+
+                                Set_Attribute DF_RUNTIME_PROGRESS_FREQUENCY to iRTFreq
+                            End
+                            Case Break
+                        Case (sDriver = DB2_DRV_ID)
+//ToDo: DB2: There doesn't seem to be an equivalent to CLI_BCP for DB2.
+//ToDo: DB2: Therefore this would need to be handle differently.
+                            Case Break
+                    Case End
+                End
+                Else Begin
+                    Close hFLXTable
+                    Showln " Copy records skipped. Table is empty."
+                End
+
+                // update filelist
+
+                Set_Attribute DF_FILE_ROOT_NAME of hFLXTable to (sDriver-":"-sTableName)
+
+                // delete the embedded tables
+
+                If (iBCPFails = 0 and iIdxFails = 0) Begin
+                    EraseFile (sTableName+".dat")
+                    EraseFile (sTableName+".hdr")
+                    EraseFile (sTableName+".k*")
+                    EraseFile (sTableName+".tag")
+                    EraseFile (sTableName+".vld")
+
+                    Showln (SFormat("Table: %1, converted.", sTableName))
+                End
+                Else Showln (SFormat("Table: %1, converted with errors.", sTableName))
+            End
+            Else Close hFLXTable
+        End
+
+        Showln
+    End_Procedure // DoMigrateTable
+
+
+    // SQL_Statement_From_Image:
+    //
+    Function SQL_Statement_From_Image Integer iSQLImageNo Returns String
+        String sDriver sStatement
+        Integer iChIn iSize
+
+        Move (Seq_New_Channel()) to iChIn
+        Move (SFormat("image:%1", iSQLImageNo)) to sDriver
+        Direct_Input channel iChIn sDriver
+        If (not(SeqEof)) Begin
+            Get_Channel_Size iChIn to iSize
+            If (iSize > 0) Read_Block channel iChIn sStatement iSize
+        End
+        Close_Input channel iChIn
+        Send Seq_Release_Channel iChIn
+
+        Function_Return sStatement
+    End_Function // SQL_Statement_From_Image
+
+
+    // Create_MSSQL_Database:
+    //
+    Function Create_MSSQL_Database Returns Integer
+        String sDriver sServer sDatabase sConnectionString sStatement sMessage
+        Handle ohSQLHandler ohConnection ohStatement
+        Integer iMessage iNoOfMessages
+        Boolean bSuccess
+
+        Get psDatabase_Driver of ghoApplication to sDriver
+        Get psDatabase_Server of ghoApplication to sServer
+        Get psDatabase_Database of ghoApplication to sDatabase
+
+        Showln (SFormat("creating database %1", sDatabase))
+
+        Get Create (RefClass(cSQLHandleManager)) to ohSQLHandler
+        If (ohSQLHandler > 0) Begin
+            Move (SFormat("SERVER=%1;Trusted_Connection=yes;DATABASE=%2", sServer, "master")) to sConnectionString
+            Get SQLConnect of ohSQLHandler sDriver sConnectionString to ohConnection
+            If (ohConnection <> 0) Begin
+                Get SQLOpen of ohConnection to ohStatement
+                If (ohStatement <> 0) Begin
+                    Get SQL_Statement_From_Image SQL_Create_Database.N to sStatement
+                    Move (Replaces('%DATABASE%', sStatement, sDatabase)) to sStatement
+                    Send SQLExecDirect of ohStatement sStatement
+                    If (not(ERR)) Begin
+                        Get SQLStmtAttribute of ohStatement SQLSTMTATTRIB_NUMMESSAGES to iNoOfMessages
+                        For iMessage from 1 to iNoOfMessages
+                            Get SQLGetMessage of ohStatement iMessage to sMessage
+                            Get RemoveComponentIdentifier of ohStatement sMessage to sMessage
+                            If (sMessage = 'ERR') Send UserError "Problem creating the database."
+                            Else Showln sMessage
+                        Loop
+                    End
+
+                    Send SQLClose of ohStatement
+                End
+                Else Send UserError "Cannot get a statement handle to the server."
+
+                Send SQLDisconnect of ohConnection
+            End
+            Else Send UserError (SFormat("Could not login on to server: %1", sConnectionString))
+
+            Send Destroy of ohSQLHandler
+        End
+        Else Error DFERR_PROGRAM "Unable to instantiate SQL handler."
+        Showln
+
+        If (not(ERR)) Move (True) to bSuccess
+        Else Move (False) to bSuccess
+
+        Function_Return bSuccess
+    End_Function // Create_MSSQL_Database
+
+
+    // DoMigrateDatabase:
+    //
+    Procedure DoMigrateDatabase
+        String sDriver sDataPath sTableName
+        Boolean bContinue
+        Handle hTable
+
+        Get psDatabase_Driver of (phoWorkspace(ghoApplication)) to sDriver
+        Case Begin
+            Case (sDriver = MSSQLDRV_ID)
+                Load_Driver MSSQLDRV_ID
+                Get Create_MSSQL_Database to bContinue
+                Case Break
+            Case (sDriver = DB2_DRV_ID)
+//ToDo: DB:
+                Load_Driver DB2_DRV_ID
+                Move (False) to bContinue
+                Case Break
+        Case End
+        If (bContinue) Begin
+
+            // switch to the database directory before starting
+
+            Get psDataPath of (phoWorkspace(ghoApplication)) to sDataPath
+            Set_Directory sDataPath
+
+            Move 0 to hTable
+            Repeat
+                Get_Attribute DF_FILE_NEXT_USED of hTable to hTable
+                If (hTable > 0 and hTable <> FLEXERRS.File_Number) Begin
+                    Get_Attribute DF_FILE_ROOT_NAME of hTable to sTableName
+                    If (sTableName <> "") Begin
+                        If (Pos(':', sTableName) = 0) Begin
+//ToDo: apc: If an alias table? Update the table's filelist entry by prefixing the rootname with the driver.
+//ToDo: apc: No aliases in Order Entry and there doesn't seem to be any existing convention that fits.
+
+                            Send DoMigrateTable hTable sTableName
+                        End
+                        Else Begin
+                            Showln (SFormat("Table: %1, is already driver tagged.", sTableName))
+                            Showln
+                        End
+                    End // not blank
+                End // table
+            Until (hTable = 0 or (ERR))
+        End
+    End_Procedure // DoMigrateDatabase
+
+End_Object // oFlexToSQL
+
+
+Send DoMigrateDatabase of oFlexToSQL
+
+Inkey Windowindex
+Abort

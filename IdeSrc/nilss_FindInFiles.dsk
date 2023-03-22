@@ -1,0 +1,13 @@
+[Header]
+Mask=*.pkg
+Active=1
+SubDirectories=1
+WholeWordOnly=0
+SearchWhere=0
+Location=C:\Projects\DF20\DbUpdateFramework\IdeSrc\nilss_FindInFiles.dsk
+[C:\Projects\DF20\DbUpdateFramework\AppSrc]
+IsEnabled=0
+[C:\Projects\DF20\DbUpdateFramework\DDSrc]
+IsEnabled=0
+[C:\Projects\DF20]
+IsEnabled=1

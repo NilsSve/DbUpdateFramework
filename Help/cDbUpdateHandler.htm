@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+
+<html>
+	
+<head>
+	<title>cDbUpdateHandler</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="description" content="Help for the DataFlex Database Update Framework" />
+    <meta name="generator" content="HelpNDoc Professional Edition 7.1.0.253" />
+	
+	
+	
+	<link type="text/css" rel="stylesheet" media="all" href="css/reset.css" />
+	<link type="text/css" rel="stylesheet" media="all" href="css/base.css" />
+	<link type="text/css" rel="stylesheet" media="all" href="css/hnd.css" />
+	<!--[if lte IE 8]>
+		<link type="text/css" rel="stylesheet" media="all" href="css/ielte8.css" />
+	<![endif]-->
+
+	<style type="text/css">
+		#topic_header
+		{
+			background-color: #EFEFEF;
+		}
+	</style>
+
+	
+
+	<script type="text/javascript" src="js/chmRelative.js"></script>
+	
+	
+</head>
+
+<body>
+
+
+
+	
+	
+	<div id="topic_content">
+		
+<p></p>
+<h1 class="rvps7"><span class="rvts0"><span class="rvts23">Class: cDbUpdateHandler</span></span></h1>
+<p class="rvps13"><span class="rvts65">See Also:</span><a class="rvts68" href="Overview.htm"> </a><a class="rvts22" href="Overview.htm">Overview of the DataFlex Database Update Framework</a></p>
+<p class="rvps2"><a class="rvts57" href="PropertiesforcDbUpdateVersion.htm"><br/></a></p>
+<p class="rvps2"><a class="rvts22" href="PropertiesforcDbUpdateHandler.htm">Properties</a><span class="rvts65"> &nbsp;</span><a class="rvts22" href="EventsforcDbUpdateHandler.htm">Events</a><span class="rvts65"> &nbsp;</span><a class="rvts22" href="MethodsforcDbUpdateHandler.htm">Methods</a></p>
+<p class="rvps2"><span class="rvts69"><br/></span></p>
+<p class="rvps2"><span class="rvts55">Hierarchy</span></p>
+<p class="rvps13"><a class="rvts57" href="VdfClassRef.chm::/cObject.htm">cObject</a><br/><span class="rvts56">---</span><span class="rvts70">cDbUpdateHandler</span><br/><span class="rvts56">------</span><a class="rvts22" href="cDbUpdateVersion.htm">cDbUpdateVersion</a><br/><span class="rvts56">------</span><a class="rvts22" href="cDbUpdateFunctionLibrary.htm">cDbUpdateFunctionLibrary</a><br/><span class="rvts56">------</span><a class="rvts22" href="cDbUpdateLogFile.htm">cDbUpdateLogFile</a><br/><span class="rvts56">------</span><a class="rvts22" href="cDbUpdateUserCount.htm">cDbUpdateUserCount</a><br/><span class="rvts56">------</span><a class="rvts22" href="cSQLConnectionHandler.htm">cSQLConnectionHandler</a><br/><span class="rvts56">---------</span><a class="rvts22" href="cSQLConnectionIniFile.htm">cSQLConnectionIniFile</a><br/><span class="rvts56">---------</span><a class="rvts22" href="cDbUpdateDatabaseDriver.htm">cDbUpdateDatabaseDriver</a></p>
+<p class="rvps13"><span class="rvts11"><br/></span></p>
+<p class="rvps2"><span class="rvts55">Library</span><span class="rvts58">: </span><span class="rvts65">Windows Application Class Library</span></p>
+<p class="rvps2"><span class="rvts65"><br/></span></p>
+<p class="rvps2"><span class="rvts55">Package</span><span class="rvts58">: </span><span class="rvts65">cDbUpdateHandler.pkg</span></p>
+<p class="rvps2"><span class="rvts66">Note: If using Mertech drivers, put the line "Define DUF_Use_Mertech_Drivers" above the "Use cDbUpdateVersion.pkg"</span></p>
+<p class="rvps2"><span class="rvts66"><br/></span></p>
+<p class="rvps2"><span class="rvts55">Description</span></p>
+<p class="rvps12"><span class="rvts31">The cDbUpdateHandler is a container object that holds one or more </span><a class="rvts22" href="cDbUpdateVersion.htm">cDbUpdateVersion</a><span class="rvts31"> objects. The object should contain a Set Data_File_Field setting that specifies the data table name and field/column name to save the database update version to. This value gets updated automatically by the child </span><a class="rvts22" href="cDbUpdateVersion.htm">cDbUpdateVersion</a><span class="rvts31"> objects after each successful update has been run. See the </span><a class="rvts22" href="cDbUpdateVersion.htm">cDbUpdateVersion</a><span class="rvts31"> class for more info</span><span class="rvts65">.</span></p>
+<p class="rvps12"><span class="rvts65"><br/></span></p>
+<p class="rvps12"><span class="rvts65">It also automatically instantiate all of the other classes of the framework. This means most of the properties of the other classes can be get/set directly in the cDbUpdateHandler object and it will "relay" that information to the correct object/class.</span></p>
+<p class="rvps12"><span class="rvts65"><br/></span></p>
+<p class="rvps12"><span class="rvts67">It is highly recommended to put all database update code in your main program. The reason is that the framework automatically locks others out of the program while the framework is doing its job. But that checking can only be performed if the same (main) program is started by another user during an update. However, you can of course put all update code in a separate package that is used (included) in your main program, right after the cApplication object.</span></p>
+<p class="rvps12"><span class="rvts65"><br/></span></p>
+<p class="rvps12"><span class="rvts65"><br/></span></p>
+<p class="rvps2"><span class="rvts55">Sample Code 1</span></p>
+<p class="rvps12"><span class="rvts58"><br/></span></p>
+<p class="rvps11"><span class="rvts36">Object oDbUpdateHandler is an cDbUpdateHandler</span><br/><span class="rvts35">&nbsp; &nbsp; &nbsp;</span><span class="rvts36">Set Data_File_Field to File_Field DbVersion.DatabaseVersion</span><br/><span class="rvts35">&nbsp; &nbsp;&nbsp;</span></p>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; Object oUpdateVersion1.1 is a cDbUpdateVersion</span><br/><span class="rvts35">&nbsp; &nbsp; &nbsp; &nbsp; Set pnVersionNumber to 1.1</span></p>
+<p class="rvps11"><span class="rvts35"></span><br/><span class="rvts35">&nbsp; &nbsp; &nbsp; &nbsp; Declare_DataFile MyTable // To satisfy the compiler.</span></p>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; &nbsp; &nbsp; Procedure OnUpdate</span></p>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Boolean bOK</span></p>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; // Write your update code here:</span></p>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; &nbsp; &nbsp; End_Procedure</span><br/><span class="rvts35">&nbsp; &nbsp; &nbsp; &nbsp; :</span><br/><span class="rvts35">&nbsp; &nbsp; End_Object</span><br/><span class="rvts35">&nbsp;</span><br/><span class="rvts35">&nbsp; &nbsp; Object oUpdateVersion1.2 is a cDbUpdateVersion</span><br/><span class="rvts35">&nbsp; &nbsp; &nbsp; &nbsp; Set pnVersionNumber to 1.2</span><br/><span class="rvts35">&nbsp; &nbsp; &nbsp; &nbsp; Use VersionUpdate2.pkg</span><br/><span class="rvts35">&nbsp; &nbsp; &nbsp; &nbsp; :</span><br/><span class="rvts35">&nbsp; &nbsp; End_Object</span><br/><span class="rvts35">&nbsp;</span><br/><span class="rvts36">End_Object</span></p>
+<p class="rvps2"><span class="rvts55"><br/></span></p>
+<p class="rvps2"><span class="rvts55">Sample Code 2</span></p>
+<p class="rvps12"><span class="rvts58"><br/></span></p>
+<p class="rvps11"><span class="rvts35">Object oDbUpdateHandler is an cDbUpdateHandler</span><br/><span class="rvts35">&nbsp; &nbsp; </span><span class="rvts36">Set Data_File_Field to File_Field DbVersion.DatabaseVersion</span></p>
+<p class="rvps11"><span class="rvts36"><br/></span></p>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; </span><span class="rvts63">// Optionally you can create an SQL database with this event:</span></p>
+<p class="rvps11"><span class="rvts63">&nbsp; &nbsp; Procedure OnPreUpdate</span></p>
+<p class="rvps11"><span class="rvts63">&nbsp; &nbsp; &nbsp; &nbsp; Boolean bOK</span></p>
+<p class="rvps11"><span class="rvts63">&nbsp; &nbsp; &nbsp; &nbsp; Get SqlDatabaseCreate MSSQLDRV_ID "OrderEntry" True True to bOK</span></p>
+<p class="rvps11"><span class="rvts63">&nbsp; &nbsp; &nbsp; &nbsp; If (bOK = False) Begin</span></p>
+<p class="rvps11"><span class="rvts63">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Send Info_Box "Nope, that didn't work. Program will now exit."</span></p>
+<p class="rvps11"><span class="rvts63">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Send Exit_Application</span></p>
+<p class="rvps11"><span class="rvts63">&nbsp; &nbsp; &nbsp; &nbsp; End</span></p>
+<p class="rvps11"><span class="rvts63">&nbsp; &nbsp; End_Procedure</span><span class="rvts35"> &nbsp; &nbsp; &nbsp; &nbsp;</span><br/><span class="rvts35">&nbsp;</span><br/><span class="rvts35">&nbsp; &nbsp; Object oDbUpdateVersion1.1 is a cDbUpdateVersion</span></p>
+<p class="rvps11"><span class="rvts36">&nbsp; &nbsp; &nbsp; &nbsp; </span><span class="rvts35">Set pnVersionNumber to 1.1</span></p>
+<p class="rvps11"><span class="rvts36">&nbsp; &nbsp; &nbsp; &nbsp; // Put your code in the OnUpdate event</span></p>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; &nbsp; &nbsp; Declare_Datafile SalesP</span></p>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; &nbsp; &nbsp; Declare_Datafile Customer</span></p>
+<p class="rvps11"><span class="rvts36">&nbsp; &nbsp; &nbsp; &nbsp; </span><span class="rvts35">Procedure OnUpdate</span></p>
+<p class="rvps11"><span class="rvts36">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="rvts35">Boolean bOK</span></p>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Get ApiTableConvertToSQL_Ex SalesP.File_Number MSSQLDRV_ID True True True True to bOK</span></p>
+<p class="rvps11"><span class="rvts36">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="rvts35">Get SQLColumnRename Customer.File_Number "Purchases" "YearlyPurchases" MSSQLDRV_ID to bOK</span></p>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Get SQLColumnAdd Customer.File_Number "IsPrinted" DF_BCD_DUF 4 2 True "1" to bOK</span></p>
+<p class="rvps11"><span class="rvts36">&nbsp; &nbsp; &nbsp; &nbsp; </span><span class="rvts35">End_Procedure</span><br/><span class="rvts36">&nbsp; &nbsp; </span><span class="rvts35">End_Object</span><br/><span class="rvts35">&nbsp;</span><br/><span class="rvts35">&nbsp;</span><span class="rvts36"> &nbsp; </span><span class="rvts35">Object oDbUpdateVersion1.2 is a cDbUpdateVersion</span><br/><span class="rvts36">&nbsp; &nbsp; &nbsp; &nbsp; </span><span class="rvts35">Set pnVersionNumber to 1.2</span></p>
+<p class="rvps11"><span class="rvts36">&nbsp; &nbsp; &nbsp; &nbsp; // ...or put your update code in a separate package:</span><br/><span class="rvts36">&nbsp; &nbsp; &nbsp; &nbsp; </span><span class="rvts35">Use DbUpdateVersion2.pkg</span><br/><span class="rvts36">&nbsp; &nbsp; &nbsp; &nbsp; :</span><br/><span class="rvts36">&nbsp; &nbsp; </span><span class="rvts35">End_Object</span><br/><span class="rvts35">&nbsp;</span><br/><span class="rvts35">End_Object</span></p>
+<p class="rvps2"><span class="rvts55"><br/></span></p>
+<p class="rvps2"><span class="rvts55">Next Topic</span></p>
+<p class="rvps5"><span class="rvts11"><br/></span></p>
+<p class="rvps5"><a class="rvts22" href="cDbUpdateVersion.htm">cDbUpdateVersion</a></p>
+<p></p>
+
+	</div>
+	
+	
+		<div id="topic_footer">
+
+			<div id="topic_footer_content">
+				Copyright &copy; 2016-2020 RDC Tools International. All Rights Reserved. Portions Copyright Data Access Worldwide, Mertech Data Systems, Inc.
+			</div>
+		</div>
+	
+
+	
+	
+
+	
+</body>
+	
+</html>
+

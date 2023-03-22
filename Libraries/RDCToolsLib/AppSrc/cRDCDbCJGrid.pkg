@@ -1,0 +1,151 @@
+Use cDbCJGrid.pkg
+Use cRDCDbCJGridColumnHyperLink.pkg
+
+Class cRDCDbCJGrid is a cDbCJGrid
+
+    Procedure Construct_Object
+        Forward Send Construct_Object
+
+        // Set to true if an descending index is in use
+        Property Boolean pbDescendingIndexInUse False
+
+        // If you quickly double-right-click, or quickly click around a cCJGrid
+        // (using a combination of middle-clicks, right-clicks and left-clicks), the application can crash.
+        // To guard against this see the augmented procedure OnComRowRClick below.
+        Property Boolean pbRightClickProcessing False
+
+        Set pbRestoreLayout to True
+        Set psLayoutSection to ((Object_Label(Parent(Self))) + "-" + (Object_Label(Self)))
+        Set peAnchors to anAll
+        Set pbUseAlternateRowBackgroundColor to True
+        #IF (!@ > 180)
+        Set peVisualTheme to xtpReportThemeVisualStudio2012Light
+        #ENDIF
+
+        On_Key Key_End  Send MoveToLastEnterableColumn
+        On_Key Key_Home Send MoveToFirstEnterableColumn
+    End_Procedure
+
+    Procedure End_Construct_Object
+        Forward Send End_Construct_Object
+
+    End_Procedure
+
+    Procedure OnCreateGridControl
+        Forward Send OnCreateGridControl
+        Send DoChangeTooltipStyle
+    End_Procedure
+
+    { MethodType=Method }
+    Procedure DoChangeTooltipStyle
+        Handle  hoTooltip
+        Integer iIcon iStyle iWidth
+        Boolean bBaloon
+
+        Get phoToolTipContext to hoTooltip
+
+        // This is the programs global tooltip control defined at desktop level.
+        If (ghoToolTipController > 0) Begin
+            Get piIcon         of ghoToolTipController    to iIcon
+            // The global tooltip controller allows the icons to be
+            // from 0-5, but the tooltip context class only allows
+            // the tooltip icon to be between 0-3.
+            If (iIcon > 3) Begin
+                Move xtpToolTipIconInfo                   to iIcon
+            End
+            Get piMaxWidth     of ghoToolTipController    to iWidth
+            Get pbBalloonStyle of ghoToolTipController    to bBaloon
+            If (bBaloon = True) Begin
+                Move xtpToolTipBalloon                    to iStyle
+            End
+            Else Begin
+                Move xtpToolTipOffice2007                 to iStyle
+            End
+        End
+        Else Begin
+            Move xtpToolTipIconInfo   to iIcon
+            Move xtpToolTipOffice2007 to iStyle
+            Move 400                  to iWidth
+        End
+
+        Set ComStyle                    of hoTooltip to iStyle
+        Set ComMaxTipWidth              of hoTooltip to iWidth
+        // This has not been implemented by CodeJock for the Report class,
+        // although it is for all other classes, go figure!
+        //Send ComShowTitleAndDescription of hoTooltip True iIcon
+    End_Procedure
+
+     // When changing to new row, update the form 'No of Rows'
+    Procedure OnRowChanged Integer iOldRow Integer iNewSelectedRow
+        Forward Send OnRowChanged iOldRow iNewSelectedRow
+        Send DoSetCurrentRow
+    End_Procedure
+
+    // When loading data, update the footer 'No of Items' text
+    Procedure Refresh Integer eMode
+        Forward Send Refresh eMode
+        Send DoSetCurrentRow
+    End_Procedure
+
+    Procedure DoSetCurrentRow
+    End_Procedure
+
+    Procedure OnComHyperlinkClick Variant llRow Variant llItem Integer llHyperlinkIndex
+        Handle  hoRow hoItem hoColumn
+        String  sLink
+        Integer iRow iColumn
+
+        Get phoReportRow to hoRow
+        Get phoReportRecordItem to hoItem
+
+        Set pvComObject of hoItem to llItem
+        Get ComIndex    of hoItem to iColumn
+        Set pvComObject of hoRow to llRow
+        Get ComIndex    of hoRow to iRow
+        Get ColumnObject iColumn to hoColumn
+        Get RowValue of hoColumn iRow to sLink
+
+        Send OnLinkClicked of hoColumn sLink iRow
+    End_Procedure
+
+    // Redisplay the grid records around the current record.
+    // If the  record no longer exists or no longer conforms to the current constraints
+    // this will redisplay the records with the same iOffset.
+    // If both finds fail the grid will not be updated so we need to clear it.
+    Procedure RefreshGrid
+        Send Find to (Server(Self)) GE (Ordering(Self))   // to refresh grid
+        If (not(Found)) Begin
+            If (pbDescendingIndexInUse(Self) = True or pbReverseOrdering(Self) = True) Begin
+                Send Find to (Server(Self)) FIRST_RECORD (Ordering(Self))
+            End
+            Else If (pbDescendingIndexInUse(Self) = False or pbReverseOrdering(Self) = False) Begin
+                Send Find to (Server(Self)) LAST_RECORD (Ordering(Self))
+            End
+        End
+        If (not(Found) and IsComObjectCreated(Self)) Begin
+            Send ResetGrid
+        End
+    End_Procedure
+
+    Procedure Request_Delete
+        Forward Send Request_Delete
+
+        // Needed to ensure list of remaining records displayed correctly
+        Send RefreshGrid
+    End_Procedure
+
+    // If you quickly double-right-click, or quickly click around a cCJGrid
+    // (using a combination of middle-clicks, right-clicks and left-clicks), the application can crash.
+    // This fixes that little problem.
+    Procedure OnComRowRClick Variant llRow Variant llItem
+        Boolean bProcessing
+        Get pbRightClickProcessing to bProcessing
+        If (not(bProcessing)) Begin
+            Set pbRightClickProcessing to True
+            Forward Send OnComRowRClick llRow llItem
+            Set pbRightClickProcessing to False
+        End
+    End_Procedure
+
+End_Class
+

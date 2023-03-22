@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+
+<html>
+	
+<head>
+	<title>Properties for cDbUpdateVersion</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="description" content="Help for the DataFlex Database Update Framework" />
+    <meta name="generator" content="HelpNDoc Professional Edition 7.1.0.253" />
+	
+	
+	
+	<link type="text/css" rel="stylesheet" media="all" href="css/reset.css" />
+	<link type="text/css" rel="stylesheet" media="all" href="css/base.css" />
+	<link type="text/css" rel="stylesheet" media="all" href="css/hnd.css" />
+	<!--[if lte IE 8]>
+		<link type="text/css" rel="stylesheet" media="all" href="css/ielte8.css" />
+	<![endif]-->
+
+	<style type="text/css">
+		#topic_header
+		{
+			background-color: #EFEFEF;
+		}
+	</style>
+
+	
+
+	<script type="text/javascript" src="js/chmRelative.js"></script>
+	
+	
+</head>
+
+<body>
+
+
+
+	
+	
+	<div id="topic_content">
+		
+<p></p>
+<h1 class="rvps7"><span class="rvts0"><span class="rvts23">Properties for </span></span><span class="rvts0"><a class="rvts72" href="cDbUpdateVersion.htm">cDbUpdateVersion</a></span></h1>
+<div class="rvps2">
+<table width="100%" border="0" cellpadding="1" cellspacing="2" style="border-width: 0px; border-spacing: 2px;">
+ <tr valign="top">
+  <td valign="middle" style="padding: 1px; background-color: #c0c0c0;">
+   <p class="rvps3"><span class="rvts71">Name</span></p>
+  </td>
+  <td valign="middle" style="padding: 1px; background-color: #c0c0c0;">
+   <p class="rvps3"><span class="rvts71">Description</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td valign="middle" style="padding: 1px; background-color: #e2e2e2;">
+   <p class="rvps2"><span class="rvts56">pnVersionNumber</span></p>
+  </td>
+  <td valign="middle" style="padding: 1px; background-color: #e2e2e2;">
+   <p class="rvps2"><span class="rvts65">Must be set to the next consecutive number for the database update. It needs be higher than the current system table Entry_Item value, or the OnUpdate event will not get called. See also </span><a class="rvts22" href="cDbUpdateHandler.htm">cDbUpdateHandler</a><span class="rvts31"> for how to set the Entry_Item</span><span class="rvts65">.</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td valign="middle" style="padding: 1px; background-color: #ffffff;">
+   <p class="rvps2"><span class="rvts56">pbVersionUpdate</span></p>
+  </td>
+  <td valign="middle" style="padding: 1px; background-color: #ffffff;">
+   <p class="rvps2"><span class="rvts66">Private</span><span class="rvts65">. It is used by class logic to indicate if the OnUpdate event was triggered, thus an actual change of the database was made.</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td valign="middle" style="padding: 1px; background-color: #e2e2e2;">
+   <p class="rvps2"><span class="rvts56">pbRecnum</span></p>
+  </td>
+  <td valign="middle" style="padding: 1px; background-color: #e2e2e2;">
+   <p class="rvps2"><span class="rvts11">If the program that is using the source database uses the recnum programming style, the tables should be converted to recnum tables. If the program uses the RowId programming style, converting to standard tables is recommended.</span></p>
+   <p class="rvps2"><span class="rvts6"><br/></span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td valign="middle" style="padding: 1px; background-color: #ffffff;">
+   <p class="rvps2"><span class="rvts56">pbToANSI</span></p>
+  </td>
+  <td valign="middle" style="padding: 1px; background-color: #ffffff;">
+   <p class="rvps2"><span class="rvts11">DataFlex data is stored in OEM format. Non-DataFlex back ends may expect the data to be stored in ANSI format. When defining the conversion options you can define the table character format to be used in the converted table. For more information on this subject, see </span><a class="rvts22" href="Character_Formats_(OEM_or_ANSI).htm">Character Formats (OEM or ANSI)</a><span class="rvts11">.</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td valign="middle" style="padding: 1px; background-color: #e2e2e2;">
+   <p class="rvps2"><span class="rvts56">pbCopyData</span></p>
+  </td>
+  <td valign="middle" style="padding: 1px; background-color: #e2e2e2;">
+   <p class="rvps2"><span class="rvts65">Copies data if a table is to be converted from an embedded to SQL table. The default is True.</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td valign="middle" style="padding: 1px; background-color: #ffffff;">
+   <p class="rvps2"><span class="rvts56">pbUseConnectionID</span></p>
+  </td>
+  <td valign="middle" style="padding: 1px; background-color: #ffffff;">
+   <p class="rvps2"><span class="rvts65">If True (the default); uses the Connection ID of the connection string as defined by the SQLConnection.ini setting. </span><span class="rvts66">See also:</span><span class="rvts65"> </span><a class="rvts22" href="DUFSQLConnectionsTool.htm">SQLConnections.exe</a></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td valign="middle" style="padding: 1px; background-color: #e2e2e2;">
+   <p class="rvps2"><span class="rvts56">psSchema</span></p>
+  </td>
+  <td valign="middle" style="padding: 1px; background-color: #e2e2e2;">
+   <p class="rvps2"><span class="rvts65">For IBM DB2, Oracle and PostgreSQL databases. Will be read from SQLConnections.ini but can be overridden here.</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td valign="middle" style="padding: 1px; background-color: #ffffff;">
+   <p class="rvps2"><span class="rvts56">psBaseTableSpace</span></p>
+  </td>
+  <td valign="middle" style="padding: 1px; background-color: #ffffff;">
+   <p class="rvps2"><span class="rvts65">The Table_TableSpace for IBM DB2 and PostgreSQL databases. &nbsp;Will be read from SQLConnections.ini but can be overridden here.</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td valign="middle" style="padding: 1px; background-color: #e2e2e2;">
+   <p class="rvps2"><span class="rvts56">psLongTableSpace</span></p>
+  </td>
+  <td valign="middle" style="padding: 1px; background-color: #e2e2e2;">
+   <p class="rvps2"><span class="rvts65">The Long_TableSpace to use for DB2 databases. &nbsp;Will be read from SQLConnections.ini but can be overridden here.</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td valign="middle" style="padding: 1px; background-color: #ffffff;">
+   <p class="rvps2"><span class="rvts56">psIndexTableSpace</span></p>
+  </td>
+  <td valign="middle" style="padding: 1px; background-color: #ffffff;">
+   <p class="rvps2"><span class="rvts65">The Index_TableSpace for IBM DB2 and PostgreSQL databases. &nbsp;Will be read from SQLConnections.ini but can be overridden here.</span></p>
+  </td>
+ </tr>
+</table>
+</div>
+<p class="rvps2"><span class="rvts77"><br/></span></p>
+<p class="rvps2"><span class="rvts54"><br/></span></p>
+<p class="rvps2"><span class="rvts77">Sample of the Studio's Properties Panel:</span></p>
+<p class="rvps2"><span class="rvts77"><br/></span></p>
+<p class="rvps2"><img width="210" height="400" alt="" style="padding : 1px;" src="lib/cDbUpdateVersionDB2Properties.png"></p>
+<p></p>
+
+	</div>
+	
+	
+		<div id="topic_footer">
+
+			<div id="topic_footer_content">
+				Copyright &copy; 2016-2020 RDC Tools International. All Rights Reserved. Portions Copyright Data Access Worldwide, Mertech Data Systems, Inc.
+			</div>
+		</div>
+	
+
+	
+	
+
+	
+</body>
+	
+</html>
+

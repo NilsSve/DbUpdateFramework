@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+
+<html>
+	
+<head>
+	<title>SqlUtilEnumerateTables</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="description" content="Help for the DataFlex Database Update Framework" />
+    <meta name="generator" content="HelpNDoc Professional Edition 7.1.0.253" />
+	
+	
+	
+	<link type="text/css" rel="stylesheet" media="all" href="css/reset.css" />
+	<link type="text/css" rel="stylesheet" media="all" href="css/base.css" />
+	<link type="text/css" rel="stylesheet" media="all" href="css/hnd.css" />
+	<!--[if lte IE 8]>
+		<link type="text/css" rel="stylesheet" media="all" href="css/ielte8.css" />
+	<![endif]-->
+
+	<style type="text/css">
+		#topic_header
+		{
+			background-color: #EFEFEF;
+		}
+	</style>
+
+	
+
+	<script type="text/javascript" src="js/chmRelative.js"></script>
+	
+	
+</head>
+
+<body>
+
+
+
+	
+	
+	<div id="topic_content">
+		
+<p></p>
+<h1 class="rvps7"><span class="rvts0"><span class="rvts23">SqlUtilEnumerateTables - </span></span><span class="rvts0"><a class="rvts72" href="cDbUpdateFunctionLibrary.htm">cDbUpdateFunctionLibrary</a></span></h1>
+<p class="rvps2"><span class="rvts83">Enumerates SQL data tables for the passed driver ID.</span></p>
+<p class="rvps2"><span class="rvts83"><br/></span></p>
+<p class="rvps2"><span class="rvts81">Type</span><span class="rvts58">:</span><span class="rvts65"> </span><a class="rvts22" href="LanguageReference.chm::/Function_Command.htm">Function</a><br/><span class="rvts65"><br/></span></p>
+<p class="rvps2"><span class="rvts81"></span><br/><span class="rvts81">Parameters</span><span class="rvts58">:</span><span class="rvts65"> </span><a class="rvts22" href="LanguageGuide.chm::/String_Type.htm">String</a><span class="rvts65"> sDriverID</span><br/><span class="rvts65"><br/></span></p>
+<div class="rvps12">
+<table border="2" cellpadding="2" cellspacing="0" style="border-color: #808080; border-style: solid; background-color: #ffffe0; border-spacing: 0px; border-top: none; border-right: none;">
+ <tr valign="top">
+  <td valign="middle" style="border-width : 2px; border-color : #000080 #000080 #000080 #000080; border-style: solid; padding: 1px 4px; border-bottom: none; border-left: none; background-color: #c0c0c0;">
+   <p class="rvps18"><span class="rvts71">Parameter</span></p>
+  </td>
+  <td valign="middle" style="border-width : 2px; border-color : #000080 #000080 #000080 #000080; border-style: solid; padding: 1px 4px; border-bottom: none; border-left: none; background-color: #c0c0c0;">
+   <p class="rvps18"><span class="rvts71">Description</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td valign="middle" style="border-width : 2px; border-color : #000000 #000000 #000000 #000000; border-style: solid; padding: 1px 4px; border-bottom: none; border-left: none;">
+   <p class="rvps5"><span class="rvts65">sDriverID</span></p>
+  </td>
+  <td valign="middle" style="border-width : 2px; border-color : #000000 #000000 #000000 #000000; border-style: solid; padding: 1px 4px; border-bottom: none; border-left: none;">
+   <p class="rvps5"><span class="rvts65">MSSQLDRV_ID, DB2_DRV_ID, ODBC_DRV_ID, ORAFLEX, SQLFLEX, MDSPgSQL or MDSMySQL</span></p>
+  </td>
+ </tr>
+</table>
+</div>
+<p class="rvps2"><span class="rvts81"><br/></span></p>
+<p class="rvps2"><span class="rvts81">Syntax</span></p>
+<p class="rvps2"><span class="rvts81"><br/></span></p>
+<p class="rvps11"><span class="rvts35">Function SQLUtilEnumerateTables String sDriverID Returns String[]</span></p>
+<div class="rvps2">
+<table border="0" cellpadding="3" cellspacing="2" style="border-width: 0px; background-color: #ffffe0; border-spacing: 2px;">
+ <tr valign="top">
+  <td width="36" valign="top" style="padding: 1px 5px; background-color: #ffffff;">
+   <p class="rvps2"><span class="rvts65">Call:</span></p>
+  </td>
+  <td width="650" valign="middle" style="padding: 1px 5px;">
+   <p class="rvps2"><span class="rvts35">Get SQLUtilEnumerateTables MSSQLDRV_ID to sMyArray</span></p>
+  </td>
+ </tr>
+</table>
+</div>
+<p class="rvps2"><span class="rvts65"><br/></span></p>
+<p class="rvps2"><span class="rvts81"></span><br/><span class="rvts81">Description</span></p>
+<p class="rvps13"><span class="rvts31">Use it to retrieve SQL tables on a machine. </span><span class="rvts65">The return value is a string array. It relies on the SQLConnection string settings.</span></p>
+<p class="rvps2"><span class="rvts65"><br/></span></p>
+<p class="rvps2"><span class="rvts82"><br/></span></p>
+<p class="rvps2"><span class="rvts82">Example</span></p>
+<p class="rvps2"><span class="rvts55"><br/></span></p>
+<p class="rvps11"><span class="rvts74">Procedure Activating</span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; &nbsp; tDataSourceRow[] MyData</span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; &nbsp; Handle hoDataSource</span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; &nbsp; String[] sValueArray &nbsp;</span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; &nbsp; String sDriverID &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;</span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; &nbsp; Integer iCount iSize</span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;</span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; &nbsp; Send Cursor_Wait of Cursor_Control</span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; &nbsp; Forward Send Activating</span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;</span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; &nbsp; Get psDriverID to sDriverID</span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; &nbsp; Send Ignore_Error of Error_Object_Id DFERR_CANT_LOAD_DLL</span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; &nbsp; Load_Driver sDriverID</span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; &nbsp; Send Trap_Error of Error_Object_Id DFERR_CANT_LOAD_DLL</span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; &nbsp; If (LastErr = 4255) Begin</span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Send Info_Box ("Can't display any items because the database driver could not be loaded. (" + sDriverID + ")")</span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Procedure_Return</span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; &nbsp; End</span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;</span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; &nbsp; </span><span class="rvts79">Get SqlUtilEnumerateTables of ghoDbUpdateFunctionLibrary sDriverID to sValueArray</span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; &nbsp;&nbsp;</span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; &nbsp; Move (SizeOfArray(sValueArray)) to iSize</span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; &nbsp; Decrement iSize</span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; &nbsp; For iCount from 0 to iSize</span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Move sValueArray[iCount] to MyData[iCount].sValue[0]</span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; &nbsp; Loop</span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;</span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; &nbsp; Get phoDataSource to hoDataSource</span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; &nbsp; Send InitializeData of hoDataSource MyData</span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; &nbsp; Send Cursor_Ready of Cursor_Control</span></p>
+<p class="rvps11"><span class="rvts74">End_Procedure &nbsp; &nbsp;</span></p>
+<p class="rvps11"><span class="rvts74"><br/></span></p>
+<p class="rvps2"><span class="rvts6"><br/></span></p>
+<p></p>
+
+	</div>
+	
+	
+		<div id="topic_footer">
+
+			<div id="topic_footer_content">
+				Copyright &copy; 2016-2020 RDC Tools International. All Rights Reserved. Portions Copyright Data Access Worldwide, Mertech Data Systems, Inc.
+			</div>
+		</div>
+	
+
+	
+	
+
+	
+</body>
+	
+</html>
+

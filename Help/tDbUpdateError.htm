@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+
+<html>
+	
+<head>
+	<title>tDbUpdateError</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="description" content="Help for the DataFlex Database Update Framework" />
+    <meta name="generator" content="HelpNDoc Professional Edition 7.1.0.253" />
+	
+	
+	
+	<link type="text/css" rel="stylesheet" media="all" href="css/reset.css" />
+	<link type="text/css" rel="stylesheet" media="all" href="css/base.css" />
+	<link type="text/css" rel="stylesheet" media="all" href="css/hnd.css" />
+	<!--[if lte IE 8]>
+		<link type="text/css" rel="stylesheet" media="all" href="css/ielte8.css" />
+	<![endif]-->
+
+	<style type="text/css">
+		#topic_header
+		{
+			background-color: #EFEFEF;
+		}
+	</style>
+
+	
+
+	<script type="text/javascript" src="js/chmRelative.js"></script>
+	
+	
+</head>
+
+<body>
+
+
+
+	
+	
+	<div id="topic_content">
+		
+<p></p>
+<h1 class="rvps7"><span class="rvts0"><span class="rvts23">tDbUpdateError - The Database Update Framework</span></span></h1>
+<p class="rvps13"><span class="rvts65">See Also: </span><a class="rvts96" href="LanguageGuide.chm::/Declaring_Variables.htm">Declaring Variables</a><span class="rvts65">, </span><a class="rvts96" href="Struct.htm">Struct</a><span class="rvts65">&nbsp;</span></p>
+<h3 class="rvps24"><span class="rvts0"><span class="rvts55">Purpose</span></span></h3>
+<p class="rvps13"><span class="rvts65">tDbUpdateError is a </span><a class="rvts96" href="LanguageGuide.chm::/Struct_Type.htm">structured type</a><span class="rvts65"> used by the </span><a class="rvts22" href="cDbUpdateHandler.htm">cDbUpdateHandler</a><span class="rvts65"> class for logging errors that occurred during a database update.</span></p>
+<p class="rvps13"><span class="rvts65">&nbsp;</span></p>
+<h3 class="rvps24"><span class="rvts0"><span class="rvts55">Type Declaration</span></span></h3>
+<p class="rvps22"><span class="rvts35">Struct tDbUpdateError</span></p>
+<p class="rvps22"><span class="rvts35">&nbsp;&nbsp;&nbsp;&nbsp;Number nUpdateVersion</span></p>
+<p class="rvps22"><span class="rvts35">&nbsp;&nbsp;&nbsp;&nbsp;Integer iError</span></p>
+<p class="rvps22"><span class="rvts35">&nbsp; &nbsp; String sErrorText</span></p>
+<p class="rvps22"><span class="rvts35">&nbsp; &nbsp; Integer iErrorLine</span></p>
+<p class="rvps22"><span class="rvts35">&nbsp; &nbsp; Boolean bError</span></p>
+<p class="rvps22"><span class="rvts35">End_Struct</span></p>
+<h4 class="rvps25"><span class="rvts0"><span class="rvts58">&nbsp;</span></span></h4>
+<h3 class="rvps24"><span class="rvts0"><span class="rvts55">Struct Members</span></span></h3>
+<p class="rvps13"><span class="rvts58">nUpdateVersion</span></p>
+<p class="rvps26"><span class="rvts65">The update version number.</span></p>
+<p class="rvps13"><span class="rvts58">iError</span></p>
+<p class="rvps26"><span class="rvts65">The error number.</span></p>
+<p class="rvps13"><span class="rvts65">&nbsp;</span><span class="rvts58">sErrorText</span></p>
+<p class="rvps26"><span class="rvts65">The error text.</span></p>
+<p class="rvps13"><span class="rvts58">iErrorLine</span></p>
+<p class="rvps26"><span class="rvts65">The error line in code.</span></p>
+<p class="rvps13"><span class="rvts58">bError</span></p>
+<p class="rvps26"><span class="rvts65">True if this was an error - false if a warning.</span></p>
+<h3 class="rvps24"><span class="rvts0"><span class="rvts55">Syntax</span></span></h3>
+<p class="rvps22"><span class="rvts35">Use cDbUpdateHandler.pkg</span></p>
+<p class="rvps22"><span class="rvts35">:</span></p>
+<p class="rvps22"><span class="rvts35">tDbUpdateError {variableName}</span></p>
+<p class="rvps13"><span class="rvts65">&nbsp;</span></p>
+<h3 class="rvps24"><span class="rvts0"><span class="rvts55">Declaring variables</span></span></h3>
+<p class="rvps13"><span class="rvts65">To declare tDbUpdateHandler variables, use the name of the type (tDbUpdateError) followed by the variable name.</span></p>
+<p class="rvps22"><span class="rvts35">tDbUpdateError[] DbUpdateErrorArray</span></p>
+<p class="rvps13"><span class="rvts65">See </span><a class="rvts96" href="LanguageGuide.chm::/Struct_Variables.htm">struct variables</a><span class="rvts65"> for more details of instantiating struct types.</span></p>
+<h3 class="rvps24"><span class="rvts0"><span class="rvts55"><br/></span></span></h3>
+<h3 class="rvps24"><span class="rvts0"><span class="rvts55">Example</span></span></h3>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; // Called once when the update begins.</span></p>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; Procedure </span><a class="rvts97" href="EventsforcDbUpdateHandler.htm">OnErrorWriteHeader_DataTable</a><span class="rvts35"> DateTime dtUpdateStart</span></p>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; &nbsp; &nbsp; Open MyLogTable</span></p>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; &nbsp; &nbsp; Move dtUpdateStart to MyLogTable.UpdateStart</span></p>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; &nbsp; &nbsp; Saverecord MyLogTable</span></p>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; End_Procedure</span></p>
+<p class="rvps11"><span class="rvts35"><br/></span></p>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; // Called once after all updates have finished if </span><span class="rvts65">pbQuickWrite=False. If pbQuickWrite=True it is called once for each error.</span></p>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; Procedure </span><a class="rvts97" href="EventsforcDbUpdateHandler.htm">OnErrorWriteRow_DataTable</a><span class="rvts35"> tDbUpdateError[] DbUpdateErrorArray</span></p>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; &nbsp; &nbsp; Integer iSize iCount</span></p>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; &nbsp; &nbsp; Open MyLogTable</span></p>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; &nbsp; &nbsp; Move (SizeOfArray(DbUpdateErrorArray)) to iSize</span></p>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; &nbsp; &nbsp; Decrement iSize</span></p>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; &nbsp; &nbsp; For iCount from 0 to iSize</span></p>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Clear MyLogTable</span></p>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Move DbUpdateErrorArray[iCount].iError to MyLogTable.ErrorNo</span></p>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Move DbUpdateErrorArray[iCount].sErrorText to MyLogTable.ErrorText</span></p>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; SaveRecord MyLogTable</span></p>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; &nbsp; &nbsp; Loop</span></p>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; End_Procedure</span><span class="rvts74">End_Procedure</span></p>
+<p class="rvps11"><span class="rvts6"><br/></span></p>
+<p class="rvps2"><span class="rvts11"><br/></span></p>
+<p class="rvps2"><span class="rvts11">Note that these are send automatically by the </span><a class="rvts22" href="cDbUpdateHandler.htm">cDbUpdateHandler</a><span class="rvts11"> class logic, if pbUseDataTable = True.</span></p>
+<p></p>
+
+	</div>
+	
+	
+		<div id="topic_footer">
+
+			<div id="topic_footer_content">
+				Copyright &copy; 2016-2020 RDC Tools International. All Rights Reserved. Portions Copyright Data Access Worldwide, Mertech Data Systems, Inc.
+			</div>
+		</div>
+	
+
+	
+	
+
+	
+</body>
+	
+</html>
+

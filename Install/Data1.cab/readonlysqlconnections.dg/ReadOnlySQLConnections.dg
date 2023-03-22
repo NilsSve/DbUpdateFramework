@@ -1,0 +1,624 @@
+Use Windows.pkg
+Use Cursor.pkg
+Use cButtonDPI.pkg
+Use cSQLCheckBox.pkg
+Use cSQLComboForm.pkg
+Use cSQLForm.pkg
+Use cSQLConnectionHandler.pkg
+Use cDbUpdateFunctionLibrary.pkg
+Use cDbUpdateDatabaseDriver.pkg
+Use DatabaseSelection.dg
+Use ServerSelection.dg
+Use TableSpaceSelection.dg
+Use SchemasSelection.dg
+
+Define CS_LoadingServers        for "Enumerating servers..."
+Define CS_LoadingDatabases      for "Enumerating databases..."
+Define CS_LoadingTableSpaces    for "Enumerating table spaces..."
+Define CS_LoadingSchemas        for "Enumerating schemas..."
+Define CS_LoginAttempt          for "Connecting..."
+Define CS_LoginSuccessful       for "Login successful!"
+Define CS_LoginFailed           for "Login failed!"
+Define CS_DF_File_Schema        for "Schema"
+Define CS_DF_File_Owner         for "Owner"
+
+Object oSQLMaintainConnections_dg is a ModalPanel
+    Set Label to "Show SQL Connection"
+    Set Size to 261 410
+    Set Location to 4 6
+    Set Locate_Mode to Center_On_Parent
+    Set Border_Style to Border_Thick
+    Set piMaxSize to (Hi(Size(Self))) (Low(Size(Self)) + 300)
+    Set piMinSize to (Hi(Size(Self))) (Low(Size(Self)))
+
+    Property Handle phoDialogCommandbar
+    Property tSQLConnection pSQLConnectionData
+    Property tDataSourceRow[] pTheData
+    Property Boolean pbDFConnId  False // Is set to True if this is a DAW "DFConnId.ini" file; in which case we warn to not encrypt/decrypt password. (different algorithms and don't touch password)
+    Property String psUncryptedPw     // Used if  pbDFConnId = True to temporary save the un-encrypted password.
+
+    Object oDbType_cf is a cSQLComboForm
+        Set Size to 11 120
+        Set Location to 11 86
+        Set Label_Col_Offset to 2
+        Set Label_Justification_Mode to JMode_Right
+        Set Label to "Database Type"
+        Set Entry_State to False
+        Set Combo_Sort_State to False
+        Set piItem to 3        
+        Set Enabled_State to False
+
+        Procedure Combo_Fill_List
+            Send Combo_Add_Item CS_dbTypeMSSQL
+            Send Combo_Add_Item CS_dbTypeMySQL
+            Send Combo_Add_Item CS_dbTypeOracle
+            Send Combo_Add_Item CS_dbTypeDB2
+            Send Combo_Add_Item CS_dbTypePostgre
+        End_Procedure
+
+        Function SelectedDbType Returns Integer
+            Integer iRetval
+            String sDbType
+
+            Get Value to sDbType
+            Get SqlUtilDbTypeToInteger of ghoDbUpdateFunctionLibrary sDbType to iRetval
+
+            Function_Return iRetval
+        End_Function
+
+    End_Object
+
+    Object oDriverID_cf is a cSQLComboForm
+        Set Size to 11 120
+        Set Location to 24 86
+        Set Label_Col_Offset to 2
+        Set Label_Justification_Mode to JMode_Right
+        Set Label to "Driver ID"
+        Set psToolTip to "Depending on the database type selected and if Mertech drivers have been installed, the comboform list will vary."
+        Set Entry_State to False
+        Set Combo_Sort_State to False
+        Set piItem to 4
+        Set Enabled_State to False
+
+        Procedure Refill_Comboform Integer iDbType
+            String sValue
+            Send Combo_Delete_Data
+            Case Begin
+                Case (iDbType = EN_dbTypeMSSQL)
+                    Send Combo_Add_Item MSSQLDRV_ID
+                    Send Combo_Add_Item SQLFLEX
+                    Move MSSQLDRV_ID to sValue
+                    Case Break
+                Case (iDbType = EN_dbTypeMySQL)
+                    Send Combo_Add_Item ODBC_DRV_ID
+                    Send Combo_Add_Item MDSMySQL
+                    Move MDSMySQL to sValue
+                    Case Break
+                Case (iDbType = EN_dbTypeOracle)
+                    Send Combo_Add_Item ODBC_DRV_ID
+                    Send Combo_Add_Item ORAFLEX
+                    Move ORAFLEX to sValue
+                    Case Break
+                Case (iDbType = EN_dbTypeDB2)
+                    Send Combo_Add_Item DB2_DRV_ID
+                    Move DB2_DRV_ID to sValue
+                    Case Break
+                Case (iDbType = EN_dbTypePostgre)
+                    Send Combo_Add_Item ODBC_DRV_ID
+                    Send Combo_Add_Item MDSPgSQL
+                    Move MDSPgSQL to sValue
+                    Case Break
+                Case Else
+                    Send Combo_Add_Item DATAFLEX_ID
+                    Move DATAFLEX_ID to sValue
+//                Case (iDbType = EN_dbTypeMSSQL)
+//                    Send Combo_Add_Item (MSSQLDRV_ID * "- (DAW)")
+//                    Send Combo_Add_Item (SQLFLEX * "- (Mertech)")
+//                    Move (MSSQLDRV_ID * "- (DAW)") to sValue
+//                    Case Break
+//                Case (iDbType = EN_dbTypeMySQL)
+//                    Send Combo_Add_Item (ODBC_DRV_ID * "- (DAW)")
+//                    Send Combo_Add_Item (MDSMySQL * "- (Mertech)")
+//                    Move (MDSMySQL * "- (Mertech)") to sValue
+//                    Case Break
+//                Case (iDbType = EN_dbTypeOracle)
+//                    Send Combo_Add_Item (ODBC_DRV_ID * "- (DAW)")
+//                    Send Combo_Add_Item (ORAFLEX * "- (Mertech)")
+//                    Move (ORAFLEX * "- (Mertech)") to sValue
+//                    Case Break
+//                Case (iDbType = EN_dbTypeDB2)
+//                    Send Combo_Add_Item (DB2_DRV_ID * "- (DAW)")
+//                    Move (DB2_DRV_ID * "- (DAW)") to sValue
+//                    Case Break
+//                Case (iDbType = EN_dbTypePostgre)
+//                    Send Combo_Add_Item (ODBC_DRV_ID * "- (DAW)")
+//                    Send Combo_Add_Item (MDSPgSQL * "- (Mertech)")
+//                    Move (MDSPgSQL * "- (Mertech)") to sValue
+//                    Case Break
+//                Case Else
+//                    Send Combo_Add_Item (DATAFLEX_ID * "- (DAW)")
+//                    Move (DATAFLEX_ID * "- (DAW)") to sValue
+            Case End
+            Set Value to sValue
+        End_Procedure
+
+//        Procedure OnChange
+//            String sDriverID
+//            Integer iDbType iPos
+//
+//            Get Value to sDriverID
+//            Move (Pos("-", sDriverID)) to iPos
+//            Move (Left(sDriverID, (iPos - 2))) to sDriverID
+//            If (sDriverID = "") Begin
+//                Move MSSQLDRV_ID to sDriverID
+//            End
+//            Get SelectedDbType of oDbType_cf to iDbType
+//            Broadcast Recursive Send DbTypeUpdate of oSettings_grp iDbType sDriverID
+//        End_Procedure
+//
+    End_Object
+
+    Object oConnectionID_fm is a cSQLForm
+        Set Size to 13 120
+        Set Location to 37 86
+        Set Label to "Connection ID"
+        Set Label_Col_Offset to 2
+        Set Label_Justification_Mode to JMode_Right
+        Set psToolTip to "The DFConnectionID keyword to set a default connection id for the driver. This is the connection ID that appear in database table .int files with the format; 'SERVER_NAME DFCONNID=MyConnID'"
+        Set piItem to 2
+        Set Enabled_State to False
+    End_Object
+
+    Object oEnabled_cb is a cSQLCheckBox
+        Set Auto_Size_State to False
+        Set Size to 9 38
+        Set Location to 39 216
+        Set Label to "Enabled"
+        Set psToolTip to "Check to indicate that this is the enabled connection. Note: There can only be one enabled connection at a time."
+        Set piItem to 1
+        Set Enabled_State to False
+    End_Object
+
+    Object oSettings_grp is a Group
+        Set Size to 166 389
+        Set Location to 59 11
+        Set Label to "Connection String Details"
+        Set peAnchors to anTopLeftRight
+
+        Object oServer_fm is a cSQLForm
+            Set Size to 13 120
+            Set Location to 14 74
+            Set Label to "Server"
+            Set Label_Col_Offset to 2
+            Set Label_Justification_Mode to JMode_Right
+            Set psToolTip to "Server/DSN: Depending on the selected database type the label can either display as 'Server' or 'DSN'. Either enter the name - if you know it - or by using the selection list (F4). Tip: If you are using Microsoft SQL Server and you are testing on the same machine as the MS SQL Server instance is running and you are using SQLEXPRESS you can enter e.g. '.\SQLEXPRESS'. That will mean use the SQLEXPRESS instance of Microsoft SQL Server running on this machine. If you press [F4] and the selection list comes up empty for Microsoft SQL Server it probably is because the service hasn't been started. Type 'Services' in Windows menu system to start Windows Services app. Type 'SQL' to jump to the SQL Server services. Check that the 'SQL Server Browser' service is started and set to 'Automatic'."
+            Set peAnchors to anTopLeftRight
+            Set piItem to 5
+            Set Enabled_State to False
+        End_Object
+
+        Object oServersInfo_tb is a TextBox
+            Set Auto_Size_State to False
+            Set Size to 9 100
+            Set Location to 18 262
+            Set TextColor to clGreen
+            Set Justification_Mode to JMode_Right
+            Set peAnchors to anTopRight
+        End_Object
+
+        Object oSilentLogin_fm is a cSQLCheckBox
+            Set Auto_Size_State to False
+            Set Size to 9 51
+            Set Location to 17 205
+            Set Label to "Silent Login"
+            Set psToolTip to "Silent login to database is to not show error if login was unsuccessive."
+            Set peAnchors to anTopRight
+            Set piItem to 15
+            Set Enabled_State to False
+        End_Object
+
+        Object oODBC_rgp is a RadioGroup
+            Set Location to 31 75
+            Set Size to 25 298
+            Set Label to "Show ODBC Data Source"
+            Set Enabled_State to False
+
+            Object oRadio1 is a Radio
+                Set Label to "User data"
+                Set Size to 10 49
+                Set Location to 10 5
+            End_Object
+
+            Object oRadio2 is a Radio
+                Set Label to "System data"
+                Set Size to 10 55
+                Set Location to 10 64
+            End_Object
+
+            Object oRadio3 is a Radio
+                Set Label to "Both"
+                Set Size to 10 28
+                Set Location to 11 130
+            End_Object
+
+            Procedure Notify_Select_State Integer iToItem Integer iFromItem
+                Forward Send Notify_Select_State iToItem iFromItem
+            End_Procedure
+
+            Object oFileDSN_btn is a cButtonDPI
+                Set Size to 13 62
+                Set Location to 8 168
+                Set Label to "Select File DSN..."
+
+                Procedure OnClick
+                    String sFileName
+                    Get vSelect_File ("Data Sources (*.dsn)|*.dsn|All Files (*.*)|*.*") "Select a file data source" "" to sFileName
+                    If (sFileName <> "") Begin
+                        Set Value of oServer_fm to sFileName
+                    End
+                End_Procedure
+
+                Set Current_Radio to 2
+            End_Object
+
+            Procedure DbTypeUpdate Integer iDbType String sDriverID
+                Set Enabled_State to (sDriverID = ODBC_DRV_ID)
+            End_Procedure
+
+            Object oODBCAdmin_btn is a cButtonDPI
+                Set Size to 13 55
+                Set Location to 8 234
+                Set Label to "ODBC Admin"
+                Procedure OnClick
+                    Handle hWnd
+                    Get Window_Handle to hWnd
+                    If (hWnd <> 0) Begin
+                        ODBCManager hWnd
+                    End
+                    Else Begin
+                        Send Stop_Box "Could not get a Windows handle.."
+                    End
+                End_Procedure
+            End_Object
+
+        End_Object
+
+        Object oTrusted_cb is a cSQLCheckBox
+            Set Size to 10 50
+            Set Location to 65 74
+            Set Label to "Use Trusted Connection"
+            Set psToolTip to "(Windows Authentication) When selected, SQL Server uses integrated login (Windows login information) security to establish connections using this data source, regardless of the current login security mode at the server."
+            Set piItem to 8
+            Set Enabled_State to False
+
+        End_Object
+
+        Object oUserID_fm is a cSQLForm
+            Set Size to 13 120
+            Set Location to 76 74
+            Set Label to "User ID"
+            Set Label_Col_Offset to 2
+            Set Label_Justification_Mode to JMode_Right
+            Set psToolTip to "Enter the user name to use for authentication when you log on to the database."
+            Set piItem to 9
+            Set Enabled_State to False
+        End_Object
+
+        Object oPassword_fm is a cSQLForm
+            Set Size to 13 91
+            Set Location to 76 270
+            Set Label to "Password"
+            Set Label_Col_Offset to 2
+            Set Label_Justification_Mode to JMode_Right
+            Set psToolTip to "Enter the password for your user name. The password will automatically be encrypted & decrypted when writing/reading from the ini file. Of Special Note: If the cConnection class is used with DataFlex 19 or later and such an .ini file is edited with this program you will get a question if you would like the program to 'touch' the password or not. If you answer No, the ini-file will keep working with the DataFlex tools. You should probably never try to change the password with this program for a DFConnid.ini file as the two programs uses different encryption/decryption algorithms."
+            Set piItem to 10
+            Set Password_State to True
+        End_Object
+
+        Object oViewPassword_btn is a cButtonDPI
+            Set Size to 13 19
+            Set Location to 76 365
+            Set psToolTip to "Toggle password"  
+            Set psImage to "PasswordView.ico"
+        
+            Procedure OnClick         
+                Handle ho       
+                Boolean bState   
+                Integer iRetval  
+                
+                Move (oPassword_fm(Self)) to ho
+                Get Password_State of ho item 0 to bState
+                Send Page_Object   of ho False
+                Set Password_State of ho item 0 to (not(bState)) 
+                Send Page_Object   of ho True  
+                // Finally we need to add the object to the focus tree again or else it will get invisible.
+                Get msg_Add_Focus  of ho (Parent(ho)) to iRetVal
+            End_Procedure
+        
+        End_Object
+
+        Object oLoginInfo_tb is a TextBox
+            Set Auto_Size_State to False
+            Set Size to 9 64
+            Set Location to 95 203
+            Set TextColor to clGreen
+            Set Justification_Mode to JMode_Right
+        End_Object
+
+        Object oCheckLogin_btn is a cButtonDPI
+            Set Size to 13 91
+            Set Location to 92 270
+            Set Label to "Check &Login"
+            Set psImage to "ActionLogin.ico"
+            Set psToolTip to "You should always use this button when adding a new SQL Connection to ensure that the entered credentials are correct. (Ctrl+L)"
+
+            Procedure OnClick
+                String sConnectionString sServer sDatabase sUserId sPassword sDriverID sCheck
+                Boolean bTrusted bLoginSuccessful bMertechDriver
+                Integer iStart iDriverID
+                Handle hoErrorObj hoDriver
+
+                Send Cursor_Wait of Cursor_Control // Note: The Cursor_Wait changes the Err flag!
+                Move Error_Object_Id to hoErrorObj
+                Move Self to Error_Object_Id
+                Move False to Err
+
+                Set Value of oLoginInfo_tb to CS_LoginAttempt
+                Send PumpMsgQueue
+
+                Get Checked_State of oTrusted_cb to bTrusted
+                Get Value of oDriverID_cf to sDriverID
+                Get Value of oServer_fm   to sServer
+                Get Value of oDatabase_fm to sDatabase
+                Get Value of oUserID_fm   to sUserId
+                Get Value of oPassword_fm to sPassword
+
+                If (sServer = "") Begin
+                    Send Info_Box "Please enter a server first, then try again."
+                    Procedure_Return
+                End
+
+                Get ConstructConnectionString of (phoSQLConnectionIniFile(ghoSQLConnectionHandler)) sDriverID sServer sDatabase bTrusted sUserId sPassword to sConnectionString
+
+                Get DriverIndex of ghoSQLConnectionHandler sDriverID to iDriverID
+                If (iDriverID = 0) Begin
+                    Set TextColor of oLoginInfo_tb to clRed
+                    Set Value of oLoginInfo_tb to CS_LoginFailed
+                    Send Info_Box ("The driver" * sDriverID * "could not be loaded. Is the driver installed? And equally imporant; Is the corresponding database server or client software installed?")
+                    Procedure_Return
+                End
+
+                Get IsMertechDriver of ghoSQLConnectionHandler sDriverID to bMertechDriver
+                If (bMertechDriver = False) Begin
+                    Set_Attribute DF_DRIVER_SILENT_LOGIN of iDriverID to True
+                End
+
+                Get Create (RefClass(cDbUpdateDatabaseDriver)) to hoDriver
+                Set psDriverID of hoDriver to sDriverID
+                Get DbLogin    of hoDriver sConnectionString sServer sDatabase bTrusted sUserID sPassword to bLoginSuccessful
+                Send Destroy   of hoDriver
+
+                If bLoginSuccessful Begin
+                    Set TextColor of oLoginInfo_tb to clGreen
+                    Set Value of oLoginInfo_tb to CS_LoginSuccessful
+                End
+                Else Begin
+                    Set TextColor of oLoginInfo_tb to clRed
+                    Set Value of oLoginInfo_tb to CS_LoginFailed
+                End
+
+                Move hoErrorObj to Error_Object_Id
+                Send Cursor_Ready of Cursor_Control
+            End_Procedure
+
+            // This method is here simply to intercept any error that may occur while logging in
+            // it does not have to do anything with the error, but it suppresses the normal error display
+            Procedure Error_Report Integer iErrNum Integer iErrLine String sErrMsg
+                #IFDEF DUF_Use_Mertech_Drivers
+                    If (LastErr = 25000) Begin
+                        If (Trim(sErrMsg) <> "") Begin
+                            Send Info_Box sErrMsg
+                        End
+                    End
+                #ENDIF
+            End_Procedure
+
+        End_Object
+
+        Object oTableSpaceInfo_tb is a TextBox
+            Set Auto_Size_State to False
+            Set Size to 9 118
+            Set Location to 102 75
+            Set TextColor to clGreen
+            Set Justification_Mode to JMode_Right
+            Set peAnchors to anNone
+        End_Object
+
+        Object oBaseTableSpace_fm is a cSQLForm
+            Set Size to 13 120
+            Set Location to 115 74
+            Set Label to "Table Space"
+            Set Label_Col_Offset to 2
+            Set Label_Justification_Mode to JMode_Right
+            Set piItem to 12
+            Set psToolTip to "Sets the name of the table space where the data will be stored. Applicable for IBM DB2, Oracle and PostgreSQL databases. Table spaces allow you to assign a physical location to logical objects (tables). They can be used to improve performance or to increase the page size, thus increasing the maximum size of a record that can be stored in the table space. You can specify what table space must be used to store table, index or long data. The index and long data table space will only be set when the table tables pace is also set."
+            Set Enabled_State to False
+        End_Object
+
+        Object oIndexTableSpace_fm is a cSQLForm
+            Set Size to 13 93
+            Set Location to 115 270
+            Set Label to "Index Table Space"
+            Set Label_Col_Offset to 2
+            Set Label_Justification_Mode to JMode_Right
+            Set piItem to 14
+            Set psToolTip to "To set the name of the table space where indexes will be stored. Only applicable for IBM DB2, Oracle and PostgreSQL databases."
+            Set Enabled_State to False
+        End_Object
+
+        Object oLongTableSpace_fm is a cSQLForm
+            Set Size to 13 120
+            Set Location to 130 74
+            Set Label to "Long Table Space"
+            Set Label_Col_Offset to 2
+            Set Label_Justification_Mode to JMode_Right
+            Set piItem to 13
+            Set psToolTip to "Only applicable for IBM DB2 databases. If you are unsure on what to enter your best bet is to use the same value as for the 'Table Space' above."
+            Set Enabled_State to False
+        End_Object
+
+        Object oSchema_fm is a cSQLForm
+            Set Size to 13 93
+            Set Location to 130 270
+            Set Label to "Schema"
+            Set psToolTip to "The name of the schema the table belongs to. A schema is a collection of names or objects. A schema can contain tables, views, and triggers. Schemas provide a logical classification of objects in the database. It can have a slightly different meaning depending on the selected database type. Please consult your database manager to ensure the correct value is selected. Applicable for IBM DB2, Oracle and PostgreSQL databases. For IBM DB2 not specifying a schema will result in the user name being used. Microsoft SQL Server has a completely different approach to security and privileges and uses owners instead."
+            Set Label_Col_Offset to 2
+            Set Label_Justification_Mode to JMode_Right
+            Set piItem to 11
+            Set Enabled_State to False
+
+            Property String psSchemaToolTip "The name of the schema the table belongs to. A schema is a collection of names or objects. A schema can contain tables, views, and triggers. Schemas provide a logical classification of objects in the database. It can have a slightly different meaning depending on the selected database type. Please consult a database manager to ensure the correct value is selected. Applicable for IBM DB2, Oracle and PostgreSQL databases. For IBM DB2 not specifying a schema will result in the user name being used. Microsoft SQL Server has a completely different approach to security and privileges and uses owners instead."
+            Property String psOwnerTooltip  "The owner name to use within the database where the tables must be placed. If you want to specify an owner of the table that will be converted you can do so, not specifying an owner will result in the default owner being used. The suggested owner name to use is 'dbo'"
+
+        End_Object
+
+        Object oDatabase_fm is a cSQLForm
+            Set Size to 13 120
+            Set Location to 146 74
+            Set Label to "Database"
+            Set Label_Col_Offset to 2
+            Set Label_Justification_Mode to JMode_Right
+            Set peAnchors to anTopLeftRight
+            Set psToolTip to "Name of the SQL database. Note: If you are setting up your first connection for a workspace and your SQL database doesn't exist yet, leave the default 'Master' as it is always available. The 'SqlDatabaseCreate' function will take care of the rest when creating your new SQL database."
+            Set piItem to 6
+            Set Enabled_State to False
+        End_Object
+
+        Procedure DbTypeUpdate Integer iDbType String sDriverID
+            String sDbType
+            Get SqlUtilDbTypeToString of ghoDbUpdateFunctionLibrary iDbType to sDbType
+            Set Label to (sDbType * "Connection Details")
+        End_Procedure
+
+    End_Object
+
+    Object oCancel_Btn is a cButtonDPI
+        Set Label    to "Close"
+        Set Location to 232 343
+        Set peAnchors to anBottomRight
+
+        Procedure OnClick
+            Send Close_Panel
+        End_Procedure
+
+    End_Object
+
+    Function MoveSQLConnectionToStringArray tSQLConnection SQLConnection Returns String[]
+        String[] sConnectionData
+        String sValue
+        Integer iRetval
+
+        Move SQLConnection.bEnabled          to sConnectionData[1]
+        Move SQLConnection.sConnectionID     to sConnectionData[2]
+        Get SqlUtilDbTypeToString of ghoDbUpdateFunctionLibrary SQLConnection.iDbType to sConnectionData[3]
+        Move SQLConnection.sDriverID         to sConnectionData[4]
+        Move SQLConnection.sServer           to sConnectionData[5]
+        Move SQLConnection.sDatabase         to sConnectionData[6]
+        Move SQLConnection.sConnectionString to sConnectionData[7]
+        Move SQLConnection.bTrusted          to sConnectionData[8]
+        Move SQLConnection.sUserID           to sConnectionData[9]
+
+        If (SQLConnection.sPassword <> "") Begin
+            Move MBR_Yes to iRetval
+            If (pbDFConnId(Self) = True) Begin
+                Set psUncryptedPw to SQLConnection.sPassword
+                Move "" to SQLConnection.sPassword
+            End
+            Else Begin
+                Move SQLConnection.sPassword to sConnectionData[10]
+            End
+        End
+
+        Move SQLConnection.sSchema           to sConnectionData[11]
+        Move SQLConnection.sBaseTableSpace   to sConnectionData[12]
+        Move SQLConnection.sLongTableSpace   to sConnectionData[13]
+        Move SQLConnection.sIndexTableSpace  to sConnectionData[14]
+        Move SQLConnection.bSilentLogin      to sConnectionData[15]
+
+        Function_Return sConnectionData
+    End_Function
+
+    Procedure Popup
+        tSQLConnection SQLIniFileConnection
+        String[] sConnectionData
+        String sDriverID
+        Integer iDbType
+
+        Get pSQLConnectionData to SQLIniFileConnection
+        Get MoveSQLConnectionToStringArray SQLIniFileConnection to sConnectionData
+        Broadcast Recursive Send ReadConnectionData sConnectionData
+
+        Get SelectedDbType of oDbType_cf to iDbType
+        Get Value of oDriverID_cf to sDriverID
+        If (sDriverID = "") Begin
+            Move MSSQLDRV_ID to sDriverID
+        End      
+        Send Refill_Comboform of oDriverID_cf iDbType
+        Broadcast Recursive Send DbTypeUpdate of oSettings_grp iDbType sDriverID
+        
+        Set Password_State of oPassword_fm to True
+        Set Value of oLoginInfo_tb to ""
+        Set Statusbar_Id to (phoDialogCommandbar(Self))
+        Forward Send Popup
+    End_Procedure
+
+    Procedure Page Integer iPageObject
+        String sText
+        Handle hWnd
+
+        Forward Send Page iPageObject
+
+        Set Icon to "SQLConnections.ico"
+
+        If (ghoSkinFramework <> 0 and hWnd <> 0) Begin
+            Send ComRemoveWindow to ghoSkinFramework hWnd
+            Send ComApplyWindow  to ghoSkinFramework hWnd
+        End
+    End_Procedure
+
+    // Put a status bar at the bottom of the panel, which makes
+    // status_help work and puts a gripper in the lower right corner.
+    Procedure End_Construct_Object
+        Integer iStyle iSize iOffset
+
+        Forward Send End_Construct_Object
+
+        Get Border_Style to iStyle
+        Move 8 to iOffset
+        If (iStyle = Border_Thick) Begin
+            Object oDialogCommandbar is a cCJCommandBarSystem
+                Object oStatusBar is a cCJStatusBar
+                    Set phoDialogCommandbar to Self
+                    Object oStatusIdle is a cCJStatusBarPane
+                        Set piId to sbpIDIdlePane
+                        Set pbStyleStretch to True
+                    End_Object
+                End_Object
+            End_Object
+
+            Get Size to iSize
+            Set Size to (Hi(iSize) + iOffset) (Low(iSize))
+        End
+    End_Procedure
+
+    On_Key Key_Ctrl+Key_L Send KeyAction of oCheckLogin_btn
+    On_Key kCancel        Send KeyAction of oCancel_Btn
+End_Object
+
+Procedure Activate_SQLMaintainConnections_dg tSQLConnection SQLConnectionData
+    Handle ho
+
+    Move (oSQLMaintainConnections_dg(Self)) to ho
+    Set pSQLConnectionData      of ho to SQLConnectionData
+    Send Popup                  of ho
+End_Procedure

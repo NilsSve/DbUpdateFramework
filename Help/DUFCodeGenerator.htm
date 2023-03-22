@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+
+<html>
+	
+<head>
+	<title>DUF Code Generator</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="description" content="Help for the DataFlex Database Update Framework" />
+    <meta name="generator" content="HelpNDoc Professional Edition 7.1.0.253" />
+	
+	
+	
+	<link type="text/css" rel="stylesheet" media="all" href="css/reset.css" />
+	<link type="text/css" rel="stylesheet" media="all" href="css/base.css" />
+	<link type="text/css" rel="stylesheet" media="all" href="css/hnd.css" />
+	<!--[if lte IE 8]>
+		<link type="text/css" rel="stylesheet" media="all" href="css/ielte8.css" />
+	<![endif]-->
+
+	<style type="text/css">
+		#topic_header
+		{
+			background-color: #EFEFEF;
+		}
+	</style>
+
+	
+
+	<script type="text/javascript" src="js/chmRelative.js"></script>
+	
+	
+</head>
+
+<body>
+
+
+
+	
+	
+	<div id="topic_content">
+		
+<p></p>
+<h1 class="rvps7"><span class="rvts0"><span class="rvts23">&nbsp;DUF Code Generator</span></span></h1>
+<p class="rvps13"><span class="rvts65">See Also: </span><a class="rvts57" href="Overview.htm">Overview of the DataFlex Database Update Framework</a></p>
+<p class="rvps2"><span class="rvts65"><br/></span></p>
+<p class="rvps2"><img width="600" height="504" alt="" style="padding : 1px; margin : 20px 20px;" src="lib/DUFCodeGenerator.png"></p>
+<p class="rvps2"><span class="rvts65">The Code Generator is intended to be used after the initial first inclution of the framework. So if your program was using e.g. the DataFlex embedded database, you first need to create a cDbUpdateVersion object where tables are converted to SQL. For the next database revision you can use the Code Generator to make the customer database identical to the current development database.</span></p>
+<p class="rvps2"><span class="rvts65"><br/></span></p>
+<p class="rvps2"><span class="rvts65">The Database Update Framework (DUF) Code Generator program is a tool that can create a snap-shot of the development database by generating database update code (DUF) to an cDbUpdteVersion object package (*.pkg file). This generated file should be compiled into your main program with a "Use" statement inside the cDbUpdateHandler object, as the last line. When run at customer site the logic will check if an update of the customer's database is needed and then automatically make necessary database changes.</span></p>
+<p class="rvps2"><span class="rvts65"><br/></span></p>
+<p class="rvps2"><span class="rvts58">Imortant: See also </span><a class="rvts44" href="Howtheautomaticupdateworks.htm">How the automatic update works</a><span class="rvts58"> for an explanation on how the inner logic works for auto-generated packages, and potential pitfalls.</span></p>
+<p class="rvps2"><span class="rvts65"><br/></span></p>
+<p class="rvps2"><span class="rvts65">As an option it can compare two databases and create a report with differences. See also: "How to use the tool - </span><a class="rvts109" href="DUFCodeGenerator.htm#Compare_Databases">Compare Databases</a><span class="rvts65">" below.</span></p>
+<p class="rvps2"><span class="rvts65"><br/></span></p>
+<p class="rvps2"><span class="rvts66">Note that you must have used the "DUF SQL Connections" tool to specify the SQL login details properly before any Filelist.cfg with SQL tables can be used/opened properly.</span></p>
+<p class="rvps2"><span class="rvts66"><br/></span></p>
+<p class="rvps27"><span class="rvts102">How to use the tool - Code Generator</span></p>
+<p class="rvps2"><span class="rvts65"><br/></span></p>
+<p class="rvps2"><span class="rvts58">Select FROM Filelist.cfg</span></p>
+<p class="rvps2"><span class="rvts65">Press F4 or click the [...] button on the end of the form, to select a Filelist.cfg from your development Data folder. The "Select Tables" grid will automatically be filled with all tables read from the selected Filelist.cfg.</span></p>
+<p class="rvps2"><span class="rvts65"><br/></span></p>
+<p class="rvps2"><span class="rvts58">Select Tables</span></p>
+<p class="rvps2"><span class="rvts65">Right-click the grid and select "Select All" to select all tables from the Filelist.cfg. This is the recommended procedure, and it will generate DUF code for all tables. However, there might be occations where it is not suitable to select all tables and thus you are in control on what to select</span><span class="rvts66">.</span></p>
+<p class="rvps2"><span class="rvts65"><br/></span></p>
+<p class="rvps2"><span class="rvts58">Configure Code Generation</span></p>
+<p class="rvps2"><span class="rvts65">It is recommended to leave all flags in the "Configure Code Generation" as they are.</span></p>
+<p class="rvps2"><span class="rvts65"><br/></span></p>
+<p class="rvps2"><span class="rvts58">Configure Generated File Name</span></p>
+<p class="rvps2"><span class="rvts65">The next pnVersionNumber was read from the DbVersion table when the Filelist.cfg was selected. The DbVersion table was/should have been created by the Database Update Framework the first time it was added to your program and it was compiled &amp; run for the first time. The value was incremented to the next decimal value (+ .1). This version number is used to create the suggested file name for the DUF code to be created.</span></p>
+<p class="rvps2"><span class="rvts65"><br/></span></p>
+<p class="rvps2"><span class="rvts65">Click the "Generate Code!" button and the file will get created for you. All you have to do now is to include the package into your main program.&nbsp;</span></p>
+<p class="rvps2"><span class="rvts66">NOTE: After testing the newly created file, you might want to remark the line "Use</span><span class="rvts91">DUF_MultipleTablesXXX.pkg</span><span class="rvts66">" until release date to avoid including the file each time the program is compiled as the compile otherwise will take considerably more time.</span></p>
+<p class="rvps2"><span class="rvts65"><br/></span></p>
+<p class="rvps2"><span class="rvts65">Example;</span></p>
+<p class="rvps2"><span class="rvts65"><br/></span></p>
+<p class="rvps11"><span class="rvts74">Object oDbUpdateHandler is a cDbUpdateHandler</span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; Set piDbVersionFileNumber &nbsp;to 38</span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; Set piDbVersionFieldNumber to 1</span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; Set pbAutoCreateDbVersionTable to True</span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; Set pbCheckDataFlexUserCount to False</span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; Set psCollation to "Latin1_General_CS_AS"</span></p>
+<p class="rvps11"><span class="rvts74"><br/></span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; Procedure OnPreUpdate</span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; &nbsp; &nbsp; Boolean bOK&nbsp;</span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; &nbsp; &nbsp; String sDatabase sDriverID sCollation</span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; &nbsp; &nbsp;&nbsp;</span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; &nbsp; &nbsp; Set DF_DATABASE_DEFAULT_DEFAULT_DATE_DUF &nbsp; &nbsp; to CS_DUFLowestSQLDateValue</span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; &nbsp; &nbsp; Set DF_DATABASE_DEFAULT_DEFAULT_DATETIME_DUF to CS_DUFLowestSQLDateValue&nbsp;</span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; &nbsp; &nbsp; Get psDriverID &nbsp; &nbsp;to sDriverID</span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; &nbsp; &nbsp; Move "MyDatabase" to sDatabase &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;</span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; &nbsp; &nbsp; Get SqlDatabaseCreate sDriverID sDatabase True True to bOK</span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; &nbsp; &nbsp; If (bOK = False) Begin</span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Send Info_Box ("Something went wrong and the SQL database '" + sDatabase + "' could NOT be created.\n\n Is 'Microsoft SQL Server' installed properly, and is the SQLConnections.ini file pointing to 'master'?\n\nThe program will now exit.")</span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Send Exit_Application</span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; &nbsp; &nbsp; End</span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; &nbsp; &nbsp;&nbsp;</span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; &nbsp; &nbsp; Get psCollation to sCollation</span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; &nbsp; &nbsp; If (sCollation &lt;&gt; "Latin1_General_CS_AS") Begin</span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Get SqlDatabaseCollationChange sDatabase 'Latin1_General_CS_AS' to bOK</span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; &nbsp; &nbsp; End</span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; End_Procedure</span></p>
+<p class="rvps11"><span class="rvts74"><br/></span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; Object oDbUpdateVersion1_0 is a cDbUpdateVersion</span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; &nbsp; &nbsp; Set pnVersionNumber to 1.0</span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;</span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; &nbsp; &nbsp; Procedure OnUpdate &nbsp;</span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Boolean bOK</span></p>
+<p class="rvps11"><span class="rvts74"><br/></span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Send ApiTableConvertALLToSql &nbsp;</span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;</span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; // These tables are _not_ automatically converted to SQL by the&nbsp;</span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; // ApiTableConvertALLToSql message, so lets convert them now.</span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Get ApiTableConvertToSQL &nbsp;38 to bOK</span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Get ApiTableConvertToSQL 253 to bOK</span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Get ApiTableConvertToSQL 254 to bOK</span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; &nbsp; &nbsp;&nbsp;</span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Get UtilMoveAllEmbeddedToBackupFolder to bOK &nbsp; &nbsp;</span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; &nbsp; &nbsp; End_Procedure &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;</span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; &nbsp; &nbsp;&nbsp;</span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; End_Object</span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp;&nbsp;</span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; Use DUF_MultipleTables1_1.pkg</span></p>
+<p class="rvps11"><span class="rvts74"><br/></span></p>
+<p class="rvps11"><span class="rvts74">End_Object &nbsp; &nbsp;</span></p>
+<p class="rvps2"><span class="rvts65"><br/></span></p>
+<p class="rvps2"><span class="rvts58">Helper - Create local program button</span></p>
+<p class="rvps2"><span class="rvts65">This button can be used to create a local help program that includes the generated package file. It is only intented to be used internally in development. The purpose is to propagate database changes between developers that has their own copy of the development database. So if programmer A has added or changed a table/field/index/relation, that particular table can be selected from the "Select Tables" grid. Then the "Generate Code!" and "Helper Create local program" buttons. Programmer A can then provide that code to programmer B, that only needs to compile &amp; run the program to automatically update his copy of the database with the changes made by programmer A.</span></p>
+<p class="rvps2"><span class="rvts65"><br/></span></p>
+<p class="rvps2"><span class="rvts58">Folder - Open containing folder</span></p>
+<p class="rvps2"><span class="rvts65">Opens Windows Exlorer and selects the newly created package file.</span></p>
+<p class="rvps27"><span class="rvts102"><br/></span></p>
+<p class="rvps27"><span class="rvts102"></span><br/><span class="rvts102">How to use the tool - </span><a name="Compare_Databases"></a><span class="rvts102">Compare Databases</span></p>
+<p class="rvps27"><span class="rvts102"><br/></span></p>
+<p class="rvps2"><span class="rvts65">The routine can compare two databases that are present on the same machine or network. It can compare a DataFlex embedded database to an SQL version, or any combination of these. In short the format of the two databases to compare doesn't matter. The routine was written to test the "Code Generator" logic, so while being correct the presented compare result might be slightly wrong at times and can't fully be trusted.</span></p>
+<p class="rvps2"><span class="rvts65"><br/></span></p>
+<p class="rvps2"><span class="rvts65">Just select the two Filelist.cfg files for the development and "customer" copy and click the "Compare Databases!" button.</span></p>
+<p class="rvps2"><span class="rvts66">Note that you must have used the "DUF SQL Connections" tool to specify the SQL login details properly before any Filelist.cfg can be used properly.</span></p>
+<p class="rvps2"><span class="rvts81"><br/></span></p>
+<p class="rvps2"><span class="rvts55">Next Topic</span></p>
+<p class="rvps5"><span class="rvts22"><br/></span></p>
+<p class="rvps5"><a class="rvts22" href="DbUpdateFrameworkTestProgram.htm">DbUpdateFrameworkTests program</a></p>
+<p></p>
+
+	</div>
+	
+	
+		<div id="topic_footer">
+
+			<div id="topic_footer_content">
+				Copyright &copy; 2016-2020 RDC Tools International. All Rights Reserved. Portions Copyright Data Access Worldwide, Mertech Data Systems, Inc.
+			</div>
+		</div>
+	
+
+	
+	
+
+	
+</body>
+	
+</html>
+

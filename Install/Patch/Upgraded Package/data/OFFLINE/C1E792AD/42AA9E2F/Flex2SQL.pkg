@@ -1,0 +1,1059 @@
+//*************************************************************************
+//*                                                                       *
+//*  Confidential Trade Secret.                                           *
+//*  Copyright (c) 1997-2014 Mertech Data Systems Inc, Miami Florida      *
+//*  All rights reserved.                                                 *
+//*  DataFlex is a registered trademark of Data Access Corporation.       *
+//*                                                                       *
+//*************************************************************************
+Use UI
+Use MERTECH.INC
+Use CLI.pkg
+
+#REM -----------------------------------------------
+#REM Mertech Data Systems Inc. - www.mertechdata.com
+#REM mertech.inc Version 1.0.2
+#REM -----------------------------------------------
+
+Struct tCLIHandleMap
+    Integer iHdbc
+    String sDriver
+    String sConnect
+End_Struct
+
+Struct tColumnMap
+    Integer iFileNum
+    Variant[] vResultColumn
+End_Struct
+
+//*** Embedded SQL statement attribute constants
+Define SQLSTMTATTRIB_COLUMNCOUNT    for 1
+Define SQLSTMTATTRIB_ROWCOUNT       for 2
+Define SQLSTMTATTRIB_ROWCOUNT_TYPE  for 3
+Define SQLSTMTATTRIB_NUMMESSAGES    for 4
+
+//*** Embedded SQL column attribute constants
+Define SQLCOLATTRIB_SIZE           for 1
+Define SQLCOLATTRIB_LENGTH         for 1
+Define SQLCOLATTRIB_PRECISION      for 2
+Define SQLCOLATTRIB_LABEL          for 3
+Define SQLCOLATTRIB_BASECOLUMNNAME for 4
+Define SQLCOLATTRIB_BASETABLENAME  for 5
+Define SQLCOLATTRIB_SQLTYPE        for 6
+Define SQLCOLATTRIB_NULLABLE       for 7
+Define SQLCOLATTRIB_DFTYPE         for 8
+
+
+//*** Enforced DAC SQL.PKG Compatibility
+Define SQL_DAC_HIGH_COMPATABILITY for 1
+Define SQL_DAC_NORMAL_COMPATIBILITY  for 0
+
+Global_Variable Integer giSQLCompatibilityMode
+Move SQL_DAC_NORMAL_COMPATIBILITY to giSQLCompatibilityMode
+
+//*** Global object handle for the manager
+Handle _embsqlghoSQLHandleMngr
+Register_Function CompareMaps tCLIHandleMap map1 tCLIHandleMap map2 Returns Integer
+
+Class cSQLStatement is a cObject
+    Procedure Construct_Object
+        Forward Send Construct_Object
+
+        Property Integer phCLIHandle      0
+        Property Integer piLastColumn     0
+        Property Integer piLastArgument   0
+        Property Integer piBindFile       0
+        Property Integer piCursorNum      0
+        Property Boolean pisBeforeFetch   True
+        Property Integer piParameterCount 0
+
+        {Visibility=Private}
+        Property Integer piDataChunkOffset 0
+        {Visibility=Private}
+        Property String psProcName ""
+        {Visibility=Private}
+        Property String psSchemaName ""
+        {Visibility=Private}
+        Property Variant[] pvParams
+        {Visibility=Private}
+        Property tColumnMap ptColumnMap
+    End_Procedure
+
+    Function SQLDateToDFDate String sSQLDate Returns String
+        Integer hoCLIHandler
+        Date dDFDate
+
+        //*** Create a CLI handler object
+        Object oSQLDFCLIHandler is a cCLIHandler
+            Move Current_Object to hoCLIHandler
+        End_Object // oCLIHandler
+
+        //*** Convert the date
+        Get CLISQLDateToDFDate of hoCLIHandler (psDRiverID(Current_Object)) sSQLDate to dDFDate
+
+        //*** Destroy the object
+        Send Destroy_Object to hoCLIHandler
+
+        Function_Return dDFDate
+    End_Function // SQLDateToDFDate
+
+    Function DFDateToSQLDate for cSQLStatement Date dDFDate Returns String
+        Integer hoCLIHandler
+        String sSQLDate
+
+        //*** Create a CLI handler object
+        Object oDFSQLCLIHandler is a cCLIHandler
+            Move Current_Object to hoCLIHandler
+        End_Object // oCLIHandler
+
+        //*** Convert the date
+        Get CLIDFDateToSQLDate of hoCLIHandler (psDRiverID(Current_Object)) dDFDate to sSQLDate
+
+        //*** Destroy the object
+        Send Destroy_Object to hoCLIHandler
+
+        Function_Return sSQLDate
+    End_Function // DFDateToSQLDate
+
+
+    {Visibility=Private}
+    Function IsProcedure String sFunctionName Returns Boolean
+        String sRoutineType
+
+        SQL_SET_CURRENT_CURSOR_STMT to (piCursorNum(Self))
+
+        Case Begin
+            Case (MertechInc_DriverName = SQLFLEX)
+                sql_set_stmt to (SFormat("select type from master.sys.sysobjects where name = '%1' union all select type from sys.sysobjects where name = '%1'", sFunctionName))
+                sql_prepare_stmt
+                sql_execute_stmt
+
+                sql_fetch_next_row into sRoutineType
+                If (sRoutineType = "P") Move "PROCEDURE" to sRoutineType
+                Else Move "FUNCTION" to sRoutineType
+                Case Break
+            Case (MertechInc_DriverName = MySQLFlex)
+                sql_set_stmt to (SFormat("select routine_type from information_schema.routines where routine_name = '%1'", sFunctionName))
+                sql_prepare_stmt
+                sql_execute_stmt
+                sql_fetch_next_row into sRoutineType
+
+                Case Break
+            Case (MertechInc_DriverName = ORAFLEX)
+                sql_set_stmt  to (SFormat("SELECT object_type from all_objects where object_name = '%1'", sFunctionName))
+                sql_prepare_stmt
+                sql_execute_stmt
+                sql_fetch_next_row into sRoutineType
+
+                Case Break
+            Case (MertechInc_DriverName = PgFlex)
+                // Postgres doesn't differentiate between procedures and functions, so treat everything as procedures
+                // because that is better tested.
+                Move "PROCEDURE" to sRoutineType
+                Case Break
+        Case End
+
+        Function_Return (sRoutineType = "PROCEDURE")
+    End_Function
+
+    {Visibility=Private}
+    Function ProcParams String sFunctionName Returns Variant[]
+        Variant[] vFuncParams
+        Integer i iParamType
+
+        SQL_SET_CURRENT_CURSOR_STMT to (piCursorNum(Self))
+
+        Case Begin
+            Case (MertechInc_DriverName = SQLFLEX)
+                sql_set_stmt to (SFormat("sys.sp_procedure_params_managed @procedure_name = '%1'", sFunctionName))
+                sql_prepare_stmt
+                sql_execute_stmt
+
+                Repeat
+                    sql_fetch_next_row
+                    If (Found) Begin
+                        sql_fetch_column 6 into iParamType
+
+                        If (iParamType = 1) Move "IN" to vFuncParams[i]
+                        If (iParamType = 2) Move "INOUT" to vFuncParams[i]
+                        If (iParamType = 3) Move "OUT" to vFuncParams[i]
+                        If (iParamType <> 4) Increment i
+                    End
+                Until (not(Found))
+
+                Function_Return vFuncParams
+
+                Case Break
+            Case (MertechInc_DriverName = MySQLFlex)
+                sql_set_stmt to (SFormat("select parameter_mode from INFORMATION_SCHEMA.PARAMETERS where SPECIFIC_NAME = '%1' order by ordinal_position", sFunctionName))
+                sql_prepare_stmt
+                sql_execute_stmt
+
+                Case Break
+            Case (MertechInc_DriverName = ORAFLEX)
+                sql_set_stmt to    "SELECT all_arguments.in_out as parameter_mode "
+                sql_append_stmt to "FROM all_objects inner join all_arguments on all_objects.object_id = all_arguments.object_id "
+                sql_append_stmt to (SFormat("WHERE all_objects.object_name = '%1' order by all_arguments.position", sFunctionName))
+                sql_prepare_stmt
+                sql_execute_stmt
+
+                Case Break
+            Case (MertechInc_DriverName = PgFlex)
+                sql_set_stmt    to "select information_schema.parameters.parameter_mode "
+                sql_append_stmt to "from information_schema.routines inner join information_schema.parameters "
+                sql_append_stmt to "on information_schema.routines.specific_name=information_schema.parameters.specific_name "
+                sql_append_stmt to (SFormat("where information_schema.routines.routine_name = '%1' ", sFunctionName))
+                sql_append_stmt to "order by information_schema.parameters.ordinal_position"
+                sql_prepare_stmt
+                sql_execute_stmt
+
+                Case Break
+        Case End
+
+        Repeat
+            sql_fetch_next_row into vFuncParams[i]
+            Increment i
+        Until (not(Found))
+
+        Function_Return vFuncParams
+    End_Function
+
+    Procedure Set StoreHandleInfo Handle hConn
+        Set phCLIHandle to hConn
+    End_Procedure
+
+    Procedure FreeHandle
+        SQL_SET_CURRENT_CURSOR_STMT to (piCursorNum(Self))
+
+				 Case Begin
+            Case (MertechInc_DriverName = SQLFLEX)
+          			END_CALL_PROCEDURE
+                Case Break
+            Case (MertechInc_DriverName = MySQLFlex)
+                Case Break
+            Case (MertechInc_DriverName = ORAFLEX)
+                Case Break
+            Case (MertechInc_DriverName = PgFlex)
+                Case Break
+        Case End
+
+
+        SQL_CLOSE_CURSOR_STMT to (piCursorNum(Self))
+        Send Destroy_Object
+    End_Procedure // FreeHandle
+
+    Procedure SQLClose
+        Send FreeHandle
+    End_Procedure // SQLClose
+
+    Procedure HandleError Integer ihstmt Integer ihdbc String sDrvrId String sOriginMsg
+        Integer iErrHandle
+        Integer iErrNum
+        String  sLocationInfo
+
+        //*** Get the DataFlex statement identifier
+        Move Current_object to iErrHandle
+
+        //*** Determine error number
+        If (ihstmt = 0) ;
+            Move CLIERR_SQLINVALID_CLI_STMT_HANDLE to iErrNum
+        Else If (ihdbc = 0) ;
+            Move CLIERR_SQLINVALID_CLI_CONN_HANDLE to iErrNum
+        Else If (sDrvrId = "") ;
+            Move CLIERR_SQLINVALID_DRIVER_ID to iErrNum
+        Else ;
+            Move CLIERR_SQL_ERROR to iErrNum
+
+        //*** Create location information
+        Move "[" to sLocationInfo
+        If (sOriginMsg <> "") Begin
+            Move (Append(sLocationInfo, sOriginMsg)) to sLocationInfo
+            Move (Append(sLocationInfo, ", "))       to sLocationInfo
+        End
+        Move (Append(sLocationInfo, "DataFlex hstmt = ")) to sLocationInfo
+        Move (Append(sLocationInfo, iErrHandle))          to sLocationInfo
+        Move (Append(sLocationInfo, "]"))                 to sLocationInfo
+
+        //*** Generate the error
+        Error iErrNum sLocationInfo
+    End_Procedure
+
+    Procedure StmtError Integer iErrNum String sErrText String sOriginMsg
+        Integer iErrHandle
+        String  sLocationInfo
+
+        //*** Get the DataFlex statement identifier
+        Move Current_object to iErrHandle
+
+
+        //*** Create location information
+        Move "[" to sLocationInfo
+        If (sOriginMsg <> "") Begin
+            Move (Append(sLocationInfo, sOriginMsg)) to sLocationInfo
+            Move (Append(sLocationInfo, ", "))       to sLocationInfo
+        End
+        If (sErrtext <> "") Begin
+            Move (Append(sLocationInfo, sErrtext)) to sLocationInfo
+            Move (Append(sLocationInfo, ", "))     to sLocationInfo
+        End
+        Move (Append(sLocationInfo, "DataFlex hstmt = ")) to sLocationInfo
+        Move (Append(sLocationInfo, iErrHandle))          to sLocationInfo
+        Move (Append(sLocationInfo, "]"))                 to sLocationInfo
+
+        //*** Generate the error
+        Error iErrNum sLocationInfo
+    End_Procedure
+
+    Procedure SQLIllegalAttribute String sErrText String sOriginMsg
+        Integer bReport
+
+        Get_Attribute DF_REPORT_UNSUPPORTED_ATTRIBUTES to bReport
+        If (bReport) ;
+            Send StmtError CLIERR_SQLINVALID_ATTRIBUTE sErrtext sOriginMsg
+    End_Procedure // SQLIllegalAttribute
+
+    Function SQLColumnValue Integer iCol Returns String
+        String sResult
+        Integer iCols
+        Integer iOrgDateFmt
+        Integer iOrgDateSep
+        String sType
+
+        SQL_SET_CURRENT_CURSOR_STMT to (piCursorNum(Self))
+
+        SQL_GET_NUM_COLS to iCols
+        If (iCol <= iCols) Begin
+            //DAC SQL Driver currently uses military format for the SQL getting of dates.
+            If (giSQLCompatibilityMode=SQL_DAC_HIGH_COMPATABILITY) Begin
+                Get_Attribute DF_DATE_FORMAT to iOrgDateFmt
+                Get_Attribute DF_DATE_SEPARATOR to iOrgDateSep
+                Set_Attribute DF_DATE_FORMAT to DF_DATE_MILITARY
+                Set_Attribute DF_DATE_SEPARATOR to (Ascii('-'))
+            End
+
+            //DAC SQL Driver cannot directly get TEXT fields into a result.
+            If (giSQLCompatibilityMode=SQL_DAC_HIGH_COMPATABILITY) Begin
+                SQL_GET_COL_ATTRIBUTE of iCol DFTYPE to sType
+                If (sType=5) Move "" to sResult
+                Else Begin
+                    SQL_FETCH_COLUMN iCol into sResult
+                End
+            End
+            Else Begin
+               SQL_FETCH_COLUMN iCol into sResult
+            End
+
+
+            If (giSQLCompatibilityMode=SQL_DAC_HIGH_COMPATABILITY) Begin
+                Set_Attribute DF_DATE_FORMAT to iOrgDateFmt
+                Set_Attribute DF_DATE_SEPARATOR to iOrgDateSep
+            End
+
+            Function_Return sResult
+        End
+        Else Send HandleError (phCLIHandle(Self)) (phCLIHandle(Parent(Self))) (psDriverID(Self)) "SQLColumnValue"
+    End_Function // SQLColumnValue
+
+    Function SQLNextColumn Returns String
+        Integer iCol
+        String  sResult
+
+        Get piLastColumn to iCol
+        Increment iCol
+        Get SQLColumnValue iCol to sResult
+        Set piLastColumn to iCol
+
+        Function_Return sResult
+    End_Function // SQLNextColumn
+
+    Procedure SQLPrepare String sStatement
+        tColumnMap tColumnMap
+        Set ptColumnMap to tColumnMap
+        Set pisBeforeFetch to True
+
+        SQL_SET_CURRENT_CURSOR_STMT to (piCursorNum(Self))
+        SQL_SET_STMT to sStatement
+
+        SQL_PREPARE_STMT
+    End_Procedure // SQLPrepare
+
+    Procedure SQLExecute
+        SQL_EXECUTE_STMT
+    End_Procedure
+
+    Procedure SQLExecDirect String sStatement
+        tColumnMap tColumnMap
+        Set ptColumnMap to tColumnMap
+        Set pisBeforeFetch to True
+
+        SQL_SET_CURRENT_CURSOR_STMT to (piCursorNum(Self))
+
+        SQL_SET_STMT to sStatement
+        SQL_PREPARE_STMT
+        SQL_EXECUTE_STMT
+    End_Procedure
+
+    Function SQLFetch Returns Integer
+        SQL_SET_CURRENT_CURSOR_STMT to (piCursorNum(Self))
+        Set pisBeforeFetch to False
+
+        SQL_FETCH_NEXT_ROW
+        Function_Return (Found)
+    End_Function
+
+    Procedure SQLBindFile Integer iFileNum
+        tColumnMap tColumnMap
+        String[] sBindFileColumns
+        Integer[] iBufferColumn
+        Integer iColCnt i iDateFormat iResultColumnType iBindFileColumnType
+        String sColumnName
+        Variant vFieldValue
+        Boolean isRecnumTable
+
+        SQL_SET_CURRENT_CURSOR_STMT to (piCursorNum(Self))
+
+        Get_Attribute DF_FILE_RECNUM_TABLE of iFileNum to isRecnumTable
+        Get ptColumnMap to tColumnMap
+
+        If (tColumnMap.iFileNum <> iFileNum) Begin
+            Move iFileNum to tColumnMap.iFileNum
+
+            // First we build an array of the column names (in order) from the file buffer to bind to
+            Get_Attribute DF_FILE_NUMBER_FIELDS of iFileNum to iColCnt
+            For i from 0 to iColCnt
+                If (isRecnumTable) Get_Attribute DF_FIELD_NAME of iFileNum i to sColumnName
+                Else Move "" to sColumnName
+
+                Move (Uppercase(sColumnName)) to sBindFileColumns[i]
+            Loop
+
+            // Next we iterate over the columns in the resultset.  Any column names that match we
+            // set its match location into an array that maps each resultset column to its matching
+            // column number in the file buffer.  If there is no match, we set that resultset
+            // column mappped column to -1.
+            //
+            // Since Arrays are zero based and columns are numbered from 1, when we actually map
+            // to set the value, we need to add 1 to array indexer to get the proper resultset
+            // column AND we need to add 1 to the mapped-to column since it was loaded into a zero
+            // based array also.  (Ex: vResultColumn[0] = 2 means column 1 from the resultset maps
+            // to Column 3 of the file buffer)
+
+
+            SQL_GET_NUM_COLS to iColCnt
+            For i from 1 to iColCnt
+                SQL_GET_COL_NAME i to sColumnName
+                // Because SearchArray returns -1 if there isn't a match, we don't need to do
+                // anything to make an "unmapped column" have a value of -1.
+                Move (SearchArray(Uppercase(sColumnName), sBindFileColumns)) to tColumnMap.vResultColumn[i-1]
+
+                // If the types don't match between the columns, then "unmap" the column.  This
+                // should only occur when you're not mapping to the same file as the resultset.
+                // In this case, sql.pkg silently does nothing, so we need to duplicate this instead
+                // of generating an error.  If the mapping is to a string, then any type can be
+                // converted to a string so its okay.
+                If (tColumnMap.vResultColumn[i-1] <> -1) Begin
+                    SQL_GET_COL_ATTRIBUTE of i DFTYPE to iResultColumnType
+                    Get_Attribute DF_FIELD_TYPE of iFileNum (tColumnMap.vResultColumn[i-1]) to iBindFileColumnType
+
+                    // If the conversion is to string (even if the resultset column is something
+                    // else) its ok, so Break out of the If block before we muck things up.
+                    If (iBindFileColumnType = DF_ASCII) Break
+
+                    // Otherwise, break the mapping
+                    If (iResultColumnType <> iBindFileColumnType) Move -1 to tColumnMap.vResultColumn[i-1]
+                End
+            Loop
+
+            Set ptColumnMap to tColumnMap
+        End
+
+        Get SQL_USE_DATAFLEX_DATEFORMAT to iDateFormat
+        Set SQL_USE_DATAFLEX_DATEFORMAT to True
+        Clear iFileNum
+        For i from 0 to (SizeOfArray(tColumnMap.vResultColumn)-1)
+            If (tColumnMap.vResultColumn[i] > -1) Begin
+                SQL_FETCH_COLUMN (i+1) into vFieldValue
+                Set_Field_Value iFileNum (tColumnMap.vResultColumn[i]) to vFieldValue
+            End
+        Loop
+        Set_Attribute DF_FILE_STATUS of iFileNum to DF_FILE_ACTIVE
+        Set SQL_USE_DATAFLEX_DATEFORMAT to iDateFormat
+    End_Procedure
+
+    Function SQLGetData Integer iCol Integer iLen Returns String
+        String data
+        Integer retlen
+
+        SQL_SET_CURRENT_CURSOR_STMT to (piCursorNum(Self))
+
+        SQL_SET_CHUNK_SIZE to iLen
+        SQL_GET_DATA_CHUNK COLUMN iCol OFFSET (piDataChunkOffset(Self)) to data retlen
+        Set piDataChunkOffset to (piDataChunkOffset(Self)+retlen)
+
+        Function_Return data
+    End_Function
+
+    Function SQLColumnMap String sColname Returns Integer
+        Integer iNumColumns i iIndex
+        String[] cols
+
+        SQL_SET_CURRENT_CURSOR_STMT to (piCursorNum(Self))
+
+        Get SQLStmtAttribute SQLSTMTATTRIB_COLUMNCOUNT to iNumColumns
+
+        For i from 1 to iNumColumns
+            SQL_GET_COL_NAME i to cols[i-1]
+            Move (trim(Uppercase(cols[i-1]))) to cols[i-1]
+        Loop
+
+        Move (trim(Uppercase(sColname))) to sColname
+        Move (SearchArray(sColname, cols)) to iIndex
+        Function_Return (iIndex+1)  // even if searcharray returns -1 (not found) this expects 0 for not found, so it's ok
+    End_Function
+
+    Function SQLStmtAttribute Integer iAttribId Returns String
+        Integer iCnt
+
+        SQL_SET_CURRENT_CURSOR_STMT to (piCursorNum(Self))
+
+        Case Begin
+            Case (iAttribId = SQLSTMTATTRIB_COLUMNCOUNT)
+                SQL_GET_NUM_COLS to iCnt
+                Function_Return iCnt
+                Case Break
+            Case (iAttribId = SQLSTMTATTRIB_ROWCOUNT)
+                SQL_GET_NUM_ROWS to iCnt
+
+                //DAC Driver doesn't know the rowcount before the first fetch.
+                If (giSQLCompatibilityMode=SQL_DAC_HIGH_COMPATABILITY) Begin
+                    If (pisBeforeFetch(Self)) Function_Return -1
+                End
+
+                Function_Return iCnt
+                Case Break
+            Case (iAttribId = SQLSTMTATTRIB_ROWCOUNT_TYPE)
+                // TODO: Need something to indicate the quality of the SQL_GET_NUM_ROWS, or fake till I make it
+                Case Break
+            Case (iAttribId = SQLSTMTATTRIB_NUMMESSAGES)
+                Function_Return -1
+                // TODO: Are the messages returned in SQLGetMessage from the driver, or from the underlying connection?
+                Case Break
+            Case Else
+        Case End
+
+    End_Function
+
+    Function SQLColAttribute Integer iCol Integer iAttribId Returns String
+        String sValue
+        Integer iSQLType
+        Integer iDFType
+
+        SQL_SET_CURRENT_CURSOR_STMT to (piCursorNum(Self))
+        SQL_GET_COL_ATTRIBUTE of iCol SQLTYPE to iSQLType
+        SQL_GET_COL_ATTRIBUTE of iCol DFTYPE to iDFType
+
+        Case Begin
+            Case (iAttribId = SQLCOLATTRIB_SIZE)
+                SQL_GET_COL_ATTRIBUTE of iCol SIZE to sValue
+
+                //DAC Driver uses different values.
+                If (giSQLCompatibilityMode=SQL_DAC_HIGH_COMPATABILITY) Begin
+                    If (iSQLType=12) Move (Integer(sValue-1)) to sValue
+                    If (iDFType=5) Move "0" to sValue
+                    If (iSQLType=40)  Move "10" to sValue
+                End
+
+                Case Break
+            Case (iAttribId = SQLCOLATTRIB_PRECISION)
+                SQL_GET_COL_ATTRIBUTE of iCol DECIMALS to sValue
+                Case Break
+            Case (iAttribId = SQLCOLATTRIB_LABEL)
+                SQL_GET_COL_ATTRIBUTE of iCol COLUMN_NAME to sValue
+                Case Break
+            Case (iAttribId = SQLCOLATTRIB_BASECOLUMNNAME)
+                SQL_GET_COL_ATTRIBUTE of iCol COLUMN_NAME to sValue
+
+                //DAC Driver doesn't use Base Column Name.
+                If (giSQLCompatibilityMode=SQL_DAC_HIGH_COMPATABILITY) Begin
+                    Move "" to sValue
+                End
+
+                Case Break
+            Case (iAttribId = SQLCOLATTRIB_BASETABLENAME)
+                SQL_GET_COL_ATTRIBUTE of iCol TABLE_NAME to sValue
+                Case Break
+            Case (iAttribId = SQLCOLATTRIB_SQLTYPE)
+                Move iSQLType to sValue
+
+                //DAC Driver uses different values.
+                If (giSQLCompatibilityMode=SQL_DAC_HIGH_COMPATABILITY) Begin
+                    If (iSQLType=2) Move "3" to sValue
+                    If (iSQLType=-99) Move "12" to sValue
+                    If (iSQLType=40)  Move "91" to sValue
+                End
+
+                Case Break
+            Case (iAttribId = SQLCOLATTRIB_NULLABLE)
+                SQL_GET_COL_ATTRIBUTE of iCol NULLABLE to sValue
+                Case Break
+            Case (iAttribId = SQLCOLATTRIB_DFTYPE)
+                SQL_GET_COL_ATTRIBUTE of iCol DFTYPE to sValue
+
+                //DAC Driver uses different values.
+                If (giSQLCompatibilityMode=SQL_DAC_HIGH_COMPATABILITY) Begin
+                    If (iDFType = 5) Move "0" to sValue
+                End
+                Case Break
+        Case End
+
+        Function_Return sValue
+    End_Function
+
+    Procedure SQLSetProcedureName String sProcName String sSchemaArg
+        Set psProcName to sProcName
+        If (Num_Arguments >= 2) ;
+            Set psSchemaName to sSchemaArg
+        Else ;
+            Set psSchemaName to ""
+    End_Procedure
+
+    Procedure SQLSetNextArgument String sArgument
+        Integer iArgnum
+
+        Get piLastArgument to iArgnum
+        Increment iArgnum
+        Send SQLSetArgument iArgnum sArgument
+        Set piLastArgument to iArgnum
+    End_Procedure // SQLSetNextArgument
+
+    Procedure SQLSetArgument Integer iArgnum String sArgument
+        Variant[] vParams
+
+        Get pvParams to vParams
+        Move sArgument to vParams[iArgnum-1]
+        Set pvParams to vParams
+
+    End_Procedure // SQLSetArgument
+
+    Procedure SQLCall
+        Variant[] vParams
+        Variant[] vParamOpts
+        Integer i
+        Integer iMax
+        Integer iParamsIn
+        String sParameter
+        Boolean bIsProcedure
+
+        SQL_SET_CURRENT_CURSOR_STMT to (piCursorNum(Self))
+
+        Get pvParams to vParams
+
+        // First, we need to figure out if this is a procedure or a function. Then if
+        // it's a procedure, "analyze" it to figure out which parameters are IN,
+        // OUT, or IN_OUT.  Then we adjust how we call SQL_SET_PROCEDURE_PARAMETER
+        // so that after the call you can retrieve the value.
+
+        Get IsProcedure (psProcName(Self)) to bIsProcedure
+
+        If (bIsProcedure) Begin
+            Get ProcParams (psProcName(Self)) to vParamOpts
+
+            Move (sizeOfArray(vParamOpts)) to iMax
+            Move (SizeOfArray(vParams)) to iParamsIn
+            Set piParameterCount to iMax
+
+            SQL_SET_PROCEDURE_NAME (psProcName(Self)) NUMPAR iMax
+            For i from 1 to iMax
+                If ( (i-1) >= iParamsIn) Move "" to sParameter
+                Else Move vParams[i-1] to sParameter
+
+                Case Begin
+                    Case (vParamOpts[i-1] = "IN")
+                        SQL_SET_PROCEDURE_PARAMETER i to sParameter IN
+                        Case Break
+                    Case (vParamOpts[i-1] = "OUT")
+                        SQL_SET_PROCEDURE_PARAMETER i to sParameter OUT
+                        Case Break
+                    Case (vParamOpts[i-1] = "IN/OUT" or vParamOpts[i-1] = "INOUT")
+                        SQL_SET_PROCEDURE_PARAMETER i to sParameter IN_OUT
+                        Case Break
+                Case End
+            Loop
+
+            SQL_PROCEDURE_EXECUTE
+        End
+        Else Begin
+            SQL_SET_FUNCTION_NAME (psProcName(Self)) NUMPAR (SizeOfArray(vParams))
+            For i from 1 to (SizeOfArray(vParams))
+                SQL_SET_FUNCTION_PARAMETER i to vParams[i-1]
+            Loop
+
+            SQL_FUNCTION_EXECUTE
+        End
+    End_Procedure
+
+    Function SQLGetNextArgument Returns String
+        Integer iArgnum
+        String  sResult
+
+        Get piLastArgument to iArgnum
+        Increment iArgnum
+        Get SQLGetArgument iArgnum to sResult
+        Set piLastArgument to iArgnum
+
+        Function_Return sResult
+    End_Function // SQLGetNextArgument
+
+    Function SQLGetArgument Integer iArgnum Returns String
+        String retval
+
+        If ( (piParameterCount(Self)) < iArgnum) Function_Return ""
+        SQL_GET_PROCEDURE_PARAMETER iArgnum to retval
+
+        Function_Return retval
+    End_Function
+
+    Function SQLReturnValue Returns String
+        String retval
+
+        SQL_GET_FUNCTION_RETURN to retval
+        Function_Return retval
+    End_Function
+
+    Function SQLNextResultSet Returns Integer
+        SQL_NEXT_RESULT_SET
+
+        Function_Return (Found)
+    End_Function
+
+    Function SQLGetMessage Integer iMessageNum Returns String
+        // TODO
+    End_Function
+
+    Procedure SQLFetchActivatesBuffer Integer iFileNum Integer bState
+        // TODO
+    End_Procedure
+
+
+End_Class
+
+Class cSQLConnection is a cObject
+    Procedure Construct_Object
+        Forward Send Construct_Object
+
+        Property Handle phCLIHandle 0
+        Property String psDriverID MertechInc_DriverName
+        Property Integer piBindFile 0
+        Property String psUsername ""
+        Property String psPassword ""
+
+        {Visibility=Private}
+        Property String psCurrentDatabase ""
+
+        {Visibility=Private}
+        Property tCLIHandleMap ptCLIHandleMap
+    End_Procedure
+
+    Procedure StoreHandleInfo Handle hCLIHandle String sDrvrId Handle iParentHandle
+        Set phCLIHandle      to hCLIHandle
+        Set psDriverID       to sDrvrId
+    End_Procedure // StoreHandleInfo
+
+    Procedure FreeHandle
+        Send Destroy
+    End_Procedure
+
+    Procedure Set SQLDatabase String sDatabase
+        tCLIHandleMap conn
+
+        Get ptCLIHandleMap to conn
+        Set psCurrentDatabase to sDatabase
+        SQL_USE_DATABASE of conn.sConnect to sDatabase
+    End_Procedure
+
+    Function SQLConnect String sDriver String sConnect Returns Handle
+        tCLIHandleMap[] maps
+        tCLIHandleMap conn
+
+        Get ptCLIHandleMaps to maps
+        Move sDriver to conn.sDriver
+        Move sConnect to conn.sConnect
+
+        If (SizeOfArray(maps) > 0) Move (maps[(SizeOfArray(maps)-1)].iHdbc+1) to conn.iHdbc
+        Else Move 1 to conn.iHdbc
+
+        Set CurrentConnection to sDriver sConnect
+        If (not(Err)) Begin
+            Move conn to maps[(SizeOfArray(maps))]
+            Set ptCLIHandleMaps to maps
+            Set ptCLIHandleMap to conn
+        End
+
+        Function_Return Self
+    End_Function
+
+    Function SQLFileConnect Integer iFileNum Returns Integer
+        Boolean bIsOpen
+        String sDriver sServer
+        tCLIHandleMap[] maps
+        tCLIHandleMap conn
+
+        Get_Attribute DF_FILE_OPENED of iFileNum to bIsOpen
+        If (bIsOpen) Begin
+            //*** Fill the driver id, assume longest is 255 characters
+            Move (Repeat(' ', 255)) to sDriver
+            Move (Repeat(' ', 255)) to sServer
+            Get_Attribute DF_FILE_DRIVER of iFileNum to sDriver
+            Get_Attribute DF_FILE_SERVER_NAME of iFileNum to sServer
+
+            Indicate Err False
+
+            Get ptCLIHandleMaps to maps
+            Move sDriver to conn.sDriver
+            Move sServer to conn.sConnect
+
+            If (SizeOfArray(maps) > 0) Move (maps[(SizeOfArray(maps)-1)].iHdbc+1) to conn.iHdbc
+            Else Move 1 to conn.iHdbc
+
+            Set CurrentConnection to sDriver sServer
+            If (not(Err)) Begin
+                Move conn to maps[(SizeOfArray(maps))]
+                Set ptCLIHandleMaps to maps
+                Set ptCLIHandleMap to conn
+            End
+
+            Send StoreHandleInfo conn.iHdbc conn.sDriver
+            Set piBindFile to iFileNum
+        End
+        Else Error 4099 "File Not Open"
+
+        //*** Return success status
+        Function_Return (not(Err))
+    End_Function
+
+    Procedure SQLDisconnect
+        tCLIHandleMap map
+        tCLIHandleMap[] maps
+        Integer iFound
+
+        Get ptCLIHandleMap to map
+        Get ptCLIHandleMaps to maps
+
+        Move (SearchArray(map, maps, Parent(Self), RefFunc(CompareMaps))) to iFound
+        If (iFound > -1) Begin
+            Send FreeHandle
+        End
+    End_Procedure // SQLDisconnect
+
+    Function CreateHandle Returns Integer
+        Handle hSQL
+        Integer iCursor
+
+        Get Create U_cSQLStatement to hSQL
+
+        Set piBindFile of hSQL to (piBindFile(Current_object))
+
+        SQL_OPEN_CURSOR_STMT to iCursor
+        Set piCursorNum of hSQL to iCursor
+
+        Function_Return hSQL
+    End_Function // CreateHandle
+
+    Function SQLOpen Returns Integer
+        Handle hDFHandle
+
+        Get CreateHandle to hDFHandle
+
+        Send StoreHandleInfo to hDFHandle Self (psDriverID(Self))
+
+        Function_Return hDFHandle
+    End_Function // SQLOpen
+
+
+
+
+    Function DriverIndex String sDriver Returns Integer
+        String sCurrentDriver
+        Integer iDriver
+        Integer iNumDrivers
+
+        Get_Attribute DF_NUMBER_DRIVERS to iNumDrivers
+        For iDriver from 1 to iNumDrivers
+          Get_Attribute DF_DRIVER_NAME of iDriver to sCurrentDriver
+          If (Uppercase(sDriver) = Uppercase(sCurrentDriver)) ;
+              Function_Return iDriver
+        Loop
+        Function_Return 0
+    End_Function // DriverIndex
+
+    Function FirstServerForDriverNo Integer iDriver Returns String
+        String sServer
+        Integer iNumServers
+        Integer iServer
+
+        If (iDriver <> 0) Begin
+            Get_Attribute DF_DRIVER_NUMBER_SERVERS of iDriver to iNumServers
+            If (iNumServers<>0) Begin
+                Move 1 to iServer
+                Get_Attribute DF_DRIVER_SERVER_NAME of iDriver iServer to sServer
+            End
+        End
+
+        Function_Return sServer
+    End_Function
+
+    {Visibility=Private}
+    Procedure Set CurrentConnection String sDriver String sServer
+        Integer iDriver
+        String sUsername
+        String sPassword
+
+        If (sDriver="") Begin
+            DO_GETFILENUMBER_DRIVERNAME 0
+            Move MertechInc_DriverName to sDriver
+        End
+
+        If ("MDSMYSQL|ORA_DRV|MDSPGSQL|SQL_DRV|MDS_DB2" contains Uppercase(Trim(sDriver))) Begin
+            Move (Uppercase(Trim(sDriver))) to MertechInc_DriverName
+
+            If (Trim(sDriver) <> "") Move (Uppercase(Trim(sDriver))) to MertechInc_CurrentDriver
+            Else Move "" to MertechInc_CurrentDriver
+
+            Get psUsername to sUsername
+            Get psPassword to sPassword
+
+            Get DriverIndex MertechInc_CurrentDriver to iDriver
+
+            If (sServer="") Get FirstServerForDriverNo iDriver to sServer
+            If (sUsername="") GET_CURRENT_USER_NAME of sServer to sUsername
+            If (sPassword="") get_current_user_password of sServer to sPassword
+
+            Login sServer sUsername sPassword MertechInc_DriverName
+            Call_Driver 0 MertechInc_DriverName Function CALLDRV_CURRENT_SQL_SERVER_CONNECTION CALLBACK 0 PASSING sServer MertechInc_Blank 0 RESULT MertechInc_iRet
+            If MertechInc_iRet EQ -1 INDICATE ERR True
+        End
+        Else Error 4099 "Invalid Driver"
+
+    End_Procedure
+
+End_Class
+
+Class cSQLHandleManager is a cObject
+
+    Procedure Construct_Object
+        Forward Send Construct_Object
+
+        Property String  psDefaultDriver     ""
+        Property String  psDefaultConnection ""
+        Property tCLIHandleMap[] ptCLIHandleMaps
+    End_Procedure
+
+    {Visibility=Private}
+    Function CompareMaps tCLIHandleMap map1 tCLIHandleMap map2 Returns Integer
+        If ((map1.iHdbc = map2.iHdbc) and (map1.sConnect = map2.sConnect) and (map1.sDriver = map2.sDriver)) Begin
+            Function_Return (EQ)
+        End
+    End_Function
+
+    Function CreateHandle Returns Handle
+        Handle hSQL
+
+        Get Create U_cSQLConnection to hSQL
+        Function_Return hSQL
+    End_Function
+
+    Procedure SQLSetConnect String sDriver String sConnect
+        Set psDefaultDriver to sDriver
+        Set psDefaultConnection to sConnect
+    End_Procedure
+
+    Function SQLConnect String sDriver String sConnect String sUsername String sPassword Returns Handle
+        Handle hSql
+        Boolean bOK
+
+        Get CreateHandle to hSql
+
+        If (sDriver = "" and sConnect = "") Begin
+            Move (psDefaultDriver(Self)) to sDriver
+            Move (psDefaultConnection(Self)) to sConnect
+        End
+
+        If (num_arguments>2) Begin
+            Set psUsername of hSql to sUsername
+            Set psPassword of hSql to sPassword
+        End
+
+        Get SQLConnect of hSql sDriver sConnect to bOK
+        If (not(bOK)) Begin
+            Send FreeHandle of hSQL
+            Function_Return 0
+        End
+
+        Function_Return hSql
+    End_Function
+
+    Function SQLFileConnect Integer iFileNum Returns Integer
+        Handle hSql
+        Boolean bOK
+
+        //*** Allocate a new handle
+        Get CreateHandle to hSql
+        Get SQLFileConnect of hSql iFileNum to bOK
+
+        //*** If failure, kill the handle and return a 0 handle
+        If (not(bOK)) Begin
+            Send FreeHandle of hSql
+            Function_Return 0
+        End
+
+        Function_Return hSql
+    End_Function // SQLFileConnect
+
+End_Class
+
+#IFDEF IS$WINDOWS
+
+Function CreateSQLmanager for cDesktop Returns Integer
+    Handle hSqlManager
+
+    Get Create U_cSQLHandleManager to hSqlManager
+    Function_Return hSqlManager
+End_Function // CreateSQLMngr
+
+#ELSE
+
+// if windows, the method is added to the real desktop class (i.e., the desktop object). If
+// not windows, the method is added to UI_Object so all objects understand it (this is not desirable
+// but it is the choice we have in character mode).
+
+Function CreateSQLmanager for Desktop Returns Integer
+    Handle hSqlManager
+
+    Get Create U_cSQLHandleManager to hSqlManager
+    Function_Return hSqlManager
+End_Function // CreateSQLMngr
+
+#ENDIF
+
+#COMMAND SQL$GetNextArgument R R
+    #IFSAME !2 to
+        #IF (!0>2)
+            Get SQLReturnValue of !1 to !3
+        #ENDIF
+    #ELSE
+        If (!1) Get SQLGetNextArgument of !1 to !2
+        #IF (!0>2)
+            SQL$GetNextArgument !1 !3 !4 !5 !6 !7 !8 !9
+        #ENDIF
+    #ENDIF
+#ENDCOMMAND
+
+#COMMAND SQLGetArguments R
+    SQL$GetNextArgument !1 !2 !3 !4 !5 !6 !7 !8 !9
+#ENDCOMMAND
+
+
+
+Get CreateSQLManager of Desktop to _embsqlghoSQLHandleMngr
+
+

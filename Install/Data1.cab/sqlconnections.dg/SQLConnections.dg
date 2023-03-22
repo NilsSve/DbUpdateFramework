@@ -1,0 +1,103 @@
+Use Windows.pkg
+Use cCJGridPromptList.pkg
+Use cDbUpdateFunctionLibrary.pkg
+Use MSSqldrv.pkg
+Use db2_drv.pkg
+Use odbc_drv.pkg
+
+Object oSQLConnections is a ModalPanel
+    Set Label to "SQL Connections"
+    Set Size to 121 185
+    Set piMinSize to 89 185
+    Set Location to 2 2
+    Set Border_Style to Border_Thick
+
+    Property String[] psTheData
+
+    If (ghoDbUpdateFunctionLibrary = 0) Begin
+        Object oDbUpateFunctionLibrary is a cDbUpdateFunctionLibrary
+        End_Object
+    End
+
+    Object oSelListSQLConnections is a cCJGridPromptList
+        Set Size to 90 167
+        Set Location to 6 6
+        Set peAnchors to anAll
+        Set pbAllowColumnRemove to False
+        Set pbUseAlternateRowBackgroundColor to True
+        Set pbGrayIfDisable to False
+        Set pbHeaderReorders to False
+        Set pbHeaderSelectsColumn to False
+        Set pbHeaderTogglesDirection to False
+        Set pbShadeSortColumn to False
+        Set piFocusCellBackColor to clDkGray
+
+        Object oName is a cCJGridColumn
+            Set piWidth to 223
+            Set psCaption to "SQL Connection"
+        End_Object
+
+        Object oDriverID is a cCJGridColumn
+            Set piWidth to 111
+            Set psCaption to "Driver ID"
+        End_Object
+
+        Procedure Activating
+            tDataSourceRow[] MyData
+            Handle hoDataSource
+            String[] sTheData
+            Integer iCount iSize iPos
+            String sDriverID sConnectionID sValue
+
+            Send Cursor_Wait of Cursor_Control
+            Forward Send Activating
+
+            Get psTheData to sTheData
+            Move (SizeOfArray(sTheData)) to iSize
+            Decrement iSize
+            For iCount from 0 to iSize
+                Move sTheData[iCount] to sValue
+                Move (Pos("|", sValue)) to iPos
+                Move (Left(sValue, (iPos -1)))     to sConnectionID
+                Move (Mid(sValue, 999, (iPos +1))) to sDriverID
+                Move sConnectionID to MyData[iCount].sValue[0]
+                Move sDriverID     to MyData[iCount].sValue[1]
+            Loop
+
+            Get phoDataSource to hoDataSource
+            Send InitializeData of hoDataSource MyData
+            Send Cursor_Ready of Cursor_Control
+        End_Procedure
+
+    End_Object
+
+    Object oOK_Btn is a Button
+        Set Label    to "&OK"
+        Set Location to 101 68
+        Set peAnchors to anBottomRight
+
+        Procedure OnClick
+            Send Ok of oSelListSQLConnections
+        End_Procedure
+
+    End_Object
+
+    Object oCancel_Btn is a Button
+        Set Label    to "&Cancel"
+        Set Location to 101 123
+        Set peAnchors to anBottomRight
+
+        Procedure OnClick
+            Send Close_Panel
+        End_Procedure
+
+    End_Object
+
+    Procedure Page Integer iPageObject
+        Set Icon to "SQLConnections.ico"
+        Forward Send Page iPageObject
+    End_Procedure
+
+    On_Key Key_Alt+Key_O Send KeyAction of oOK_Btn
+    On_Key Key_Alt+Key_C Send KeyAction of oCancel_Btn
+End_Object

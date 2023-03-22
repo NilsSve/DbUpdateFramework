@@ -1,0 +1,19 @@
+ ***  The Database Update Framework (DUF) ***
+
+Database Update Started:      2022-07-12 16:44:42,939
+[Err No:] [pnVersionNumber:] [Status Text:]
+      52                  0   . [ErrLine: 100427]    (Table: 0.0)
+   (Bad format of expression (operator))
+
+Database Update Started:      2023-01-19 10:21:08,453
+[Err No:] [pnVersionNumber:] [Status Text:]
+   12293                  0   [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Login failed for user 'sa'. [ErrLine: 84855]    (Table: 0.0)
+   (Login unsuccessful)
+[Err No:] [pnVersionNumber:] [Status Text:]
+    4402                  0   Could not login to the database server. Can't continue. Program will now exit. \n\nError Text: \nConnectionID = wsdb_winserv_db\nConnection String = SERVER=.\SQLDEV;DATABASE=wsdb;UID=wsuser;PWD=usq5Wyfu5j2Ysvr [ErrLine: 86391]    (Table: 0.0)
+[Err No:] [pnVersionNumber:] [Status Text:]
+   12293                  0 [ErrLine: 84855]    (Table: 0.0)
+   (Login unsuccessful)
+[Err No:] [pnVersionNumber:] [Status Text:]
+    4402                  0   Login error. [ErrLine: 85869]    (Table: 0.0)
+Database Update Finished: Time Elapsed: 0:0:0:0

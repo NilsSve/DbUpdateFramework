@@ -1,0 +1,27 @@
+Use Windows.pkg
+
+Class cSQLForm is a Form
+    Procedure Construct_Object
+        Forward Send Construct_Object
+        // The piItem should be set to the object's corresponding tSQLConnection member (One based)
+        Property Integer piItem
+    End_Procedure
+
+    Procedure DbTypeUpdate Integer iDbType String sDriverID
+    End_Procedure
+
+    Procedure ReadConnectionData String[] sConnectionData
+        Integer iItem
+        Get piItem to iItem
+        Set Value to sConnectionData[iItem]
+    End_Procedure
+
+    Procedure WriteConnectionData String[] ByRef sConnectionData
+        String sValue
+        Integer iItem
+        Get piItem to iItem
+        Get Value to sValue
+        Move sValue to sConnectionData[iItem]
+    End_Procedure
+
+End_Class

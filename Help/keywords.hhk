@@ -1,0 +1,3884 @@
+
+
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+
+<head>
+	<meta name="generator" content="HelpNDoc Professional Edition 7.1.0.253">
+</head>
+
+<body>
+
+	<ul>
+
+	
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="Adding SQL Keywords">
+				
+							<param name="Local" value="HowtoAddSQLKeywords.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="API Based Methods">
+				
+							<param name="Local" value="APIBasedMethods.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="API Make Database Changes">
+				
+							<param name="Local" value="APIMakeDatabaseChanges.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="API Utility Methods">
+				
+							<param name="Local" value="APIUtilityFunctions.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="ApiColumnAdd">
+				
+							<param name="Local" value=".htm">
+				
+							<param name="Local" value="ApiColumnAdd.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="ApiColumnChange">
+				
+							<param name="Local" value=".htm">
+				
+							<param name="Local" value="ApiColumnChange.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="ApiColumnChangeMainIndex">
+				
+							<param name="Local" value=".htm">
+				
+							<param name="Local" value="ApiColumnChangeMainIndex.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="ApiColumnMove">
+				
+							<param name="Local" value="ApiColumnMove.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="ApiColumnRemove">
+				
+							<param name="Local" value=".htm">
+				
+							<param name="Local" value="ApiColumnRemove.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="ApiColumnRename">
+				
+							<param name="Local" value=".htm">
+				
+							<param name="Local" value="ApiColumnRename.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="ApiColumnUpdateValue">
+				
+							<param name="Local" value="ApiColumnUpdateValue.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="ApiIndexChangeDirection">
+				
+							<param name="Local" value=".htm">
+				
+							<param name="Local" value="ApiIndexChangeDirection.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="ApiIndexChangeUppercase">
+				
+							<param name="Local" value="ApiIndexChangeUppercase.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="ApiIndexCreate">
+				
+							<param name="Local" value=".htm">
+				
+							<param name="Local" value="ApiIndexCreate.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="ApiIndexCreateByFieldNames">
+				
+							<param name="Local" value="ApiIndexCreateByFieldNames.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="ApiIndexRemove">
+				
+							<param name="Local" value="ApiIndexRemove.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="ApiTableAttachToSQL">
+				
+							<param name="Local" value="ApiTableAttachtToSQL.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="ApiTableChangeAttribute">
+				
+							<param name="Local" value="ApiTableChangeAttribute.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="ApiTableConvertAllAddException">
+				
+							<param name="Local" value="ApiTableConvertAllAddException.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="ApiTableConvertALLToSQL">
+				
+							<param name="Local" value="ApiTableConvertALLToSQL.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="ApiTableConvertToSQL">
+				
+							<param name="Local" value=".htm">
+				
+							<param name="Local" value=".htm">
+				
+							<param name="Local" value="ApiTableConvertToSQL.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="ApiTableConvertToSQL_Ex">
+				
+							<param name="Local" value=".htm">
+				
+							<param name="Local" value="ApiTableConvertToSQL_Ex.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="ApiTableCopyData">
+				
+							<param name="Local" value="ApiTableCopyData.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="ApiTableCreate">
+				
+							<param name="Local" value="ApiTableCreate.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="ApiTableCreateAlias">
+				
+							<param name="Local" value=".htm">
+				
+							<param name="Local" value="ApiTableCreateAlias.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="ApiTableRelate">
+				
+							<param name="Local" value="ApiTableRelate.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="ApiTableRemove">
+				
+							<param name="Local" value=".htm">
+				
+							<param name="Local" value="ApiTableRemove.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="ApiTableRemoveRelation">
+				
+							<param name="Local" value="ApiTableRemoveRelation.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="ApiTableRename">
+				
+							<param name="Local" value=".htm">
+				
+							<param name="Local" value="ApiTableRename.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="ApiTableRenameAlias">
+				
+							<param name="Local" value=".htm">
+				
+							<param name="Local" value="ApiTableRenameAlias.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="ApiTableUpdate">
+				
+							<param name="Local" value="ApiTableUpdate.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="automated database update logic">
+				
+							<param name="Local" value="Overview.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="automated database updates">
+				
+							<param name="Local" value="TheDatabaseUpdateFramework1.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="automated updates">
+				
+							<param name="Local" value="Overview.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="AutoSetConnectionID">
+				
+							<param name="Local" value="MethodsforcSQLConnectionHandler.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="bigint">
+				
+							<param name="Local" value="MicrosoftSQLServerandMSSQLDRV.htm">
+				
+							<param name="Local" value="MicrosoftSQLServerandSQLFLEX.htm">
+				
+							<param name="Local" value="IBMDB2andDB2_DRV.htm">
+				
+							<param name="Local" value="MySQLDatabaseandMDSMySQL.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="binary">
+				
+							<param name="Local" value="MicrosoftSQLServerandMSSQLDRV.htm">
+				
+							<param name="Local" value="MicrosoftSQLServerandSQLFLEX.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="bit">
+				
+							<param name="Local" value="MicrosoftSQLServerandMSSQLDRV.htm">
+				
+							<param name="Local" value="MicrosoftSQLServerandSQLFLEX.htm">
+				
+							<param name="Local" value="MySQLDatabaseandMDSMySQL.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="BLOB">
+				
+							<param name="Local" value="IBMDB2andDB2_DRV.htm">
+				
+							<param name="Local" value="MySQLDatabaseandMDSMySQL.htm">
+				
+							<param name="Local" value="OracleDatabaseandORAFLEX.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="cDbUpdateDatabaseDriver">
+				
+							<param name="Local" value="cDbUpdateDatabaseDriver.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="cDbUpdateFunctionLibrary">
+				
+							<param name="Local" value="cDbUpdateFunctionLibrary.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="cDbUpdateHandler">
+				
+							<param name="Local" value="cDbUpdateHandler.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="cDbUpdateLogFile">
+				
+							<param name="Local" value="cDbUpdateLogFile.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="cDbUpdateUserCount">
+				
+							<param name="Local" value="cDbUpdateUserCount.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="cDbUpdateVersion">
+				
+							<param name="Local" value="cDbUpdateVersion.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="char">
+				
+							<param name="Local" value="MicrosoftSQLServerandMSSQLDRV.htm">
+				
+							<param name="Local" value="MicrosoftSQLServerandSQLFLEX.htm">
+				
+							<param name="Local" value="IBMDB2andDB2_DRV.htm">
+				
+							<param name="Local" value="OracleDatabaseandORAFLEX.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="CHAR FOR BIT DATA">
+				
+							<param name="Local" value="IBMDB2andDB2_DRV.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="CLOB">
+				
+							<param name="Local" value="IBMDB2andDB2_DRV.htm">
+				
+							<param name="Local" value="OracleDatabaseandORAFLEX.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="code based framework">
+				
+							<param name="Local" value="Overview.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="Code Generator">
+				
+							<param name="Local" value="DUFCodeGenerator.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="Compare Databases">
+				
+							<param name="Local" value="DUFCodeGenerator.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="consecutive database version number">
+				
+							<param name="Local" value="cDbUpdateVersion.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="ConstructConnectionString">
+				
+							<param name="Local" value="MethodsforcSQLConnectionHandler.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="container class">
+				
+							<param name="Local" value="Overview.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="container object">
+				
+							<param name="Local" value="cDbUpdateHandler.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="CreateDbVersionTable">
+				
+							<param name="Local" value="Tools.htm">
+				
+							<param name="Local" value="CreateDbVersionTableTool.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="CreateDbVersionTable Tool">
+				
+							<param name="Local" value="CreateDbVersionTableTool.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="CreateErrorLogFile">
+				
+							<param name="Local" value="MethodsforcDbUpdateHandler.htm">
+				
+							<param name="Local" value="MethodsforcDbUpdateLogFile.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="CreateSQLConnection">
+				
+							<param name="Local" value="MethodsforcSQLConnectionHandler.htm">
+				
+							<param name="Local" value="MethodsforcDbUpdateHandler.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="cSQLConnectionHandler">
+				
+							<param name="Local" value="cSQLConnectionHandler.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="cSQLConnectionIniFile">
+				
+							<param name="Local" value="cSQLConnectionIniFile.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="Data_File_Field">
+				
+							<param name="Local" value="MethodsforcDbUpdateHandler.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="database API">
+				
+							<param name="Local" value="Overview.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="database revision">
+				
+							<param name="Local" value="Overview.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="Database Update Framework">
+				
+							<param name="Local" value="Overview.htm">
+				
+							<param name="Local" value="TheDatabaseUpdateFramework1.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="DataFlex Database Update Framework">
+				
+							<param name="Local" value="Overview.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="DataFlex Embedded database">
+				
+							<param name="Local" value="TheDatabaseUpdateFramework1.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="DataFlex Replacement Data Types">
+				
+							<param name="Local" value="DataFlexReplacementDataTypes.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="date">
+				
+							<param name="Local" value="MicrosoftSQLServerandMSSQLDRV.htm">
+				
+							<param name="Local" value="MicrosoftSQLServerandSQLFLEX.htm">
+				
+							<param name="Local" value="IBMDB2andDB2_DRV.htm">
+				
+							<param name="Local" value="MySQLDatabaseandMDSMySQL.htm">
+				
+							<param name="Local" value="OracleDatabaseandORAFLEX.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="datetime">
+				
+							<param name="Local" value="MicrosoftSQLServerandMSSQLDRV.htm">
+				
+							<param name="Local" value="MicrosoftSQLServerandSQLFLEX.htm">
+				
+							<param name="Local" value="MySQLDatabaseandMDSMySQL.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="datetime2">
+				
+							<param name="Local" value="MicrosoftSQLServerandMSSQLDRV.htm">
+				
+							<param name="Local" value="MicrosoftSQLServerandSQLFLEX.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="datetimeoffset">
+				
+							<param name="Local" value="MicrosoftSQLServerandMSSQLDRV.htm">
+				
+							<param name="Local" value="MicrosoftSQLServerandSQLFLEX.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="DBCLOB">
+				
+							<param name="Local" value="IBMDB2andDB2_DRV.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="DbLogin">
+				
+							<param name="Local" value="MethodsforcDbUpdateDatabaseDrive.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="DbUpdateFramework Test Program">
+				
+							<param name="Local" value="DbUpdateFrameworkTestProgram.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="DbUpdateFrameworkTests">
+				
+							<param name="Local" value="DbUpdateFrameworkTestProgram.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="decimal">
+				
+							<param name="Local" value="MicrosoftSQLServerandMSSQLDRV.htm">
+				
+							<param name="Local" value="MicrosoftSQLServerandSQLFLEX.htm">
+				
+							<param name="Local" value="IBMDB2andDB2_DRV.htm">
+				
+							<param name="Local" value="MySQLDatabaseandMDSMySQL.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="DeComposeConnectionString">
+				
+							<param name="Local" value="MethodsforcSQLConnectionHandler.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="DecryptPassword">
+				
+							<param name="Local" value="MethodsforcSQLConnectionIniFile.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="DF_BINARY">
+				
+							<param name="Local" value="IBMDB2andDB2_DRV.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="DF_TEXT">
+				
+							<param name="Local" value="MicrosoftSQLServerandMSSQLDRV.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="Double">
+				
+							<param name="Local" value="MicrosoftSQLServerandSQLFLEX.htm">
+				
+							<param name="Local" value="IBMDB2andDB2_DRV.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="DUF Code Generator">
+				
+							<param name="Local" value="DUFCodeGenerator.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="DUF SQL Connections Tool">
+				
+							<param name="Local" value="DUFSQLConnectionsTool.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="eMySQL_BIGINT">
+				
+							<param name="Local" value="MySQLDatabaseandMDSMySQL.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="eMySQL_BIT">
+				
+							<param name="Local" value="MySQLDatabaseandMDSMySQL.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="eMySQL_BLOB">
+				
+							<param name="Local" value="MySQLDatabaseandMDSMySQL.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="eMySQL_DATE">
+				
+							<param name="Local" value="MySQLDatabaseandMDSMySQL.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="eMySQL_DATETIME">
+				
+							<param name="Local" value="MySQLDatabaseandMDSMySQL.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="eMySQL_DECIMAL">
+				
+							<param name="Local" value="MySQLDatabaseandMDSMySQL.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="eMySQL_ENUM">
+				
+							<param name="Local" value="MySQLDatabaseandMDSMySQL.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="eMySQL_FLOAT">
+				
+							<param name="Local" value="MySQLDatabaseandMDSMySQL.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="eMySQL_LONG_BLOB">
+				
+							<param name="Local" value="MySQLDatabaseandMDSMySQL.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="eMySQL_LONG_TEXT">
+				
+							<param name="Local" value="MySQLDatabaseandMDSMySQL.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="eMySQL_MEDIUM_BLOB">
+				
+							<param name="Local" value="MySQLDatabaseandMDSMySQL.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="eMySQL_MEDIUM_TEXT">
+				
+							<param name="Local" value="MySQLDatabaseandMDSMySQL.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="eMySQL_SET">
+				
+							<param name="Local" value="MySQLDatabaseandMDSMySQL.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="eMySQL_TEXT">
+				
+							<param name="Local" value="MySQLDatabaseandMDSMySQL.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="eMySQL_TIME">
+				
+							<param name="Local" value="MySQLDatabaseandMDSMySQL.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="eMySQL_TIMESTAMP">
+				
+							<param name="Local" value="MySQLDatabaseandMDSMySQL.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="eMySQL_TINY">
+				
+							<param name="Local" value="MySQLDatabaseandMDSMySQL.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="eMySQL_TINY_BLOB">
+				
+							<param name="Local" value="MySQLDatabaseandMDSMySQL.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="eMySQL_TINY_TEXT">
+				
+							<param name="Local" value="MySQLDatabaseandMDSMySQL.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="eMySQL_VAR_STRING">
+				
+							<param name="Local" value="MySQLDatabaseandMDSMySQL.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="eMySQL_YEAR">
+				
+							<param name="Local" value="MySQLDatabaseandMDSMySQL.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="EncryptPassword">
+				
+							<param name="Local" value="MethodsforcSQLConnectionIniFile.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="Enum">
+				
+							<param name="Local" value="MySQLDatabaseandMDSMySQL.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="eOracle_BLOB">
+				
+							<param name="Local" value="OracleDatabaseandORAFLEX.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="eOracle_CHAR">
+				
+							<param name="Local" value="OracleDatabaseandORAFLEX.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="eOracle_CLOB">
+				
+							<param name="Local" value="OracleDatabaseandORAFLEX.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="eOracle_DATE">
+				
+							<param name="Local" value="OracleDatabaseandORAFLEX.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="eOracle_FLOAT">
+				
+							<param name="Local" value="OracleDatabaseandORAFLEX.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="eOracle_INT">
+				
+							<param name="Local" value="OracleDatabaseandORAFLEX.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="eOracle_LONG">
+				
+							<param name="Local" value="OracleDatabaseandORAFLEX.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="eOracle_LONGRAW">
+				
+							<param name="Local" value="OracleDatabaseandORAFLEX.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="eOracle_MSLABEL">
+				
+							<param name="Local" value="OracleDatabaseandORAFLEX.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="eOracle_NCHAR">
+				
+							<param name="Local" value="OracleDatabaseandORAFLEX.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="eOracle_NCLOB">
+				
+							<param name="Local" value="OracleDatabaseandORAFLEX.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="eOracle_NUMBER">
+				
+							<param name="Local" value="OracleDatabaseandORAFLEX.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="eOracle_NVARCHAR2">
+				
+							<param name="Local" value="OracleDatabaseandORAFLEX.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="eOracle_RAW">
+				
+							<param name="Local" value="OracleDatabaseandORAFLEX.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="eOracle_ROWID">
+				
+							<param name="Local" value="OracleDatabaseandORAFLEX.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="eOracle_STRING">
+				
+							<param name="Local" value="OracleDatabaseandORAFLEX.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="eOracle_TIMESTAMP">
+				
+							<param name="Local" value="OracleDatabaseandORAFLEX.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="eOracle_TIMESTAMPLTZ">
+				
+							<param name="Local" value="OracleDatabaseandORAFLEX.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="eOracle_TIMESTAMPPTZ">
+				
+							<param name="Local" value="OracleDatabaseandORAFLEX.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="eOracle_VARCHAR2">
+				
+							<param name="Local" value="OracleDatabaseandORAFLEX.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="Error_Report">
+				
+							<param name="Local" value="MethodsforcDbUpdateHandler.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="eSQLServer_BIGINT">
+				
+							<param name="Local" value="MicrosoftSQLServerandSQLFLEX.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="eSQLServer_BINARY">
+				
+							<param name="Local" value="MicrosoftSQLServerandSQLFLEX.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="eSQLServer_BIT">
+				
+							<param name="Local" value="MicrosoftSQLServerandSQLFLEX.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="eSQLServer_CHAR">
+				
+							<param name="Local" value="MicrosoftSQLServerandSQLFLEX.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="eSQLServer_DATE">
+				
+							<param name="Local" value="MicrosoftSQLServerandSQLFLEX.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="eSQLServer_DATETIME">
+				
+							<param name="Local" value="MicrosoftSQLServerandSQLFLEX.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="eSQLServer_DATETIME2">
+				
+							<param name="Local" value="MicrosoftSQLServerandSQLFLEX.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="eSQLServer_DATETIMEOFFSET">
+				
+							<param name="Local" value="MicrosoftSQLServerandSQLFLEX.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="eSQLServer_DECIMAL">
+				
+							<param name="Local" value="MicrosoftSQLServerandSQLFLEX.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="eSQLServer_DOUBLE">
+				
+							<param name="Local" value="MicrosoftSQLServerandSQLFLEX.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="eSQLServer_FLOAT">
+				
+							<param name="Local" value="MicrosoftSQLServerandSQLFLEX.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="eSQLServer_GUID">
+				
+							<param name="Local" value="MicrosoftSQLServerandSQLFLEX.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="eSQLServer_INTEGER">
+				
+							<param name="Local" value="MicrosoftSQLServerandSQLFLEX.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="eSQLServer_NCHAR">
+				
+							<param name="Local" value="MicrosoftSQLServerandSQLFLEX.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="eSQLServer_NTEXT">
+				
+							<param name="Local" value="MicrosoftSQLServerandSQLFLEX.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="eSQLServer_NUMERIC">
+				
+							<param name="Local" value="MicrosoftSQLServerandSQLFLEX.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="eSQLServer_NVARCHAR">
+				
+							<param name="Local" value="MicrosoftSQLServerandSQLFLEX.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="eSQLServer_NVARCHARMAX">
+				
+							<param name="Local" value="MicrosoftSQLServerandSQLFLEX.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="eSQLServer_REAL">
+				
+							<param name="Local" value="MicrosoftSQLServerandSQLFLEX.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="eSQLServer_SMALLDATETIME">
+				
+							<param name="Local" value="MicrosoftSQLServerandSQLFLEX.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="eSQLServer_SMALLINT">
+				
+							<param name="Local" value="MicrosoftSQLServerandSQLFLEX.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="eSQLServer_TEXT">
+				
+							<param name="Local" value="MicrosoftSQLServerandSQLFLEX.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="eSQLServer_TIME">
+				
+							<param name="Local" value="MicrosoftSQLServerandSQLFLEX.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="eSQLServer_TIMESTAMP">
+				
+							<param name="Local" value="MicrosoftSQLServerandSQLFLEX.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="eSQLServer_TINYINT">
+				
+							<param name="Local" value="MicrosoftSQLServerandSQLFLEX.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="eSQLServer_VARBINARY">
+				
+							<param name="Local" value="MicrosoftSQLServerandSQLFLEX.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="eSQLServer_VARBINARYMAX">
+				
+							<param name="Local" value="MicrosoftSQLServerandSQLFLEX.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="eSQLServer_VARCHAR">
+				
+							<param name="Local" value="MicrosoftSQLServerandSQLFLEX.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="eSQLServer_VARCHARMAX">
+				
+							<param name="Local" value="MicrosoftSQLServerandSQLFLEX.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="eSQLServer_XML">
+				
+							<param name="Local" value="MicrosoftSQLServerandSQLFLEX.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="execute SQL scripts">
+				
+							<param name="Local" value="Overview.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="ExistingConnectionSettings">
+				
+							<param name="Local" value="MethodsforcSQLConnectionHandler.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="First Time Usage">
+				
+							<param name="Local" value="FirstTimeSetup.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="float">
+				
+							<param name="Local" value="MicrosoftSQLServerandMSSQLDRV.htm">
+				
+							<param name="Local" value="MicrosoftSQLServerandSQLFLEX.htm">
+				
+							<param name="Local" value="IBMDB2andDB2_DRV.htm">
+				
+							<param name="Local" value="MySQLDatabaseandMDSMySQL.htm">
+				
+							<param name="Local" value="OracleDatabaseandORAFLEX.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="Framework">
+				
+							<param name="Local" value="Overview.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="Framework Data Types">
+				
+							<param name="Local" value="FrameworkStructs.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="GRAPHIC">
+				
+							<param name="Local" value="IBMDB2andDB2_DRV.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="Guid">
+				
+							<param name="Local" value="MicrosoftSQLServerandSQLFLEX.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="How to use the Database Update Framework">
+				
+							<param name="Local" value="HowToUseItImportant.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="IBM DB2">
+				
+							<param name="Local" value="TheDatabaseUpdateFramework1.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="IBM DB2 SQL Data Types">
+				
+							<param name="Local" value="IBMDB2andDB2_DRV.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="include">
+				
+							<param name="Local" value="Commands.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="include a SQL Script file">
+				
+							<param name="Local" value="Commands.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="IncludeSQLScriptResource">
+				
+							<param name="Local" value="Commands.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="int">
+				
+							<param name="Local" value="MicrosoftSQLServerandMSSQLDRV.htm">
+				
+							<param name="Local" value="MicrosoftSQLServerandSQLFLEX.htm">
+				
+							<param name="Local" value="OracleDatabaseandORAFLEX.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="INTEGER">
+				
+							<param name="Local" value="IBMDB2andDB2_DRV.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="library">
+				
+							<param name="Local" value="Commands.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="lock all other users">
+				
+							<param name="Local" value="Overview.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="locked out">
+				
+							<param name="Local" value="Overview.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="LONG VARCHAR">
+				
+							<param name="Local" value="IBMDB2andDB2_DRV.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="LONG VARCHAR FOR BIT DATA">
+				
+							<param name="Local" value="IBMDB2andDB2_DRV.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="LONG VARGRAPHIC">
+				
+							<param name="Local" value="IBMDB2andDB2_DRV.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="LongBLOB">
+				
+							<param name="Local" value="MySQLDatabaseandMDSMySQL.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="LongRAW">
+				
+							<param name="Local" value="OracleDatabaseandORAFLEX.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="LongText">
+				
+							<param name="Local" value="MySQLDatabaseandMDSMySQL.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="Mapping of SQL Data Types">
+				
+							<param name="Local" value="MappingofSQLDataTypes.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="MediumBLOB">
+				
+							<param name="Local" value="MySQLDatabaseandMDSMySQL.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="MediumText">
+				
+							<param name="Local" value="MySQLDatabaseandMDSMySQL.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="Microsoft SQL Server">
+				
+							<param name="Local" value="TheDatabaseUpdateFramework1.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="Microsoft SQL Server Data Types">
+				
+							<param name="Local" value="MicrosoftSQLServerandMSSQLDRV.htm">
+				
+							<param name="Local" value="MicrosoftSQLServerandSQLFLEX.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="money">
+				
+							<param name="Local" value="MicrosoftSQLServerandMSSQLDRV.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="MySQL">
+				
+							<param name="Local" value="TheDatabaseUpdateFramework1.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="MySQL Data Types">
+				
+							<param name="Local" value="MySQLDatabaseandMDSMySQL.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="nchar">
+				
+							<param name="Local" value="MicrosoftSQLServerandMSSQLDRV.htm">
+				
+							<param name="Local" value="MicrosoftSQLServerandSQLFLEX.htm">
+				
+							<param name="Local" value="OracleDatabaseandORAFLEX.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="nCLOB">
+				
+							<param name="Local" value="OracleDatabaseandORAFLEX.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="ntext">
+				
+							<param name="Local" value="MicrosoftSQLServerandMSSQLDRV.htm">
+				
+							<param name="Local" value="MicrosoftSQLServerandSQLFLEX.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="Number">
+				
+							<param name="Local" value="OracleDatabaseandORAFLEX.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="numeric">
+				
+							<param name="Local" value="MicrosoftSQLServerandMSSQLDRV.htm">
+				
+							<param name="Local" value="MicrosoftSQLServerandSQLFLEX.htm">
+				
+							<param name="Local" value="IBMDB2andDB2_DRV.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="nvarchar">
+				
+							<param name="Local" value="MicrosoftSQLServerandMSSQLDRV.htm">
+				
+							<param name="Local" value="MicrosoftSQLServerandSQLFLEX.htm">
+				
+							<param name="Local" value="OracleDatabaseandORAFLEX.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="nvarchar(max)">
+				
+							<param name="Local" value="MicrosoftSQLServerandMSSQLDRV.htm">
+				
+							<param name="Local" value="MicrosoftSQLServerandSQLFLEX.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="OnErrorWriteHeader_DataTable">
+				
+							<param name="Local" value="EventsforcDbUpdateHandler.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="OnErrorWriteRow_DataTable">
+				
+							<param name="Local" value="EventsforcDbUpdateHandler.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="OnFindVersionRecord">
+				
+							<param name="Local" value="EventsforcDbUpdateHandler.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="OnPostUpdate">
+				
+							<param name="Local" value="EventsforcDbUpdateHandler.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="OnPreUpdate">
+				
+							<param name="Local" value="EventsforcDbUpdateHandler.htm">
+				
+							<param name="Local" value="cDbUpdateHandler.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="OnUpdate">
+				
+							<param name="Local" value="EventsforcDbUpdateVersion.htm">
+				
+							<param name="Local" value="cDbUpdateVersion.htm">
+				
+							<param name="Local" value="HowToUseItImportant.htm">
+				
+							<param name="Local" value="Overview.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="OpenErrorLogFile">
+				
+							<param name="Local" value="MethodsforcDbUpdateHandler.htm">
+				
+							<param name="Local" value="MethodsforcDbUpdateLogFile.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="Oracle">
+				
+							<param name="Local" value="TheDatabaseUpdateFramework1.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="Oracle Data Types">
+				
+							<param name="Local" value="OracleDatabaseandORAFLEX.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="Overview">
+				
+							<param name="Local" value="Overview.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="ParseKeyWord">
+				
+							<param name="Local" value="MethodsforcSQLConnectionHandler.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="pbContinueOnError">
+				
+							<param name="Local" value="PropertiesforcDbUpdateHandler.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="pbCopyData">
+				
+							<param name="Local" value="PropertiesforcDbUpdateVersion.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="pbDatabaseWasUpdated">
+				
+							<param name="Local" value="PropertiesforcDbUpdateHandler.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="pbRecnum">
+				
+							<param name="Local" value="PropertiesforcDbUpdateVersion.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="pbShowErrorLogPostRun">
+				
+							<param name="Local" value="PropertiesforcDbUpdateHandler.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="pbSilentLogin">
+				
+							<param name="Local" value="PropertiesforcSQLConnectionHandl.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="pbSilentMode">
+				
+							<param name="Local" value="PropertiesforcDbUpdateHandler.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="pbStopOnFirstError">
+				
+							<param name="Local" value="PropertiesforcDbUpdateHandler.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="pbToANSI">
+				
+							<param name="Local" value="PropertiesforcDbUpdateVersion.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="pbTrusted">
+				
+							<param name="Local" value="PropertiesforcSQLConnectionHandl.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="pbUseConnectionID">
+				
+							<param name="Local" value="PropertiesforcDbUpdateVersion.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="pbVersionUpdate">
+				
+							<param name="Local" value="PropertiesforcDbUpdateVersion.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="phoSQLConnectionIniFile">
+				
+							<param name="Local" value="PropertiesforcSQLConnectionHandl.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="piDbType">
+				
+							<param name="Local" value="PropertiesforcSQLConnectionHandl.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="pnVersionNumber">
+				
+							<param name="Local" value="PropertiesforcDbUpdateVersion.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="PostgreSQL">
+				
+							<param name="Local" value="TheDatabaseUpdateFramework1.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="PostgreSQL Data Types">
+				
+							<param name="Local" value="PostgreSQLDatabaseandMDSPgSQL.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="psBaseTableSpace">
+				
+							<param name="Local" value="PropertiesforcDbUpdateVersion.htm">
+				
+							<param name="Local" value="PropertiesforcSQLConnectionHandl.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="psCollation">
+				
+							<param name="Local" value="SqlDataBaseCreate.htm">
+				
+							<param name="Local" value="DUFCodeGenerator.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="psConnectionID">
+				
+							<param name="Local" value="PropertiesforcSQLConnectionHandl.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="psConnectionString">
+				
+							<param name="Local" value="PropertiesforcDbUpdateHandler.htm">
+				
+							<param name="Local" value="PropertiesforcSQLConnectionHandl.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="psDatabase">
+				
+							<param name="Local" value="PropertiesforcSQLConnectionHandl.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="psDriverID">
+				
+							<param name="Local" value="PropertiesforcDbUpdateHandler.htm">
+				
+							<param name="Local" value="PropertiesforcSQLConnectionHandl.htm">
+				
+							<param name="Local" value="PropertiesforcDbUpdateDatabaseDr.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="psIndexTableSpace">
+				
+							<param name="Local" value="PropertiesforcDbUpdateVersion.htm">
+				
+							<param name="Local" value="PropertiesforcSQLConnectionHandl.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="psIniFileName">
+				
+							<param name="Local" value="MethodsforcSQLConnectionIniFile.htm">
+				
+							<param name="Local" value="PropertiesforcSQLConnectionIniFi.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="psIniFilePath">
+				
+							<param name="Local" value="MethodsforcSQLConnectionIniFile.htm">
+				
+							<param name="Local" value="PropertiesforcSQLConnectionIniFi.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="psIniSectionName">
+				
+							<param name="Local" value="MethodsforcSQLConnectionIniFile.htm">
+				
+							<param name="Local" value="PropertiesforcSQLConnectionIniFi.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="psLongTableSpace">
+				
+							<param name="Local" value="PropertiesforcDbUpdateVersion.htm">
+				
+							<param name="Local" value="PropertiesforcSQLConnectionHandl.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="psPassword">
+				
+							<param name="Local" value="PropertiesforcSQLConnectionHandl.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="pSQLConnectionData">
+				
+							<param name="Local" value="PropertiesforcSQLConnectionHandl.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="psSchema">
+				
+							<param name="Local" value="PropertiesforcDbUpdateVersion.htm">
+				
+							<param name="Local" value="PropertiesforcSQLConnectionHandl.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="psServer">
+				
+							<param name="Local" value="PropertiesforcSQLConnectionHandl.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="psUserID">
+				
+							<param name="Local" value="PropertiesforcSQLConnectionHandl.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="real">
+				
+							<param name="Local" value="MicrosoftSQLServerandMSSQLDRV.htm">
+				
+							<param name="Local" value="MicrosoftSQLServerandSQLFLEX.htm">
+				
+							<param name="Local" value="IBMDB2andDB2_DRV.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="RedirectConnection">
+				
+							<param name="Local" value="MethodsforcSQLConnectionHandler.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="ReinitializeFramework">
+				
+							<param name="Local" value="MethodsforcDbUpdateHandler.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="RemoveExistingConnectionID">
+				
+							<param name="Local" value="MethodsforcSQLConnectionHandler.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="RowId">
+				
+							<param name="Local" value="OracleDatabaseandORAFLEX.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="Scripts can be included">
+				
+							<param name="Local" value="Overview.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="Set">
+				
+							<param name="Local" value="MySQLDatabaseandMDSMySQL.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="SetupConnectionString">
+				
+							<param name="Local" value="MethodsforcDbUpdateHandler.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="siblings">
+				
+							<param name="Local" value="Overview.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="smalldatetime">
+				
+							<param name="Local" value="MicrosoftSQLServerandMSSQLDRV.htm">
+				
+							<param name="Local" value="MicrosoftSQLServerandSQLFLEX.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="smallint">
+				
+							<param name="Local" value="MicrosoftSQLServerandMSSQLDRV.htm">
+				
+							<param name="Local" value="MicrosoftSQLServerandSQLFLEX.htm">
+				
+							<param name="Local" value="IBMDB2andDB2_DRV.htm">
+				
+							<param name="Local" value="MySQLDatabaseandMDSMySQL.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="smallmoney">
+				
+							<param name="Local" value="MicrosoftSQLServerandMSSQLDRV.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="SQL Based Methods">
+				
+							<param name="Local" value="SQLBasedMethods.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="SQL Make Database Changes">
+				
+							<param name="Local" value="SQLMakeDatabaseChanges.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="SQL Script">
+				
+							<param name="Local" value="Commands.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="SQL Utility Functions">
+				
+							<param name="Local" value="SQLUtilityFunctions.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="SQL_BIGINT">
+				
+							<param name="Local" value="MicrosoftSQLServerandMSSQLDRV.htm">
+				
+							<param name="Local" value="IBMDB2andDB2_DRV.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="SQL_BINARY">
+				
+							<param name="Local" value="MicrosoftSQLServerandMSSQLDRV.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="SQL_BIT">
+				
+							<param name="Local" value="MicrosoftSQLServerandMSSQLDRV.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="SQL_BLOB">
+				
+							<param name="Local" value="IBMDB2andDB2_DRV.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="SQL_CHAR">
+				
+							<param name="Local" value="IBMDB2andDB2_DRV.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="SQL_CLOB">
+				
+							<param name="Local" value="IBMDB2andDB2_DRV.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="SQL_DATE">
+				
+							<param name="Local" value="MicrosoftSQLServerandMSSQLDRV.htm">
+				
+							<param name="Local" value="IBMDB2andDB2_DRV.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="SQL_DATETIME">
+				
+							<param name="Local" value="MicrosoftSQLServerandMSSQLDRV.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="SQL_DBCLOP">
+				
+							<param name="Local" value="IBMDB2andDB2_DRV.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="SQL_DECIMAL">
+				
+							<param name="Local" value="MicrosoftSQLServerandMSSQLDRV.htm">
+				
+							<param name="Local" value="IBMDB2andDB2_DRV.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="SQL_DOUBLE">
+				
+							<param name="Local" value="IBMDB2andDB2_DRV.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="SQL_FLOAT">
+				
+							<param name="Local" value="MicrosoftSQLServerandMSSQLDRV.htm">
+				
+							<param name="Local" value="IBMDB2andDB2_DRV.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="SQL_GRAPHIC">
+				
+							<param name="Local" value="IBMDB2andDB2_DRV.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="SQL_GUID">
+				
+							<param name="Local" value="MicrosoftSQLServerandMSSQLDRV.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="SQL_INTEGER">
+				
+							<param name="Local" value="MicrosoftSQLServerandMSSQLDRV.htm">
+				
+							<param name="Local" value="IBMDB2andDB2_DRV.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="SQL_LONGVARBINARY">
+				
+							<param name="Local" value="MicrosoftSQLServerandMSSQLDRV.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="SQL_LONGVARCHAR">
+				
+							<param name="Local" value="MicrosoftSQLServerandMSSQLDRV.htm">
+				
+							<param name="Local" value="IBMDB2andDB2_DRV.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="SQL_LONGVARGRAPHIC">
+				
+							<param name="Local" value="IBMDB2andDB2_DRV.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="SQL_NUMERIC">
+				
+							<param name="Local" value="MicrosoftSQLServerandMSSQLDRV.htm">
+				
+							<param name="Local" value="IBMDB2andDB2_DRV.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="SQL_REAL">
+				
+							<param name="Local" value="MicrosoftSQLServerandMSSQLDRV.htm">
+				
+							<param name="Local" value="IBMDB2andDB2_DRV.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="SQL_SMALLINT">
+				
+							<param name="Local" value="MicrosoftSQLServerandMSSQLDRV.htm">
+				
+							<param name="Local" value="IBMDB2andDB2_DRV.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="SQL_SS_TIMESTAMPOFFSET">
+				
+							<param name="Local" value="MicrosoftSQLServerandMSSQLDRV.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="SQL_SS_XML">
+				
+							<param name="Local" value="MicrosoftSQLServerandMSSQLDRV.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="SQL_TEXT">
+				
+							<param name="Local" value="MicrosoftSQLServerandMSSQLDRV.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="SQL_TIME">
+				
+							<param name="Local" value="MicrosoftSQLServerandMSSQLDRV.htm">
+				
+							<param name="Local" value="IBMDB2andDB2_DRV.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="SQL_TINYINT">
+				
+							<param name="Local" value="MicrosoftSQLServerandMSSQLDRV.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="SQL_TYPE_MONEY">
+				
+							<param name="Local" value="MicrosoftSQLServerandMSSQLDRV.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="SQL_TYPE_SMALLDATETIME">
+				
+							<param name="Local" value="MicrosoftSQLServerandMSSQLDRV.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="SQL_TYPE_SMALLMONEY">
+				
+							<param name="Local" value="MicrosoftSQLServerandMSSQLDRV.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="SQL_TYPE_TIMESTAMP">
+				
+							<param name="Local" value="IBMDB2andDB2_DRV.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="SQL_TYPE_TIMESTAMP2">
+				
+							<param name="Local" value="MicrosoftSQLServerandMSSQLDRV.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="SQL_VARBINARY">
+				
+							<param name="Local" value="MicrosoftSQLServerandMSSQLDRV.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="SQL_VARCHAR">
+				
+							<param name="Local" value="MicrosoftSQLServerandMSSQLDRV.htm">
+				
+							<param name="Local" value="IBMDB2andDB2_DRV.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="SQL_VARCHARMAX">
+				
+							<param name="Local" value="MicrosoftSQLServerandMSSQLDRV.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="SQL_VARGRAPHIC">
+				
+							<param name="Local" value="IBMDB2andDB2_DRV.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="sql_variant">
+				
+							<param name="Local" value="MicrosoftSQLServerandSQLFLEX.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="SQL_WCHAR">
+				
+							<param name="Local" value="MicrosoftSQLServerandMSSQLDRV.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="SQL_WLONGVARCHAR">
+				
+							<param name="Local" value="MicrosoftSQLServerandMSSQLDRV.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="SQL_WVARCHAR">
+				
+							<param name="Local" value="MicrosoftSQLServerandMSSQLDRV.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="SQL_XML">
+				
+							<param name="Local" value="IBMDB2andDB2_DRV.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="SQLColumnAdd">
+				
+							<param name="Local" value=".htm">
+				
+							<param name="Local" value="SQLMakeDatabaseChanges.htm">
+				
+							<param name="Local" value="SqlColumnAdd.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="SQLColumnChange">
+				
+							<param name="Local" value=".htm">
+				
+							<param name="Local" value="SQLMakeDatabaseChanges.htm">
+				
+							<param name="Local" value="SqlColumnChange.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="SqlColumnDefaultValue">
+				
+							<param name="Local" value="SQLMakeDatabaseChanges.htm">
+				
+							<param name="Local" value="SqlColumnDefaultValue.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="SqlColumnNullable">
+				
+							<param name="Local" value="SQLMakeDatabaseChanges.htm">
+				
+							<param name="Local" value="SqlColumnNullable.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="SqlColumnRemove">
+				
+							<param name="Local" value=".htm">
+				
+							<param name="Local" value="SQLMakeDatabaseChanges.htm">
+				
+							<param name="Local" value="SqlColumnRemove.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="SQLColumnRename">
+				
+							<param name="Local" value="SQLMakeDatabaseChanges.htm">
+				
+							<param name="Local" value="SqlColumnRename.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="SQLConnections">
+				
+							<param name="Local" value="Tools.htm">
+				
+							<param name="Local" value="DUFSQLConnectionsTool.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="SQLConnections Tool">
+				
+							<param name="Local" value="DUFSQLConnectionsTool.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="SQLConnections.ini">
+				
+							<param name="Local" value="cSQLConnectionHandler.htm">
+				
+							<param name="Local" value="cSQLConnectionIniFile.htm">
+				
+							<param name="Local" value="DUFSQLConnectionsTool.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="SqlDatabaseCollationChange">
+				
+							<param name="Local" value="DUFCodeGenerator.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="SqlDataBaseCreate">
+				
+							<param name="Local" value=".htm">
+				
+							<param name="Local" value="SQLMakeDatabaseChanges.htm">
+				
+							<param name="Local" value="SqlDataBaseCreate.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="SQLDropDataTable">
+				
+							<param name="Local" value=".htm">
+				
+							<param name="Local" value=".htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="SQLDropDataView">
+				
+							<param name="Local" value=".htm">
+				
+							<param name="Local" value=".htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="SQLExecuteQuery">
+				
+							<param name="Local" value=".htm">
+				
+							<param name="Local" value=".htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="SQLExecuteQueryFromArray">
+				
+							<param name="Local" value=".htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="SQLIncludeScriptFile">
+				
+							<param name="Local" value="Commands.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="SQLIniFileAddConnection">
+				
+							<param name="Local" value="MethodsforcSQLConnectionIniFile.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="SQLIniFileDeleteAllConnections">
+				
+							<param name="Local" value="MethodsforcSQLConnectionIniFile.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="SQLIniFileDeleteConnection">
+				
+							<param name="Local" value="MethodsforcSQLConnectionIniFile.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="SQLIniFileFindConnection">
+				
+							<param name="Local" value="MethodsforcSQLConnectionIniFile.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="SQLIniFileNumberOfConnections">
+				
+							<param name="Local" value="MethodsforcSQLConnectionIniFile.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="SQLIniFileReadConnections">
+				
+							<param name="Local" value="MethodsforcSQLConnectionIniFile.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="SQLIniFileSetDefaultConnection">
+				
+							<param name="Local" value="MethodsforcSQLConnectionIniFile.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="SQLIniFileWriteConnections">
+				
+							<param name="Local" value="MethodsforcSQLConnectionIniFile.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="SQLReadScriptFromResource">
+				
+							<param name="Local" value=".htm">
+				
+							<param name="Local" value=".htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="SQLTableConvertToEmbedded">
+				
+							<param name="Local" value="SQLTableConvertToEmbedded.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="SqlTableCreate">
+				
+							<param name="Local" value="SqlTableCreate.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="SqlTableRemove">
+				
+							<param name="Local" value="SqlTableRemove.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="SqlTableRename">
+				
+							<param name="Local" value="SqlTableRename.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="SQLUpdateIntFile">
+				
+							<param name="Local" value=".htm">
+				
+							<param name="Local" value=".htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="SqlUtilBackupDatabaseToDisk">
+				
+							<param name="Local" value="SqlUtilBackupDatabaseToDisk.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="SqlUtilChangeIntFilesToConnectionIDs">
+				
+							<param name="Local" value="SqlUtilChangeIntFilesToConnectio.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="SqlUtilChangeIntFilesToUseConnectionIDs">
+				
+							<param name="Local" value="SqlUtilChangeIntFilesToConnectio.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="SQLUtilColumnExists">
+				
+							<param name="Local" value="SQLUtilColumnExists.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="SqlUtilCreateFileFromMemory">
+				
+							<param name="Local" value="SqlUtilCreateFileFromMemory.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="SQLUtilDefaultNullValue">
+				
+							<param name="Local" value="SQLUtilDefaultNullValue.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="SqlUtilEnumerateColumns">
+				
+							<param name="Local" value=".htm">
+				
+							<param name="Local" value="UtilityMethods.htm">
+				
+							<param name="Local" value="SqlUtilEnumerateColumns.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="SqlUtilEnumerateDatabases">
+				
+							<param name="Local" value=".htm">
+				
+							<param name="Local" value="UtilityMethods.htm">
+				
+							<param name="Local" value="SqlUtilEnumerateDatabases.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="SqlUtilEnumerateIntFiles">
+				
+							<param name="Local" value=".htm">
+				
+							<param name="Local" value="UtilityMethods.htm">
+				
+							<param name="Local" value="SqlUtilEnumerateIntFiles.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="SqlUtilEnumerateLoggedInUsers">
+				
+							<param name="Local" value="SqlUtilEnumerateLoggedInUsers.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="SqlUtilEnumerateSchemas">
+				
+							<param name="Local" value="SqlUtilEnumerateSchemas.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="SqlUtilEnumerateServers">
+				
+							<param name="Local" value=".htm">
+				
+							<param name="Local" value="UtilityMethods.htm">
+				
+							<param name="Local" value="SqlUtilEnumerateServers.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="SqlUtilEnumerateTables">
+				
+							<param name="Local" value=".htm">
+				
+							<param name="Local" value="UtilityMethods.htm">
+				
+							<param name="Local" value="SqlUtilEnumerateTables.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="SqlUtilEnumerateTableSpaces">
+				
+							<param name="Local" value="SqlUtilEnumerateTableSpaces.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="SQLUtilExecuteQuery">
+				
+							<param name="Local" value="SqlUtilExecuteQuery.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="SqlUtilExecuteResource">
+				
+							<param name="Local" value="SqlUtilExecuteResource.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="SqlUtilGUIDTempTableName">
+				
+							<param name="Local" value="SqlUtilGUIDTempTableName.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="SqlUtilRefreshIntFile">
+				
+							<param name="Local" value="SqlUtilRefreshIntFile.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="SqlUtilTableIsAttached">
+				
+							<param name="Local" value="SqlUtilTableIsAttached.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="SQLUtilTableIsViewType">
+				
+							<param name="Local" value="SQLUtilTableIsViewType.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="SqlUtilUpdateIntFile">
+				
+							<param name="Local" value="SqlUtilRefreshIntFile.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="SqlViewRemove">
+				
+							<param name="Local" value="SqlViewRemove.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="String">
+				
+							<param name="Local" value="OracleDatabaseandORAFLEX.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="system table">
+				
+							<param name="Local" value="cDbUpdateHandler.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="tColumnType">
+				
+							<param name="Local" value="tColumnType.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="tDbUpdateError">
+				
+							<param name="Local" value="tDbUpdateError.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="text">
+				
+							<param name="Local" value="MicrosoftSQLServerandMSSQLDRV.htm">
+				
+							<param name="Local" value="MicrosoftSQLServerandSQLFLEX.htm">
+				
+							<param name="Local" value="MySQLDatabaseandMDSMySQL.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="The Database Update Framework">
+				
+							<param name="Local" value="Overview.htm">
+				
+							<param name="Local" value="TheDatabaseUpdateFramework1.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="time">
+				
+							<param name="Local" value="MicrosoftSQLServerandMSSQLDRV.htm">
+				
+							<param name="Local" value="MicrosoftSQLServerandSQLFLEX.htm">
+				
+							<param name="Local" value="IBMDB2andDB2_DRV.htm">
+				
+							<param name="Local" value="MySQLDatabaseandMDSMySQL.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="TimeStamp">
+				
+							<param name="Local" value="MicrosoftSQLServerandSQLFLEX.htm">
+				
+							<param name="Local" value="IBMDB2andDB2_DRV.htm">
+				
+							<param name="Local" value="MySQLDatabaseandMDSMySQL.htm">
+				
+							<param name="Local" value="OracleDatabaseandORAFLEX.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="TinyBLOB">
+				
+							<param name="Local" value="MySQLDatabaseandMDSMySQL.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="tinyint">
+				
+							<param name="Local" value="MicrosoftSQLServerandMSSQLDRV.htm">
+				
+							<param name="Local" value="MicrosoftSQLServerandSQLFLEX.htm">
+				
+							<param name="Local" value="MySQLDatabaseandMDSMySQL.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="TinyText">
+				
+							<param name="Local" value="MySQLDatabaseandMDSMySQL.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="tSQLConnection">
+				
+							<param name="Local" value="FrameworkStructs.htm">
+				
+							<param name="Local" value="tSQLConnection.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="tSqlErrorArray">
+				
+							<param name="Local" value="tSQLErrorArray.htm">
+				
+							<param name="Local" value="FrameworkStructs.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="tSQLScriptArray">
+				
+							<param name="Local" value="tSQLScriptArray.htm">
+				
+							<param name="Local" value="FrameworkStructs.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="uniqueidentifier">
+				
+							<param name="Local" value="MicrosoftSQLServerandMSSQLDRV.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="Update Framework">
+				
+							<param name="Local" value="Overview.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="UpdateConnectionString">
+				
+							<param name="Local" value="MethodsforcSQLConnectionHandler.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="UpdateVersionColumnValue">
+				
+							<param name="Local" value="MethodsforcDbUpdateVersion.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="UtilCodeMasterAddValue">
+				
+							<param name="Local" value=".htm">
+				
+							<param name="Local" value="UtilCodeMasterAddValue.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="UtilCodeMasterChangeValue">
+				
+							<param name="Local" value="UtilCodeMasterChangeValue.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="UtilCodeMasterRemoveValue">
+				
+							<param name="Local" value="UtilCodeMasterRemoveValue.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="UtilColumnExists">
+				
+							<param name="Local" value="UtilityMethods.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="UtilColumnTypeToInteger">
+				
+							<param name="Local" value=".htm">
+				
+							<param name="Local" value="UtilityMethods.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="UtilColumnTypeToString">
+				
+							<param name="Local" value=".htm">
+				
+							<param name="Local" value="UtilityMethods.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="UtilCreateFileFromMemory">
+				
+							<param name="Local" value="UtilityMethods.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="UtilEnumerateColumnTypes">
+				
+							<param name="Local" value="UtilityMethods.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="UtilEnumerateOverlapFields">
+				
+							<param name="Local" value="UtilityMethods.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="UtilLowestAllowedMSSQLDRV_And_ClientVersion">
+				
+							<param name="Local" value="UtilLowestAllowedMSSQLDRV_And_Cl.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="UtilMoveAllEmbeddedToBackupFolder">
+				
+							<param name="Local" value="DUFCodeGenerator.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="UtilPrepareDataFolderForSQLConversion">
+				
+							<param name="Local" value="UtilPrepareDataFolderForSQLConve.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="UtilTableHandleToString">
+				
+							<param name="Local" value="UtilityMethods.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="UtilTableIsAlias">
+				
+							<param name="Local" value="UtilityMethods.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="UtilTableIsSQL">
+				
+							<param name="Local" value="UtilityMethods.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="UtilTableIsSQLByRootName">
+				
+							<param name="Local" value="UtilityMethods.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="UtilTableNameFromHandleToString">
+				
+							<param name="Local" value="UtilityMethods.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="UtilTableNameToString">
+				
+							<param name="Local" value="UtilityMethods.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="UtilTableNumberIsInUse">
+				
+							<param name="Local" value="UtilityMethods.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="UtilTableOpen">
+				
+							<param name="Local" value="UtilityMethods.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="varbinary">
+				
+							<param name="Local" value="MicrosoftSQLServerandMSSQLDRV.htm">
+				
+							<param name="Local" value="MicrosoftSQLServerandSQLFLEX.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="varbinary(max)">
+				
+							<param name="Local" value="MicrosoftSQLServerandMSSQLDRV.htm">
+				
+							<param name="Local" value="MicrosoftSQLServerandSQLFLEX.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="varchar">
+				
+							<param name="Local" value="MicrosoftSQLServerandMSSQLDRV.htm">
+				
+							<param name="Local" value="MicrosoftSQLServerandSQLFLEX.htm">
+				
+							<param name="Local" value="IBMDB2andDB2_DRV.htm">
+				
+							<param name="Local" value="MySQLDatabaseandMDSMySQL.htm">
+				
+							<param name="Local" value="OracleDatabaseandORAFLEX.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="VARCHAR FOR BIT DATA">
+				
+							<param name="Local" value="IBMDB2andDB2_DRV.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="varchar(max)">
+				
+							<param name="Local" value="MicrosoftSQLServerandMSSQLDRV.htm">
+				
+							<param name="Local" value="MicrosoftSQLServerandSQLFLEX.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="VARGRAPHIC">
+				
+							<param name="Local" value="IBMDB2andDB2_DRV.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="Workspace Setup">
+				
+							<param name="Local" value="WorkspaceSetup.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="xml">
+				
+							<param name="Local" value="MicrosoftSQLServerandMSSQLDRV.htm">
+				
+							<param name="Local" value="MicrosoftSQLServerandSQLFLEX.htm">
+				
+							<param name="Local" value="IBMDB2andDB2_DRV.htm">
+				
+			</object>
+
+	</li>
+
+			<li> <object type="text/sitemap">
+				<param name="Name" value="Year">
+				
+							<param name="Local" value="MySQLDatabaseandMDSMySQL.htm">
+				
+			</object>
+
+	</li>
+	
+	</ul>
+    
+</body>
+
+</html>
+

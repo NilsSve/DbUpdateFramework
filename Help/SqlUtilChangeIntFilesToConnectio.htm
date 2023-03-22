@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+
+<html>
+	
+<head>
+	<title>SqlUtilChangeIntFilesToConnectionIDs</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="description" content="Help for the DataFlex Database Update Framework" />
+    <meta name="generator" content="HelpNDoc Professional Edition 7.1.0.253" />
+	
+	
+	
+	<link type="text/css" rel="stylesheet" media="all" href="css/reset.css" />
+	<link type="text/css" rel="stylesheet" media="all" href="css/base.css" />
+	<link type="text/css" rel="stylesheet" media="all" href="css/hnd.css" />
+	<!--[if lte IE 8]>
+		<link type="text/css" rel="stylesheet" media="all" href="css/ielte8.css" />
+	<![endif]-->
+
+	<style type="text/css">
+		#topic_header
+		{
+			background-color: #EFEFEF;
+		}
+	</style>
+
+	
+
+	<script type="text/javascript" src="js/chmRelative.js"></script>
+	
+	
+</head>
+
+<body>
+
+
+
+	
+	
+	<div id="topic_content">
+		
+<p></p>
+<h1 class="rvps7"><span class="rvts0"><span class="rvts23">SqlUtilChangeIntFilesToConnectionIDs - </span></span><span class="rvts0"><a class="rvts72" href="cDbUpdateFunctionLibrary.htm">cDbUpdateFunctionLibrary</a></span></h1>
+<p class="rvps2"><span class="rvts65">Enumerates SQL columns/fields for the passed table name and driver ID.</span></p>
+<p class="rvps2"><span class="rvts83"><br/></span></p>
+<p class="rvps2"><span class="rvts81">Type</span><span class="rvts58">:</span><span class="rvts65"> </span><a class="rvts22" href="LanguageReference.chm::/Function_Command.htm">Procedure</a><br/><span class="rvts65"><br/></span></p>
+<p class="rvps2"><span class="rvts81"></span><br/><span class="rvts81">Parameters</span><span class="rvts58">:</span><span class="rvts65"> </span><a class="rvts22" href="LanguageGuide.chm::/String_Type.htm">String</a><span class="rvts65"> sTableName, </span><a class="rvts22" href="LanguageGuide.chm::/String_Type.htm">String</a><span class="rvts65"> sDriverID</span><br/><span class="rvts65"><br/></span></p>
+<div class="rvps12">
+<table border="2" cellpadding="2" cellspacing="0" style="border-color: #808080; border-style: solid; background-color: #ffffe0; border-spacing: 0px; border-top: none; border-right: none;">
+ <tr valign="top">
+  <td height="19" valign="middle" style="border-width : 2px; border-color : #000080 #000080 #000080 #000080; border-style: solid; padding: 1px 4px; border-bottom: none; border-left: none; background-color: #c0c0c0;">
+   <p class="rvps18"><span class="rvts71">Parameter</span></p>
+  </td>
+  <td height="19" valign="middle" style="border-width : 2px; border-color : #000080 #000080 #000080 #000080; border-style: solid; padding: 1px 4px; border-bottom: none; border-left: none; background-color: #c0c0c0;">
+   <p class="rvps18"><span class="rvts71">Description</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td valign="middle" style="border-width : 2px; border-color : #000000 #000000 #000000 #000000; border-style: solid; padding: 1px 4px; border-bottom: none; border-left: none;">
+   <p class="rvps5"><span class="rvts65">sDataPath</span></p>
+  </td>
+  <td valign="middle" style="border-width : 2px; border-color : #000000 #000000 #000000 #000000; border-style: solid; padding: 1px 4px; border-bottom: none; border-left: none;">
+   <p class="rvps5"><span class="rvts65">The path to a Data folder</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td valign="middle" style="border-width : 2px; border-color : #000000 #000000 #000000 #000000; border-style: solid; padding: 1px 4px; border-bottom: none; border-left: none;">
+   <p class="rvps5"><span class="rvts74">sConnectionID</span></p>
+  </td>
+  <td valign="middle" style="border-width : 2px; border-color : #000000 #000000 #000000 #000000; border-style: solid; padding: 1px 4px; border-bottom: none; border-left: none;">
+   <p class="rvps5"><span class="rvts65">The connection ID as defined in the SQLConnection.ini file to change to</span></p>
+  </td>
+ </tr>
+</table>
+</div>
+<p class="rvps2"><span class="rvts81"><br/></span></p>
+<p class="rvps2"><span class="rvts81">Syntax</span></p>
+<p class="rvps2"><span class="rvts81"><br/></span></p>
+<p class="rvps11"><span class="rvts35">Procedure SqlUtilChangeIntFilesToConnectionIDs String sDataPath String sConnectionID Boolean bShowResult</span></p>
+<p class="rvps11"><span class="rvts35"><br/></span></p>
+<div class="rvps2">
+<table border="0" cellpadding="3" cellspacing="2" style="border-width: 0px; background-color: #ffffe0; border-spacing: 2px;">
+ <tr valign="top">
+  <td width="36" valign="top" style="padding: 1px 5px; background-color: #ffffff;">
+   <p class="rvps2"><span class="rvts65">Call:</span></p>
+  </td>
+  <td width="650" valign="middle" style="padding: 1px 5px;">
+   <p class="rvps2"><span class="rvts35">Send SqlUtilChangeIntFilesToConnectionIDs sDataPath sConnectionID True</span></p>
+  </td>
+ </tr>
+</table>
+</div>
+<p class="rvps2"><span class="rvts65"><br/></span></p>
+<p class="rvps2"><span class="rvts81"></span><br/><span class="rvts81">Description</span></p>
+<p class="rvps13"><span class="rvts31">Use it to </span><span class="rvts65">change update all intermediate files in a data-folder.</span></p>
+<p class="rvps2"><span class="rvts65"><br/></span></p>
+<p class="rvps2"><span class="rvts82"><br/></span></p>
+<p class="rvps2"><span class="rvts82">Example</span></p>
+<p class="rvps2"><span class="rvts55"><br/></span></p>
+<p class="rvps11"><span class="rvts74">Object oChangeAllIntFiles_btn is a Button</span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; Set Size to 13 65</span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; Set Location to 38 320</span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; Set Label to "GO !"&nbsp;</span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; Set psToolTip to "Changes or updates all .int files in the selected folder - except for ;</span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; &nbsp; &nbsp; DAW driver .int files (MSSQL_DRV.int, DB2_DRV.int &amp; ODBC_DRV.int) - to use 'SERVER_NAME DFCONNID=xxx'"</span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; Set FontWeight to fw_Bold</span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; Set peAnchors to anTopRight</span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; &nbsp; &nbsp;&nbsp;</span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; Procedure OnClick</span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; &nbsp; &nbsp; String sDataPath sConnectionID</span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; &nbsp; &nbsp; Boolean bExists&nbsp;</span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; &nbsp; &nbsp; Integer iRetval</span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;</span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; &nbsp; &nbsp; Get Value of oSelectDataPath_fm to sDataPath</span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; &nbsp; &nbsp; Get vFolderExists sDataPath to bExists</span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; &nbsp; &nbsp; If (bExists = False) Begin</span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Send Info_Box ("The data folder doesn't exist!\n" + sDataPath)</span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Procedure_Return &nbsp; &nbsp;</span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; &nbsp; &nbsp; End &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;</span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; &nbsp; &nbsp; Get Value of oConnectionID_fm to sConnectionID</span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; &nbsp; &nbsp; Move (Trim(sConnectionID)) to sConnectionID</span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; &nbsp; &nbsp; If (sConnectionID = "") Begin</span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Send Info_Box "You need to specify a Connection_ID to use for the .int files."</span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Procedure_Return</span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; &nbsp; &nbsp; End &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;</span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; &nbsp; &nbsp; Get YesNo_Box ("Do you want to change all .int files in folder:\n" + sDataPath + "\n\nTo use ;</span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;'DFCONNID=" + sConnectionID +"' ?") to iRetval</span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; &nbsp; &nbsp; If (iRetval &lt;&gt; MBR_Yes) Begin</span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Procedure_Return</span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; &nbsp; &nbsp; End &nbsp;&nbsp;</span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; &nbsp; &nbsp; Get YesNo_Box "All '.CCH' files will first be deleted. Continue?" to iRetval</span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; &nbsp; &nbsp; If (iRetval &lt;&gt; MBR_Yes) Begin</span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Procedure_Return</span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; &nbsp; &nbsp; End</span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;</span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; &nbsp; &nbsp; Get vDeleteFile (sDataPath + "\*.cch") to iRetval</span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; &nbsp; &nbsp; If (iRetval &lt;&gt; 0) Begin</span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Send Info_Box "Could not delete .cch files!"</span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Procedure_Return&nbsp;</span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; &nbsp; &nbsp; End</span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; &nbsp; &nbsp;&nbsp;</span></p>
+<p class="rvps11"><span class="rvts79">&nbsp; &nbsp; &nbsp; &nbsp; Send </span><span class="rvts35">SqlUtilChangeIntFilesToConnectionIDs</span><span class="rvts79"> of ghoDbUpdateFunctionLibrary ;</span></p>
+<p class="rvps11"><span class="rvts79">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;sDataPath sConnectionID True</span></p>
+<p class="rvps11"><span class="rvts79"><br/></span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; &nbsp; &nbsp; Send Info_Box "Ready! All .int files changed."</span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; End_Procedure</span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; &nbsp; &nbsp;&nbsp;</span></p>
+<p class="rvps11"><span class="rvts74">End_Object</span></p>
+<p class="rvps11"><span class="rvts74"><br/></span></p>
+<p class="rvps2"><span class="rvts6"><br/></span></p>
+<p></p>
+
+	</div>
+	
+	
+		<div id="topic_footer">
+
+			<div id="topic_footer_content">
+				Copyright &copy; 2016-2020 RDC Tools International. All Rights Reserved. Portions Copyright Data Access Worldwide, Mertech Data Systems, Inc.
+			</div>
+		</div>
+	
+
+	
+	
+
+	
+</body>
+	
+</html>
+

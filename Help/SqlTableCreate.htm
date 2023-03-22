@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+
+<html>
+	
+<head>
+	<title>SqlTableCreate</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="description" content="Help for the DataFlex Database Update Framework" />
+    <meta name="generator" content="HelpNDoc Professional Edition 7.1.0.253" />
+	
+	
+	
+	<link type="text/css" rel="stylesheet" media="all" href="css/reset.css" />
+	<link type="text/css" rel="stylesheet" media="all" href="css/base.css" />
+	<link type="text/css" rel="stylesheet" media="all" href="css/hnd.css" />
+	<!--[if lte IE 8]>
+		<link type="text/css" rel="stylesheet" media="all" href="css/ielte8.css" />
+	<![endif]-->
+
+	<style type="text/css">
+		#topic_header
+		{
+			background-color: #EFEFEF;
+		}
+	</style>
+
+	
+
+	<script type="text/javascript" src="js/chmRelative.js"></script>
+	
+	
+</head>
+
+<body>
+
+
+
+	
+	
+	<div id="topic_content">
+		
+<p></p>
+<h1 class="rvps7"><span class="rvts0"><span class="rvts23">SQLTableCreate - </span></span><span class="rvts0"><a class="rvts72" href="cDbUpdateFunctionLibrary.htm">cDbUpdateFunctionLibrary</a></span></h1>
+<p class="rvps2"><span class="rvts83">Creates an SQL Table at the SQL end by a filelist number. The function was created for completeness because there is also the ApiTableCreate function which is actually the preferred method as it is easier to use.</span></p>
+<p class="rvps2"><span class="rvts83"><br/></span></p>
+<p class="rvps2"><span class="rvts81">Type</span><span class="rvts58">:</span><span class="rvts65"> </span><a class="rvts22" href="LanguageReference.chm::/Function_Command.htm">Function</a><br/><span class="rvts65"><br/></span></p>
+<p class="rvps2"><span class="rvts81"></span><br/><span class="rvts81">Parameters</span><span class="rvts58">:</span><span class="rvts65"> </span><a class="rvts22" href="LanguageGuide.chm::/String_Type.htm">String</a><span class="rvts65"> sTableName</span><br/><span class="rvts65"><br/></span></p>
+<div class="rvps12">
+<table border="2" cellpadding="2" cellspacing="0" style="border-color: #808080; border-style: solid; background-color: #ffffe0; border-spacing: 0px; border-top: none; border-right: none;">
+ <tr valign="top">
+  <td valign="middle" style="border-width : 2px; border-color : #000080 #000080 #000080 #000080; border-style: solid; padding: 1px 4px; border-bottom: none; border-left: none; background-color: #c0c0c0;">
+   <p class="rvps18"><span class="rvts71">Parameter</span></p>
+  </td>
+  <td valign="middle" style="border-width : 2px; border-color : #000080 #000080 #000080 #000080; border-style: solid; padding: 1px 4px; border-bottom: none; border-left: none; background-color: #c0c0c0;">
+   <p class="rvps18"><span class="rvts71">Description</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td valign="middle" style="border-width : 2px; border-color : #000000 #000000 #000000 #000000; border-style: solid; padding: 1px 4px; border-bottom: none; border-left: none;">
+   <p class="rvps5"><span class="rvts65">hTable</span></p>
+  </td>
+  <td valign="middle" style="border-width : 2px; border-color : #000000 #000000 #000000 #000000; border-style: solid; padding: 1px 4px; border-bottom: none; border-left: none;">
+   <p class="rvps5"><span class="rvts65">A file handle to the table name. Same as the Filelist.cfg slot number. Note: There is also a </span><span class="rvts58">SqlTableCreateByTableName</span><span class="rvts65"> function where you instead of the filelist number pass the table name as a string.</span></p>
+  </td>
+ </tr>
+</table>
+</div>
+<p class="rvps2"><span class="rvts81"><br/></span></p>
+<p class="rvps2"><span class="rvts81">Syntax</span></p>
+<p class="rvps2"><span class="rvts81"><br/></span></p>
+<p class="rvps11"><span class="rvts35">Function SQLTableCreate Integer hTable&nbsp;</span></p>
+<div class="rvps2">
+<table border="0" cellpadding="3" cellspacing="2" style="border-width: 0px; background-color: #ffffe0; border-spacing: 2px;">
+ <tr valign="top">
+  <td width="36" valign="top" style="padding: 1px 5px; background-color: #ffffff;">
+   <p class="rvps2"><span class="rvts65">Call:</span></p>
+  </td>
+  <td width="650" valign="middle" style="padding: 1px 5px;">
+   <p class="rvps2"><span class="rvts35">Get SQLTableCreate SysTable.File_Number to bOK</span></p>
+  </td>
+ </tr>
+</table>
+</div>
+<p class="rvps2"><span class="rvts65"><br/></span></p>
+<p class="rvps2"><span class="rvts81"></span><br/><span class="rvts81">Description</span></p>
+<p class="rvps13"><span class="rvts31">Use it to create a new SQL table. The file handle is the same as the file number in Filelist.cfg.</span></p>
+<p class="rvps2"><span class="rvts81">Note</span><span class="rvts58">: </span><span class="rvts65">The function will create a new SQL table with a dummy column named "dummy". This is because SQL databases doesn't like tables with no columns in them. It is the programmers responsibility to remove the dummy column after other columns has been added. It will also create a filelist slot and the .int file.</span><span class="rvts58"> </span><span class="rvts65">If you want to remove a table from the DataFlex Embedded database, use the API based ApiTableRemove function.</span><br/><span class="rvts65"><br/></span></p>
+<p class="rvps2"><span class="rvts82"><br/></span></p>
+<p class="rvps2"><span class="rvts82">Example</span></p>
+<p class="rvps2"><span class="rvts55"><br/></span></p>
+<p class="rvps11"><span class="rvts74">Procedure OnUpdate</span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; Boolean bOK</span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp;&nbsp;</span></p>
+<p class="rvps11"><span class="rvts79">&nbsp; &nbsp; Get SQLTableCreate MyTable.File_Number to bOK</span></p>
+<p class="rvps11"><span class="rvts79">&nbsp; &nbsp; Get SQLColumnAdd MyTable.File_Number "NewColumnAscii1" &nbsp; DF_ASCII_DUF 34 0 False "" to bOK</span></p>
+<p class="rvps11"><span class="rvts79">&nbsp; &nbsp; Get SQLColumnAdd MyTable.File_Number "NewColumnNumeric2" DF_BCD_DUF &nbsp; &nbsp;8 4 False "" to bOK</span></p>
+<p class="rvps11"><span class="rvts79">&nbsp; &nbsp; Get SQLColumnAdd MyTable.File_Number "NewColumnDate3" &nbsp; &nbsp;DF_DATE_DUF &nbsp;34 0 False "" to bOK</span></p>
+<p class="rvps11"><span class="rvts79"><br/></span></p>
+<p class="rvps11"><span class="rvts79">&nbsp; &nbsp; // Don't forget to remove the temporary "dummy" column created by "SQLTableCreate".</span></p>
+<p class="rvps11"><span class="rvts74">&nbsp; &nbsp; Get SqlColumnRemove MyTable.File_Number "dummy" to bOK</span></p>
+<p class="rvps11"><span class="rvts74">End_Procedure</span></p>
+<p class="rvps2"><span class="rvts6"><br/></span></p>
+<p></p>
+
+	</div>
+	
+	
+		<div id="topic_footer">
+
+			<div id="topic_footer_content">
+				Copyright &copy; 2016-2020 RDC Tools International. All Rights Reserved. Portions Copyright Data Access Worldwide, Mertech Data Systems, Inc.
+			</div>
+		</div>
+	
+
+	
+	
+
+	
+</body>
+	
+</html>
+

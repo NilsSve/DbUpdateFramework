@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+
+<html>
+	
+<head>
+	<title>Suggestions Implemented in Version</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="description" content="Help for the DataFlex Database Update Framework" />
+    <meta name="generator" content="HelpNDoc Professional Edition 7.1.0.253" />
+	
+	
+	
+	<link type="text/css" rel="stylesheet" media="all" href="css/reset.css" />
+	<link type="text/css" rel="stylesheet" media="all" href="css/base.css" />
+	<link type="text/css" rel="stylesheet" media="all" href="css/hnd.css" />
+	<!--[if lte IE 8]>
+		<link type="text/css" rel="stylesheet" media="all" href="css/ielte8.css" />
+	<![endif]-->
+
+	<style type="text/css">
+		#topic_header
+		{
+			background-color: #EFEFEF;
+		}
+	</style>
+
+	
+
+	<script type="text/javascript" src="js/chmRelative.js"></script>
+	
+	
+</head>
+
+<body>
+
+
+
+	
+	
+	<div id="topic_content">
+		
+<p></p>
+<h1 class="rvps7"><span class="rvts0"><span class="rvts23">Suggestions Implemented in Version 1.0.0.19 (Released July 26 2017)</span></span></h1>
+<ul style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: disc;">
+ <ul style="text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: circle;">
+  <li class="rvps2"><span class="rvts11">The </span><span class="rvts43">ApiColumnAdd</span><span class="rvts11"> function was improved to take on two more parameter that makes it possible to initialize the new column with a value. This is in parallel with how the SQL counterpart function </span><span class="rvts43">SqlColumnAdd</span><span class="rvts11"> works. In fact when doing this work it became obvious it might be a good idea to break out the functionality that updates the column value to its own function, as that can come in handy in other cases as well. The new function created is named </span><span class="rvts43">ApiColumnUpdateValue</span><span class="rvts11">. When creating this new functionality the old SqlColumnAdd function was split in two and the update logic was moved to the new function </span><span class="rvts43">SqlColumnUpdateValue</span><span class="rvts11">. You can read more about this in the on-line help.</span></li>
+ </ul>
+</ul>
+<p class="rvps4"><span class="rvts14">Reported by Sam Neuner</span></p>
+<p></p>
+
+	</div>
+	
+	
+		<div id="topic_footer">
+
+			<div id="topic_footer_content">
+				Copyright &copy; 2016-2020 RDC Tools International. All Rights Reserved. Portions Copyright Data Access Worldwide, Mertech Data Systems, Inc.
+			</div>
+		</div>
+	
+
+	
+	
+
+	
+</body>
+	
+</html>
+

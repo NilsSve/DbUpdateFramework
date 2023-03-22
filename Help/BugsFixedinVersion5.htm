@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+
+<html>
+	
+<head>
+	<title>Bugs Fixed in Version</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="description" content="Help for the DataFlex Database Update Framework" />
+    <meta name="generator" content="HelpNDoc Professional Edition 7.1.0.253" />
+	
+	
+	
+	<link type="text/css" rel="stylesheet" media="all" href="css/reset.css" />
+	<link type="text/css" rel="stylesheet" media="all" href="css/base.css" />
+	<link type="text/css" rel="stylesheet" media="all" href="css/hnd.css" />
+	<!--[if lte IE 8]>
+		<link type="text/css" rel="stylesheet" media="all" href="css/ielte8.css" />
+	<![endif]-->
+
+	<style type="text/css">
+		#topic_header
+		{
+			background-color: #EFEFEF;
+		}
+	</style>
+
+	
+
+	<script type="text/javascript" src="js/chmRelative.js"></script>
+	
+	
+</head>
+
+<body>
+
+
+
+	
+	
+	<div id="topic_content">
+		
+<p></p>
+<h1 class="rvps7"><span class="rvts0"><span class="rvts23">Bugs Fixed in Version 1.0.0.17 (Released July 4 2017)</span></span></h1>
+<ul style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: disc;">
+ <ul style="text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: circle;">
+  <li class="rvps2"><span class="rvts11">When the </span><span class="rvts43">CreateDbVersionTable.exe</span><span class="rvts11"> helper program was used “outside” of the current Studio workspace and a Filelist.cfg is dropped on it, the DbVersion.fd file was not created in the correct DDSrc folder, resulting in compile errors. The psDDSrcPath had not been set correctly, resulting in that the .fd file got created in the DDSrc folder of the workspace where the CreateDbVersionTable was started in/with.&nbsp;</span></li>
+ </ul>
+</ul>
+<p class="rvps4"><span class="rvts14">Reported by Marco Kuipers</span></p>
+<p class="rvps2"><span class="rvts14"><br/></span></p>
+<ul style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: disc;">
+ <ul style="text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: circle;">
+  <li style="margin-left: 0px" class="rvps5"><span class="rvts11">If the ApiTableConvertAllToSQL message was used to convert all tables in the Filelist.cfg from embedded to SQL (pbCopyData = True and pbContinueOnError = False), and an error occurred while copying data from embedded to SQL, the conversion would still continue with the rest of the tables. This has been corrected so that the process now is properly interrupted if an error is encountered. This logic has also been improved. If copying of data fails for any reason when the ApiTableConvertToSQL_Ex message is executed (used internally by the ApiTableConvertAllToSQL) the SQL table will be renamed by adding an underscore and a GUID, and an error is saved to the error log, telling you what it did. You need to make a decision if that SQL table should be kept; else just delete it with an SQL back-end tool. Note that the embedded .dat file will be kept intact and the Filelist.cfg will still point to the embedded .dat file.</span></li>
+ </ul>
+</ul>
+<p class="rvps4"><span class="rvts14">Reported by Marco Kuipers</span></p>
+<p class="rvps4"><span class="rvts14"><br/></span></p>
+<ul style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: disc;">
+ <ul style="text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: circle;">
+  <li class="rvps2"><span class="rvts11">If slot number 50 in Filelist.cfg was used for another table than FlexErrs, things would not go so well because table number 50 would just get ignored. The logic has been improved to instead check for the </span><span class="rvts43">table name</span><span class="rvts11"> “FlexErrs” and ignore it.</span></li>
+ </ul>
+</ul>
+<p class="rvps4"><span class="rvts14">Reported by Marco Kuipers</span></p>
+<p class="rvps4"><span class="rvts14"><br/></span></p>
+<ul style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: disc;">
+ <ul style="text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: circle;">
+  <li class="rvps2"><span class="rvts11">If using a pre DataFlex 18 version compile errors occurred for function not found and constants not defined. These have been fixed.</span></li>
+ </ul>
+</ul>
+<p class="rvps4"><span class="rvts14">Reported by Nils G Svedmyr (Thanks Clayton for making me test this more thoroughly)</span></p>
+<p></p>
+
+	</div>
+	
+	
+		<div id="topic_footer">
+
+			<div id="topic_footer_content">
+				Copyright &copy; 2016-2020 RDC Tools International. All Rights Reserved. Portions Copyright Data Access Worldwide, Mertech Data Systems, Inc.
+			</div>
+		</div>
+	
+
+	
+	
+
+	
+</body>
+	
+</html>
+

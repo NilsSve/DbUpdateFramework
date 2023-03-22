@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+
+<html>
+	
+<head>
+	<title>tAPITableNameInfo</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="description" content="Help for the DataFlex Database Update Framework" />
+    <meta name="generator" content="HelpNDoc Professional Edition 7.1.0.253" />
+	
+	
+	
+	<link type="text/css" rel="stylesheet" media="all" href="css/reset.css" />
+	<link type="text/css" rel="stylesheet" media="all" href="css/base.css" />
+	<link type="text/css" rel="stylesheet" media="all" href="css/hnd.css" />
+	<!--[if lte IE 8]>
+		<link type="text/css" rel="stylesheet" media="all" href="css/ielte8.css" />
+	<![endif]-->
+
+	<style type="text/css">
+		#topic_header
+		{
+			background-color: #EFEFEF;
+		}
+	</style>
+
+	
+
+	<script type="text/javascript" src="js/chmRelative.js"></script>
+	
+	
+</head>
+
+<body>
+
+
+
+	
+	
+	<div id="topic_content">
+		
+<p></p>
+<h1 class="rvps7"><span class="rvts0"><span class="rvts23">tAPITableNameInfo - The Database Update Framework</span></span></h1>
+<p class="rvps13"><span class="rvts65">See Also: </span><a class="rvts96" href="LanguageGuide.chm::/Declaring_Variables.htm">Declaring Variables</a><span class="rvts65">, </span><a class="rvts96" href="Struct.htm">Struct</a><span class="rvts65">&nbsp;</span></p>
+<h3 class="rvps24"><span class="rvts0"><span class="rvts55">Purpose</span></span></h3>
+<p class="rvps13"><span class="rvts65">tAPITableNameInfo is a </span><a class="rvts96" href="LanguageGuide.chm::/Struct_Type.htm">structured type</a><span class="rvts65"> used for some members of the </span><a class="rvts22" href="cDbUpdateFunctionLibrary.htm">cDbUpdateFunctionLibrary</a><span class="rvts65"> class. The struct can be passed as a parameter to the e.g. ApiTableUpdate function to make it easier (less code writing) to create a new table.</span></p>
+<p class="rvps13"><span class="rvts65">&nbsp;</span></p>
+<h3 class="rvps24"><span class="rvts0"><span class="rvts55">Type Declaration</span></span></h3>
+<p class="rvps22"><span class="rvts35">Struct tAPITableNameInfo</span></p>
+<p class="rvps22"><span class="rvts35">&nbsp; &nbsp; Integer iTableNumber</span></p>
+<p class="rvps22"><span class="rvts35">&nbsp; &nbsp; String &nbsp;sRootName</span></p>
+<p class="rvps22"><span class="rvts35">&nbsp; &nbsp; String &nbsp;sLogicalName</span></p>
+<p class="rvps22"><span class="rvts35">&nbsp; &nbsp; String &nbsp;sDisplayName</span></p>
+<p class="rvps22"><span class="rvts35">&nbsp; &nbsp; String &nbsp;sDriverID</span></p>
+<p class="rvps22"><span class="rvts35">&nbsp; &nbsp; Boolean bIsAlias</span></p>
+<p class="rvps22"><span class="rvts35">&nbsp; &nbsp; Boolean bIsSQL</span></p>
+<p class="rvps22"><span class="rvts35">&nbsp; &nbsp; Boolean bIsSystemFile</span></p>
+<p class="rvps22"><span class="rvts35">&nbsp; &nbsp; Boolean bShouldChange</span></p>
+<p class="rvps22"><span class="rvts35">&nbsp; &nbsp; Boolean bCancel</span></p>
+<p class="rvps22"><span class="rvts35">&nbsp; &nbsp; Boolean bError</span></p>
+<p class="rvps22"><span class="rvts35">End_Struct</span></p>
+<p class="rvps22"><span class="rvts35"><br/></span></p>
+<h4 class="rvps25"><span class="rvts0"><span class="rvts58">&nbsp;</span></span></h4>
+<h3 class="rvps24"><span class="rvts0"><span class="rvts55">Struct Members</span></span></h3>
+<p class="rvps13"><span class="rvts58">iTableNumber</span></p>
+<p class="rvps26"><span class="rvts65">The Filelist.cfg table number (file slot number).</span></p>
+<p class="rvps13"><span class="rvts58">sRootName</span></p>
+<p class="rvps26"><span class="rvts65">The Filelist.cfg root name.</span></p>
+<p class="rvps13"><span class="rvts58">sLogicalName</span></p>
+<p class="rvps26"><span class="rvts65">The Filelist.cfg logical name.</span></p>
+<p class="rvps13"><span class="rvts58">sDisplayName</span></p>
+<p class="rvps26"><span class="rvts65">The Filelist.cfg display name.</span></p>
+<p class="rvps13"><span class="rvts58">sDriverID</span></p>
+<p class="rvps26"><span class="rvts65">The driver ID; MSSQLDRV_ID, DB2_DRV_ID, ODBC_DRV_ID etc.</span></p>
+<p class="rvps13"><span class="rvts58">bIsAlias</span></p>
+<p class="rvps26"><span class="rvts65">Boolean parameter. Pass a True if this is an Alias table in Filelist.cfg</span></p>
+<p class="rvps13"><span class="rvts58">bIsSystemFile</span></p>
+<p class="rvps26"><span class="rvts65">Boolean parameter. Pass a True if this is a system table (can only have 1 record).</span></p>
+<p class="rvps13"><span class="rvts58">bShouldChange</span></p>
+<p class="rvps26"><span class="rvts65">Boolean parameter. Internal usage.</span></p>
+<p class="rvps13"><span class="rvts58">bCancel</span></p>
+<p class="rvps26"><span class="rvts65">Boolean parameter. Internal usage.</span></p>
+<p class="rvps13"><span class="rvts58">bError</span></p>
+<p class="rvps26"><span class="rvts65">Boolean parameter. Internal usage.</span></p>
+<h3 class="rvps24"><span class="rvts0"><span class="rvts55"><br/></span></span></h3>
+<h3 class="rvps24"><span class="rvts0"><span class="rvts55">Syntax</span></span></h3>
+<p class="rvps22"><span class="rvts35">Use cDbUpdateFunctionLibrary.pkg</span></p>
+<p class="rvps22"><span class="rvts35">:</span></p>
+<p class="rvps22"><span class="rvts35">tAPITableNameInfo {variableName}</span></p>
+<p class="rvps13"><span class="rvts65">&nbsp;</span></p>
+<h3 class="rvps24"><span class="rvts0"><span class="rvts55">Declaring variables</span></span></h3>
+<p class="rvps13"><span class="rvts65">To declare tAPITableNameInfo variables, use the name of the type (tAPITableNameInfo) followed by the variable name.</span></p>
+<p class="rvps22"><span class="rvts35">tAPITableNameInfo[] aAPITableNameInfo</span></p>
+<p class="rvps13"><span class="rvts65">See </span><a class="rvts96" href="LanguageGuide.chm::/Struct_Variables.htm">struct variables</a><span class="rvts65"> for more details of instantiating struct types.</span></p>
+<p class="rvps2"><span class="rvts6"><br/></span></p>
+<p></p>
+
+	</div>
+	
+	
+		<div id="topic_footer">
+
+			<div id="topic_footer_content">
+				Copyright &copy; 2016-2020 RDC Tools International. All Rights Reserved. Portions Copyright Data Access Worldwide, Mertech Data Systems, Inc.
+			</div>
+		</div>
+	
+
+	
+	
+
+	
+</body>
+	
+</html>
+

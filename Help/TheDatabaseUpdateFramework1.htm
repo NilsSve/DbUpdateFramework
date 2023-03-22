@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+
+<html>
+	
+<head>
+	<title>The Database Update Framework</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="description" content="Help for the DataFlex Database Update Framework" />
+    <meta name="generator" content="HelpNDoc Professional Edition 7.1.0.253" />
+	
+	
+	
+	<link type="text/css" rel="stylesheet" media="all" href="css/reset.css" />
+	<link type="text/css" rel="stylesheet" media="all" href="css/base.css" />
+	<link type="text/css" rel="stylesheet" media="all" href="css/hnd.css" />
+	<!--[if lte IE 8]>
+		<link type="text/css" rel="stylesheet" media="all" href="css/ielte8.css" />
+	<![endif]-->
+
+	<style type="text/css">
+		#topic_header
+		{
+			background-color: #EFEFEF;
+		}
+	</style>
+
+	
+
+	<script type="text/javascript" src="js/chmRelative.js"></script>
+	
+	
+</head>
+
+<body>
+
+
+
+	
+	
+	<div id="topic_content">
+		
+<p></p>
+<h1 class="rvps7"><span class="rvts0"><span class="rvts23">Welcome to the Database Update Framework</span></span></h1>
+<p class="rvps2"><span class="rvts11"><br/></span></p>
+<p class="rvps8"><img alt="" style="float: left; padding : 1px;" src="lib/DbUpdateFrameworkDF19_256257.png"></p>
+<p class="rvps4"><span class="rvts11"><br/></span></p>
+<p class="rvps9"><span class="rvts12">The framework is a </span><span class="rvts13">code based framework for making automated database updates</span><span class="rvts12">. It is designed to make it easy to update databases at customer site when e.g. installing a new revision of a software that depends on changes have been made to the database before the new software version can run.</span></p>
+<p class="rvps4"><span class="rvts12"><br/></span></p>
+<p class="rvps9"><span class="rvts28">The framework is compatible with the following databases; </span><span class="rvts27">Microsoft SQL Server, IBM DB2, MySQL, Oracle, PostgreSQL and the DataFlex Embedded database.</span></p>
+<p class="rvps9"><span class="rvts27"><br/></span></p>
+<p class="rvps9"><span class="rvts11">And it is compatible with these Data Access Worldwide connectivity kit drivers;</span></p>
+<p class="rvps9"><span class="rvts11">DataFlex, MSSQLDrv.dll, DB2_Drv.dll and ODBC_Drv.dll. It is </span><span class="rvts14">not</span><span class="rvts11"> compatible with the Pervasive driver due to its lack of SQL support. However, it should be possible to use the framework for a Pervasive database if the ODBC_DRV driver is used although this has not been tested.</span></p>
+<p class="rvps4"><span class="rvts11"><br/></span></p>
+<p class="rvps4"><span class="rvts11"><br/></span></p>
+<p class="rvps2"><span class="rvts24"><br/></span></p>
+<p class="rvps2"><span class="rvts24"><br/></span></p>
+<p class="rvps2"><span class="rvts24">Note: If the installation program was used the framework was </span><span class="rvts25">by default</span><span class="rvts24"> installed under "C:\Projects\DbUpdateFramework"</span></p>
+<p class="rvps2"><span class="rvts14"><br/></span></p>
+<p class="rvps4"><span class="rvts11"><br/></span></p>
+<ul style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: disc;">
+ <li style="margin-left: 0px" class="rvps4"><span class="rvts11">Watch a professionally made introduction video </span><a class="rvts18" href="https://www.youtube.com/watch?v=VD4eN9oP0_U&feature=youtu.be" target="_blank">here</a><span class="rvts11">. (Courtesy of Data Access Europe)</span></li>
+ <li style="margin-left: 0px" class="rvps4"><span class="rvts11">Or watch a short funny animation (1 minute 30 secs) about the framework</span><a class="rvts20" href="https://www.youtube.com/watch?v=EetznI-HsYg&feature=em-upload_owner" target="_blank"> </a><a class="rvts22" href="https://www.youtube.com/watch?v=EetznI-HsYg&feature=em-upload_owner" target="_blank">here</a><span class="rvts11"> </span><a class="rvts20" href="https://www.youtube.com/watch?v=EetznI-HsYg&feature=em-upload_owner" target="_blank">or the release video </a><a class="rvts22" href="https://www.youtube.com/watch?v=W91SOH2kXpo&rel=0" target="_blank">here</a><a class="rvts21" href="https://www.youtube.com/watch?v=EetznI-HsYg&feature=em-upload_owner" target="_blank"> </a><a class="rvts20" href="https://www.youtube.com/watch?v=EetznI-HsYg&feature=em-upload_owner" target="_blank">(1 minute 8 secs).</a></li>
+ <li style="margin-left: 0px" class="rvps4"><span class="rvts11">If you are viewing the Microsoft HTML .chm help file - there is also an on-line version of this help text that might be more recent. You'll find the on-line help </span><a class="rvts18" href="http://www.rdctools.com/HTMLHelp/Developer5.htm" target="_blank">here</a><span class="rvts11">.</span></li>
+</ul>
+<h2 class="rvps6"><span class="rvts0"><span class="rvts15"><br/></span></span></h2>
+<h2 class="rvps6"><span class="rvts0"><span class="rvts26">Why would you use the Database Update Framework?</span></span></h2>
+<h2 class="rvps6"><span class="rvts0"><span class="rvts16">Problem description:</span></span></h2>
+<ul style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: disc;">
+ <li class="rvps2"><span class="rvts11">A brand new version of your software is about to be released</span></li>
+ <li class="rvps2"><span class="rvts11">During development of the new software, database changes have been made; new tables and fields/columns added and the new fields needs to be initialized with default values and yet other fields were changed.</span></li>
+ <li class="rvps2"><span class="rvts11">The plan is also to to use an SQL based database (e.g. Microsoft SQL Server) at all sites.</span></li>
+ <li class="rvps2"><span class="rvts11">Thus all customer's databases needs to be changed before the new software can run.</span></li>
+ <li class="rvps2"><span class="rvts11">To use the build in DataFlex tools to make this transition is to difficult, time consuming and error prune to do at each customer site.</span></li>
+</ul>
+<p class="rvps2"><span class="rvts11"><br/></span></p>
+<h2 class="rvps6"><span class="rvts0"><span class="rvts16">The solution - Use The Database Update Framework:</span></span></h2>
+<p class="rvps2"><span class="rvts12"><br/></span></p>
+<ul style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: disc;">
+ <li class="rvps2"><span class="rvts11">You only need to make necessary changes once at the office to later run them on all customer sites</span></li>
+ <li class="rvps2"><span class="rvts11">Powerful functions help you write compact code to make even big changes. Typically one line of code for each table, field or index to change</span></li>
+ <li class="rvps2"><span class="rvts11">Test all changes at the office at your own pace to make sure it all works</span></li>
+ <li class="rvps2"><span class="rvts11">Securely locks everybody else out of the system while the database update is under way</span></li>
+ <li class="rvps2"><span class="rvts11">Deploy your program at customer site, run it, and all database changes will be done automatically and your program will then run safely</span></li>
+</ul>
+<p class="rvps2"><span class="rvts12"><br/></span></p>
+<h2 class="rvps6"><span class="rvts0"><span class="rvts17">Created By</span></span></h2>
+<p class="rvps5"><span class="rvts11">Nils Svedmyr, RDC Tools International</span></p>
+<p class="rvps5"><span class="rvts11">Visit us at: </span><a class="rvts18" href="http://www.rdctools.com" target="_blank">rdctools.com</a></p>
+<h2 class="rvps6"><span class="rvts0"><span class="rvts17">See Also</span></span></h2>
+<p class="rvps5"><a class="rvts19" href="License.htm">License</a></p>
+<p class="rvps5"><a class="rvts19" href="Disclaimer.htm">Disclaimer</a></p>
+<p class="rvps5"><a class="rvts19" href="Feedback.htm">Feedback</a></p>
+<h2 class="rvps6"><span class="rvts0"><span class="rvts17">Next Topic</span></span></h2>
+<p class="rvps5"><a class="rvts19" href="Overview.htm">Overview</a><span class="rvts11">&nbsp;</span></p>
+<p></p>
+
+	</div>
+	
+	
+		<div id="topic_footer">
+
+			<div id="topic_footer_content">
+				Copyright &copy; 2016-2020 RDC Tools International. All Rights Reserved. Portions Copyright Data Access Worldwide, Mertech Data Systems, Inc.
+			</div>
+		</div>
+	
+
+	
+	
+
+	
+</body>
+	
+</html>
+

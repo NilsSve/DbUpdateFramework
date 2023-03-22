@@ -1,0 +1,417 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="generator" content="HelpNDoc Professional Edition 7.1.0.253">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" href="favicon.ico"/>
+
+  <title>SQL Make Database Changes</title>
+  <meta name="description" content="Help for the DataFlex Database Update Framework" /> 
+  <meta name="keywords" content="SqlDataBaseCreate,SQLColumnAdd,SQLColumnChange,SqlColumnRemove,SQLColumnRename,SqlColumnDefaultValue,SqlColumnNullable,SQL Make Database Changes">
+
+
+
+  
+
+  <!-- Twitter Card data -->
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="SQL Make Database Changes">
+  <meta name="twitter:description" content="Help for the DataFlex Database Update Framework">
+
+  <!-- Open Graph data -->
+  <meta property="og:title" content="SQL Make Database Changes" />
+  <meta property="og:type" content="article" />
+  <meta property="og:description" content="Help for the DataFlex Database Update Framework" />
+  <meta property="og:site_name" content="The Database Update Framework" /> 
+
+  <!-- Bootstrap core CSS -->
+  <link href="vendors/bootstrap-3.4.1/css/bootstrap.min.css" rel="stylesheet"/>
+
+  <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+  <link href="vendors/bootstrap-3.4.1/css/ie10-viewport-bug-workaround.css" rel="stylesheet"/>
+
+  <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+  <!--[if lt IE 9]>
+      <script src="vendors/html5shiv-3.7.3/html5shiv.min.js"></script>
+      <script src="vendors/respond-1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+  <!-- JsTree styles -->
+  <link href="vendors/jstree-3.3.10/themes/default/style.min.css" rel="stylesheet"/>
+
+  <!-- Hnd styles -->
+  <link href="css/layout.min.css" rel="stylesheet" />
+  <link href="css/effects.min.css" rel="stylesheet" />
+  <link href="css/theme-default.min.css" rel="stylesheet" />
+  <link href="css/print.min.css" rel="stylesheet" media="print" />
+  <style type="text/css">nav { width: 400px} @media screen and (min-width:769px) { body.md-nav-expanded div#main { margin-left: 400px} body.md-nav-expanded header { padding-left: 414px} }</style>
+
+  <!-- Content style -->
+  <link href="css/hnd.content.css" rel="stylesheet" />
+
+  
+
+
+
+</head>
+
+<body class="md-nav-expanded">
+
+
+
+  <div id="skip-link">
+    <a href="#main-content" class="element-invisible">Skip to main content</a>
+  </div>
+
+  <header class="headroom">
+    <button class="hnd-toggle btn btn-default">
+      <span class="sr-only">Toggle navigation</span>
+      <span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span>        
+    </button>
+    <h1>The Database Update Framework</h1>
+    
+  </header>
+
+  <nav id="panel-left" class="md-nav-expanded">
+    <!-- Nav tabs -->
+    <ul class="tab-tabs nav nav-tabs" role="tablist">
+      <li id="nav-close"> 
+        <button class="hnd-toggle btn btn-default">
+          <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+        </button>
+      </li>
+      
+	  
+        <li role="presentation" class="tab active">
+            <a href="#contents" id="tab-contents" aria-controls="contents" role="tab" data-toggle="tab">
+                <i class="glyphicon glyphicon-list"></i>
+                Contents
+            </a>
+        </li>
+      
+        <li role="presentation" class="tab">
+            <a href="#index" id="tab-index" aria-controls="index" role="tab" data-toggle="tab">
+                <i class="glyphicon glyphicon-asterisk"></i>
+                Index
+            </a>
+        </li>
+      
+        <li role="presentation" class="tab">
+            <a href="#search" id="tab-search" aria-controls="search" role="tab" data-toggle="tab">
+                <i class="glyphicon glyphicon-search"></i>
+                Search
+            </a>
+        </li>
+      
+    </ul>  <!-- /Nav tabs -->
+
+    <!-- Tab panes -->
+    <div class="tab-content">
+	  
+      <div role="tabpanel" class="tab-pane active" id="contents">
+        <div id="toc" class="tree-container unselectable"
+            data-url="_toc.json"
+            data-openlvl="1"
+        >
+            
+        </div>
+      </div>  <!-- /contents-->
+      
+      <div role="tabpanel" class="tab-pane" id="index">
+        <div id="keywords" class="tree-container unselectable"
+            data-url="_keywords.json"
+            data-openlvl="1"
+        >
+            
+        </div>
+      </div>  <!-- /index-->
+      
+      <div role="tabpanel" class="tab-pane" id="search">
+        <div class="search-content">
+          <div class="search-input">
+            <form id="search-form">
+              <div class="form-group">
+                <div class="input-group">
+                  <input type="text" class="form-control" id="input-search" name="input-search" placeholder="Search..." />
+                  <span class="input-group-btn">
+                    <button class="btn btn-default" type="submit">
+                      <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+                    </button>
+                  </span>
+                </div>
+              </div>
+            </form>
+          </div>  <!-- /search-input -->
+          <div class="search-result">
+            <div id="search-info"></div>
+            <div class="tree-container unselectable" id="search-tree"></div>
+          </div>  <!-- /search-result -->
+        </div>  <!-- /search-content -->
+      </div>  <!-- /search-->
+      
+    </div>  <!-- /Tab panes -->
+
+  </nav>
+
+  <div id="main">
+
+    <article>
+        <div id="topic-content" class="container-fluid" 
+		  data-hnd-id="SQLMakeDatabaseChanges"
+		  data-hnd-context="100"
+		  data-hnd-title="SQL Make Database Changes"
+		>
+            
+
+            <a id="main-content"></a>
+
+            
+
+            <div class="main-content">
+                
+<p></p>
+<h1 class="rvps7"><span class="rvts0"><span class="rvts23">SQL Make Database Changes - SQL Based Methods (ESQL)</span></span></h1>
+<div class="rvps2">
+<table width="100%" border="0" style="border-width: 0px; border-spacing: 2px;">
+ <tr valign="top">
+  <td valign="middle" style="padding: 1px; background-color: #c0c0c0; width: 176px;">
+   <p class="rvps3"><span class="rvts71">Name</span></p>
+  </td>
+  <td valign="middle" style="padding: 1px; background-color: #c0c0c0; width: 98px;">
+   <p class="rvps3"><span class="rvts71">Type</span></p>
+  </td>
+  <td valign="middle" style="padding: 1px; background-color: #c0c0c0; width: 400px;">
+   <p class="rvps3"><span class="rvts71">Description</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td valign="middle" style="padding: 1px; background-color: #ffffff; width: 176px;">
+   <p class="rvps2"><a class="rvts22" href="SqlDataBaseCreate.html">SqlDataBaseCreate</a></p>
+  </td>
+  <td valign="middle" style="padding: 1px; background-color: #ffffff; width: 98px;">
+   <p class="rvps2"><span class="rvts65">Function</span></p>
+  </td>
+  <td valign="middle" style="padding: 1px; background-color: #ffffff; width: 400px;">
+   <p class="rvps2"><span class="rvts65">Function for creating a new SQL Database.</span></p>
+   <p class="rvps2"><span class="rvts65">Note: This is for creating new SQL DATABASES - not database tables!</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td valign="middle" style="padding: 1px; background-color: #e2e2e2; width: 176px;">
+   <p class="rvps2"><a class="rvts22" href="SqlTableCreate.html">SqlTableCreate</a></p>
+  </td>
+  <td valign="middle" style="padding: 1px; background-color: #e2e2e2; width: 98px;">
+   <p class="rvps2"><span class="rvts65">Function</span></p>
+  </td>
+  <td valign="middle" style="padding: 1px; background-color: #e2e2e2; width: 400px;">
+   <p class="rvps2"><span class="rvts65">Creates an SQL Table at the SQL back-end.</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td valign="middle" style="padding: 1px; background-color: #ffffff; width: 176px;">
+   <p class="rvps2"><a class="rvts22" href="SqlTableRemove.html">SqlTableRemove</a></p>
+  </td>
+  <td valign="middle" style="padding: 1px; background-color: #ffffff; width: 98px;">
+   <p class="rvps2"><span class="rvts65">Function</span></p>
+  </td>
+  <td valign="middle" style="padding: 1px; background-color: #ffffff; width: 400px;">
+   <p class="rvps2"><span class="rvts65">Deletes the data cache file and .int file, then drops the passed data table name.</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td valign="middle" style="padding: 1px; background-color: #e2e2e2; width: 176px;">
+   <p class="rvps2"><a class="rvts22" href="SqlTableRename.html">SqlTableRename</a></p>
+  </td>
+  <td valign="middle" style="padding: 1px; background-color: #e2e2e2; width: 98px;">
+   <p class="rvps2"><span class="rvts65">Function</span></p>
+  </td>
+  <td valign="middle" style="padding: 1px; background-color: #e2e2e2; width: 400px;">
+   <p class="rvps2"><span class="rvts65">To rename an existing table name</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td valign="middle" style="padding: 1px; background-color: #e2e2e2; width: 176px;">
+   <p class="rvps2"><a class="rvts22" href="SqlViewRemove.html">SqlViewRemove</a></p>
+  </td>
+  <td valign="middle" style="padding: 1px; background-color: #e2e2e2; width: 98px;">
+   <p class="rvps2"><span class="rvts65">Function</span></p>
+  </td>
+  <td valign="middle" style="padding: 1px; background-color: #e2e2e2; width: 400px;">
+   <p class="rvps2"><span class="rvts65">Deletes the data cache file and .int file, then drops the passed SQL data view.</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td valign="middle" style="padding: 1px; background-color: #ffffff; width: 176px;">
+   <p class="rvps2"><a class="rvts22" href="SqlColumnAdd.html">SqlColumnAdd</a></p>
+  </td>
+  <td valign="middle" style="padding: 1px; background-color: #ffffff; width: 98px;">
+   <p class="rvps2"><span class="rvts65">Function</span></p>
+  </td>
+  <td valign="middle" style="padding: 1px; background-color: #ffffff; width: 400px;">
+   <p class="rvps2"><span class="rvts65">To add a new column to a table.</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td valign="middle" style="padding: 1px; background-color: #e2e2e2; width: 176px;">
+   <p class="rvps2"><a class="rvts22" href="SqlColumnChange.html">SqlColumnChange</a></p>
+  </td>
+  <td valign="middle" style="padding: 1px; background-color: #e2e2e2; width: 98px;">
+   <p class="rvps2"><span class="rvts65">Function</span></p>
+  </td>
+  <td valign="middle" style="padding: 1px; background-color: #e2e2e2; width: 400px;">
+   <p class="rvps2"><span class="rvts65">To change the length or type of an existing column.</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td valign="middle" style="padding: 1px; background-color: #ffffff; width: 176px;">
+   <p class="rvps2"><a class="rvts22" href="SqlColumnRemove.html">SqlColumnRemove</a></p>
+  </td>
+  <td valign="middle" style="padding: 1px; background-color: #ffffff; width: 98px;">
+   <p class="rvps2"><span class="rvts65">Function</span></p>
+  </td>
+  <td valign="middle" style="padding: 1px; background-color: #ffffff; width: 400px;">
+   <p class="rvps2"><span class="rvts65">To remove an existing table column/field.</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td valign="middle" style="padding: 1px; background-color: #e2e2e2; width: 176px;">
+   <p class="rvps2"><a class="rvts22" href="SqlColumnRename.html">SqlColumnRename</a></p>
+  </td>
+  <td valign="middle" style="padding: 1px; background-color: #e2e2e2; width: 98px;">
+   <p class="rvps2"><span class="rvts65">Function</span></p>
+  </td>
+  <td valign="middle" style="padding: 1px; background-color: #e2e2e2; width: 400px;">
+   <p class="rvps2"><span class="rvts65">To rename an existing column/field.</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td valign="middle" style="padding: 1px; background-color: #ffffff; width: 176px;">
+   <p class="rvps2"><a class="rvts22" href="SqlColumnDefaultValue.html">SqlColumnDefaultValue</a></p>
+  </td>
+  <td valign="middle" style="padding: 1px; background-color: #ffffff; width: 98px;">
+   <p class="rvps2"><span class="rvts65">Function</span></p>
+  </td>
+  <td valign="middle" style="padding: 1px; background-color: #ffffff; width: 400px;">
+   <p class="rvps2"><span class="rvts65">To set a default value for a column.</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td valign="middle" style="padding: 1px; background-color: #e2e2e2; width: 176px;">
+   <p class="rvps2"><a class="rvts22" href="SqlColumnNullable.html">SqlColumnNullable</a></p>
+  </td>
+  <td valign="middle" style="padding: 1px; background-color: #e2e2e2; width: 98px;">
+   <p class="rvps2"><span class="rvts65">Function</span></p>
+  </td>
+  <td valign="middle" style="padding: 1px; background-color: #e2e2e2; width: 400px;">
+   <p class="rvps2"><span class="rvts65">To set if a column accepts NULL values or not.</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td valign="middle" style="padding: 1px; background-color: #ffffff; width: 176px;">
+   <p class="rvps2"><a class="rvts22" href="SQLTableConvertToEmbedded.html">SQLTableConvertToEmbedded</a></p>
+  </td>
+  <td valign="middle" style="padding: 1px; background-color: #ffffff; width: 98px;">
+   <p class="rvps2"><span class="rvts65">Function</span></p>
+  </td>
+  <td valign="middle" style="padding: 1px; background-color: #ffffff; width: 400px;">
+   <p class="rvps2"><span class="rvts65">To convert an SQL table to Embedded (a DataFlex .dat file)</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td valign="middle" style="padding: 1px; background-color: #ffffff; width: 176px;">
+   <p class="rvps2"><a class="rvts22" href="SqlColumnUpdateValue.html">SqlColumnUpdateValue</a></p>
+  </td>
+  <td valign="middle" style="padding: 1px; background-color: #ffffff; width: 98px;">
+   <p class="rvps2"><span class="rvts65">Function</span></p>
+  </td>
+  <td valign="middle" style="padding: 1px; background-color: #ffffff; width: 400px;">
+   <p class="rvps2"><span class="rvts65">To populate all existing table rows for a column.</span></p>
+  </td>
+ </tr>
+</table>
+</div>
+<p class="rvps2"><span class="rvts54"><br/></span></p>
+<p class="rvps2"><span class="rvts31">Several of the above functions have their counterpart as "ApiXXX" functions - see </span><a class="rvts22" href="APIBasedMethods.html">API Based Methods</a><span class="rvts31">.</span></p>
+<p class="rvps2"><span class="rvts31">The difference is that the "SqlXXX" functions above doesn't use Structure_Start and Structure_End commands to make changes to the SQL server. Instead they use ESQL (Embedded SQL). This can drastically reduce the time it takes to perform some tasks as the Structure_Start/End usually exports all table data, drops the table and loads the table again with data. Something that can be very time consuming if there is a lot of data. These functions are available to SQL based tables only.</span></p>
+<p class="rvps2"><span class="rvts31"><br/></span></p>
+<p class="rvps2"><span class="rvts53">Note: If you don't find what you are looking for here, look at the </span><a class="rvts62" href="APIMakeDatabaseChanges.html">API Make Database Changes</a><span class="rvts53"> sections for more functions.</span></p>
+<p></p>
+
+            </div>
+            
+            <div id="topic_footer"><div id="topic_footer_content">Copyright &copy; 2016-2020 RDC Tools International. All Rights Reserved. Portions Copyright Data Access Worldwide, Mertech Data Systems, Inc.</div></div>
+        </div>  <!-- /#topic-content -->
+    </article>
+
+    <footer></footer>
+
+  </div>  <!-- /#main -->
+
+  <div class="mask" data-toggle="sm-nav-expanded"></div>
+  
+  <!-- Modal -->
+  <div class="modal fade" id="hndModal" tabindex="-1" role="dialog" aria-labelledby="hndModalLabel">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="hndModalLabel"></h4>
+        </div>
+        <div class="modal-body">
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary modal-btn-close" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Splitter -->
+  <div id="hnd-splitter" style="left: 400px"></div>  
+
+  <!-- Scripts -->
+  <script src="vendors/jquery-3.5.1/jquery.min.js"></script>
+  <script src="vendors/bootstrap-3.4.1/js/bootstrap.min.js"></script>
+  <script src="vendors/bootstrap-3.4.1/js/ie10-viewport-bug-workaround.js"></script>
+  <script src="vendors/markjs-8.11.1/jquery.mark.min.js"></script>
+  <script src="vendors/uri-1.19.2/uri.min.js"></script>
+  <script src="vendors/imageMapResizer-1.0.10/imageMapResizer.min.js"></script>
+  <script src="vendors/headroom-0.11.0/headroom.min.js"></script>
+  <script src="vendors/jstree-3.3.10/jstree.min.js"></script>  
+  <script src="vendors/interactjs-1.9.22/interact.min.js"></script>  
+
+  <!-- HelpNDoc scripts -->
+  <script src="js/polyfill.object.min.js"></script>
+  <script src="_translations.js"></script>
+  <script src="js/hndsd.min.js"></script>
+  <script src="js/hndse.min.js"></script>
+  <script src="js/app.min.js"></script>
+
+  <!-- Init script -->
+  <script>
+    $(function() {
+      // Create the app
+      var app = new Hnd.App();
+      // Update translations
+      hnd_ut(app);
+	  // Instanciate imageMapResizer
+	  imageMapResize();
+	  // Custom JS
+	  
+      // Boot the app
+      app.Boot();
+    });
+  </script>
+
+
+
+</body>
+
+</html>
+

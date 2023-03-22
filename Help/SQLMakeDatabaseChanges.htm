@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+
+<html>
+	
+<head>
+	<title>SQL Make Database Changes</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="description" content="Help for the DataFlex Database Update Framework" />
+    <meta name="generator" content="HelpNDoc Professional Edition 7.1.0.253" />
+	
+	
+	
+	<link type="text/css" rel="stylesheet" media="all" href="css/reset.css" />
+	<link type="text/css" rel="stylesheet" media="all" href="css/base.css" />
+	<link type="text/css" rel="stylesheet" media="all" href="css/hnd.css" />
+	<!--[if lte IE 8]>
+		<link type="text/css" rel="stylesheet" media="all" href="css/ielte8.css" />
+	<![endif]-->
+
+	<style type="text/css">
+		#topic_header
+		{
+			background-color: #EFEFEF;
+		}
+	</style>
+
+	
+
+	<script type="text/javascript" src="js/chmRelative.js"></script>
+	
+	
+</head>
+
+<body>
+
+
+
+	
+	
+	<div id="topic_content">
+		
+<p></p>
+<h1 class="rvps7"><span class="rvts0"><span class="rvts23">SQL Make Database Changes - SQL Based Methods (ESQL)</span></span></h1>
+<div class="rvps2">
+<table width="100%" border="0" cellpadding="1" cellspacing="2" style="border-width: 0px; border-spacing: 2px;">
+ <tr valign="top">
+  <td width="176" valign="middle" style="padding: 1px; background-color: #c0c0c0;">
+   <p class="rvps3"><span class="rvts71">Name</span></p>
+  </td>
+  <td width="98" valign="middle" style="padding: 1px; background-color: #c0c0c0;">
+   <p class="rvps3"><span class="rvts71">Type</span></p>
+  </td>
+  <td width="400" valign="middle" style="padding: 1px; background-color: #c0c0c0;">
+   <p class="rvps3"><span class="rvts71">Description</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="176" valign="middle" style="padding: 1px; background-color: #ffffff;">
+   <p class="rvps2"><a class="rvts22" href="SqlDataBaseCreate.htm">SqlDataBaseCreate</a></p>
+  </td>
+  <td width="98" valign="middle" style="padding: 1px; background-color: #ffffff;">
+   <p class="rvps2"><span class="rvts65">Function</span></p>
+  </td>
+  <td width="400" valign="middle" style="padding: 1px; background-color: #ffffff;">
+   <p class="rvps2"><span class="rvts65">Function for creating a new SQL Database.</span></p>
+   <p class="rvps2"><span class="rvts65">Note: This is for creating new SQL DATABASES - not database tables!</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="176" valign="middle" style="padding: 1px; background-color: #e2e2e2;">
+   <p class="rvps2"><a class="rvts22" href="SqlTableCreate.htm">SqlTableCreate</a></p>
+  </td>
+  <td width="98" valign="middle" style="padding: 1px; background-color: #e2e2e2;">
+   <p class="rvps2"><span class="rvts65">Function</span></p>
+  </td>
+  <td width="400" valign="middle" style="padding: 1px; background-color: #e2e2e2;">
+   <p class="rvps2"><span class="rvts65">Creates an SQL Table at the SQL back-end.</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="176" valign="middle" style="padding: 1px; background-color: #ffffff;">
+   <p class="rvps2"><a class="rvts22" href="SqlTableRemove.htm">SqlTableRemove</a></p>
+  </td>
+  <td width="98" valign="middle" style="padding: 1px; background-color: #ffffff;">
+   <p class="rvps2"><span class="rvts65">Function</span></p>
+  </td>
+  <td width="400" valign="middle" style="padding: 1px; background-color: #ffffff;">
+   <p class="rvps2"><span class="rvts65">Deletes the data cache file and .int file, then drops the passed data table name.</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="176" valign="middle" style="padding: 1px; background-color: #e2e2e2;">
+   <p class="rvps2"><a class="rvts22" href="SqlTableRename.htm">SqlTableRename</a></p>
+  </td>
+  <td width="98" valign="middle" style="padding: 1px; background-color: #e2e2e2;">
+   <p class="rvps2"><span class="rvts65">Function</span></p>
+  </td>
+  <td width="400" valign="middle" style="padding: 1px; background-color: #e2e2e2;">
+   <p class="rvps2"><span class="rvts65">To rename an existing table name</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="176" valign="middle" style="padding: 1px; background-color: #e2e2e2;">
+   <p class="rvps2"><a class="rvts22" href="SqlViewRemove.htm">SqlViewRemove</a></p>
+  </td>
+  <td width="98" valign="middle" style="padding: 1px; background-color: #e2e2e2;">
+   <p class="rvps2"><span class="rvts65">Function</span></p>
+  </td>
+  <td width="400" valign="middle" style="padding: 1px; background-color: #e2e2e2;">
+   <p class="rvps2"><span class="rvts65">Deletes the data cache file and .int file, then drops the passed SQL data view.</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="176" valign="middle" style="padding: 1px; background-color: #ffffff;">
+   <p class="rvps2"><a class="rvts22" href="SqlColumnAdd.htm">SqlColumnAdd</a></p>
+  </td>
+  <td width="98" valign="middle" style="padding: 1px; background-color: #ffffff;">
+   <p class="rvps2"><span class="rvts65">Function</span></p>
+  </td>
+  <td width="400" valign="middle" style="padding: 1px; background-color: #ffffff;">
+   <p class="rvps2"><span class="rvts65">To add a new column to a table.</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="176" valign="middle" style="padding: 1px; background-color: #e2e2e2;">
+   <p class="rvps2"><a class="rvts22" href="SqlColumnChange.htm">SqlColumnChange</a></p>
+  </td>
+  <td width="98" valign="middle" style="padding: 1px; background-color: #e2e2e2;">
+   <p class="rvps2"><span class="rvts65">Function</span></p>
+  </td>
+  <td width="400" valign="middle" style="padding: 1px; background-color: #e2e2e2;">
+   <p class="rvps2"><span class="rvts65">To change the length or type of an existing column.</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="176" valign="middle" style="padding: 1px; background-color: #ffffff;">
+   <p class="rvps2"><a class="rvts22" href="SqlColumnRemove.htm">SqlColumnRemove</a></p>
+  </td>
+  <td width="98" valign="middle" style="padding: 1px; background-color: #ffffff;">
+   <p class="rvps2"><span class="rvts65">Function</span></p>
+  </td>
+  <td width="400" valign="middle" style="padding: 1px; background-color: #ffffff;">
+   <p class="rvps2"><span class="rvts65">To remove an existing table column/field.</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="176" valign="middle" style="padding: 1px; background-color: #e2e2e2;">
+   <p class="rvps2"><a class="rvts22" href="SqlColumnRename.htm">SqlColumnRename</a></p>
+  </td>
+  <td width="98" valign="middle" style="padding: 1px; background-color: #e2e2e2;">
+   <p class="rvps2"><span class="rvts65">Function</span></p>
+  </td>
+  <td width="400" valign="middle" style="padding: 1px; background-color: #e2e2e2;">
+   <p class="rvps2"><span class="rvts65">To rename an existing column/field.</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="176" valign="middle" style="padding: 1px; background-color: #ffffff;">
+   <p class="rvps2"><a class="rvts22" href="SqlColumnDefaultValue.htm">SqlColumnDefaultValue</a></p>
+  </td>
+  <td width="98" valign="middle" style="padding: 1px; background-color: #ffffff;">
+   <p class="rvps2"><span class="rvts65">Function</span></p>
+  </td>
+  <td width="400" valign="middle" style="padding: 1px; background-color: #ffffff;">
+   <p class="rvps2"><span class="rvts65">To set a default value for a column.</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="176" valign="middle" style="padding: 1px; background-color: #e2e2e2;">
+   <p class="rvps2"><a class="rvts22" href="SqlColumnNullable.htm">SqlColumnNullable</a></p>
+  </td>
+  <td width="98" valign="middle" style="padding: 1px; background-color: #e2e2e2;">
+   <p class="rvps2"><span class="rvts65">Function</span></p>
+  </td>
+  <td width="400" valign="middle" style="padding: 1px; background-color: #e2e2e2;">
+   <p class="rvps2"><span class="rvts65">To set if a column accepts NULL values or not.</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="176" valign="middle" style="padding: 1px; background-color: #ffffff;">
+   <p class="rvps2"><a class="rvts22" href="SQLTableConvertToEmbedded.htm">SQLTableConvertToEmbedded</a></p>
+  </td>
+  <td width="98" valign="middle" style="padding: 1px; background-color: #ffffff;">
+   <p class="rvps2"><span class="rvts65">Function</span></p>
+  </td>
+  <td width="400" valign="middle" style="padding: 1px; background-color: #ffffff;">
+   <p class="rvps2"><span class="rvts65">To convert an SQL table to Embedded (a DataFlex .dat file)</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="176" valign="middle" style="padding: 1px; background-color: #ffffff;">
+   <p class="rvps2"><a class="rvts22" href="SqlColumnUpdateValue.htm">SqlColumnUpdateValue</a></p>
+  </td>
+  <td width="98" valign="middle" style="padding: 1px; background-color: #ffffff;">
+   <p class="rvps2"><span class="rvts65">Function</span></p>
+  </td>
+  <td width="400" valign="middle" style="padding: 1px; background-color: #ffffff;">
+   <p class="rvps2"><span class="rvts65">To populate all existing table rows for a column.</span></p>
+  </td>
+ </tr>
+</table>
+</div>
+<p class="rvps2"><span class="rvts54"><br/></span></p>
+<p class="rvps2"><span class="rvts31">Several of the above functions have their counterpart as "ApiXXX" functions - see </span><a class="rvts22" href="APIBasedMethods.htm">API Based Methods</a><span class="rvts31">.</span></p>
+<p class="rvps2"><span class="rvts31">The difference is that the "SqlXXX" functions above doesn't use Structure_Start and Structure_End commands to make changes to the SQL server. Instead they use ESQL (Embedded SQL). This can drastically reduce the time it takes to perform some tasks as the Structure_Start/End usually exports all table data, drops the table and loads the table again with data. Something that can be very time consuming if there is a lot of data. These functions are available to SQL based tables only.</span></p>
+<p class="rvps2"><span class="rvts31"><br/></span></p>
+<p class="rvps2"><span class="rvts53">Note: If you don't find what you are looking for here, look at the </span><a class="rvts62" href="APIMakeDatabaseChanges.htm">API Make Database Changes</a><span class="rvts53"> sections for more functions.</span></p>
+<p></p>
+
+	</div>
+	
+	
+		<div id="topic_footer">
+
+			<div id="topic_footer_content">
+				Copyright &copy; 2016-2020 RDC Tools International. All Rights Reserved. Portions Copyright Data Access Worldwide, Mertech Data Systems, Inc.
+			</div>
+		</div>
+	
+
+	
+	
+
+	
+</body>
+	
+</html>
+

@@ -1,0 +1,10 @@
+C:\Projects\DF20\DbUpdateFramework\Data\Filelist.cfg
+[Table No:]            [LogicalName:]        [RootName:]                             [DisplayName:]
+===================================================================================================
+
+        1                   DbVersion         DbVersion                                   DbVersion
+       50                    FLEXERRS          FLEXERRS                       @DataFlex Error Table
+      253                    CodeType          CodeType                 Code Maintenance Type Table
+      254                    CodeMast          CodeMast                 Code Maintenance Code Table
+===================================================================================================
+Total Number of Tables in Filelist.cfg: 4

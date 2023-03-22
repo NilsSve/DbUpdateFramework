@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+
+<html>
+	
+<head>
+	<title>How To Use It - Important!</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="description" content="Help for the DataFlex Database Update Framework" />
+    <meta name="generator" content="HelpNDoc Professional Edition 7.1.0.253" />
+	
+	
+	
+	<link type="text/css" rel="stylesheet" media="all" href="css/reset.css" />
+	<link type="text/css" rel="stylesheet" media="all" href="css/base.css" />
+	<link type="text/css" rel="stylesheet" media="all" href="css/hnd.css" />
+	<!--[if lte IE 8]>
+		<link type="text/css" rel="stylesheet" media="all" href="css/ielte8.css" />
+	<![endif]-->
+
+	<style type="text/css">
+		#topic_header
+		{
+			background-color: #EFEFEF;
+		}
+	</style>
+
+	
+
+	<script type="text/javascript" src="js/chmRelative.js"></script>
+	
+	
+</head>
+
+<body>
+
+
+
+	
+	
+	<div id="topic_content">
+		
+<p></p>
+<h1 class="rvps7"><span class="rvts0"><span class="rvts23">How to use the Database Update Framework</span></span></h1>
+<p class="rvps2"><span class="rvts14">Be sure to first follow these instructions: &nbsp;</span><a class="rvts62" href="FirstTimeSetup.htm">First Time Usage</a><span class="rvts14"> and </span><a class="rvts62" href="WorkspaceSetup.htm">Workspace Setup</a><span class="rvts14">.</span></p>
+<p class="rvps2"><span class="rvts14"><br/></span></p>
+<p class="rvps2"><span class="rvts11"><br/></span></p>
+<p class="rvps2"><span class="rvts64">Note for DUF 2.0</span></p>
+<p class="rvps2"><span class="rvts64">If your database already has been converted to SQL, please use the program "DUF Code Generator" to auto-generate DUF code from your development database. Read more about it in the help under "Tools" - "DUF Code Generator"</span></p>
+<p class="rvps2"><span class="rvts64"><br/></span></p>
+<p class="rvps2"><span class="rvts64"><br/></span></p>
+<p class="rvps2"><span class="rvts64">Steps for making database updates:</span></p>
+<p class="rvps2"><span class="rvts6"><br/></span></p>
+<ol style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: decimal;">
+ <li value="1" class="rvps2"><span class="rvts11">Drag a </span><a class="rvts22" href="cDbUpdateHandler.htm">cDbUpdateHandler</a><span class="rvts11"> object from the Studio's </span><span class="rvts43">Database Update Framework</span><span class="rvts11"> </span><a class="rvts22" href="Studio.chm::/ClassPalette_pnl.htm">Class Palette</a><span class="rvts11"> group, and drop it to the source code right after the cApplication object. Be sure to be in "source code mode" or the Studio's designer will complain that the object cannot be dropped on a non-data aware object.</span></li>
+ <li value="2" class="rvps2"><span class="rvts11">By default the DbVersion.DatabaseVersion database table/field will be used to keep the current database version. This value will be updated by the cDbUpdateVersion class as soon as a successful </span><a class="rvts22" href="cDbUpdateVersion.htm">cDbUpdateVersion</a><span class="rvts11"> update has finished. However, the table name can be changed to use one of your own, but is more work to do so.</span></li>
+ <li value="3" class="rvps2"><span class="rvts11">Place </span><a class="rvts22" href="cDbUpdateVersion.htm">cDbUpdateVersion</a><span class="rvts11"> objects within the cDbUpdateHandler container object, as siblings. Add one object for each database revision. You can drag </span><a class="rvts22" href="cDbUpdateVersion.htm">cDbUpdateVersion</a><span class="rvts11"> objects from the </span><span class="rvts49">Database Update Framework</span><span class="rvts11"> class palette and drop them within the cDbUpdateHandler container object.</span></li>
+ <li value="4" class="rvps2"><span class="rvts11">In each </span><a class="rvts22" href="cDbUpdateVersion.htm">cDbUpdateVersion</a><span class="rvts11"> object set the database update version property </span><a class="rvts22" href="PropertiesforcDbUpdateVersion.htm">pnVersionNumber</a><span class="rvts11"> to a consecutive number. Then use the </span><a class="rvts22" href="EventsforcDbUpdateVersion.htm">OnUpdate</a><span class="rvts11"> event to put code to update the database, or enter a "Use" statement with a package filename that contains an </span><a class="rvts22" href="EventsforcDbUpdateVersion.htm">OnUpdate</a><a class="rvts21" href="EventsforcDbUpdateVersion.htm"> </a><a class="rvts20" href="EventsforcDbUpdateVersion.htm">procedure</a><span class="rvts11">. </span><span class="rvts14">The </span><a class="rvts62" href="EventsforcDbUpdateVersion.htm">OnUpdate</a><span class="rvts14"> event is automatically fired when the object is created</span><span class="rvts11">. The code can consist of structural database changes as well as code to change/update data, whatever is needed.</span></li>
+ <li value="5" class="rvps2"><span class="rvts11">Compile and run your program.</span></li>
+</ol>
+<p class="rvps2"><span class="rvts6"><br/></span></p>
+<p class="rvps2"><span class="rvts11">The cDbUpdateFunctionLibrary has been imported to the cDbUpdateHandler class and thus all of those functions can be used in both the cDbUpdateHandler and the cDbUpdateVersion objects without any need to create an object of the cDbUpdateFunctionLibrary class.</span></p>
+<p class="rvps2"><span class="rvts11"><br/></span></p>
+<p class="rvps2"><span class="rvts11">Functions are available for converting tables to SQL, create new SQL tables, connect to existing SQL tables, add/edit columns/fields and at the same time initialize the new column with a value, add/change indexes and much much more. These functions are "re-entrant" in their design, meaning that if it has been executed before, it will not be run again. So in short; functions first checks if it is OK to execute before attempting to make any changes.</span></p>
+<p class="rvps2"><span class="rvts11"><br/></span></p>
+<p class="rvps2"><span class="rvts55"><br/></span></p>
+<p class="rvps2"><span class="rvts55">Note</span></p>
+<p class="rvps12"><span class="rvts53">If you are using DataFlex 19 or later and have placed a cConnection object inside the cApplication object, those "Managed Connection" settings will automatically be picked up by the framework. However, since there are additional properties that can be set by the SQLConnection tool it might still be a good idea to use it. An alternative is to set those properties in the cDbUpdateHandler object.</span></p>
+<p class="rvps2"><span class="rvts38"><br/></span></p>
+<p class="rvps2"><span class="rvts38"><br/></span></p>
+<p class="rvps2"><span class="rvts38"><br/></span></p>
+<p class="rvps2"><span class="rvts55">Sample Code 1</span></p>
+<p class="rvps12"><span class="rvts58"><br/></span></p>
+<p class="rvps12"><span class="rvts65">To convert the whole Order Entry Sample Application - including data - to an</span><span class="rvts66"> </span><span class="rvts67">IBM DB2 database</span><span class="rvts65"> you would add the following code.</span></p>
+<p class="rvps12"><span class="rvts65">If you are using </span><span class="rvts67">Microsoft SQL Server</span><span class="rvts65"> </span><span class="rvts66">see Sample Code 2</span><span class="rvts65"> below.</span></p>
+<p class="rvps12"><span class="rvts58"><br/></span></p>
+<p class="rvps11"><span class="rvts35">Object oApplication is a cApplication</span></p>
+<p class="rvps11"><span class="rvts35">End_Object</span></p>
+<p class="rvps11"><span class="rvts35"><br/></span></p>
+<p class="rvps11"><span class="rvts35">// </span><span class="rvts63">These are needed to keep the compiler happy;</span></p>
+<p class="rvps11"><span class="rvts35">Declare_Datafile Customer</span></p>
+<p class="rvps11"><span class="rvts35">Declare_Datafile Invt</span></p>
+<p class="rvps11"><span class="rvts35">Declare_Datafile OrderDtl</span></p>
+<p class="rvps11"><span class="rvts35">Declare_Datafile OrderHea</span></p>
+<p class="rvps11"><span class="rvts35">Declare_Datafile OrdSys</span></p>
+<p class="rvps11"><span class="rvts35">Declare_Datafile SalesP</span></p>
+<p class="rvps11"><span class="rvts35">Declare_Datafile Users</span></p>
+<p class="rvps11"><span class="rvts35">Declare_Datafile Vendor</span></p>
+<p class="rvps11"><span class="rvts35"><br/></span></p>
+<p class="rvps11"><span class="rvts36">Object oDbUpdateHandler is an cDbUpdateHandler</span><span class="rvts35">&nbsp;</span><br/><span class="rvts35">&nbsp; &nbsp; </span><span class="rvts36">Set Data_File_Field to File_Field DbVersion.DatabaseVersion</span></p>
+<p class="rvps11"><span class="rvts36"></span><br/><span class="rvts35">&nbsp; &nbsp; Object oUpdateVersion1 is a cDbUpdateVersion</span><br/><span class="rvts35">&nbsp; &nbsp; &nbsp; &nbsp; Set pnVersionNumber to 1.0</span><br/><span class="rvts35">&nbsp; &nbsp; &nbsp; &nbsp; Set pbUseConnectionID to True</span></p>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; &nbsp; &nbsp; Set pbCopyData to False</span></p>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; &nbsp; &nbsp; Set pbRecnum to False</span></p>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; &nbsp; &nbsp; Set pbToANSI to False</span></p>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; &nbsp; &nbsp; Set psDriverID to </span><span class="rvts36">DB2_DRV_ID</span><span class="rvts35"> // (The default driver is DATAFLEX_ID)</span></p>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; &nbsp; &nbsp; </span><span class="rvts63">// DB2 specific settings;</span></p>
+<p class="rvps11"><span class="rvts63">&nbsp; &nbsp; &nbsp; &nbsp; // Note: These are only necessary to set if not specified if not set with the SQLConnections program.</span></p>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; &nbsp; &nbsp; Set psBaseTableSpace &nbsp;to "USERSPACE1"</span></p>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; &nbsp; &nbsp; Set psIndexTableSpace to "USERSPACE1"</span></p>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; &nbsp; &nbsp; Set psLongTableSpace &nbsp;to "USERSPACE1"</span></p>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; &nbsp; &nbsp; Set psSchema &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;to "TestSchema"</span></p>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; &nbsp; &nbsp;&nbsp;</span></p>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; &nbsp; &nbsp; Procedure OnUpdate</span></p>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Boolean bOK</span></p>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Get ApiTableConvertToSQL Customer.File_Number &nbsp; to bOK</span></p>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Get ApiTableConvertToSQL Invt.File_Number &nbsp; &nbsp; &nbsp; to bOK</span></p>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Get ApiTableConvertToSQL OrderHea.File_Number &nbsp; to bOK</span></p>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Get ApiTableConvertToSQL OrderDtl.File_Number &nbsp; to bOK</span></p>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Get ApiTableConvertToSQL OrdSys.File_Number &nbsp; &nbsp; to bOK</span></p>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Get ApiTableConvertToSQL SalesP.File_Number &nbsp; &nbsp; to bOK</span></p>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Get ApiTableConvertToSQL Users.File_Number &nbsp; &nbsp; &nbsp;to bOK</span></p>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Get ApiTableConvertToSQL Vendor.File_Number &nbsp; &nbsp; to bOK</span></p>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; &nbsp; &nbsp; End_Procedure</span></p>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; End_Object</span><br/><span class="rvts35">&nbsp;</span><br/><span class="rvts36">End_Object</span></p>
+<p class="rvps2"><span class="rvts55"><br/></span></p>
+<p class="rvps2"><span class="rvts55"><br/></span></p>
+<p class="rvps2"><span class="rvts39">Comments: </span><span class="rvts38">The above code would the first time it is run;</span></p>
+<p class="rvps2"><span class="rvts38"><br/></span></p>
+<ul style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: disc;">
+ <li class="rvps2"><span class="rvts38">Check that nobody else is using the database</span></li>
+ <li class="rvps2"><span class="rvts38">Inform the user that the database needs to be updated (unless the pbSilentMode = True, which can be good if this is e.g. a webapp.)</span></li>
+ <li class="rvps2"><span class="rvts38">Lock the database so nobody else can start the program until it has finished the update(s).</span></li>
+ <li class="rvps2"><span class="rvts38">Close all open tables</span></li>
+ <li class="rvps2"><span class="rvts38">Convert all the sample tables to MS-SQL and populate each SQL table with data. See the </span><a class="rvts22" href="ApiTableConvertToSQL_Ex.htm">ApiTableConvertToSQL_Ex</a><span class="rvts38"> function for parameters and usage.</span></li>
+ <li class="rvps2"><span class="rvts38">Update the DbVersion.DatabaseVersion with the "1.0" value to notify the framework that this piece of code has been run successfully.</span></li>
+ <li class="rvps2"><span class="rvts38">Show a log if any errors occurred during update.</span></li>
+ <li class="rvps2"><span class="rvts38">Unlock database and continue running the program, now with MS-SQL data.</span></li>
+ <li class="rvps2"><span class="rvts38">Re-open all tables that was open before the update(s) started (including setting Master/Alias table properties).</span></li>
+ <li class="rvps2"><span class="rvts38">Continues to run the program.</span></li>
+</ul>
+<p class="rvps2"><span class="rvts38"><br/></span></p>
+<p class="rvps2"><span class="rvts38"><br/></span></p>
+<p class="rvps2"><span class="rvts38">The assumption above is that a SQL database already exists and the database was specified with the SQLConnections tool - or if DataFlex 19 or later; a cConnection has been setup in the cApplication object . If the database doesn't exist yet you first need to create it with a "database management software" that is native to the database used. However, if you are using Microsoft SQL you can create the database with the framework. See "Sample Code 2".</span></p>
+<p class="rvps2"><span class="rvts38"><br/></span></p>
+<p class="rvps2"><span class="rvts55"><br/></span></p>
+<p class="rvps2"><a name="SampleCode2"></a><span class="rvts55">Sample Code 2</span></p>
+<p class="rvps12"><span class="rvts58"><br/></span></p>
+<p class="rvps11"><span class="rvts35">// </span><span class="rvts63">These are needed to keep the compiler happy;</span></p>
+<p class="rvps11"><span class="rvts35">Declare_Datafile Customer</span></p>
+<p class="rvps11"><span class="rvts35">Declare_Datafile Invt</span></p>
+<p class="rvps11"><span class="rvts35">Declare_Datafile OrderDtl</span></p>
+<p class="rvps11"><span class="rvts35">Declare_Datafile OrderHea</span></p>
+<p class="rvps11"><span class="rvts35">Declare_Datafile OrdSys</span></p>
+<p class="rvps11"><span class="rvts35">Declare_Datafile SalesP</span></p>
+<p class="rvps11"><span class="rvts35">Declare_Datafile Users</span></p>
+<p class="rvps11"><span class="rvts35">Declare_Datafile Vendor</span></p>
+<p class="rvps11"><span class="rvts35"><br/></span></p>
+<p class="rvps11"><span class="rvts35">Object oDbUpdateHandler is an cDbUpdateHandler&nbsp;</span><br/><span class="rvts35">&nbsp; &nbsp; Set Data_File_Field to File_Field DbVersion.DatabaseVersion</span></p>
+<p class="rvps11"><span class="rvts35"><br/></span></p>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; </span><span class="rvts63">// Optionally you may create an MS-SQL database, in case it doesn't exist yet:</span></p>
+<p class="rvps11"><span class="rvts63">&nbsp; &nbsp; // This option is only available for MS-SQL.</span></p>
+<p class="rvps11"><span class="rvts63">&nbsp; &nbsp; Procedure OnPreUpdate</span></p>
+<p class="rvps11"><span class="rvts63">&nbsp; &nbsp; &nbsp; &nbsp; Boolean bOK</span></p>
+<p class="rvps11"><span class="rvts63">&nbsp; &nbsp; &nbsp; &nbsp; Get SqlDatabaseCreate MSSQLDRV_ID "OrderEntry" True True to bOK</span></p>
+<p class="rvps11"><span class="rvts63">&nbsp; &nbsp; &nbsp; &nbsp; If (bOK = False) Begin</span></p>
+<p class="rvps11"><span class="rvts63">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Send Info_Box "Nope, that didn't work. Program will now exit."</span></p>
+<p class="rvps11"><span class="rvts63">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Send Exit_Application</span></p>
+<p class="rvps11"><span class="rvts63">&nbsp; &nbsp; &nbsp; &nbsp; End_Procedure</span></p>
+<p class="rvps11"><span class="rvts63">&nbsp; &nbsp; End_Procedure</span><span class="rvts35"> &nbsp; &nbsp; &nbsp; &nbsp;</span><br/><span class="rvts35">&nbsp;</span><br/><span class="rvts35">&nbsp; &nbsp; Object oDbUpdateVersion1 is a cDbUpdateVersion</span></p>
+<p class="rvps11"><span class="rvts36">&nbsp; &nbsp; &nbsp; &nbsp; </span><span class="rvts35">Set pnVersionNumber to 1.0</span></p>
+<p class="rvps11"><span class="rvts36"><br/></span></p>
+<p class="rvps11"><span class="rvts36">&nbsp; &nbsp; &nbsp; &nbsp; // Add your code to the OnUpdate event</span></p>
+<p class="rvps11"><span class="rvts36">&nbsp; &nbsp; &nbsp; &nbsp; </span><span class="rvts35">Procedure OnUpdate</span></p>
+<p class="rvps11"><span class="rvts36">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="rvts35">Boolean bOK</span></p>
+<p class="rvps11"><span class="rvts35"><br/></span></p>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Get ApiTableConvertToSQL Customer.File_Number &nbsp; to bOK</span></p>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Get ApiTableConvertToSQL Invt.File_Number &nbsp; &nbsp; &nbsp; to bOK</span></p>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Get ApiTableConvertToSQL OrderHea.File_Number &nbsp; to bOK</span></p>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Get ApiTableConvertToSQL OrderDtl.File_Number &nbsp; to bOK</span></p>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Get ApiTableConvertToSQL OrdSys.File_Number &nbsp; &nbsp; to bOK</span></p>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Get ApiTableConvertToSQL SalesP.File_Number &nbsp; &nbsp; to bOK</span></p>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Get ApiTableConvertToSQL Users.File_Number &nbsp; &nbsp; &nbsp;to bOK</span></p>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Get ApiTableConvertToSQL Vendor.File_Number &nbsp; &nbsp; to bOK</span></p>
+<p class="rvps11"><span class="rvts36"><br/></span></p>
+<p class="rvps11"><span class="rvts36">&nbsp; &nbsp; &nbsp; &nbsp; </span><span class="rvts35">End_Procedure</span><br/><span class="rvts36">&nbsp; &nbsp; </span><span class="rvts35">End_Object</span><br/><span class="rvts35">&nbsp;</span></p>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; Object oDbUpdateVersion1.1 is a cDbUpdateVersion</span></p>
+<p class="rvps11"><span class="rvts36">&nbsp; &nbsp; &nbsp; &nbsp; </span><span class="rvts35">Set pnVersionNumber to 1.1</span></p>
+<p class="rvps11"><span class="rvts35"><br/></span></p>
+<p class="rvps11"><span class="rvts36">&nbsp; &nbsp; &nbsp; &nbsp; </span><span class="rvts35">Procedure OnUpdate</span></p>
+<p class="rvps11"><span class="rvts36">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="rvts35">Boolean bOK</span></p>
+<p class="rvps11"><span class="rvts36">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="rvts35">Get SQLColumnRename Customer.File_Number "Purchases" "YearlyPurchases" to bOK</span></p>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; // The "1" parameter will initialize all current records with a 1 for the new field.</span></p>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Get SQLColumnAdd Customer.File_Number "IsPrinted" SQL_CHAR 4 0 True "1" to bOK</span></p>
+<p class="rvps11"><span class="rvts36">&nbsp; &nbsp; &nbsp; &nbsp; </span><span class="rvts35">End_Procedure</span><br/><span class="rvts36">&nbsp; &nbsp; </span><span class="rvts35">End_Object</span><br/><span class="rvts35"></span><br/><span class="rvts36">&nbsp; &nbsp; // ...or put your update code (Procedure OnUpdate) in a separate package:</span><br/><span class="rvts35">&nbsp;</span><span class="rvts36"> &nbsp; </span><span class="rvts35">Object oDbUpdateVersion1.3 is a cDbUpdateVersion</span><br/><span class="rvts36">&nbsp; &nbsp; &nbsp; &nbsp; </span><span class="rvts35">Set pnVersionNumber to 1.3</span></p>
+<p class="rvps11"><span class="rvts36">&nbsp; &nbsp; &nbsp; &nbsp; </span><span class="rvts35">Use MyDbUpdateVersion1.3.pkg</span><br/><span class="rvts36">&nbsp; &nbsp; &nbsp; &nbsp; :</span><br/><span class="rvts36">&nbsp; &nbsp; </span><span class="rvts35">End_Object</span><br/><span class="rvts35">&nbsp;</span><br/><span class="rvts35">End_Object</span></p>
+<p class="rvps2"><span class="rvts11"><br/></span></p>
+<p class="rvps2"><span class="rvts11"><br/></span></p>
+<p class="rvps2"><a name="SampleCode2"></a><span class="rvts55">Sample Code 3</span></p>
+<p class="rvps12"><span class="rvts58"><br/></span></p>
+<p class="rvps11"><span class="rvts35">Object oDbUpdateHandler is an cDbUpdateHandler&nbsp;</span><br/><span class="rvts35">&nbsp; &nbsp; Set Data_File_Field to File_Field DbVersion.DatabaseVersion</span></p>
+<p class="rvps11"><span class="rvts35"><br/></span></p>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; Object oDbUpdateVersion1 is a cDbUpdateVersion</span></p>
+<p class="rvps11"><span class="rvts36">&nbsp; &nbsp; &nbsp; &nbsp; </span><span class="rvts35">Set pnVersionNumber to 1.0</span></p>
+<p class="rvps11"><span class="rvts36"><br/></span></p>
+<p class="rvps11"><span class="rvts36">&nbsp; &nbsp; &nbsp; &nbsp; </span><span class="rvts35">Procedure OnUpdate</span></p>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Send ApiTableConvertAllAddException MyHistoryTable.File_Number</span></p>
+<p class="rvps11"><span class="rvts36"><br/></span></p>
+<p class="rvps11"><span class="rvts36">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; // This will convert all tables in your Filelist.cfg to SQL, except for those</span></p>
+<p class="rvps11"><span class="rvts36">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; // tables added with the ApiTableConvertAllAddException message:</span></p>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Send ApiTableConvertALLToSQL</span></p>
+<p class="rvps11"><span class="rvts36"><br/></span></p>
+<p class="rvps11"><span class="rvts36">&nbsp; &nbsp; &nbsp; &nbsp; </span><span class="rvts35">End_Procedure</span><br/><span class="rvts36">&nbsp; &nbsp; </span><span class="rvts35">End_Object</span><br/><span class="rvts35">&nbsp;&nbsp;</span><br/><span class="rvts35">End_Object</span></p>
+<p class="rvps2"><span class="rvts11"><br/></span></p>
+<p class="rvps2"><span class="rvts11"><br/></span></p>
+<p class="rvps2"><span class="rvts55">Next Topic</span></p>
+<p class="rvps5"><span class="rvts11"><br/></span></p>
+<p class="rvps5"><a class="rvts22" href="cDbUpdateHandler.htm">cDbUpdateHandler</a></p>
+<p></p>
+
+	</div>
+	
+	
+		<div id="topic_footer">
+
+			<div id="topic_footer_content">
+				Copyright &copy; 2016-2020 RDC Tools International. All Rights Reserved. Portions Copyright Data Access Worldwide, Mertech Data Systems, Inc.
+			</div>
+		</div>
+	
+
+	
+	
+
+	
+</body>
+	
+</html>
+

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+
+<html>
+	
+<head>
+	<title>tSQLLoggedInUser</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="description" content="Help for the DataFlex Database Update Framework" />
+    <meta name="generator" content="HelpNDoc Professional Edition 7.1.0.253" />
+	
+	
+	
+	<link type="text/css" rel="stylesheet" media="all" href="css/reset.css" />
+	<link type="text/css" rel="stylesheet" media="all" href="css/base.css" />
+	<link type="text/css" rel="stylesheet" media="all" href="css/hnd.css" />
+	<!--[if lte IE 8]>
+		<link type="text/css" rel="stylesheet" media="all" href="css/ielte8.css" />
+	<![endif]-->
+
+	<style type="text/css">
+		#topic_header
+		{
+			background-color: #EFEFEF;
+		}
+	</style>
+
+	
+
+	<script type="text/javascript" src="js/chmRelative.js"></script>
+	
+	
+</head>
+
+<body>
+
+
+
+	
+	
+	<div id="topic_content">
+		
+<p></p>
+<h1 class="rvps7"><span class="rvts0"><span class="rvts23">tSQLLoggedInUser - The Database Update Framework</span></span></h1>
+<p class="rvps13"><span class="rvts65">See Also: </span><a class="rvts96" href="LanguageGuide.chm::/Declaring_Variables.htm">Declaring Variables</a><span class="rvts65">, </span><a class="rvts96" href="Struct.htm">Struct</a><span class="rvts65">&nbsp;</span></p>
+<h3 class="rvps24"><span class="rvts0"><span class="rvts55">Purpose</span></span></h3>
+<p class="rvps13"><span class="rvts65">tSQLLoggedInUser is a </span><a class="rvts96" href="LanguageGuide.chm::/Struct_Type.htm">structured type</a><span class="rvts65"> used by the </span><a class="rvts22" href="cDbUpdateHandler.htm">cDbUpdateHandler</a><span class="rvts65"> class for enumerating currently logged in users for a particular database.</span></p>
+<p class="rvps13"><span class="rvts65">&nbsp;</span></p>
+<h3 class="rvps24"><span class="rvts0"><span class="rvts55">Type Declaration</span></span></h3>
+<p class="rvps22"><span class="rvts35">Struct tSQLLoggedInUser</span></p>
+<p class="rvps22"><span class="rvts35">&nbsp; &nbsp; String sUser</span></p>
+<p class="rvps22"><span class="rvts35">&nbsp; &nbsp; String sProgram</span></p>
+<p class="rvps22"><span class="rvts35">End_Struct</span></p>
+<h4 class="rvps25"><span class="rvts0"><span class="rvts58">&nbsp;</span></span></h4>
+<h3 class="rvps24"><span class="rvts0"><span class="rvts55">Struct Members</span></span></h3>
+<p class="rvps13"><span class="rvts65">&nbsp;</span><span class="rvts58">sUser</span></p>
+<p class="rvps26"><span class="rvts65">The login name of the user.</span></p>
+<p class="rvps13"><span class="rvts58">sProgram</span></p>
+<p class="rvps26"><span class="rvts65">The name of the program for the logged in user as reported by the SQL back end database.</span></p>
+<h3 class="rvps24"><span class="rvts0"><span class="rvts55">Syntax</span></span></h3>
+<p class="rvps22"><span class="rvts35">Use cDbUpdateHandler.pkg</span></p>
+<p class="rvps22"><span class="rvts35">:</span></p>
+<p class="rvps22"><span class="rvts35">tSQLLoggedInUser {variableName}</span></p>
+<p class="rvps13"><span class="rvts65">&nbsp;</span></p>
+<h3 class="rvps24"><span class="rvts0"><span class="rvts55">Declaring variables</span></span></h3>
+<p class="rvps13"><span class="rvts65">To declare tDbUpdateHandler variables, use the name of the type (tDbUpdateError) followed by the variable name.</span></p>
+<p class="rvps22"><span class="rvts35">tSQLLoggedInUser[] SQLLoggedInUser</span></p>
+<p class="rvps13"><span class="rvts65"><br/></span></p>
+<p class="rvps13"><span class="rvts65">See </span><a class="rvts96" href="LanguageGuide.chm::/Struct_Variables.htm">struct variables</a><span class="rvts65"> for more details of instantiating struct types.</span></p>
+<h3 class="rvps24"><span class="rvts0"><span class="rvts55">Example</span></span></h3>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; Procedure </span><span class="rvts74">OnClick</span></p>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; &nbsp; &nbsp; String sDatabase</span></p>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; &nbsp; &nbsp; Integer iSize iCount</span></p>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; &nbsp; &nbsp; tSQLLoggedInUser[] SQLLoggedInUsers</span></p>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; &nbsp; &nbsp;&nbsp;</span></p>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; &nbsp; &nbsp; Move "OrderEntry" to sDatabase</span></p>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; &nbsp; &nbsp; Get SqlUtilEnumerateLoggedInUsers of ghoDbUpdateFunctionLibrary MSSQLDRV_ID sDatabase to SQLLoggedInUsers</span></p>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; &nbsp; &nbsp; Move (SizeOfArray(SQLLoggedInUsers)) to iSize</span></p>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; &nbsp; &nbsp; Decrement iSize</span></p>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; &nbsp; &nbsp;&nbsp;</span></p>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; &nbsp; &nbsp; For iCount from 0 to iSize</span></p>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Showln SQLLoggedInUsers[iCount]</span></p>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; &nbsp; &nbsp; Loop</span></p>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; &nbsp; &nbsp;&nbsp;</span></p>
+<p class="rvps11"><span class="rvts35">&nbsp; &nbsp; End_Procedure</span></p>
+<p class="rvps11"><span class="rvts35"><br/></span></p>
+<p class="rvps2"><span class="rvts11"><br/></span></p>
+<p></p>
+
+	</div>
+	
+	
+		<div id="topic_footer">
+
+			<div id="topic_footer_content">
+				Copyright &copy; 2016-2020 RDC Tools International. All Rights Reserved. Portions Copyright Data Access Worldwide, Mertech Data Systems, Inc.
+			</div>
+		</div>
+	
+
+	
+	
+
+	
+</body>
+	
+</html>
+

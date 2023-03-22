@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+
+<html>
+	
+<head>
+	<title>SqlUtilBackupDatabaseToDisk</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="description" content="Help for the DataFlex Database Update Framework" />
+    <meta name="generator" content="HelpNDoc Professional Edition 7.1.0.253" />
+	
+	
+	
+	<link type="text/css" rel="stylesheet" media="all" href="css/reset.css" />
+	<link type="text/css" rel="stylesheet" media="all" href="css/base.css" />
+	<link type="text/css" rel="stylesheet" media="all" href="css/hnd.css" />
+	<!--[if lte IE 8]>
+		<link type="text/css" rel="stylesheet" media="all" href="css/ielte8.css" />
+	<![endif]-->
+
+	<style type="text/css">
+		#topic_header
+		{
+			background-color: #EFEFEF;
+		}
+	</style>
+
+	
+
+	<script type="text/javascript" src="js/chmRelative.js"></script>
+	
+	
+</head>
+
+<body>
+
+
+
+	
+	
+	<div id="topic_content">
+		
+<p></p>
+<h1 class="rvps7"><span class="rvts0"><span class="rvts23">SqlUtilBackupDatabaseToDisk - </span></span><span class="rvts0"><a class="rvts72" href="cDbUpdateFunctionLibrary.htm">cDbUpdateFunctionLibrary</a></span></h1>
+<p class="rvps2"><span class="rvts65">Backs up an SQL database. Either to a particular disk folder or to the default SQL backup folder.</span><br/><span class="rvts65"></span><br/><span class="rvts81">Type</span><span class="rvts58">:</span><span class="rvts65"> </span><a class="rvts22" href="LanguageReference.chm::/Function_Command.htm">Function</a><br/><span class="rvts65"></span><br/><span class="rvts81">Parameters</span><span class="rvts58">:</span><span class="rvts65"> </span><a class="rvts22" href="LanguageGuide.chm::/String_Type.htm">String</a><span class="rvts65"> sDatabase </span><a class="rvts22" href="LanguageGuide.chm::/String_Type.htm">String</a><span class="rvts65"> sBackupName </span><a class="rvts22" href="LanguageGuide.chm::/String_Type.htm">String</a><span class="rvts65"> sPath</span></p>
+<p class="rvps2"><span class="rvts65"><br/></span></p>
+<div class="rvps12">
+<table border="2" cellpadding="2" cellspacing="0" style="border-color: #808080; border-style: solid; background-color: #ffffe0; border-spacing: 0px; border-top: none; border-right: none;">
+ <tr valign="top">
+  <td valign="middle" style="border-width : 2px; border-color : #000080 #000080 #000080 #000080; border-style: solid; padding: 1px 4px; border-bottom: none; border-left: none; background-color: #c0c0c0;">
+   <p class="rvps18"><span class="rvts71">Parameter</span></p>
+  </td>
+  <td valign="middle" style="border-width : 2px; border-color : #000080 #000080 #000080 #000080; border-style: solid; padding: 1px 4px; border-bottom: none; border-left: none; background-color: #c0c0c0;">
+   <p class="rvps18"><span class="rvts71">Description</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td valign="middle" style="border-width : 2px; border-color : #000000 #000000 #000000 #000000; border-style: solid; padding: 1px 4px; border-bottom: none; border-left: none;">
+   <p class="rvps5"><span class="rvts65">sDatabase</span></p>
+  </td>
+  <td valign="middle" style="border-width : 2px; border-color : #000000 #000000 #000000 #000000; border-style: solid; padding: 1px 4px; border-bottom: none; border-left: none;">
+   <p class="rvps5"><span class="rvts65">The name of the SQL database</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td valign="middle" style="border-width : 2px; border-color : #000000 #000000 #000000 #000000; border-style: solid; padding: 1px 4px; border-bottom: none; border-left: none;">
+   <p class="rvps5"><span class="rvts65">sBackUpName</span></p>
+  </td>
+  <td valign="middle" style="border-width : 2px; border-color : #000000 #000000 #000000 #000000; border-style: solid; padding: 1px 4px; border-bottom: none; border-left: none;">
+   <p class="rvps5"><span class="rvts65">The name of the backup file name.</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td valign="middle" style="border-width : 2px; border-color : #000000 #000000 #000000 #000000; border-style: solid; padding: 1px 4px; border-bottom: none; border-left: none;">
+   <p class="rvps5"><span class="rvts65">sPath</span></p>
+  </td>
+  <td valign="middle" style="border-width : 2px; border-color : #000000 #000000 #000000 #000000; border-style: solid; padding: 1px 4px; border-bottom: none; border-left: none;">
+   <p class="rvps5"><span class="rvts65">The path to the folder to backup to. If left empty the default SQL backup folder will be used.</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td valign="middle" style="border-width : 2px; border-color : #000000 #000000 #000000 #000000; border-style: solid; padding: 1px 4px; border-bottom: none; border-left: none;">
+   <p class="rvps5"><span class="rvts65">bShowProgress</span></p>
+  </td>
+  <td valign="middle" style="border-width : 2px; border-color : #000000 #000000 #000000 #000000; border-style: solid; padding: 1px 4px; border-bottom: none; border-left: none;">
+   <p class="rvps5"><span class="rvts65">Optional. If the backup progress should be shown or not. If the ghoStatusPanel is active - the info will be shown there. Else Showln is used to display the progress percentage.</span></p>
+  </td>
+ </tr>
+</table>
+</div>
+<p class="rvps2"><span class="rvts65"><br/></span></p>
+<p class="rvps2"><span class="rvts81"></span><br/><span class="rvts81">Syntax</span></p>
+<p class="rvps2"><span class="rvts81"><br/></span></p>
+<p class="rvps11"><span class="rvts35">Procedure SqlUtilBackupDatabaseToDisk String </span><span class="rvts65">sDatabase</span><span class="rvts35"> String </span><span class="rvts65">sBackupName String sPath Boolean bShowProgress</span><span class="rvts35">&nbsp;</span></p>
+<div class="rvps2">
+<table border="0" cellpadding="3" cellspacing="2" style="border-width: 0px; background-color: #ffffe0; border-spacing: 2px;">
+ <tr valign="top">
+  <td width="49" valign="top" style="padding: 1px 5px; background-color: #ffffff;">
+   <p class="rvps2"><span class="rvts65">Call:</span></p>
+  </td>
+  <td width="709" valign="middle" style="padding: 1px 5px;">
+   <p class="rvps2"><span class="rvts35">Send SqlUtilBackupDatabaseToDisk "OrderEntry" "OrderEntry" "T:\Backups\SQLBackups" False</span></p>
+  </td>
+ </tr>
+</table>
+</div>
+<p class="rvps2"><span class="rvts65"><br/></span></p>
+<p class="rvps2"><span class="rvts81"></span><br/><span class="rvts81">Description</span></p>
+<p class="rvps13"><span class="rvts65">Uses embedded SQL (ESQL) script code to backup the specified SQL database. This can be performed while the database is in use. The fourth parameter is optional.</span></p>
+<p class="rvps19"><span class="rvts67">Note: Currently only available for the Microsoft SQL Server database, but could be improved with SQL script files for other back-ends.</span></p>
+<p></p>
+
+	</div>
+	
+	
+		<div id="topic_footer">
+
+			<div id="topic_footer_content">
+				Copyright &copy; 2016-2020 RDC Tools International. All Rights Reserved. Portions Copyright Data Access Worldwide, Mertech Data Systems, Inc.
+			</div>
+		</div>
+	
+
+	
+	
+
+	
+</body>
+	
+</html>
+
