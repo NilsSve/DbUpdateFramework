@@ -13068,25 +13068,29 @@ Class cDbUpdateFunctionLibrary is a cObject
     Function OpenTableExclusive Handle hTable Returns Boolean
         Integer iMode
         Boolean bOpened
-        String sTableName
+        String sTableName 
+        Handle hoCurrentErrorHandler
 
         Set Error_Report_Mode to DUF_ERROR_NO_REPORT
         // Can't open a table properly if run through the Debugger/Studio,
         // so we generate an error here:
         If (IsDebuggerPresent()) Begin
-            Error DFERR_OPERATOR "It is not possible to make structural changes to the database when running through the Debugger/Studio"
+            Move Error_Object_Id to hoCurrentErrorHandler
+            Get piOrgErrorHandlerID to Error_Object_Id
+            Error DFERR_OPERATOR "It is not possible to make structural changes to the database when running through the Debugger/Studio! You need to run this program from outside of the Studio."
+            Move hoCurrentErrorHandler to Error_Object_Id
             Set Error_Report_Mode to DUF_ERROR_REPORT
             Function_Return False
         End
         Get_Attribute DF_FILE_OPENED of hTable to bOpened
         If (bOpened) Begin
-            If (IsDebuggerPresent()) Begin
-                Get_Attribute DF_FILE_LOGICAL_NAME of hTable to sTableName
-                If (Uppercase(sTableName) = "CODEMAST" or Uppercase(sTableName) = "CODETYPE") Begin
-                    Set Error_Report_Mode to DUF_ERROR_REPORT
-                    Function_Return True
-                End
-            End
+//            If (IsDebuggerPresent()) Begin
+//                Get_Attribute DF_FILE_LOGICAL_NAME of hTable to sTableName
+//                If (Uppercase(sTableName) = "CODEMAST" or Uppercase(sTableName) = "CODETYPE") Begin
+//                    Set Error_Report_Mode to DUF_ERROR_REPORT
+//                    Function_Return True
+//                End
+//            End
             Get_Attribute DF_FILE_OPEN_MODE of hTable to iMode
             If (iMode=DF_EXCLUSIVE) Begin
                     Set Error_Report_Mode to DUF_ERROR_REPORT

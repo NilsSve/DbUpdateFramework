@@ -35,7 +35,7 @@ Use LanguageText.Pkg
     Define CS_DUF_WorkingUpdateText         for "The database is being updated. Please wait..."
     Define CS_DUF_DatabaseUpdatedText       for "Ready! The database was updated."
     Define CS_DUF_DatabaseCheckedText       for "Ready! The database was checked but no updates was needed."
-    Define CS_DUF_DbUpdatedErrorText        for "One or more errors occured while the database was updated. Please check the logfile.\n\nThe program will now close."
+    Define CS_DUF_DbUpdatedErrorText        for "One or more errors occured while the database was updated. Please check the logfile in the data-folder.\n\nThe program will now close."
     Define CS_DUF_UpdateInProgressTxt       for ("System locked!\n\nThe database is being updated. Please try again later...\n\n" * "The program will now close.")
     // *** cDbUpdateHandler.pkg Class Language Constants ***
     Define CS_DUF_DatabaseConnStringSpec    for "The database specified in the connection string: '"
@@ -115,7 +115,7 @@ Use LanguageText.Pkg
     Define CS_DUF_WorkingUpdateText         for "Databasen h†ller p† att uppdateras. Var god v„nta..."
     Define CS_DUF_DatabaseUpdatedText       for "Klart! Databasen „r nu uppdaterad."
     Define CS_DUF_DatabaseCheckedText       for "Ready! The database was checked but no updates was needed."
-    Define CS_DUF_DbUpdatedErrorText        for "Ett eller flera fel uppstod tyv„rr under uppdateringen av databasen. Var god kontrollera fel-loggen.\n\nProgrammet kommer nu att avslutas."
+    Define CS_DUF_DbUpdatedErrorText        for "Ett eller flera fel uppstod tyv„rr under uppdateringen av databasen. Var god kontrollera fel-loggen i data-katalogen.\n\nProgrammet kommer nu att avslutas."
     Define CS_DUF_UpdateInProgressTxt       for ("Systemet „r l†st!\n\nDatabasen h†ller p† att uppdateras. Var god v„nta och f”rs”k †ter senare...\n\n" * "Programmet kommer nu att avslutas.")
     // *** cDbUpdateHandler.pkg Class Language Constants ***
     Define CS_DUF_DatabaseConnStringSpec    for "The database specified in the connection string: '"
@@ -195,7 +195,7 @@ Use LanguageText.Pkg
     Define CS_DUF_WorkingUpdateText         for "The database is being updated. Please wait..."
     Define CS_DUF_DatabaseUpdatedText       for "Ready! The database was updated."
     Define CS_DUF_DatabaseCheckedText       for "Ready! The database was checked but no updates was needed."
-    Define CS_DUF_DbUpdatedErrorText        for "One or more errors occured while the database was updated. Please check the logfile.\n\nThe program will now close."
+    Define CS_DUF_DbUpdatedErrorText        for "One or more errors occured while the database was updated. Please check the logfile in the data-folder.\n\nThe program will now close."
     Define CS_DUF_UpdateInProgressTxt       for ("System locked!\n\nThe database is being updated. Please try again later...\n\n" * "The program will now close.")
     // *** cDbUpdateHandler.pkg Class Language Constants ***
     Define CS_DUF_DatabaseConnStringSpec    for "The database specified in the connection string: '"
@@ -275,7 +275,7 @@ Use LanguageText.Pkg
     Define CS_DUF_WorkingUpdateText         for "The database is being updated. Please wait..."
     Define CS_DUF_DatabaseUpdatedText       for "Ready! The database was updated."
     Define CS_DUF_DatabaseCheckedText       for "Ready! The database was checked but no updates was needed."
-    Define CS_DUF_DbUpdatedErrorText        for "One or more errors occured while the database was updated. Please check the logfile.\n\nThe program will now close."
+    Define CS_DUF_DbUpdatedErrorText        for "One or more errors occured while the database was updated. Please check the logfile in the data-folder.\n\nThe program will now close."
     Define CS_DUF_UpdateInProgressTxt       for ("System locked!\n\nThe database is being updated. Please try again later...\n\n" * "The program will now close.")
     // *** cDbUpdateHandler.pkg Class Language Constants ***
     Define CS_DUF_DatabaseConnStringSpec    for "The database specified in the connection string: '"
@@ -315,7 +315,7 @@ Use LanguageText.Pkg
     Define CS_DUF_WorkingUpdateText         for "The database is being updated. Please wait..."
     Define CS_DUF_DatabaseUpdatedText       for "Ready! The database was updated."
     Define CS_DUF_DatabaseCheckedText       for "Ready! The database was checked but no updates was needed."
-    Define CS_DUF_DbUpdatedErrorText        for "One or more errors occured while the database was updated. Please check the logfile.\n\nThe program will now close."
+    Define CS_DUF_DbUpdatedErrorText        for "One or more errors occured while the database was updated. Please check the logfile in the data-folder.\n\nThe program will now close."
     Define CS_DUF_UpdateInProgressTxt       for ("System locked!\n\nThe database is being updated. Please try again later...\n\n" * "The program will now close.")
     // *** cDbUpdateHandler.pkg Class Language Constants ***
     Define CS_DUF_DatabaseConnStringSpec    for "The database specified in the connection string: '"
@@ -395,7 +395,7 @@ Use LanguageText.Pkg
     Define CS_DUF_WorkingUpdateText         for "Databasen oppdateres. Vennligst vent..."
     Define CS_DUF_DatabaseUpdatedText       for "Klar! Databasen ble oppdatert."
     Define CS_DUF_DatabaseCheckedText       for "Klar! Database ble sjekket, men ingen oppdatering var nÃ¸dvendig."
-    Define CS_DUF_DbUpdatedErrorText        for "En eller flere feil oppsto under oppdatering av databasen. Sjekk loggfil.\n\nProgrammet avsluttes."
+    Define CS_DUF_DbUpdatedErrorText        for "En eller flere feil oppsto under oppdatering av databasen. Sjekk loggfil i data-kataloge.\n\nProgrammet avsluttes."
     Define CS_DUF_UpdateInProgressTxt       for ("System lÃ¥st!\n\nDatabasen blir oppdatert. PrÃ¸v igjen senere...\n\n" * "Programmet avsluttes.")
     // *** cDbUpdateHandler.pkg Class Language Constants ***
     Define CS_DUF_DatabaseConnStringSpec    for "The database specified in the connection string: '"
@@ -435,7 +435,7 @@ Use LanguageText.Pkg
     Define CS_DUF_WorkingUpdateText         for "The database is being updated. Please wait..."
     Define CS_DUF_DatabaseUpdatedText       for "Ready! The database was updated."
     Define CS_DUF_DatabaseCheckedText       for "Ready! The database was checked but no updates was needed."
-    Define CS_DUF_DbUpdatedErrorText        for "One or more errors occured while the database was updated. Please check the logfile.\n\nThe program will now close."
+    Define CS_DUF_DbUpdatedErrorText        for "One or more errors occured while the database was updated. Please check the logfile in the data-folder.\n\nThe program will now close."
     Define CS_DUF_UpdateInProgressTxt       for ("System locked!\n\nThe database is being updated. Please try again later...\n\n" * "The program will now close.")
     // *** cDbUpdateHandler.pkg Class Language Constants ***
     Define CS_DUF_DatabaseConnStringSpec    for "The database specified in the connection string: '"
@@ -475,7 +475,7 @@ Use LanguageText.Pkg
     Define CS_DUF_WorkingUpdateText         for "The database is being updated. Please wait..."
     Define CS_DUF_DatabaseUpdatedText       for "Ready! The database was updated."
     Define CS_DUF_DatabaseCheckedText       for "Ready! The database was checked but no updates was needed."
-    Define CS_DUF_DbUpdatedErrorText        for "One or more errors occured while the database was updated. Please check the logfile.\n\nThe program will now close."
+    Define CS_DUF_DbUpdatedErrorText        for "One or more errors occured while the database was updated. Please check the logfile in the data-folder.\n\nThe program will now close."
     Define CS_DUF_UpdateInProgressTxt       for ("System locked!\n\nThe database is being updated. Please try again later...\n\n" * "The program will now close.")
     // *** cDbUpdateHandler.pkg Class Language Constants ***
     Define CS_DUF_DatabaseConnStringSpec    for "The database specified in the connection string: '"
@@ -515,7 +515,7 @@ Use LanguageText.Pkg
     Define CS_DUF_WorkingUpdateText         for "The database is being updated. Please wait..."
     Define CS_DUF_DatabaseUpdatedText       for "Ready! The database was updated."
     Define CS_DUF_DatabaseCheckedText       for "Ready! The database was checked but no updates was needed."
-    Define CS_DUF_DbUpdatedErrorText        for "One or more errors occured while the database was updated. Please check the logfile.\n\nThe program will now close."
+    Define CS_DUF_DbUpdatedErrorText        for "One or more errors occured while the database was updated. Please check the logfile in the data-folder.\n\nThe program will now close."
     Define CS_DUF_UpdateInProgressTxt       for ("System locked!\n\nThe database is being updated. Please try again later...\n\n" * "The program will now close.")
     // *** cDbUpdateHandler.pkg Class Language Constants ***
     Define CS_DUF_DatabaseConnStringSpec    for "The database specified in the connection string: '"

@@ -1,15 +1,15 @@
 <?xml version="1.0"?>
 <classList xmlns="http://www.dataaccess.com/VisualDataFlex/2006/classlist/">
-	<VDFLibraryTimeStamp>2022-07-17T22:22:34</VDFLibraryTimeStamp>
+	<VDFLibraryTimeStamp>2023-07-24T09:31:25</VDFLibraryTimeStamp>
 	<libraries>
 		<library>
-			<libraryPath>Libraries\DFAbout\DFAbout19.1.sws</libraryPath>
-			<libraryTimeStamp>2019-08-15T15:10:39</libraryTimeStamp>
+			<libraryPath>Libraries\DFAbout\DFAbout20.1.sws</libraryPath>
+			<libraryTimeStamp>2019-08-15T16:10:39</libraryTimeStamp>
 			<libraryID>Lib3</libraryID>
 		</library>
 		<library>
-			<libraryPath>Libraries\RDCToolsLib\RDCToolsLib 19.1.sws</libraryPath>
-			<libraryTimeStamp>2019-09-02T16:33:23</libraryTimeStamp>
+			<libraryPath>Libraries\RDCToolsLib\RDCToolsLib 20.1.sws</libraryPath>
+			<libraryTimeStamp>2019-09-02T17:33:23</libraryTimeStamp>
 			<libraryID>Lib2</libraryID>
 		</library>
 	</libraries>
@@ -1048,6 +1048,90 @@
 			<image>cWebListExpandPanel.ico</image>
 			<package>cWebListExpandPanel.pkg</package>
 			<groupName>Web Containers</groupName>
+			<libraryID>0</libraryID>
+		</class>
+		<class>
+			<className>cWebContextMenu</className>
+			<image>cWebContextMenu.ico</image>
+			<package>cWebContextMenu.pkg</package>
+			<groupName>Web Controls</groupName>
+			<libraryID>0</libraryID>
+		</class>
+		<class>
+			<className>cWebDragDropHelper</className>
+			<image>cWebDragDropHelper.ico</image>
+			<package>cWebDragDropHelper.pkg</package>
+			<groupName>Web Controls</groupName>
+			<libraryID>0</libraryID>
+		</class>
+		<class>
+			<className>cWebDragDropFileHelper</className>
+			<image>cWebDragDropFileHelper.ico</image>
+			<package>cWebDragDropFileHelper.pkg</package>
+			<groupName>Web Controls</groupName>
+			<libraryID>0</libraryID>
+		</class>
+		<class>
+			<className>cWebGeoLocation</className>
+			<image>cWebGeoLocation.ico</image>
+			<package>cWebGeoLocation.pkg</package>
+			<groupName>Web Controls</groupName>
+			<libraryID>0</libraryID>
+		</class>
+		<class>
+			<className>cWebHtmlList</className>
+			<image>cWebHtmlList.ico</image>
+			<package>cWebHtmlList.pkg</package>
+			<groupName>Web Controls</groupName>
+			<libraryID>0</libraryID>
+		</class>
+		<class>
+			<className>cWebMenuItemCheckbox</className>
+			<image>cWebMenuItemCheckbox.ico</image>
+			<package>cWebMenuItemCheckbox.pkg</package>
+			<groupName>Web Controls</groupName>
+			<libraryID>0</libraryID>
+		</class>
+		<class>
+			<className>cWebTagsForm</className>
+			<image>cWebTagsForm.ico</image>
+			<package>cWebTagsForm.pkg</package>
+			<groupName>Web Controls</groupName>
+			<libraryID>0</libraryID>
+		</class>
+		<class>
+			<className>cWebDynamicObjectContainer</className>
+			<image>cWebGroup.ico</image>
+			<package>cWebDynamicObjectContainer.pkg</package>
+			<groupName>Web Containers</groupName>
+			<libraryID>0</libraryID>
+		</class>
+		<class>
+			<className>cWebView2Browser</className>
+			<image>cWebView2Browser.ico</image>
+			<package>cWebView2Browser.pkg</package>
+			<groupName>Base Controls</groupName>
+			<libraryID>0</libraryID>
+		</class>
+		<class>
+			<className>cDBTagsForm</className>
+			<image>cDBTagsForm.ico</image>
+			<package>cDBTagsForm.pkg</package>
+			<groupName>Data Controls</groupName>
+			<libraryID>0</libraryID>
+		</class>
+		<class>
+			<className>cTagsForm</className>
+			<image>cTagsForm.ico</image>
+			<package>cTagsForm.pkg</package>
+			<groupName>Base Controls</groupName>
+			<libraryID>0</libraryID>
+		</class>
+		<class>
+			<className>cSelectFolderDialog</className>
+			<image>ControlOpenDialog.ico</image>
+			<package>cSelectFolderDialog.pkg</package>
+			<groupName>Dialogs</groupName>
 			<libraryID>0</libraryID>
 		</class>
 		<class>

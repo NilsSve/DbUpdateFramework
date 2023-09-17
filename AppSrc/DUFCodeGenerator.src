@@ -455,14 +455,14 @@ Object oMain is a Panel
                     Boolean bExists bOK
 
                     Move (Focus(Desktop)) to hoFocus
-                    Forward Send OnExecute vCommandBarControl
 
                     // First change the "current" filelist depending on which
                     // Filelist form is active.
                     Get Value of hoFocus to sCurrentFilelist
                     Get vFilePathExists sCurrentFilelist to bExists
                     Get psFilelistFrom of ghoApplication to sFileListFrom
-                    If (sFileListFrom = "") Begin
+                    If (sFileListFrom = "") Begin 
+                        Send Info_Box "You need to select a Filelist.cfg file with SQL tables first."
                         Procedure_Return
                     End
                     If (bExists = True and sCurrentFilelist <> "") Begin
