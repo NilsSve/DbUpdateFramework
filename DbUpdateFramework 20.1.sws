@@ -4,7 +4,7 @@ Version=20.1
 ConfigFile=.\Programs\Config.ws
 [Conditionals]
 Is$WebApp=False
-Is$Win64=True
+Is$Win64=False
 DUF_Use_Mertech_Drivers=False
 [Libraries]
 Lib1=Libraries\vwin32fh\StudioLibrary\vWin32fh-Library-DF201.sws

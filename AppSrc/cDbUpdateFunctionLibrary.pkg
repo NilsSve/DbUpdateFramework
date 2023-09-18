@@ -41,6 +41,10 @@ Use Dfabout.pkg
 // Set_Attribute DF_DATABASE_DEFAULT_MAP_DF_TO_SQL_TYPE_SCHEMA of {driverNumber} {databaseHandle} ;
 // to {MAP_DF_TO_SQL_TYPE_SQL2000|MAP_DF_TO_SQL_TYPE_SQL2005|MAP_DF_TO_SQL_TYPE_SQL2008|MAP_DF_TO_SQL_TYPE_SQL2012}
 //
+#IFNDEF piOrgErrorHandlerID
+    Function piOrgErrorHandlerID Returns Integer
+    End_Function
+#ENDIF    
 
 Class cDbUpdateFunctionLibrary is a cObject
     Import_Class_Protocol cDbUpdateFunctionLibrary_Mixin
@@ -13066,7 +13070,7 @@ Class cDbUpdateFunctionLibrary is a cObject
     // Note: If run from the Studio, CodeMast & CodeType _is_ open by the Studio,
     //       so in that case we "cheat" and report those tables were opened OK.
     Function OpenTableExclusive Handle hTable Returns Boolean
-        Integer iMode
+        Integer iMode iErrorObject
         Boolean bOpened
         String sTableName 
         Handle hoCurrentErrorHandler
@@ -13076,7 +13080,10 @@ Class cDbUpdateFunctionLibrary is a cObject
         // so we generate an error here:
         If (IsDebuggerPresent()) Begin
             Move Error_Object_Id to hoCurrentErrorHandler
-            Get piOrgErrorHandlerID to Error_Object_Id
+            Get piOrgErrorHandlerID to iErrorObject
+            If (iErrorObject <> 0) Begin
+                Move iErrorObject to Error_Object_Id
+            End
             Error DFERR_OPERATOR "It is not possible to make structural changes to the database when running through the Debugger/Studio! You need to run this program from outside of the Studio."
             Move hoCurrentErrorHandler to Error_Object_Id
             Set Error_Report_Mode to DUF_ERROR_REPORT
