@@ -1,2 +1,46 @@
-# Auto detect text files and perform LF normalization
-* text=auto
+# Files to be ignored by git in a DataFlex workspace
+
+# AppHtml
+**/apphtml/global.asa
+
+# AppSrc
+**/appsrc/**/*.prn
+**/appsrc/**/*.dep
+**/appsrc/**/*.dbg
+**/appsrc/**/*.exe.manifest
+**/appsrc/**/*.err
+**/appsrc/**/*.fld
+**/appsrc/**/*.pbg
+**/appsrc/**/*.pdp
+**/appsrc/**/*.pkd
+**/appsrc/**/*.prn
+**/appsrc/**/*.prp
+loginEncryptionkey.inc
+
+# Data
+**/data/**/*.log
+**/data/**/*.dat
+**/data/**/*.vld
+**/data/**/*.k*
+**/data/**/*.bad
+**/data/**/*.hdr
+**/data/**/*.cch
+**/data/**/*.cfg
+
+# DDSrc
+**/ddsrc/**/*.def
+
+# IdeSrc
+**/idesrc/*.dsk
+**/idesrc/*.loc
+**/idesrc/*.mtd
+
+# Programs
+**/programs/*.dbg
+**/programs/*.exe
+**/programs/*.exe.manifest
+**/programs/*.log
+
+# Workspace specific
+**/install
+
