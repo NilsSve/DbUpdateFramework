@@ -975,26 +975,27 @@ Object oSQLMaintainConnections_dg is a ModalPanel
 
         End_Object
 
-        Object oStartSQLManager_btn is a cRDCButton
-            Set Size to 13 78
-            Set Location to 22 210
-            Set Label to "SQL Manager"
-            Set pbAutoEnable to True  
-            Set psImage to "SSMS1.ico" 
-            Set psToolTip to "Start Microsoft SQL Server Management Studio"
-            Set peAnchors to anTopRight
-        
-            Procedure OnClick
-                Runprogram Shell Background "Ssms.exe"    
-            End_Procedure  
-            
-            Function IsEnabled Returns Boolean
-                String sDbType
-                Get Value of oDbType_cf to sDbType
-                Function_Return (sDbType = CS_dbTypeMSSQL)
-            End_Function
-        
-        End_Object
+// This used to work, but it seems that the Ssms.exe is no longer part of Windows "global pathing (in DOS)".
+//        Object oStartSQLManager_btn is a cRDCButton
+//            Set Size to 13 78
+//            Set Location to 22 210
+//            Set Label to "SQL Manager"
+//            Set pbAutoEnable to True  
+//            Set psImage to "SSMS1.ico" 
+//            Set psToolTip to "Start Microsoft SQL Server Management Studio"
+//            Set peAnchors to anTopRight
+//        
+//            Procedure OnClick
+//                Runprogram Shell Background "Ssms.exe"    
+//            End_Procedure  
+//            
+//            Function IsEnabled Returns Boolean
+//                String sDbType
+//                Get Value of oDbType_cf to sDbType
+//                Function_Return (sDbType = CS_dbTypeMSSQL)
+//            End_Function
+//        
+//        End_Object
 
         Object oDriverID_cf is a cSQLComboForm
             Set Size to 13 115
