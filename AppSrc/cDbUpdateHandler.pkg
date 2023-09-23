@@ -124,7 +124,7 @@ Class cDbUpdateHandler is a cObject
         Property tDbVersionInfo[] paDbVersionInfoArray
 
         { Visibility=Private }
-        Property Integer Error_Processing_State False  // internal use
+        Property Integer Error_Processing_State False  // internal usage
         
         { Visibility=Private }
         Property Boolean Private.pbDbVersionCheckDone False
@@ -305,12 +305,12 @@ Class cDbUpdateHandler is a cObject
         Send Cleanup
     End_Procedure
     
-    { MethodType=Event }
+    { MethodType=Event Visibility = Public }
     // Programmers hook event.
     Procedure OnCreate
     End_Procedure        
                                  
-    // *** MAIN .Int file (and Filelist.cfg) Check Integrity Message ***
+    // *** MAIN .Int file (and Filelist.cfg) Integrity Check Message ***
     //                                                
     // The logic is activated by setting the property "pbCheckIntFiles = True" in the
     // cDbUpdateHandler object.
@@ -326,7 +326,7 @@ Class cDbUpdateHandler is a cObject
     // Note: If an error occurrs the application will exit, as it means that at least one
     // .int file is in error or the Filelist.cfg was missing and couldn't be recreated.
     Procedure CheckIntFilesIntegrity
-        Boolean bCheckIntFiles bExists bOK bSaved bIsSQL bFileListExist bResult bDevelop bZipExists
+        Boolean bCheckIntFiles bExists bOK bSaved bIsSQL bFileListExist bResult bDevelop bZipExists bIntFilesTablesCheckDone
         String sPaths sDataPath sIntFileName sRootFileNname sFileListName sDDSrcPath sCurrentFolder
         String sFileListZipFile sParam sProgram sFile 
         Integer iDataPaths iCount
@@ -347,8 +347,8 @@ Class cDbUpdateHandler is a cObject
         // into the executable. Thus the file _must_ be named "Filelist.cfg", or you
         // need to change the next code line.         
         //
-        // This is a pickle (!) with the Filelist.cfg as it is "busy" as it is open in the Studio,
-        // when we get here and then it seems the compiler can't embedd it!        
+        // There is a pickle with the Filelist.cfg as it is "busy" as it is open in the Studio,
+        // when we get here and then the compiler can't embedd it!        
         // ToDo: Change compiler directives in Project properties (?)
 //        Include_Resource Filelist2.cfg as res_EmbeddedFilelistCfg type DF_RESOURCE_TYPE_BINARY
 //        Get ReadFileListResource "res_EmbeddedFilelistCfg" to asFileListArray
@@ -384,6 +384,11 @@ Class cDbUpdateHandler is a cObject
         // It is used to save data from the current set of .int files.
         If (sRootFileNname <> CS_IntFilesTableRootName) Begin
             Send AutoCreateIntFilesTable
+            Get Private.pbIntFilesTablesCheckDone to bIntFilesTablesCheckDone
+            If (bIntFilesTablesCheckDone = False) Begin
+                Send Info_Box CS_DUF_DbUpdatedErrorText
+                Send Exit_Application of ghoApplication
+            End
         End                                                       
         
         // Check if this is a development machine. *Only* then we will attempt to read .int files to the internal table. 
@@ -406,8 +411,8 @@ Class cDbUpdateHandler is a cObject
                     If (hTable <> 0) Begin
                         Get_Attribute DF_FILE_ROOT_NAME of hTable to sIntFileName 
                         Get UtilTableIsSqlByRootName sIntFileName to bIsSQL
-                        If (bIsSQL = True) Begin
-                            Get _TableNoPrefix sIntFileName to sIntFileName
+                        If (bIsSQL = True) Begin     
+                            Get _TableNameOnly sIntFileName to sIntFileName
                             Move (sIntFileName + ".int")    to sIntFileName
                             Get IsIntFileSaved sIntFileName to bSaved  
                             Move True to bOK            
@@ -828,6 +833,7 @@ Class cDbUpdateHandler is a cObject
         End
 
         If (hTable < 1) Begin
+            Set Private.pbIntFilesTablesCheckDone to False
             Move (piCurrentErrorHandlerID(Self)) to Error_Object_Id
             Error DFERR_PROGRAM "The phIntFilesTable has been set to 0 (!). The default value is 2048 and if changed MUST be set to a free Filelist.cfg slot in the cDbUpdateHandler object.\nProgram will now exit!"
             Procedure_Return
@@ -840,8 +846,8 @@ Class cDbUpdateHandler is a cObject
         End
 
         Send CreateIntFilesTable hTable
-
-        Set Private.pbIntFilesTablesCheckDone to True
+        Get Private.pbIntFilesTablesCheckDone to bIntFilesTablesCheckDone
+        Set Private.pbIntFilesTablesCheckDone to bIntFilesTablesCheckDone
     End_Function
                 
     Procedure CreateIntFilesTable Handle hTable
@@ -887,19 +893,22 @@ Class cDbUpdateHandler is a cObject
             Move ("Int Files Table:" + sTableName * "was successfully created" * "at filelist slot:" * String(hTable)) to sInfoTxt
         End
         Else Begin
+            Set Private.pbIntFilesTablesCheckDone to False
             Move ("ERROR" * "Int Files Table:" + sTableName * "could NOT be created" * "at filelist slot:" * String(hTable) * "\Program will now exit.") to sInfoTxt
-            Error sInfoTxt
+            Error DFERR_PROGRAM sInfoTxt
             Procedure_Return
         End
         Send LogError of (phoLogFile(Self)) 0 0 sInfoTxt 0 False
-
+        
+        Open hTable
         Get ApiIndexCreate hTable 1 1 1   to bOK     // Index 1 = ID
         If (bOK = True) Begin
             Get ApiIndexCreate hTable 2 2 2 1 to bOK // Index 2 = InteFileName, ID.
         End
         If (bOK = False) Begin
+            Set Private.pbIntFilesTablesCheckDone to False
             Move ("ERROR" * "Indexes for Int Files Table:" + sTableName * "could NOT be created" * "at filelist slot:" * String(hTable) * "\Program will now exit.") to sInfoTxt
-            Error sInfoTxt
+            Error DFERR_PROGRAM sInfoTxt
             Procedure_Return
         End                    
         
@@ -918,6 +927,7 @@ Class cDbUpdateHandler is a cObject
             End
         End
         
+        Set Private.pbIntFilesTablesCheckDone to True
     End_Procedure
 
     Procedure CheckAutoCreateDbVersionTable
@@ -1846,7 +1856,6 @@ Class cDbUpdateHandler is a cObject
         Set pbDbUpdateErrorHasOccured to True
         Get pnCurrentVersionUpdate to nVersion
         Get phoLogFile to hoLogFile
-//        Get Error_Description iErrorLine sErrorText to sErrorText
         Send LogError of hoLogFile nVersion iErrorNumber sErrorText iErrorLine True
 
         Set Private.pbProcessingError to False

@@ -42,5 +42,11 @@ loginEncryptionkey.inc
 **/programs/*.log
 
 # Workspace specific
+**/data/compileheader.h
+**/help/**/*.hnd
+**/help/**/assets
+**/help/**/online help
 **/install
-
+**/capture
+**/dfrefactor backup
+**/*.mp4
