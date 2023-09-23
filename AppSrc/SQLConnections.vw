@@ -379,8 +379,8 @@ Object oSQLConnections_vw is a dbView
                     Set peAnchors to anNone
                     Set psImage to "SQLConnections1.ico"
 
-                    Procedure OnClick
-                        Runprogram Background "SQLConnections.exe"
+                    Procedure OnClick 
+                        Runprogram Background "DUFSQLConnections.exe"
                     End_Procedure
 
                 End_Object
