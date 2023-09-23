@@ -1,5 +1,6 @@
 Compiling Program: C:\Projects\DF20\DbUpdateFramework\AppSrc\DUFTestProgram.src
-Memory Available: 102313660416
+Memory Available: 99583426560
+1>
 1>    CompilerLevelWarning All On
 1>Use DFAllEnt.pkg
 Using pre-compiled package DFALLENT.PKG
@@ -4351,6 +4352,7 @@ Including file: cDbUpdateVersion.pkg    (C:\Projects\DF20\DbUpdateFramework\AppS
 75518>>>>>Use DUFLanguageConstants.inc
 75518>>>>>Use cDbUpdateFunctionLibrary.pkg
 Including file: cDbUpdateFunctionLibrary.pkg    (C:\Projects\DF20\DbUpdateFramework\AppSrc\cDbUpdateFunctionLibrary.pkg)
+75518>>>>>>>
 75518>>>>>>>//****************************************************************************
 75518>>>>>>>// $Module type: Class
 75518>>>>>>>// $Module name: cDbUpdateFunctionLibrary
@@ -10169,6 +10171,7 @@ Including file: ParseKeyWord.pkg    (C:\Projects\DF20\DbUpdateFramework\AppSrc\P
 78622>>>>>>>Use vWin32fh.pkg
 78622>>>>>>>Use Dfabout.pkg
 Including file: DfAbout.pkg    (C:\Projects\DF20\DbUpdateFramework\Libraries\DFAbout\DfAbout.pkg)
+78622>>>>>>>>>
 78622>>>>>>>>>Use LanguageText.pkg
 78622>>>>>>>>>Use Windows.pkg
 78622>>>>>>>>>Use Dfclient.pkg
@@ -37519,6 +37522,7 @@ Including file: APIFunctions.vw    (C:\Projects\DF20\DbUpdateFramework\AppSrc\AP
 98789>>>End_Object
 98790>        Use UtilFunctions.vw
 Including file: UtilFunctions.vw    (C:\Projects\DF20\DbUpdateFramework\AppSrc\UtilFunctions.vw)
+98790>>>
 98790>>>Use Windows.pkg
 98790>>>Use DFClient.pkg
 98790>>>Use Dfline.pkg
@@ -38319,14 +38323,14 @@ Including file: Working.pkg    (C:\Projects\DF20\DbUpdateFramework\AppSrc\Workin
 99394>
 Including Resources...
 Summary
-Memory Available: 102232903680
+Memory Available: 99193384960
 Total Warnings : 0
 Total Errors   : 0
-Total Symbols  : 52665
+Total Symbols  : 52666
 Total Resources: 9
 Total Commands : 99393
 Total Windows  : 0
 Total Pages    : 0
-Static Data    : 857451
+Static Data    : 857435
 Message area   : 639036
-Total Blocks   : 76691
+Total Blocks   : 76692
