@@ -143,87 +143,6 @@ Class cDbUpdateDataFlexDriver is a cDbUpdateGenericDatabaseDriver
     End_Function
 End_Class
 
-Class cDbUpdateSQLFLEXDriver is a cDbUpdateGenericDatabaseDriver
-    Function DbLogin String sConnectionString String sServer String sDatabase Boolean bTrusted String sUserID String sPassword Returns Boolean
-        Boolean bLoginSuccessful
-        String sDriverID
-
-        Get psDriverID to sDriverID
-        //For the Mertech driver, using the Err indicator is the sanctioned way
-        Move False to Err
-        If (bTrusted = False) Begin
-            Login sServer sUserId sPassword sDriverID
-        End
-        Else Begin
-            Login sServer "" "" sDriverID
-        End
-        Move (not(Err)) to bLoginSuccessful
-
-        Function_Return bLoginSuccessful
-    End_Function
-End_Class
-
-Class cDbUpdateORAFLEXDriver is a cDbUpdateGenericDatabaseDriver
-    Function DbLogin String sConnectionString String sServer String sDatabase Boolean bTrusted String sUserID String sPassword Returns Boolean
-        Boolean bLoginSuccessful
-        String sDriverID
-        Integer iPos
-
-        Get psDriverID to sDriverID
-        Move (Pos("/", sServer)) to iPos
-        If (iPos = 0) Begin
-            If (sDatabase <> "") Begin
-                Move (sServer + "/" + sDatabase) to sServer
-            End
-        End
-        // For the Mertech driver, using the Err indicator is the sanctioned way
-        Move False to Err
-        // For Oracle I don't believe "Trusted" doesn't exist.
-        Login sServer sUserId sPassword sDriverID
-
-        Move (not(Err)) to bLoginSuccessful
-        Function_Return bLoginSuccessful
-    End_Function
-End_Class
-
-Class cDbUpdateMDSMySQLDriver is a cDbUpdateGenericDatabaseDriver
-    Function DbLogin String sConnectionString String sServer String sDatabase Boolean bTrusted String sUserID String sPassword Returns Boolean
-        Boolean bLoginSuccessful
-        String sDriverID
-
-        Get psDriverID to sDriverID
-        // For the Mertech driver, using the Err indicator is the sanctioned way
-        Move False to Err
-        If (bTrusted = False) Begin
-            Login sServer sUserId sPassword sDriverID
-        End
-        Else Begin
-            Login sServer "" "" sDriverID
-        End
-        Move (not(Err)) to bLoginSuccessful
-        Function_Return bLoginSuccessful
-    End_Function
-End_Class
-
-Class cDbUpdateMDSPgSQLDriver is a cDbUpdateGenericDatabaseDriver
-    Function DbLogin String sConnectionString String sServer String sDatabase Boolean bTrusted String sUserID String sPassword Returns Boolean
-        Boolean bLoginSuccessful
-        String sDriverID
-
-        Get psDriverID to sDriverID
-        // For the Mertech driver, using the Err indicator is the sanctioned way
-        Move False to Err
-        If (bTrusted = False) Begin
-            Login sServer sUserId sPassword sDriverID
-        End
-        Else Begin
-            Login sServer "" "" sDriverID
-        End
-        Move (not(Err)) to bLoginSuccessful
-        Function_Return bLoginSuccessful
-    End_Function
-End_Class
-
 Class cDbUpdateDatabaseDriver is a cObject
     Procedure Construct_Object
         Forward Send Construct_Object
@@ -246,21 +165,6 @@ Class cDbUpdateDatabaseDriver is a cObject
             Case (sDriverID = DB2_DRV_ID)
                 Move (RefClass(cDbUpdateDB2Driver))      to hcDriverClass
                 Case Break               
-//            Case (sDriverID = DFBTRDRV_ID)
-//                Move (RefClass(cDbUpdateDatabaseDriver)) to hcDriverClass
-//                Case Break
-            Case (sDriverID = SQLFLEX)
-                Move (RefClass(cDbUpdateSQLFLEXDriver))  to hcDriverClass
-                Case Break
-            Case (sDriverID = ORAFLEX)
-                Move (RefClass(cDbUpdateORAFLEXDriver))  to hcDriverClass
-                Case Break
-            Case (sDriverID = MDSPgSQL)
-                Move (RefClass(cDbUpdateMDSPgSQLDriver)) to hcDriverClass
-                Case Break
-            Case (sDriverID = MDSMySQL)
-                Move (RefClass(cDbUpdateMDSMySQLDriver)) to hcDriverClass
-                Case Break
             // DATAFLEX_ID = Default driver
             Case Else
                 Move (RefClass(cDbUpdateDataFlexDriver)) to hcDriverClass

@@ -1,16 +1,21 @@
 <?xml version="1.0"?>
 <classList xmlns="http://www.dataaccess.com/VisualDataFlex/2006/classlist/">
-	<VDFLibraryTimeStamp>2023-07-24T09:31:25</VDFLibraryTimeStamp>
+	<VDFLibraryTimeStamp>2023-07-24T17:47:23</VDFLibraryTimeStamp>
 	<libraries>
 		<library>
-			<libraryPath>Libraries\DFAbout\DFAbout20.1.sws</libraryPath>
-			<libraryTimeStamp>2019-08-15T16:10:39</libraryTimeStamp>
-			<libraryID>Lib3</libraryID>
+			<libraryPath>Libraries\DFAbout20\DFAbout23.0.sws</libraryPath>
+			<libraryTimeStamp>2019-08-15T15:10:39</libraryTimeStamp>
+			<libraryID>Lib1</libraryID>
 		</library>
 		<library>
-			<libraryPath>Libraries\RDCToolsLib\RDCToolsLib 20.1.sws</libraryPath>
-			<libraryTimeStamp>2019-09-02T17:33:23</libraryTimeStamp>
+			<libraryPath>Libraries\RDCToolsLib20\RDCToolsLib23.0.sws</libraryPath>
+			<libraryTimeStamp>2019-09-02T16:33:23</libraryTimeStamp>
 			<libraryID>Lib2</libraryID>
+		</library>
+		<library>
+			<libraryPath>Libraries\vwin32fh20\StudioLibrary\vWin32fh-Library-DF23.0.sws</libraryPath>
+			<libraryTimeStamp>2023-04-30T09:36:03</libraryTimeStamp>
+			<libraryID>Lib3</libraryID>
 		</library>
 	</libraries>
 	<classes>
@@ -1030,20 +1035,6 @@
 			<libraryID>0</libraryID>
 		</class>
 		<class>
-			<className>cMapComponent</className>
-			<image>ControlCOM.ico</image>
-			<package>cMapComponent.pkg</package>
-			<groupName>Map Component</groupName>
-			<libraryID>Lib3</libraryID>
-		</class>
-		<class>
-			<className>cComSWXMap</className>
-			<image>ControlCOM.ico</image>
-			<package>cComSWXMap.pkg</package>
-			<groupName>ActiveX</groupName>
-			<libraryID>Lib3</libraryID>
-		</class>
-		<class>
 			<className>cWebListExpandPanel</className>
 			<image>cWebListExpandPanel.ico</image>
 			<package>cWebListExpandPanel.pkg</package>
@@ -1135,25 +1126,81 @@
 			<libraryID>0</libraryID>
 		</class>
 		<class>
+			<className>cWebColumnTags</className>
+			<image>cWebColumnTags.ico</image>
+			<package>cWebColumnTags.pkg</package>
+			<groupName>Web Controls</groupName>
+			<libraryID>0</libraryID>
+		</class>
+		<class>
+			<className>cWebColumnSelectionIndicator</className>
+			<image>cWebColumnSelectionIndicator.ico</image>
+			<package>cWebColumnSelectionIndicator.pkg</package>
+			<groupName>Web Controls</groupName>
+			<libraryID>0</libraryID>
+		</class>
+		<class>
+			<className>cWebMultiSelectList</className>
+			<image>cWebMultiSelectList.ico</image>
+			<package>cWebMultiSelectList.pkg</package>
+			<groupName>Web Controls</groupName>
+			<libraryID>0</libraryID>
+		</class>
+		<class>
+			<className>cLocalWebAppHost</className>
+			<image>cLocalWebAppHost.ico</image>
+			<package>cLocalWebAppHost.pkg</package>
+			<groupName>Base Containers</groupName>
+			<libraryID>0</libraryID>
+		</class>
+		<class>
+			<className>cLocalWebControlHost</className>
+			<image>cLocalWebControlHost.ico</image>
+			<package>cLocalWebControlHost.pkg</package>
+			<groupName>Base Containers</groupName>
+			<libraryID>0</libraryID>
+		</class>
+		<class>
+			<className>cDbLocalWebControlHost</className>
+			<image>cDbLocalWebControlHost.ico</image>
+			<package>cDbLocalWebControlHost.pkg</package>
+			<groupName>Data Containers</groupName>
+			<libraryID>0</libraryID>
+		</class>
+		<class>
+			<className>cMapComponent</className>
+			<image>ControlCOM.ico</image>
+			<package>cMapComponent.pkg</package>
+			<groupName>Map Component</groupName>
+			<libraryID>Lib1</libraryID>
+		</class>
+		<class>
 			<className>cSkinComboBoxCJMenuItem</className>
 			<image>ControlCJSkinFramework.ico</image>
 			<package>cSkinComboBoxCJMenuItem.pkg</package>
 			<groupName>Menus and Toolbars</groupName>
-			<libraryID>Lib3</libraryID>
+			<libraryID>Lib1</libraryID>
 		</class>
 		<class>
 			<className>cDbUpdateHandler</className>
 			<image>ControlObject.ico</image>
 			<package>cDbUpdateHandler.pkg</package>
 			<groupName>Database Update Framework</groupName>
-			<libraryID>Lib3</libraryID>
+			<libraryID>Lib1</libraryID>
 		</class>
 		<class>
 			<className>cDbUpdateVersion</className>
 			<image>ControlObject.ico</image>
 			<package>cDbUpdateVersion.pkg</package>
 			<groupName>Database Update Framework</groupName>
-			<libraryID>Lib3</libraryID>
+			<libraryID>Lib1</libraryID>
+		</class>
+		<class>
+			<className>cComSWXMap</className>
+			<image>ControlCOM.ico</image>
+			<package>cComSWXMap.pkg</package>
+			<groupName>ActiveX</groupName>
+			<libraryID>Lib1</libraryID>
 		</class>
 	</classes>
 </classList>

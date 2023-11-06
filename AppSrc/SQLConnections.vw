@@ -98,13 +98,6 @@ Object oSQLConnections_vw is a dbView
                         Send Combo_Add_Item MSSQLDRV_ID
                         Send Combo_Add_Item DB2_DRV_ID
                         Send Combo_Add_Item ODBC_DRV_ID
-                        #IFDEF DUF_Use_Mertech_Drivers
-                        Send Combo_Add_Item SQLFLEX
-                        Send Combo_Add_Item MDSDB2
-                        Send Combo_Add_Item MDSMySQL
-                        Send Combo_Add_Item MDSPgSQL
-                        Send Combo_Add_Item ORAFLEX
-                        #ENDIF
                     End_Procedure
 
                     Procedure OnChange
@@ -297,7 +290,7 @@ Object oSQLConnections_vw is a dbView
                     Procedure OnClick
                         tSQLConnection SQLConnection
                         String sServer sDatabase sDriverID sUserID sPassword sConnectionID sConnectionString
-                        Boolean bTrusted bMertechDriver bLoginSuccessful
+                        Boolean bTrusted bLoginSuccessful
                         Integer iDriverID
                         Handle hoDriver
 
@@ -317,11 +310,7 @@ Object oSQLConnections_vw is a dbView
                             Procedure_Return
                         End
 
-                        Get IsMertechDriver of ghoSQLConnectionHandler SQLConnection.sDriverID to bMertechDriver
-                        If (bMertechDriver = False) Begin
-                            Set_Attribute DF_DRIVER_SILENT_LOGIN of iDriverID to True
-                        End
-
+                        Set_Attribute DF_DRIVER_SILENT_LOGIN of iDriverID to True
                         Send Ignore_Error of Error_Object_Id CLIERR_LOGIN_UNSUCCESSFUL
                         Get Create (RefClass(cDbUpdateDatabaseDriver)) to hoDriver
                         Set psDriverID of hoDriver to SQLConnection.sDriverID

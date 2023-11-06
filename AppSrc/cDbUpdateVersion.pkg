@@ -679,7 +679,7 @@ Register_Function piCurrentErrorHandlerID Returns Integer
 //            Delegate Send CheckAutoCreateDbVersionTable // cDbUpdateHandler object event.
         End
         Else Begin
-            Get UtilTableExists of ghoDbUpdateFunctionLibrary iDbVersionFileNumber to bTableExists
+            Get _UtilTableExists of ghoDbUpdateFunctionLibrary iDbVersionFileNumber to bTableExists
             If (bTableExists = False) Begin
                 Delegate Send OnCreateCustomDbVersionTable
             End

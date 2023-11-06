@@ -182,9 +182,6 @@ Object oTableDUFCodeGenerator is a dbView
             Set Location to 27 29
             Set piLayoutBuild to 6
             Set Status_Help to "Select with the spacebar, or use the selection buttons above the grid"
-            #IF (!@ > 180)
-                Set peVisualTheme to xtpReportThemeVisualStudio2012Light
-            #ENDIF
 
             Property Handle phDbVersion
             Property Integer piCurrentRow -1
@@ -942,7 +939,7 @@ Object oTableDUFCodeGenerator is a dbView
                 Move TheData[iTable].sDisplayName to APITableNameInfo.sDisplayName
                 Move TheData[iTable].bIsAlias     to bIsAlias
                 Move bIsAlias                     to APITableNameInfo.bIsAlias
-                Get UtilTableIsSQL of ghoDbUpdateFunctionLibrary hTable to APITableNameInfo.bIsSQL
+                Get _UtilTableIsSql of ghoDbUpdateFunctionLibrary hTable to APITableNameInfo.bIsSQL
 
                 // Get the Driver ID
                 Get_Attribute DF_FILE_DRIVER of hTable to sDriverID

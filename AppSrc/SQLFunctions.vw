@@ -70,13 +70,6 @@ Object oSQLFunctions_vw is a dbView
                         Send Combo_Add_Item MSSQLDRV_ID
                         Send Combo_Add_Item DB2_DRV_ID
                         Send Combo_Add_Item ODBC_DRV_ID
-                        #IFDEF DUF_Use_Mertech_Drivers
-                        Send Combo_Add_Item SQLFLEX
-                        Send Combo_Add_Item MDSDB2
-                        Send Combo_Add_Item MDSMySQL
-                        Send Combo_Add_Item MDSPgSQL
-                        Send Combo_Add_Item ORAFLEX
-                        #ENDIF
                     End_Procedure
 
                     Procedure Refresh
@@ -150,7 +143,7 @@ Object oSQLFunctions_vw is a dbView
 
                         Send Delete_Data
                         Get Value of oDriverID2_cf to sDriverID
-                        Get SQLUtilEnumerateTables of ghoDbUpdateFunctionLibrary sDriverID to sTablesArray
+                        Get _SqlUtilEnumerateTables of ghoDbUpdateFunctionLibrary sDriverID to sTablesArray
                         Move (SizeOfArray(sTablesArray)) to iSize
                         Decrement iSize
                         For iCount from 0 to iSize
@@ -188,7 +181,7 @@ Object oSQLFunctions_vw is a dbView
                         Send Delete_Data
                         Get Value of oDriverID2_cf    to sDriverID
                         Get Value of oSQLTableName_cf to sTableName
-                        Get SQLUtilEnumerateColumns of ghoDbUpdateFunctionLibrary sDriverID sTableName to sColumnsArray
+                        Get _SqlUtilEnumerateColumns of ghoDbUpdateFunctionLibrary sDriverID sTableName to sColumnsArray
                         Move (SizeOfArray(sColumnsArray)) to iSize
                         Decrement iSize
                         For iCount from 0 to iSize
@@ -333,7 +326,7 @@ Object oSQLFunctions_vw is a dbView
                         Send Delete_Data
                         Get Value of oDriverID2_cf to sDriverID
                         Get piDbType of ghoDbUpdateFunctionLibrary to iDbType
-                        Get UtilEnumerateColumnTypes of ghoDbUpdateFunctionLibrary sDriverID iDbType to ColumnTypeArray
+                        Get _UtilEnumerateColumnTypes of ghoDbUpdateFunctionLibrary sDriverID iDbType to ColumnTypeArray
                         Move (SizeOfArray(ColumnTypeArray)) to iSize
                         Decrement iSize
                         For iCount from 0 to iSize
@@ -512,7 +505,7 @@ Object oSQLFunctions_vw is a dbView
 
                         Get Value of oDriverID2_cf to sDriverID
                         Get Value of oSQLTableName_cf to sTableName
-                        Get SqlUtilEnumerateRelations of ghoDbUpdateFunctionLibrary sTableName sDriverID to SQLRelationArray
+                        Get _SqlUtilEnumerateRelations of ghoDbUpdateFunctionLibrary sTableName sDriverID to SQLRelationArray
                         Move (SizeOfArray(SQLRelationArray)) to iSize
                         Decrement iSize
                         For iCount from 0 to iSize

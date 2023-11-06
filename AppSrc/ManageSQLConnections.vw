@@ -59,9 +59,12 @@ Object oSQLMaintainConnection is a dbView
         Set pbAutoAppend to False
         Set pbAutoSave to False
         Set pbEditOnTyping to False
-        #IF (!@ > 170)
-            Set peVisualTheme to xtpReportThemeOffice2003
-            Set peTooltipStyle to xtpToolTipOffice2013
+        #IF (!@ > 180)
+            #IF (!@ < 230)
+                Set peVisualTheme to xtpReportThemeExplorer
+            #ELSE
+                Set peVisualTheme to xtpGridThemeExplorer
+            #ENDIF
         #ENDIF
         
         Object oCJGridColumnRowIndicator is a cCJGridColumnRowIndicator

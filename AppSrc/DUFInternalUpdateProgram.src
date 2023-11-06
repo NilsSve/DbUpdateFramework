@@ -12,6 +12,7 @@ Object oApplication is a cApplication
     Set psProduct to 'DUF Auto Update Program'
     Set psProgram to 'Internal use/test of a DUF Update Package'
     Set psVersion to '20.1'
+    Property String psCompileDateAndTime
 End_Object
 
 Get YesNo_Box ("This is a DUF test program written for INTERNAL usage only.\n\nUpdate your DEVELOPMENT DATABASE to version: 1 now?") to WindowIndex

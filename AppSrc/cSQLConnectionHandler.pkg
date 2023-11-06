@@ -18,6 +18,7 @@
 //                These changes make the class compatible with DFConnId.ini (can read/write DAW connection ini-files)
 //    2017-02-12  Reworked the whole connection property interface.
 //                Now there is one struct property that is the at cencter of a connection.
+//    2023-11-06 *** REMOVED ALL SUPPORT FOR MERTECH DRIVERS ***
 //****************************************************************************
 Use cli.pkg
 Use MSSqldrv.pkg
@@ -88,7 +89,7 @@ Class cSQLConnectionHandler is a cObject
         Property Boolean pbDriverDefaultNullableText     False
 
         // *** This is the central point of connection data for the Database Update Framework ***
-        //     It is private because the get/set version also updates the DAW/Mertech
+        //     It is private because the get/set version also updates the DAW
         //     driver interfaces.
         //     There are also procedure/function pairs to set/get individual data members
         //     of the struct they are all routed throu this struct property.
@@ -113,7 +114,7 @@ Class cSQLConnectionHandler is a cObject
     // merely here for conveniance.
     //
     // The pSQLConnection get/set are here so we have a "central hub"
-    // where we update data to/from the DAW & Mertech driver interfaces and this framework.
+    // where we update data to/from the DAW driver interfaces and this framework.
     // This struct property contains all the connection data.
     //
     { MethodType=Property }
@@ -131,7 +132,7 @@ Class cSQLConnectionHandler is a cObject
         // If a DAW DFConnId.ini file was read instead of the DUF SQLConnections.ini file we should by now
         // be logged in already and don't want to do it again.
         If (SQLConnection.bDAWConnection = False) Begin
-            // After we have set the class property we need to tell the DAW/Mertech
+            // After we have set the class property we need to tell the DAW
             // driver interfaces about the change & make a new login.
             Get SQLLogin SQLConnection to bOK
             If (bOK = False) Begin
@@ -149,12 +150,7 @@ Class cSQLConnectionHandler is a cObject
     // Returns true if the passed driver is SQL based.
     Function IsSQLDriver String sDriverID Returns Boolean
         Boolean bOK
-
         Get IsDAWSQLDriver sDriverID to bOK
-        If (bOK = False) Begin
-            Get IsMertechDriver sDriverID to bOK
-        End
-
         Function_Return bOK
     End_Function
 
@@ -162,16 +158,12 @@ Class cSQLConnectionHandler is a cObject
     Procedure SetupDriverDefaults String sDriverID
         String sAttributeValue
         Integer iDriverID
-        Boolean bNULL bSQLDriver bIsMertechDriver
+        Boolean bNULL bSQLDriver
 
         Get IsSQLDriver sDriverID to bSQLDriver
         If (bSQLDriver = False) Begin
             Procedure_Return
         End                                      
-        Get IsMertechDriver sDriverID to bIsMertechDriver
-        If (bIsMertechDriver = True) Begin
-            Procedure_Return
-        End
         
         Get DriverIndex sDriverID to iDriverID
 
@@ -216,19 +208,13 @@ Class cSQLConnectionHandler is a cObject
     End_Procedure
 
     Function SQLLogin tSQLConnection SQLConnection Returns Boolean
-        Boolean bOK bIsDaw bIsMertech
+        Boolean bOK bIsDaw
         String sConnectionString
         Handle hoErrorObj hoDriver hoIniFile
         Integer iDriverID
 
         Move False to bOK
         Get IsDAWSQLDriver SQLConnection.sDriverID to bIsDaw
-        If (bIsDaw = False) Begin
-            Get IsMertechDriver SQLConnection.sDriverID to bIsMertech
-            If (bIsMertech = False) Begin
-                Function_Return False
-            End
-        End
 
         Get phoSQLConnectionIniFile to hoIniFile
         Get ConstructConnectionString SQLConnection.sDriverID SQLConnection.sServer SQLConnection.sDatabase SQLConnection.bTrusted SQLConnection.sUserID SQLConnection.sPassword to sConnectionString
@@ -238,11 +224,7 @@ Class cSQLConnectionHandler is a cObject
             Function_Return False
         End
 
-        // There's a bug in Mertech drivers creating "an Exception error" in the debugger (probably will crash an application too.)
-        If (bIsMertech = False) Begin
-            Set_Attribute DF_DRIVER_SILENT_LOGIN of iDriverID to SQLConnection.bSilentLogin
-        End
-
+        Set_Attribute DF_DRIVER_SILENT_LOGIN of iDriverID to SQLConnection.bSilentLogin
         Get Create (RefClass(cDbUpdateDatabaseDriver)) to hoDriver
         Set psDriverID of hoDriver to SQLConnection.sDriverID
         Get DbLogin    of hoDriver sConnectionString SQLConnection.sServer SQLConnection.sDatabase SQLConnection.bTrusted SQLConnection.sUserID SQLConnection.sPassword to bOK
@@ -393,7 +375,7 @@ Class cSQLConnectionHandler is a cObject
     End_Function
 
     // *** All of these properties are special to the Database Update Framework ***
-    //     Thus they are not propagated to the DAW/Mertech classes and that is why
+    //     Thus they are not propagated to the DAW classes and that is why
     //     the Private.pSQLConnection property is set instead of the going throu
     //     the central pSQLConnection "hub".
     Procedure Set pbSilentLogin Boolean bValue
@@ -947,67 +929,6 @@ Class cSQLConnectionHandler is a cObject
                                 Get ParseKeyWord sConnectionString (CS_SQLIniFileDSNKeyword  + "=") to SQLConnection.sServer
                             End
                             Case Break
-                        Case (sDriverID = SQLFLEX)
-                            Get ParseKeyWord sConnectionString (CS_SQLIniDSNKeyword + "=") to SQLConnection.sServer
-                            Move (CS_SQLIniServerKeyword + "=" + SQLConnection.sServer)    to sConnectionString
-                            If (SQLConnection.bTrusted = True) Begin
-                                Move (sConnectionString + ";" + CS_SQLIniTrustedKeyword + "=" + CS_SQLIniConnectionYes) to sConnectionString
-                            End
-                            Else Begin
-                                Get ParseKeyWord sConnectionString (CS_SQLIniUIDKeyword + "=")    to sVal
-                                Move (sConnectionString + ";" + CS_SQLIniUIDKeyword + "=" + sVal) to sConnectionString
-                                Get ParseKeyWord sConnectionString (CS_SQLIniPWDKeyword + "=")    to sVal
-                                Move (sConnectionString + ";" + CS_SQLIniPWDKeyword + "=" + sVal) to sConnectionString
-                            End
-                            Move sConnectionString                                         to SQLConnection.sConnectionString
-                            Case Break
-                        Case (sDriverID = MDSMySQL)
-                            Get ParseKeyWord sConnectionString (CS_SQLIniDSNKeyword + "=") to SQLConnection.sServer
-                            Move (CS_SQLIniServerKeyword + "=" + SQLConnection.sServer)    to sConnectionString
-                            If (SQLConnection.bTrusted = True) Begin
-                                Move (sConnectionString + ";" + CS_SQLIniTrustedKeyword + "=" + CS_SQLIniConnectionYes) to sConnectionString
-                            End
-                            Else Begin
-                                Get ParseKeyWord sConnectionString (CS_SQLIniUIDKeyword + "=")    to sVal
-                                Move (sConnectionString + ";" + CS_SQLIniUIDKeyword + "=" + sVal) to sConnectionString
-                                Get ParseKeyWord sConnectionString (CS_SQLIniPWDKeyword + "=")    to sVal
-                                Move (sConnectionString + ";" + CS_SQLIniPWDKeyword + "=" + sVal) to sConnectionString
-                            End
-                            Move sConnectionString                                         to SQLConnection.sConnectionString
-                            Case Break
-                        Case (sDriverID = MDSPgSQL)
-                            Get ParseKeyWord sConnectionString (CS_SQLIniDSNKeyword + "=") to SQLConnection.sServer
-                            Move (CS_SQLIniServerKeyword + "=" + SQLConnection.sServer)    to sConnectionString
-                            If (SQLConnection.bTrusted = True) Begin
-                                Move (sConnectionString + ";" + CS_SQLIniTrustedKeyword + "=" + CS_SQLIniConnectionYes) to sConnectionString
-                            End
-                            Else Begin
-                                Get ParseKeyWord sConnectionString (CS_SQLIniUIDKeyword + "=")    to sVal
-                                Move (sConnectionString + ";" + CS_SQLIniUIDKeyword + "=" + sVal) to sConnectionString
-                                Get ParseKeyWord sConnectionString (CS_SQLIniPWDKeyword + "=")    to sVal
-                                Move (sConnectionString + ";" + CS_SQLIniPWDKeyword + "=" + sVal) to sConnectionString
-                            End
-                            Move sConnectionString                                                to SQLConnection.sConnectionString
-                            Case Break
-
-                        Case (sDriverID = ORAFLEX)
-                            Get ParseKeyWord sConnectionString (CS_SQLIniDSNKeyword + "=")      to SQLConnection.sServer
-                            Move (CS_SQLIniServerKeyword + "=" + SQLConnection.sServer)         to sConnectionString
-                            Get ParseKeyWord sConnectionString (CS_SQLIniDatabaseKeyword + "=") to sDatabase
-                            If (sDatabase <> "" and (not(SQLConnection.sServer contains "/"))) Begin
-                                Move (SQLConnection.sServer + "/" + sDatabase)                  to SQLConnection.sServer
-                            End
-                            If (SQLConnection.bTrusted = True) Begin
-                                Move (sConnectionString + ";" + CS_SQLIniTrustedKeyword + "=" + CS_SQLIniConnectionYes) to sConnectionString
-                            End
-                            Else Begin
-                                Get ParseKeyWord sConnectionString (CS_SQLIniUIDKeyword + "=")    to sVal
-                                Move (sConnectionString + ";" + CS_SQLIniUIDKeyword + "=" + sVal) to sConnectionString
-                                Get ParseKeyWord sConnectionString (CS_SQLIniPWDKeyword + "=")    to sVal
-                                Move (sConnectionString + ";" + CS_SQLIniPWDKeyword + "=" + sVal) to sConnectionString
-                            End
-                            Move sConnectionString                                         to SQLConnection.sConnectionString
-                            Case Break
                         Case Else
                             Error ("Wrong driver ID passed:" * sDriverID)
                             Case Break
@@ -1074,7 +995,7 @@ Class cSQLConnectionHandler is a cObject
         String sConnectionID sDriverID sConnectionString
         Integer iDriver iRetval
         Handle hoCLI
-        Boolean bOK bSilent bMertechDriver
+        Boolean bOK bSilent
 
         Get pbSilentLogin      to bSilent
         Get psConnectionID     to sConnectionID
@@ -1084,15 +1005,6 @@ Class cSQLConnectionHandler is a cObject
         Get _SqlCheckCurrentDriver sDriverID to bOK
         If (bOK = False) Begin
             Function_Return False
-        End
-
-        // Mertech drivers can't use connection ID's.
-        Get IsMertechDriver sDriverID to bMertechDriver
-        If (bMertechDriver = True) Begin
-            // This ensures that the correct Server & Database attributes are set both for
-            // embedded SQL calls and "normal" database commands like e.g. "Open".
-            Get _MertechSQLManagerHandle to hoCLI
-            Function_Return (hoCLI <> 0)
         End
 
         Get DriverIndex sDriverID          to iDriver
@@ -1107,7 +1019,7 @@ Class cSQLConnectionHandler is a cObject
             Function_Return False
         End           
         #IF (!@ > 182)
-        Set_Attribute DF_DRIVER_LOGIN_ON_OPEN of iDriver to True
+            Set_Attribute DF_DRIVER_LOGIN_ON_OPEN of iDriver to True
         #ENDIF
         
         Get Create (RefClass(cCLIHandler)) to hoCLI
@@ -1120,71 +1032,13 @@ Class cSQLConnectionHandler is a cObject
         Function_Return (iRetval = 0)
     End_Function
 
-    // Returns the handle of the Mertech SQL handler.
-    // It also ensures that the correct Server & Database attributes are set both for
-    // embedded SQL calls and "normal" database commands like e.g. "Open".
-    // Note: This does _not_ return a proper CLI handler handle as it is not in this class.
-    //       So the return value is of no use! But we don't need the handle for this class.
-#IF (Required_FMAC_Build > 106)
-#warning -3
-#ENDIF
-    Function _MertechSQLManagerHandle Returns Handle
-        Handle hoSQLHandler
-        String sDriverID sServer sDatabase
-
-        Move 0 to hoSQLHandler
-        Get psDriverID to sDriverID
-        Get psServer   to sServer
-        Get psDatabase to sDatabase
-        #IFDEF DUF_Use_Mertech_Drivers
-        // This command is used to set the server to be used when opening tables
-        SET_CURRENT_SQL_SERVER to sServer
-        // This command is used to specify which server to use for embedded SQL statements,
-        // but it has been constructed rather studidly as only constants and not variables
-        // are allowed...
-        If (sDriverID = MDSPgSQL) Begin
-            SET_CURRENT_SQL_SERVER_CONNECTION of MDSPgSQL to sServer
-        End
-        If (sDriverID = MDSMySQL) Begin
-            SET_CURRENT_SQL_SERVER_CONNECTION of MDSMySQL to sServer
-        End
-        If (sDriverID = ORAFLEX) Begin
-            SET_CURRENT_SQL_SERVER_CONNECTION of ORAFLEX to sServer
-        End
-        If (sDriverID = SQLFLEX) Begin
-            SET_CURRENT_SQL_SERVER_CONNECTION of SQLFLEX to sServer
-        End
-
-        // This command is used to specify which database is used for embedded SQL statements.
-        SQL_USE_DATABASE sDatabase
-        SET_DATABASE_NAME to sDatabase
-
-        // Can't have this here because the property is defined for the cDbUpdateFunctionLibrary class,
-        // which object may or may not have been created at this point. So don't use the return
-        // value for this function!
-        //Get phoSQLManagerMT to hoSQLHandler
-        #ENDIF
-
-        Function_Return hoSQLHandler
-    End_Function
-
     Function _SqlCheckCurrentDriver String sDriverID Returns Boolean
-        Boolean bOK bMertechDriver
+        Boolean bOK
 
         Get IsDAWSQLDriver sDriverID to bOK
 
         If (bOK = False) Begin
-            Get IsMertechDriver sDriverID to bOK
-        End
-
-        If (bOK = False) Begin
-            Get IsMertechDriver sDriverID to bMertechDriver
-            If (bMertechDriver = True) Begin
-                Error DFERR_PROGRAM "Driver needs to be one of MSSQLDRV_ID, DB2_DRV_ID, ODBC_DRV_ID, SQLFLEX, ORAFLEX, MDSPgSQL or MDSMYSQL"
-            End
-            Else Begin
-                Error DFERR_PROGRAM "Driver needs to be one of MSSQLDRV_ID, DB2_DRV_ID or ODBC_DRV_ID"
-            End
+            Error DFERR_PROGRAM "Driver needs to be one of MSSQLDRV_ID, DB2_DRV_ID or ODBC_DRV_ID"
             Function_Return False
         End
 
@@ -1193,16 +1047,7 @@ Class cSQLConnectionHandler is a cObject
 
     Function IsDAWSQLDriver String sDriverID Returns Boolean
         Boolean bOK
-        Move (sDriverID = MSSQLDRV_ID or sDriverID = DB2_DRV_ID or sDriverID = ODBC_DRV_ID or sDriverID = DFBTRDRV_ID) to bOK
-        Function_Return bOK
-    End_Function
-
-    Function IsMertechDriver String sDriverID Returns Boolean
-        Boolean bOK
-        Move False to bOK
-//        #IFDEF DUF_Use_Mertech_Drivers
-            Move (sDriverID = SQLFLEX or sDriverID = ORAFLEX or sDriverID = MDSPgSQL or sDriverID = MDSMYSQL) to bOK
-//        #ENDIF
+        Move (sDriverID = MSSQLDRV_ID or sDriverID = DB2_DRV_ID or sDriverID = ODBC_DRV_ID) to bOK
         Function_Return bOK
     End_Function
 
@@ -1266,40 +1111,6 @@ Class cSQLConnectionHandler is a cObject
 
             Case (sDriverID = DB2_DRV_ID)
                 Get ParseKeyWord sConnectionString (CS_SQLIniDSNKeyword + "=")      to sServer
-                Get ParseKeyWord sConnectionString (CS_SQLIniUIDKeyword + "=")      to sUserID
-                Get ParseKeyWord sConnectionString (CS_SQLIniPWDKeyword + "=")      to sPassword
-                Case Break
-
-            Case (sDriverID = SQLFLEX)
-                Get ParseKeyWord sConnectionString (CS_SQLIniServerKeyword + "=")   to sServer
-                Get ParseKeyWord sConnectionString (CS_SQLIniTrustedKeyword + "=")  to sValue
-                Move (If(Uppercase(sValue) = "YES", True, False))                   to bTrusted
-                If (bTrusted = False) Begin
-                    Get ParseKeyWord sConnectionString (CS_SQLIniUIDKeyword + "=")  to sUserID
-                    Get ParseKeyWord sConnectionString (CS_SQLIniPWDKeyword + "=")  to sPassword
-                End
-                Case Break
-
-            Case (sDriverID = ORAFLEX)
-                Get ParseKeyWord sConnectionString (CS_SQLIniDSNKeyword + "=")      to sServer
-                Get ParseKeyWord sConnectionString (CS_SQLIniDatabaseKeyword + "=") to sDatabase
-                If (sDatabase <> "" and (not(sServer contains "/"))) Begin
-                    Move (sServer + "/" + sDatabase)                                to sServer
-                End
-                Get ParseKeyWord sConnectionString (CS_SQLIniUIDKeyword + "=")      to sUserID
-                Get ParseKeyWord sConnectionString (CS_SQLIniPWDKeyword + "=")      to sPassword
-                Case Break
-
-            Case (sDriverID = MDSPgSQL)
-                Get ParseKeyWord sConnectionString (CS_SQLIniDSNKeyword + "=")      to sServer
-                Get ParseKeyWord sConnectionString (CS_SQLIniDatabaseKeyword + "=") to sDatabase
-                Get ParseKeyWord sConnectionString (CS_SQLIniUIDKeyword + "=")      to sUserID
-                Get ParseKeyWord sConnectionString (CS_SQLIniPWDKeyword + "=")      to sPassword
-                Case Break
-
-            Case (sDriverID = MDSMySQL)
-                Get ParseKeyWord sConnectionString (CS_SQLIniDSNKeyword + "=")      to sServer
-                Get ParseKeyWord sConnectionString (CS_SQLIniDatabaseKeyword + "=") to sDatabase
                 Get ParseKeyWord sConnectionString (CS_SQLIniUIDKeyword + "=")      to sUserID
                 Get ParseKeyWord sConnectionString (CS_SQLIniPWDKeyword + "=")      to sPassword
                 Case Break

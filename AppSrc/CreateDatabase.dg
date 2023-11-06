@@ -33,10 +33,10 @@ Object oCreateDatabase_dg is a cRDCModalPanel
 //            
 //            Get psDriverID to sDriverID      
 //            
-//            // The SqlEnumerateDatabaseCollations function is *at current* for MSSQLDRV_ID only.
+//            // The _SqlEnumerateDatabaseCollations function is *at current* for MSSQLDRV_ID only.
 //            If (sDriverID = MSSQLDRV_ID) Begin
 //                Send Cursor_Wait of Cursor_Control
-//                Get SqlEnumerateDatabaseCollations of ghoDbUpdateFunctionLibrary sDriverID to asCollations
+//                Get _SqlEnumerateDatabaseCollations of ghoDbUpdateFunctionLibrary sDriverID to asCollations
 //                Move (SizeOfArray(asCollations)) to iSize
 //                Decrement iSize
 //                For iCount from 0 to iSize
@@ -122,13 +122,13 @@ Object oCreateDatabase_dg is a cRDCModalPanel
                 String sDriverID sCollation
                 
                 Get psDriverID to sDriverID      
-                // The SqlEnumerateDatabaseCollations function is at current for MSSQLDRV_ID only.
+                // The _SqlEnumerateDatabaseCollations function is at current for MSSQLDRV_ID only.
                 If (sDriverID <> MSSQLDRV_ID) Begin
                     Function_Return asCollations
                 End                 
                 
                 Send Cursor_Wait of Cursor_Control
-                Get SqlEnumerateDatabaseCollations of ghoDbUpdateFunctionLibrary sDriverID to asCollations
+                Get _SqlEnumerateDatabaseCollations of ghoDbUpdateFunctionLibrary sDriverID to asCollations
                 Set psSavedFormValues to asCollations
                     
                 If (sDriverID = MSSQLDRV_ID) Begin

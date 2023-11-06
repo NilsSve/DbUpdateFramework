@@ -86,13 +86,6 @@ Object oAPIFunctions_vw is a dbView
                         Send Combo_Add_Item MSSQLDRV_ID
                         Send Combo_Add_Item DB2_DRV_ID
                         Send Combo_Add_Item ODBC_DRV_ID
-                        #IFDEF DUF_Use_Mertech_Drivers
-                        Send Combo_Add_Item SQLFLEX
-                        Send Combo_Add_Item MDSDB2
-                        Send Combo_Add_Item MDSMySQL
-                        Send Combo_Add_Item MDSPgSQL
-                        Send Combo_Add_Item ORAFLEX
-                        #ENDIF
                     End_Procedure
 
                     Procedure Refresh
@@ -188,7 +181,7 @@ Object oAPIFunctions_vw is a dbView
                         Integer iSize iCount
 
                         Send Delete_Data
-                        Get UtilEnumerateColumnTypes of ghoDbUpdateFunctionLibrary DATAFLEX_ID EN_DbTypeDataFlex to ColumnTypeArray
+                        Get _UtilEnumerateColumnTypes of ghoDbUpdateFunctionLibrary DATAFLEX_ID EN_DbTypeDataFlex to ColumnTypeArray
                         Move (SizeOfArray(ColumnTypeArray)) to iSize
                         Decrement iSize
                         For iCount from 0 to iSize

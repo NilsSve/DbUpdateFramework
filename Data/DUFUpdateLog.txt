@@ -1,19 +1,20 @@
- ***  The Database Update Framework (DUF) ***
-
-Database Update Started:      2022-07-12 16:44:42,939
+Database Update Started:      2023-11-06 15:49:22,86
+Database Update Started:      2023-11-06 16:42:01,376
 [Err No:] [pnVersionNumber:] [Status Text:]
-      52                  0   . [ErrLine: 100427]    (Table: 0.0)
-   (Bad format of expression (operator))
-
-Database Update Started:      2023-01-19 10:21:08,453
+      98                  0   GET__UTILTABLEEXISTS [ErrLine: 93785]    (Table: 0.0)
+   (Invalid message)
 [Err No:] [pnVersionNumber:] [Status Text:]
-   12293                  0   [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Login failed for user 'sa'. [ErrLine: 84855]    (Table: 0.0)
-   (Login unsuccessful)
+      98                  0   GET__UTILTABLENUMBERISINUSE [ErrLine: 93796]    (Table: 0.0)
+   (Invalid message)
 [Err No:] [pnVersionNumber:] [Status Text:]
-    4402                  0   Could not login to the database server. Can't continue. Program will now exit. \n\nError Text: \nConnectionID = wsdb_winserv_db\nConnection String = SERVER=.\SQLDEV;DATABASE=wsdb;UID=wsuser;PWD=usq5Wyfu5j2Ysvr [ErrLine: 86391]    (Table: 0.0)
+      98                  0   GET_ISSQLDRIVER [ErrLine: 93801]    (Table: 0.0)
+   (Invalid message)
 [Err No:] [pnVersionNumber:] [Status Text:]
-   12293                  0 [ErrLine: 84855]    (Table: 0.0)
-   (Login unsuccessful)
+      98                  0   GET_APITABLECREATE [ErrLine: 93811]    (Table: 0.0)
+   (Invalid message)
 [Err No:] [pnVersionNumber:] [Status Text:]
-    4402                  0   Login error. [ErrLine: 85869]    (Table: 0.0)
+      98                  0   GET_APITABLECHANGEATTRIBUTE [ErrLine: 93812]    (Table: 0.0)
+   (Invalid message)
+[Err No:] [pnVersionNumber:] [Status Text:]
+                          0   The column could NOT be added. Either column already exists or the Table name is incorrect?
 Database Update Finished: Time Elapsed: 0:0:0:0

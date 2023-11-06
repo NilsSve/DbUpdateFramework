@@ -32,10 +32,6 @@ Use DFBtrDrv.pkg
 Use vWin32fh.pkg
 
 Use DUFLanguageConstants.inc
-Use MertechDUF.pkg
-
-// This needs to be after Mertech drivers are defined.
-//Use cDbUpdateFunctionLibrary_Mixin.pkg
 
 #IFNDEF DATAFLEX_ID
     Define DATAFLEX_ID for "DATAFLEX"
@@ -46,26 +42,6 @@ Use MertechDUF.pkg
     Define PSQLDRV_ID for "DFBTRDRV"
 #ENDIF
 
-#IFNDEF SQLFLEX
-    Define SQLFLEX   for "SQL_DRV"
-#ENDIF
-
-#IFNDEF MDSPgSQL
-    Define MDSPgSQL  for "MDSPGSQL"
-#ENDIF
-
-#IFNDEF MDSMySQL
-    Define MDSMySQL  for "MDSMYSQL"
-#ENDIF             
-
-#IFNDEF MDSDB2
-    Define MDSDB2    for "MDS_DB2"
-#ENDIF
-
-#IFNDEF ORAFLEX
-    Define ORAFLEX   for "ORA_DRV"
-#ENDIF
-
 // SQL Back-ends (iSQLDbType in the tSQLKeywords struct).
 // They can have slightly different SQL keywords.
 // Note: If a new type is added to the list,
@@ -74,25 +50,25 @@ Use MertechDUF.pkg
 //       keywords for that new type.
 Enum_List  
     #IFNDEF EN_DbTypeDataFlex
-    Define EN_DbTypeDataFlex   for 0
+        Define EN_DbTypeDataFlex   for 0
     #ENDIF
     #IFNDEF EN_DbTypeMSSQL   
-    Define EN_DbTypeMSSQL      for 1
+        Define EN_DbTypeMSSQL      for 1
     #ENDIF
     #IFNDEF EN_DbTypeMySQL   
-    Define EN_DbTypeMySQL      for 2
+        Define EN_DbTypeMySQL      for 2
     #ENDIF
     #IFNDEF EN_DbTypeOracle  
-    Define EN_DbTypeOracle     for 3
+        Define EN_DbTypeOracle     for 3
     #ENDIF
     #IFNDEF EN_DbTypeDB2     
-    Define EN_DbTypeDB2        for 4
+        Define EN_DbTypeDB2        for 4
     #ENDIF
     #IFNDEF EN_DbTypePostgre 
-    Define EN_DbTypePostgre    for 5
+        Define EN_DbTypePostgre    for 5
     #ENDIF
     #IFNDEF EN_DbTypePervasive 
-    Define EN_DbTypePervasive  for 6
+        Define EN_DbTypePervasive  for 6
     #ENDIF
 End_Enum_List
 
@@ -115,6 +91,7 @@ Define CS_DbTypePervasive   for "Pervasive.SQL (Btrieve)"
 #IFNDEF CS_SQLConnectionIDText
     Define CS_SQLConnectionIDText       for "DFConnectionId"
 #ENDIF
+
 Define CS_SQLIniFileName                for "SQLConnections.ini"
 Define CS_SQLDF19IniFileName            for "DFConnId.ini"
 Define CS_SQLIniConnectionSection       for "SQL Connections" // Obsolete!
@@ -166,6 +143,4 @@ Struct tSQLConnection
     Boolean bSilentLogin            // 15. True=Silent login. (i.e. don't show Database login dialog if database login to fails). Same as driver "Options" parameter.
     Boolean bError                  // 16. Set to true on error.
     Boolean bDAWConnection          // 17. True if a DFConnId.ini file (from DAW) has been used instead of a DUF SQLConnections.ini file.
-//    Boolean bDisabled               // 17. For compatability with DF19 Managed Connections only. Not used by DUF (Database Update Framework).
-//    Integer iDriverIndex            // 18. For compatability with DF19 Managed Connections only. Not used by DUF (Database Update Framework).
 End_Struct

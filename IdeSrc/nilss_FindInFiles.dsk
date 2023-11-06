@@ -1,6 +1,6 @@
 [Header]
 Mask=*.src;*.vw;*.sl;*.dg;*.rv;*.bp;*.pkg;*.wo;*.dd;*.inc;*.tpl;*.dfo;*.asp;*.asa;*.html;*.css;*.js
-Active=0
+Active=1
 SubDirectories=1
 WholeWordOnly=0
 SearchWhere=0

@@ -73,7 +73,7 @@ Object oUtilFunctions_vw is a dbView
                         End
 
                         Else Begin
-                            Send UtilShowErrorList of ghoDbUpdateFunctionLibrary
+                            Send _UtilShowErrorList of ghoDbUpdateFunctionLibrary
                             Move ("Nope, that didn't work. There was a problem running the script.\n\n" + "See Notepad for details...") to sInfoText
                         End
 
@@ -120,7 +120,7 @@ Object oUtilFunctions_vw is a dbView
                         End
 
                         Else Begin
-                            Send UtilShowErrorList of ghoDbUpdateFunctionLibrary
+                            Send _UtilShowErrorList of ghoDbUpdateFunctionLibrary
                             Move ("Nope, that didn't work. There was a problem running the script.\n\n" + "See Notepad for details...") to sInfoText
                         End
 
@@ -167,7 +167,7 @@ Object oUtilFunctions_vw is a dbView
                         End
 
                         Else Begin
-                            Send UtilShowErrorList of ghoDbUpdateFunctionLibrary
+                            Send _UtilShowErrorList of ghoDbUpdateFunctionLibrary
                             Move ("Nope, that didn't work. There was a problem running the script.\n\n" + "See Notepad for details...") to sInfoText
                         End
 
@@ -217,7 +217,7 @@ Object oUtilFunctions_vw is a dbView
         //                End
         //
         //                Else Begin
-        //                    Send UtilShowErrorList of ghoDbUpdateFunctionLibrary
+        //                    Send _UtilShowErrorList of ghoDbUpdateFunctionLibrary
         //                    Move ("Nope, that didn't work. There was a problem running the script.\n\n" + "See Notepad for details...") to sInfoText
         //                End
         //

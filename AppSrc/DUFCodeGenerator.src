@@ -7,8 +7,6 @@ Use cCJCommandBarSystem.pkg
 Use Dferror.pkg
 Use Colr_dlg.pkg
 Use Cursor.pkg
-// Unmark this Define statement if using Mertech drivers!
-Define DUF_Use_Mertech_Drivers
 Use cDbUpdateHandler.pkg
 Use vWin32fh.pkg
 Use cDbUpdateVersion.pkg
@@ -20,10 +18,10 @@ End_Object
 Define CS_PropertiesKeyWord     for "Properties"
 Define CS_ThemeKeyWord          for "Theme"
 
-//#IF (!@ < 190)
-//    Send Stop_Box "Nope, that won't work. You need at least DataFlex 19.0 to run this program."
-//    Send Exit_Application
-//#ENDIF
+#IF (!@ < 190)
+    Send Stop_Box "Nope, that won't work. You need at least DataFlex 19.0 to run this program."
+    Send Exit_Application
+#ENDIF
 
 Object oApplication is a cApplication
     Set psCompany to "RDC Tools International"
@@ -38,6 +36,16 @@ Object oApplication is a cApplication
     Property String psFilelistFrom ""
     Property Integer[] piaDifferences
     Property String psOrgOpenPath ""
+
+    Property String psCompileDateAndTime
+    // This is used by the About object to display the compile date & time:
+    Include_Resource CompileHeader.h as res_CompileHeader type DF_RESOURCE_TYPE_LINE
+    
+    Function psWorkspaceHomePath Returns String
+        String sPath 
+        Get psHome of (phoWorkspace(Self)) to sPath
+        Function_Return sPath
+    End_Function
 
     // Set psOrgOpenPath at startup
     Procedure Save_DF_OPEN_PATH
@@ -193,6 +201,22 @@ Object oApplication is a cApplication
     End_Object
     #ENDIF
 
+    Procedure End_Construct_Object
+        String sCompileTime  
+        Integer iPos
+        
+        Forward Send End_Construct_Object
+        Direct_Input "resource: res_CompileHeader"
+        Readln sCompileTime
+        Move (Pos('"', sCompileTime)) to iPos
+        If (iPos <> 0) Begin
+            Move (Mid(sCompileTime, Length(sCompileTime), (iPos + 1))) to sCompileTime
+            Move (Replaces('"', sCompileTime, '')) to sCompileTime
+            Set psCompileDateAndTime to sCompileTime
+        End
+        Close_Input
+    End_Procedure
+
 End_Object
 
 Object oDbUpdateHandler is a cDbUpdateHandler
@@ -241,9 +265,8 @@ Object oMain is a Panel
         #IF (!@ > 182)
             Set pbAutoResizeIcons to True
             Set pbTabbedWorkspaces to True
-//            Set pbLargeIcons to True
             Set peVisualTheme to xtpThemeOffice2013Publisher
-        Set pbLargeIcons to True
+            Set pbLargeIcons to True
         #ENDIF
 
         Procedure OnCreateCommandBars
@@ -294,12 +317,8 @@ Object oMain is a Panel
             Set ComDrawTextPathEllipsis of hoPaintManager to True
             Set ComLayout               of hoPaintManager to xtpTabLayoutMultiRow
 
-//            #IF (!@ < 190)
-                Move 32 to iSize
-                Send ComSetIconSize     of hoOptions False iSize iSize  // Set icon size for Toolbar buttons.
-//                Move 24 to iSize
-//                Send ComSetIconSize     of hoPaintManager  iSize iSize  // Set icon size for Tab-workspace.
-//            #ENDIF
+            Move 32 to iSize
+            Send ComSetIconSize     of hoOptions False iSize iSize  // Set icon size for Toolbar buttons.
             Get Create (RefClass(cCJPaintManager)) to hoPaintManager
             Get ComPaintManager of hoPaintManager  to vPaintManager
             Set pvComObject     of hoPaintManager  to vPaintManager
@@ -310,14 +329,11 @@ Object oMain is a Panel
         End_Procedure
 
         #IF (!@ > 182)
-        Procedure OnCreateTabbedWorkspace Handle hoTabWorkspace Handle hoTabPaintManager
-//            Set ComShowIcons of hoTabPaintManager to True
-//            Send ComSetIconSize of hoTabPaintManager 24 24
-
-            // This will truncate the middle part of long text items
-            Set ComDrawTextPathEllipsis of hoTabPaintManager to True
-            Set ComFlags of hoTabWorkspace to xtpWorkspaceHideAll //xtpWorkspaceHideClose //xtpWorkspaceShowCloseTab
-        End_Procedure
+            Procedure OnCreateTabbedWorkspace Handle hoTabWorkspace Handle hoTabPaintManager
+                // This will truncate the middle part of long text items
+                Set ComDrawTextPathEllipsis of hoTabPaintManager to True
+                Set ComFlags of hoTabWorkspace to xtpWorkspaceHideAll //xtpWorkspaceHideClose //xtpWorkspaceShowCloseTab
+            End_Procedure
         #ENDIF
 
         Procedure SetTheTheme Integer eTheme
@@ -809,7 +825,7 @@ Object oMain is a Panel
         Use StdAbout.pkg
         Use CompareDatabases.rv
         Procedure Activate_About
-            Send DoAbout "" "" ("Copyright 2016-2020" * psCompany(ghoApplication)) "Author: Nils Svedmyr" "DUFUpdateCodeGenerator64x64.bmp" "E-mail: mailto:support@rdctools.com" "Web-site: www.rdctools.com" ("This tool was created with DataFlex" * String(C_DFVersion) * "from Data Access Worldwide. Please visit http://www.dataaccess.com for a free personal copy of DataFlex.")
+            Send DoAbout "" "" ("Copyright 2016-2023" * psCompany(ghoApplication)) "Author: Nils Svedmyr" "DUFUpdateCodeGenerator64x64.bmp" "E-mail: mailto:support@rdctools.com" "Web-site: www.rdctools.com" ("This tool was created with DataFlex" * String(C_DFVersion) * "from Data Access Worldwide. Please visit http://www.dataaccess.com for a free personal copy of DataFlex.")
         End_Procedure
 
         On_Key Key_Ctrl+Key_Tab           Send Switch_Next_View

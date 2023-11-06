@@ -19,7 +19,8 @@ Object oApplication is a cApplication
     Set psCompany to "RDC Tools International"
     Set psProduct to "Driver Info Import"
     Set psProgram to "Read DF Driver Def XML file"
-    Set psVersion to "20.1"
+    Set psVersion to "2023"
+    Property String psCompileDateAndTime
 End_Object
 
 Object oMainPanel is a BasicPanel
@@ -169,18 +170,15 @@ Object oMainPanel is a BasicPanel
                 Case Begin
                     Case (iDbType = EN_dbTypeMSSQL)
                         Send Combo_Add_Item MSSQLDRV_ID
-                        Send Combo_Add_Item SQLFLEX
                         Move MSSQLDRV_ID to sValue
                         Case Break
                     Case (iDbType = EN_dbTypeMySQL)
                         Send Combo_Add_Item ODBC_DRV_ID
-                        Send Combo_Add_Item MDSMySQL
-                        Move MDSMySQL to sValue
+                        Move ODBC_DRV_ID to sValue
                         Case Break
                     Case (iDbType = EN_dbTypeOracle)
                         Send Combo_Add_Item ODBC_DRV_ID
-                        Send Combo_Add_Item ORAFLEX
-                        Move ORAFLEX to sValue
+                        Move ODBC_DRV_ID to sValue
                         Case Break
                     Case (iDbType = EN_dbTypeDB2)
                         Send Combo_Add_Item DB2_DRV_ID
@@ -188,8 +186,7 @@ Object oMainPanel is a BasicPanel
                         Case Break
                     Case (iDbType = EN_dbTypePostgre)
                         Send Combo_Add_Item ODBC_DRV_ID
-                        Send Combo_Add_Item MDSPgSQL
-                        Move MDSPgSQL to sValue
+                        Move ODBC_DRV_ID to sValue
                         Case Break
                     Case Else
                         Send Combo_Add_Item DATAFLEX_ID

@@ -1,11 +1,9 @@
-
 #If (!@ > 190)
     CompilerLevelWarning All On
 #ENDIF
 Use DFAllEnt.pkg
 Use cCJStandardCommandBarSystem.pkg
 Use cCJCommandBarSystem.pkg
-Use cCJSkinFramework.pkg
 Use cDbUpdateHandler.pkg
 
 Object oHtmlHelp is a cHtmlHelp
@@ -34,15 +32,35 @@ Object oApplication is a cApplication
 
     Set pbPreserveEnvironment to True
     Set psProduct to "Database Update Framework Lab"
-    Set psCompany to "RDC Tools International"
+    Set psCompany to "RDC Tools International" 
+
+    Property String psCompileDateAndTime
+    // This is used by the About object to display the compile date & time:
+    Include_Resource CompileHeader.h as res_CompileHeader type DF_RESOURCE_TYPE_LINE
 
     // DF 19 and up.
     #IF (!@ > 182)
-    Object oConnection is a cConnection
-        Use LoginEncryption.pkg
-        Use DatabaseLoginDialog.dg
-    End_Object
+        Object oConnection is a cConnection
+            Use LoginEncryption.pkg
+            Use DatabaseLoginDialog.dg
+        End_Object
     #ENDIF
+
+    Procedure End_Construct_Object
+        String sCompileTime  
+        Integer iPos
+        
+        Forward Send End_Construct_Object
+        Direct_Input "resource: res_CompileHeader"
+        Readln sCompileTime
+        Move (Pos('"', sCompileTime)) to iPos
+        If (iPos <> 0) Begin
+            Move (Mid(sCompileTime, Length(sCompileTime), (iPos + 1))) to sCompileTime
+            Move (Replaces('"', sCompileTime, '')) to sCompileTime
+            Set psCompileDateAndTime to sCompileTime
+        End
+        Close_Input
+    End_Procedure
 
 End_Object   
 
@@ -82,23 +100,21 @@ Object oMain is a Panel
             Set pbAutoResizeIcons to True
             Set pbTabbedWorkspaces to True // Switch on for DF 19 to see the new tabbed-view look.
             Set peVisualTheme to xtpThemeOffice2013Publisher
-        Set pbLargeIcons to True
+            Set pbLargeIcons to True
         #ENDIF
 
         Procedure OnCreateCommandBars
             Handle hoOptions
-            
             Forward Send OnCreateCommandBars
-            
             #IF (!@ < 190)
                 Send DisplayTabWorkspace
             #ELSE
-            Get OptionsObject to hoOptions
-            Send ComSetIconSize of hoOptions False 32 32  // Set icon size for Toolbar buttons.
+                Get OptionsObject to hoOptions
+                Send ComSetIconSize of hoOptions False 32 32  // Set icon size for Toolbar buttons.
             #ENDIF     
         End_Procedure
 
-        #IF (!@ < 190)
+    #IF (!@ < 190)
         Procedure DisplayTabWorkspace
             Variant vTab vPaintManager
             Handle hoTab hoPaintManager  hoOptions
@@ -128,32 +144,24 @@ Object oMain is a Panel
             Set ComDrawTextPathEllipsis of hoPaintManager to True
             Set ComLayout               of hoPaintManager to xtpTabLayoutMultiRow
 
-//#IF (Required_RT_Version < 19)
-//            Move 16 to iSize
-//            Send ComSetIconSize         of hoOptions False iSize iSize  // Set icon size for Toolbar buttons.
-//            Move 24 to iSize
-//            Send ComSetIconSize         of hoPaintManager  iSize iSize  // Set icon size for Tab-workspace.
-//#ELSE
             Get Create (RefClass(cCJPaintManager)) to hoPaintManager
             Get ComPaintManager of hoPaintManager  to vPaintManager
             Set pvComObject     of hoPaintManager  to vPaintManager
             Set ComAutoResizeIcons of hoPaintManager to True
-//#ENDIF
             Send Destroy of hoPaintManager
             Send ComRecalcLayout
             Send Destroy of hoTab
         End_Procedure
-        #ENDIF
+    #ENDIF
 
-        #IF (!@ >= 190)
+    #IF (!@ >= 190)
         Procedure OnCreateTabbedWorkspace Handle hoTabWorkspace Handle hoTabPaintManager
             Set ComShowIcons of hoTabPaintManager to True
-//            Send ComSetIconSize of hoTabPaintManager 24 24
 
             // This will truncate the middle part of long items
             Set ComDrawTextPathEllipsis of hoTabPaintManager to True
         End_Procedure
-        #ENDIF
+    #ENDIF
 
         // This is needed to get the "Key_Shift+Key_Tab" key combination to activate
         // the previous tab workspace view.
@@ -192,7 +200,7 @@ Object oMain is a Panel
                 Set pbControlBeginGroup to True
             End_Object
 
-            #IF (!@ > 180)
+        #IF (!@ > 180)
             Object oTheme_tb is a cCJMenuItem
                 Set peControlType to xtpControlLabel
                 Set psCaption to "Theme:"
@@ -236,41 +244,41 @@ Object oMain is a Panel
                 Procedure FillComboList Handle hoCombo
                     Send ComClear     of hoCombo
                     #IF (!@ > 182)
-                    Send AddTheme hoCombo "xtpThemeOffice2013Word" xtpThemeOffice2013Word
-                    Send AddTheme hoCombo "xtpThemeOffice2013Outlook" xtpThemeOffice2013Outlook
-                    Send AddTheme hoCombo "xtpThemeOffice2013Excel" xtpThemeOffice2013Excel
-                    Send AddTheme hoCombo "xtpThemeOffice2013PowerPoint" xtpThemeOffice2013PowerPoint
-                    Send AddTheme hoCombo "xtpThemeOffice2013Publisher" xtpThemeOffice2013Publisher
-                    Send AddTheme hoCombo "xtpThemeOffice2013OneNote" xtpThemeOffice2013OneNote
-                    Send AddTheme hoCombo "xtpThemeOffice2013Access" xtpThemeOffice2013Access
-                    Send AddTheme hoCombo "xtpThemeOffice2003" xtpThemeOffice2003
-                    Send AddTheme hoCombo "xtpThemeOffice2000" xtpThemeOffice2000
-                    Send AddTheme hoCombo "xtpThemeOfficeXP" xtpThemeOfficeXP
-
-                    Send AddTheme hoCombo "xtpThemeOffice2010Blue" xtpThemeOffice2010Blue
-                    Send AddTheme hoCombo "xtpThemeOffice2010Black" xtpThemeOffice2010Black
-                    Send AddTheme hoCombo "xtpThemeOffice2010Silver" xtpThemeOffice2010Silver
-
-                    Send AddTheme hoCombo "xtpThemeOffice2007Aqua" xtpThemeOffice2007Aqua
-                    Send AddTheme hoCombo "xtpThemeOffice2007Black" xtpThemeOffice2007Black
-                    Send AddTheme hoCombo "xtpThemeOffice2007Blue" xtpThemeOffice2007Blue
-                    Send AddTheme hoCombo "xtpThemeOffice2007Silver" xtpThemeOffice2007Silver
-
-                    Send AddTheme hoCombo "xtpThemeVisualStudio2015Blue" xtpThemeVisualStudio2015Blue
-                    Send AddTheme hoCombo "xtpThemeVisualStudio2015Light" xtpThemeVisualStudio2015Light
-                    Send AddTheme hoCombo "xtpThemeVisualStudio2015Dark" xtpThemeVisualStudio2015Dark
-
-                    Send AddTheme hoCombo "xtpThemeVisualStudio2012Light" xtpThemeVisualStudio2012Light
-                    Send AddTheme hoCombo "xtpThemeVisualStudio2012Dark" xtpThemeVisualStudio2012Dark
-
-                    Send AddTheme hoCombo "xtpThemeVisualStudio2008" xtpThemeVisualStudio2008
-                    Send AddTheme hoCombo "xtpThemeVisualStudio6" xtpThemeVisualStudio6
-
-                    Send AddTheme hoCombo "xtpThemeWindows7" xtpThemeWindows7
-
-                    Send AddTheme hoCombo "xtpThemeWhidbey" xtpThemeWhidbey
-
-                    Send AddTheme hoCombo "xtpThemeNativeWinXP" xtpThemeNativeWinXP
+                        Send AddTheme hoCombo "xtpThemeOffice2013Word" xtpThemeOffice2013Word
+                        Send AddTheme hoCombo "xtpThemeOffice2013Outlook" xtpThemeOffice2013Outlook
+                        Send AddTheme hoCombo "xtpThemeOffice2013Excel" xtpThemeOffice2013Excel
+                        Send AddTheme hoCombo "xtpThemeOffice2013PowerPoint" xtpThemeOffice2013PowerPoint
+                        Send AddTheme hoCombo "xtpThemeOffice2013Publisher" xtpThemeOffice2013Publisher
+                        Send AddTheme hoCombo "xtpThemeOffice2013OneNote" xtpThemeOffice2013OneNote
+                        Send AddTheme hoCombo "xtpThemeOffice2013Access" xtpThemeOffice2013Access
+                        Send AddTheme hoCombo "xtpThemeOffice2003" xtpThemeOffice2003
+                        Send AddTheme hoCombo "xtpThemeOffice2000" xtpThemeOffice2000
+                        Send AddTheme hoCombo "xtpThemeOfficeXP" xtpThemeOfficeXP
+    
+                        Send AddTheme hoCombo "xtpThemeOffice2010Blue" xtpThemeOffice2010Blue
+                        Send AddTheme hoCombo "xtpThemeOffice2010Black" xtpThemeOffice2010Black
+                        Send AddTheme hoCombo "xtpThemeOffice2010Silver" xtpThemeOffice2010Silver
+    
+                        Send AddTheme hoCombo "xtpThemeOffice2007Aqua" xtpThemeOffice2007Aqua
+                        Send AddTheme hoCombo "xtpThemeOffice2007Black" xtpThemeOffice2007Black
+                        Send AddTheme hoCombo "xtpThemeOffice2007Blue" xtpThemeOffice2007Blue
+                        Send AddTheme hoCombo "xtpThemeOffice2007Silver" xtpThemeOffice2007Silver
+    
+                        Send AddTheme hoCombo "xtpThemeVisualStudio2015Blue" xtpThemeVisualStudio2015Blue
+                        Send AddTheme hoCombo "xtpThemeVisualStudio2015Light" xtpThemeVisualStudio2015Light
+                        Send AddTheme hoCombo "xtpThemeVisualStudio2015Dark" xtpThemeVisualStudio2015Dark
+    
+                        Send AddTheme hoCombo "xtpThemeVisualStudio2012Light" xtpThemeVisualStudio2012Light
+                        Send AddTheme hoCombo "xtpThemeVisualStudio2012Dark" xtpThemeVisualStudio2012Dark
+    
+                        Send AddTheme hoCombo "xtpThemeVisualStudio2008" xtpThemeVisualStudio2008
+                        Send AddTheme hoCombo "xtpThemeVisualStudio6" xtpThemeVisualStudio6
+    
+                        Send AddTheme hoCombo "xtpThemeWindows7" xtpThemeWindows7
+    
+                        Send AddTheme hoCombo "xtpThemeWhidbey" xtpThemeWhidbey
+    
+                        Send AddTheme hoCombo "xtpThemeNativeWinXP" xtpThemeNativeWinXP
                     #ENDIF
                 End_Procedure
 
@@ -323,20 +331,7 @@ Object oMain is a Panel
                 End_Function
 
             End_Object
-            #ENDIF
-
-//            Object oSkin_tb is a cCJMenuItem
-//                Set peControlType to xtpControlLabel
-//                Set psCaption to "Skin:"
-//                Set pbControlBeginGroup to True
-//            End_Object
-//
-//            Object oSkinSelector_cf is a cSkinComboBoxCJMenuItem
-//                Set psToolTip to "Select a skin to change the appearance of the application. Either select a Theme OR a Skin, not both."
-//            End_Object
-//
-//            #IF (!@ >= 190)
-//            #ENDIF
+        #ENDIF
 
             Object oAbout_MenuItem is a cCJMenuItem
                 Set psCaption to "About"
@@ -430,7 +425,7 @@ Object oMain is a Panel
         Use UtilFunctions.vw
 
         Procedure Activate_About
-            Send DoAbout "" "" ("Copyright 2016-2020" * psCompany(ghoApplication)) "Author: Nils Svedmyr" "TestTools.bmp" "E-mail: mailto:support@rdctools.com" "Web-site: www.rdctools.com" ("This tool was created with DataFlex" * String(C_DFVersion) * "from Data Access Worldwide. Please visit http://www.dataaccess.com for a free personal copy of DataFlex.")
+            Send DoAbout "" "" ("Copyright 2016-2023" * psCompany(ghoApplication)) "Author: Nils Svedmyr" "TestTools.bmp" "E-mail: mailto:support@rdctools.com" "Web-site: www.rdctools.com" ("This tool was created with DataFlex" * String(C_DFVersion) * "from Data Access Worldwide. Please visit http://www.dataaccess.com for a free personal copy of DataFlex.")
         End_Procedure
 
         On_Key Key_Ctrl+Key_Tab           Send Switch_Prior_View

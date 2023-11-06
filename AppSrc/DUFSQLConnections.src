@@ -6,8 +6,6 @@ Use cCJStandardCommandBarSystem.pkg
 Use vWin32fh.pkg
 Use cCJSkinFramework.pkg
 Use cCJCommandBarSystem.pkg                      
-// Unmark this Define statement if using Mertech drivers!
-Define DUF_Use_Mertech_Drivers
 Use cSQLConnectionIniFile.pkg
 
 Object oHtmlHelp is a cHtmlHelp
@@ -26,6 +24,10 @@ Object oApplication is a cApplication
     Property Boolean pbIniFileExists False     
     Property Handle phoMainView 0
 
+    Property String psCompileDateAndTime
+    // This is used by the About object to display the compile date & time:
+    Include_Resource CompileHeader.h as res_CompileHeader type DF_RESOURCE_TYPE_LINE
+        
     // If the folder contains exactly one workspace file (*.ws), it will be
     // returned. Else an empty string ("") will be returned.
     Function FindWorkspaceFile String sPath Returns String
@@ -97,6 +99,27 @@ Object oApplication is a cApplication
     End_Object
     #ENDIF
 
+    Procedure End_Construct_Object
+        String sCompileTime  
+        Integer iPos
+        
+        Forward Send End_Construct_Object
+        Direct_Input "resource: res_CompileHeader"
+        Readln sCompileTime
+        Move (Pos('"', sCompileTime)) to iPos
+        If (iPos <> 0) Begin
+            Move (Mid(sCompileTime, Length(sCompileTime), (iPos + 1))) to sCompileTime
+            Move (Replaces('"', sCompileTime, '')) to sCompileTime
+            Set psCompileDateAndTime to sCompileTime
+        End
+        Close_Input
+    End_Procedure
+
+End_Object
+
+Use cDbUpdateFunctionLibrary.pkg
+// Needs to be after the cSQLConnectionHandler Object
+Object oDbUpdateFunctionLibrary is a cDbUpdateFunctionLibrary
 End_Object
 
 Use cSQLConnectionHandler.pkg
@@ -119,11 +142,6 @@ Object oSQLConnectionHandler is a cSQLConnectionHandler
         End
         Forward Send End_Construct_Object
     End_Procedure
-End_Object
-
-Use cDbUpdateFunctionLibrary.pkg
-// Needs to be after the cSQLConnectionHandler object
-Object oDbUpdateFunctionLibrary is a cDbUpdateFunctionLibrary
 End_Object
 
 Object oToolTipController is a cToolTipController
@@ -150,7 +168,7 @@ Object oMain is a Panel
         Set pbShowTextBelowIcons to True
         #IF (!@ > 182)
             Set pbAutoResizeIcons to True
-        Set pbLargeIcons to True
+            Set pbLargeIcons to True
         #ENDIF
 
         Procedure OnCreateCommandBars
@@ -474,7 +492,7 @@ Object oMain is a Panel
         Use CreateDatabase.dg
 
         Procedure Activate_About
-            Send DoAbout "" "" ("Copyright 2016-2020" * psCompany(ghoApplication)) "Author: Nils Svedmyr" "SQLConnections.bmp" "E-mail: mailto:support@rdctools.com" "Web-site: www.rdctools.com" ("This tool was created with DataFlex" * String(C_DFVersion) * "from Data Access Worldwide. Please visit http://www.dataaccess.com for a free personal copy of DataFlex.")
+            Send DoAbout "" "" ("Copyright 2016-2023" * psCompany(ghoApplication)) "Author: Nils Svedmyr" "SQLConnections.bmp" "E-mail: mailto:support@rdctools.com" "Web-site: www.rdctools.com" ("This tool was created with DataFlex" * String(C_DFVersion) * "from Data Access Worldwide. Please visit http://www.dataaccess.com for a free personal copy of DataFlex.")
         End_Procedure
 
     End_Object

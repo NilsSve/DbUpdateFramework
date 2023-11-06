@@ -15,10 +15,10 @@ Object oSQLConnections is a ModalPanel
 
     Property tSQLConnection[] psTheData
 
-    If (ghoDbUpdateFunctionLibrary = 0) Begin
-        Object oDbUpateFunctionLibrary is a cDbUpdateFunctionLibrary
-        End_Object
-    End
+//    If (ghoDbUpdateFunctionLibrary = 0) Begin
+//        Object oDbUpateFunctionLibrary is a cDbUpdateFunctionLibrary
+//        End_Object
+//    End
 
     Object oSelListSQLConnections is a cCJGridPromptList
         Set Size to 90 377

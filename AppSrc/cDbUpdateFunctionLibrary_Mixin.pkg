@@ -18,6 +18,7 @@ Use cSQLConnectionIniFile.inc
 Use cDbUpdateFunctionLibrary.inc
 
 Class cDbUpdateFunctionLibrary_Mixin is a Mixin
+
     Procedure CreateDbUpdateLibraryProperties
         Handle hoSQLManagerMT
 
@@ -37,10 +38,6 @@ Class cDbUpdateFunctionLibrary_Mixin is a Mixin
 
         { Visibility=Private }
         Property Handle phoSQLManagerMT
-        #IFDEF DUF_Use_Mertech_Drivers
-            Move (Create(Self,RefClass(cSQLHandleManagerDUF))) to hoSQLManagerMT
-            Set phoSQLManagerMT to hoSQLManagerMT
-        #ENDIF
 
         { Visibility=Private }
         Property Handle phoMSSQLHandler    (Create(Self,RefClass(cMSSQLHandler)))
@@ -102,8 +99,9 @@ Class cDbUpdateFunctionLibrary_Mixin is a Mixin
 
         // Fill the paSQLKeywordArray array with values;
         Send SetupSQLKeywordArray
-        Move Self to ghoDbUpdateFunctionLibrary
     End_Procedure
+
+    #Include ParseKeyWord.pkg
 
     // Custom array find function. It compares both the iSQLWord & iSQLDbType params.
     Function CompareFindSQLKeyWords tSQLKeyWords SQLKeywords1 tSQLKeyWords SQLKeywords2 Returns Integer

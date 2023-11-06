@@ -552,23 +552,11 @@ Class cSQLConnectionIniFile is a cIniFile
         If (sDriverID = MSSQLDRV_ID) Begin
             Move EN_dbTypeMSSQL to iRetval
         End
-        If (sDriverID = SQLFLEX) Begin
-            Move EN_dbTypeMSSQL to iRetval
-        End
         If (sDriverID = ODBC_DRV_ID) Begin
             Move EN_dbTypeMSSQL to iRetval
         End
-        If (sDriverID = MDSMySQL) Begin
-            Move EN_dbTypeMySQL to iRetval
-        End
-        If (sDriverID = ORAFLEX) Begin
-            Move EN_dbTypeOracle to iRetval
-        End
         If (sDriverID = DB2_DRV_ID) Begin
             Move EN_dbTypeDB2 to iRetval
-        End
-        If (sDriverID = MDSPgSQL) Begin
-            Move EN_dbTypePostgre to iRetval
         End
         If (sDriverID = DFBTRDRV_ID) Begin
             Move EN_DbTypePervasive to iRetval
@@ -595,7 +583,7 @@ Class cSQLConnectionIniFile is a cIniFile
         String sConnect
 
         Case Begin
-            Case (sDriverID = MSSQLDRV_ID or sDriverID = SQLFLEX)
+            Case (sDriverID = MSSQLDRV_ID)
                 Move (sConnect * CS_SQLIniServerKeyword + "=" + sServer) to sConnect
                 If (sDatabase <> "") Begin
                     Move (sConnect * ";" + CS_SQLIniDatabaseKeyword + "=" + sDatabase) to sConnect
@@ -619,27 +607,6 @@ Class cSQLConnectionIniFile is a cIniFile
                 Move (sConnect * CS_SQLIniDSNKeyword + "=" + sServer) to sConnect
                 If (sDatabase <> "") Begin
                     Move (sConnect * ";" + CS_SQLIniDatabaseKeyword + "=" + sDatabase) to sConnect
-                End
-                Case Break
-
-            Case (sDriverID = ORAFLEX)
-                Move (sConnect * CS_SQLIniDSNKeyword + "=" + sServer) to sConnect
-                If (sDatabase <> "") Begin
-                    Move (sConnect * ";" + CS_SQLIniDatabaseKeyword + "=" + sDatabase) to sConnect
-                End
-                Case Break
-
-            Case (sDriverID = MDSPgSQL)
-                Move (sConnect * CS_SQLIniDSNKeyword + "=" + sServer) to sConnect
-                If (sDatabase <> "") Begin
-                    Move (sConnect * ";" + CS_SQLIniDatabaseKeyword + "=" + sDatabase) to sConnect
-                End
-                Case Break
-
-            Case (sDriverID = MDSMySQL)
-                Move (sConnect * CS_SQLIniDSNKeyword + "=" + sServer) to sConnect
-                If (sDatabase <> "") Begin
-                    Move (sConnect * ";" +CS_SQLIniDatabaseKeyword + "=" + sDatabase) to sConnect
                 End
                 Case Break
 

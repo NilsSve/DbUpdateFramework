@@ -97,9 +97,9 @@ Use cDbUpdateFunctionLibrary.pkg
 { OverrideProperty=pbCompareIndexAscending Visibility=Private }
 { OverrideProperty=pbCompareIndexUppercase Visibility=Private }
     // Note: We import all functionality of the DatabaseFunctionLibrary into the class:
-Class cDbUpdateHandler is a cObject
-    Import_Class_Protocol cDbUpdateFunctionLibrary
-    Import_Class_Protocol cDbUpdateFunctionLibrary_Mixin
+Class cDbUpdateHandler is a cDbUpdateFunctionLibrary // cObject
+//    Import_Class_Protocol cDbUpdateFunctionLibrary
+//    Import_Class_Protocol cDbUpdateFunctionLibrary_Mixin
 
     Procedure Construct_Object
         tUserCount UserCount
@@ -269,11 +269,6 @@ Class cDbUpdateHandler is a cObject
 
         Set pbHandleQueryErrors to False
             
-        // This can't be right?    
-//        If (ghoDbUpdateFunctionLibrary = 0) Begin
-//            Move Self to ghoDbUpdateFunctionLibrary
-//        End
-
         { Visibility=Private }
         Property Handle phoSQLConnectionHandler 0
         // If no ghoSQLConnectionHandler object has been created prior to this object,
@@ -410,7 +405,7 @@ Class cDbUpdateHandler is a cObject
                     Get_Attribute DF_FILE_NEXT_USED of hTable to hTable    
                     If (hTable <> 0) Begin
                         Get_Attribute DF_FILE_ROOT_NAME of hTable to sIntFileName 
-                        Get UtilTableIsSqlByRootName sIntFileName to bIsSQL
+                        Get _UtilTableIsSqlByRootName sIntFileName to bIsSQL
                         If (bIsSQL = True) Begin     
                             Get _TableNameOnly sIntFileName to sIntFileName
                             Move (sIntFileName + ".int")    to sIntFileName
@@ -839,7 +834,7 @@ Class cDbUpdateHandler is a cObject
             Procedure_Return
         End
 
-        Get UtilTableExists of ghoDbUpdateFunctionLibrary hTable to bTableExists
+        Get _UtilTableExists of ghoDbUpdateFunctionLibrary hTable to bTableExists
         If (bTableExists = True) Begin
             Set Private.pbIntFilesTablesCheckDone to True
             Procedure_Return
@@ -855,7 +850,7 @@ Class cDbUpdateHandler is a cObject
         Boolean bTableExists bOK bUseConnectionID bExists
         tAPIColumn[] APIColumn
 
-        Get UtilTableNumberIsInUse of ghoDbUpdateFunctionLibrary hTable to bTableExists
+        Get _UtilTableNumberIsInUse of ghoDbUpdateFunctionLibrary hTable to bTableExists
         If (bTableExists = True) Begin
             Procedure_Return
         End
@@ -951,7 +946,7 @@ Class cDbUpdateHandler is a cObject
         End
 
         Get piDbVersionFileNumber to iDbVersionFileNumber
-        Get UtilTableExists of ghoDbUpdateFunctionLibrary iDbVersionFileNumber to bTableExists
+        Get _UtilTableExists of ghoDbUpdateFunctionLibrary iDbVersionFileNumber to bTableExists
         If (bTableExists = True) Begin
             Set Private.pbDbVersionCheckDone to True
             Procedure_Return
@@ -970,7 +965,7 @@ Class cDbUpdateHandler is a cObject
         Boolean bTableExists bOK bUseConnectionID
         tAPIColumn[] APIColumn
 
-        Get UtilTableNumberIsInUse of ghoDbUpdateFunctionLibrary hTable to bTableExists
+        Get _UtilTableNumberIsInUse of ghoDbUpdateFunctionLibrary hTable to bTableExists
         If (bTableExists = True) Begin
             Procedure_Return
         End

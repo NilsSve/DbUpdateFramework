@@ -453,8 +453,8 @@ Object oSQLMaintainConnections_dg is a ModalPanel
             Set peAnchors to anTopRight
 
             Procedure OnClick
-                String sConnectionString sDriverID sError //sServer sDatabase sUserId sPassword 
-                Boolean bLoginSuccessful bMertechDriver // bTrusted 
+                String sConnectionString sDriverID sError
+                Boolean bLoginSuccessful 
                 Integer iDriverID
                 Handle hoErrorObj
 
@@ -483,10 +483,7 @@ Object oSQLMaintainConnections_dg is a ModalPanel
                     Procedure_Return
                 End
 
-                Get IsMertechDriver of ghoSQLConnectionHandler sDriverID to bMertechDriver
-                If (bMertechDriver = False) Begin
-                    Set_Attribute DF_DRIVER_SILENT_LOGIN of iDriverID to True
-                End
+                Set_Attribute DF_DRIVER_SILENT_LOGIN of iDriverID to True
 
                 Move False to Err
                 Send CreateConnParamsFromConnectionString of ghoSQLConnectionHandler sDriverID sConnectionString
@@ -510,13 +507,11 @@ Object oSQLMaintainConnections_dg is a ModalPanel
             // This method is here simply to intercept any error that may occur while logging in
             // it does not have to do anything with the error, but it suppresses the normal error display
             Procedure Error_Report Integer iErrNum Integer iErrLine String sErrMsg
-                #IFDEF DUF_Use_Mertech_Drivers
-                    If (LastErr = 25000) Begin
-                        If (Trim(sErrMsg) <> "") Begin
-                            Send Info_Box sErrMsg
-                        End
-                    End  
-                #ENDIF
+                If (LastErr = 25000) Begin
+                    If (Trim(sErrMsg) <> "") Begin
+                        Send Info_Box sErrMsg
+                    End
+                End  
             End_Procedure   
             
         End_Object
@@ -539,7 +534,7 @@ Object oSQLMaintainConnections_dg is a ModalPanel
                 Set Label of oShowInfo_tb to CS_LoadingTableSpaces
                 Get ReadCurrentSQLSettings to SQLConnection
 
-                Get SqlUtilEnumerateTableSpaces of ghoDbUpdateFunctionLibrary SQLConnection.sDriverID SQLConnection.iDbType SQLConnection.sConnectionString to sTheData
+                Get _SqlUtilEnumerateTablespaces of ghoDbUpdateFunctionLibrary SQLConnection.sDriverID SQLConnection.iDbType SQLConnection.sConnectionString to sTheData
 
                 Get Prompt_Object to ho
                 Set psTheData     of ho to sTheData
@@ -580,7 +575,7 @@ Object oSQLMaintainConnections_dg is a ModalPanel
 
                 Set Label of oShowInfo_tb to CS_LoadingTableSpaces
                 Get ReadCurrentSQLSettings to SQLConnection
-                Get SqlUtilEnumerateTableSpaces of ghoDbUpdateFunctionLibrary SQLConnection.sDriverID SQLConnection.iDbType SQLConnection.sConnectionString to sTheData
+                Get _SqlUtilEnumerateTablespaces of ghoDbUpdateFunctionLibrary SQLConnection.sDriverID SQLConnection.iDbType SQLConnection.sConnectionString to sTheData
 
                 Get Prompt_Object to ho
                 Set psTheData  of ho to sTheData
@@ -613,7 +608,7 @@ Object oSQLMaintainConnections_dg is a ModalPanel
                 Set Label of oShowInfo_tb to CS_LoadingTableSpaces
                 Get ReadCurrentSQLSettings to SQLConnection
 
-                Get SqlUtilEnumerateTableSpaces of ghoDbUpdateFunctionLibrary SQLConnection.sDriverID SQLConnection.iDbType SQLConnection.sConnectionString to sTheData
+                Get _SqlUtilEnumerateTablespaces of ghoDbUpdateFunctionLibrary SQLConnection.sDriverID SQLConnection.iDbType SQLConnection.sConnectionString to sTheData
 
                 Get Prompt_Object to ho
                 Set psTheData     of ho to sTheData
@@ -721,7 +716,7 @@ Object oSQLMaintainConnections_dg is a ModalPanel
                 String sValue
 
                 If (sDriverID <> "") Begin
-                    Set Enabled_State to (sDriverID = MSSQLDRV_ID or sDriverID = SQLFLEX or sDriverID = MDSMySQL or sDriverID = MDSPgSQL or sDriverID = ORAFLEX or (sDriverID = ODBC_DRV_ID and iDbType <> EN_DbTypeOracle))
+                    Set Enabled_State to (sDriverID = MSSQLDRV_ID or (sDriverID = ODBC_DRV_ID and iDbType <> EN_DbTypeOracle))
                     If (Enabled_State(Self) = True) Begin
                         Move (piCurrentRow(Self) = -1) to bAdd
                         Get Value to sValue
@@ -832,7 +827,7 @@ Object oSQLMaintainConnections_dg is a ModalPanel
                         End
                     End
                     Case Break
-                Case (SQLIniFileConnection.sDriverID = MSSQLDRV_ID or SQLIniFileConnection.sDriverID = SQLFLEX)
+                Case (SQLIniFileConnection.sDriverID = MSSQLDRV_ID)
                     If (SQLIniFileConnection.bTrusted = True) Begin
                         If (SQLIniFileConnection.bEnabled = True) Begin
                         Move (SQLIniFileConnection.sConnectionID <> "" and SQLIniFileConnection.sServer <> "" and SQLIniFileConnection.sDatabase <> "") to bOK
@@ -849,33 +844,6 @@ Object oSQLMaintainConnections_dg is a ModalPanel
                         Else Begin
                             Move (SQLIniFileConnection.sServer <> "" and SQLIniFileConnection.sDatabase <> "" and SQLIniFileConnection.sUserID <> "") to bOK
                         End
-                    End
-                    Case Break
-                Case (SQLIniFileConnection.sDriverID = ORAFLEX or SQLIniFileConnection.sDriverID = MDSPgSQL)
-                    // It should probably be allowed to use an UID but no password...
-                    If (SQLIniFileConnection.bEnabled = True) Begin
-                    Move (SQLIniFileConnection.sConnectionID <> "" and SQLIniFileConnection.sServer <> "" and SQLIniFileConnection.sUserID <> "") to bOK
-                    End
-                    Else Begin
-                        Move (SQLIniFileConnection.sServer <> "" and SQLIniFileConnection.sUserID <> "") to bOK
-                    End
-                    Case Break
-                Case (SQLIniFileConnection.sDriverID = MDSPgSQL)
-                    // It should probably be allowed to use an UID but no password...
-                    If (SQLIniFileConnection.bEnabled = True) Begin
-                    Move (SQLIniFileConnection.sConnectionID <> "" and SQLIniFileConnection.sServer <> "" and SQLIniFileConnection.sUserID <> "") to bOK
-                    End
-                    Else Begin
-                        Move (SQLIniFileConnection.sServer <> "" and SQLIniFileConnection.sUserID <> "") to bOK
-                    End
-                    Case Break
-                Case (SQLIniFileConnection.sDriverID = MDSMySQL)
-                    // It should probably be allowed to use an UID but no password...
-                    If (SQLIniFileConnection.bEnabled = True) Begin
-                    Move (SQLIniFileConnection.sConnectionID <> "" and SQLIniFileConnection.sServer <> "" and SQLIniFileConnection.sUserID <> "") to bOK
-                    End
-                    Else Begin
-                        Move (SQLIniFileConnection.sServer <> "" and SQLIniFileConnection.sUserID <> "") to bOK
                     End
                     Case Break
             Case End
@@ -1003,7 +971,7 @@ Object oSQLMaintainConnections_dg is a ModalPanel
             Set Label to "Driver ID"
             Set Entry_State to False
             Set Combo_Sort_State to False
-            Set psToolTip to "Depending on the database type selected and if Mertech drivers have been installed, the comboform list will vary."
+            Set psToolTip to "Depending on the database type selected the comboform list will vary."
             Set piItem to 4
 
             Procedure Refill_Comboform Integer iDbType
@@ -1011,15 +979,8 @@ Object oSQLMaintainConnections_dg is a ModalPanel
 
                 Send Combo_Delete_Data
                 Send Combo_Add_Item MSSQLDRV_ID
-                Send Combo_Add_Item ODBC_DRV_ID
-                Send Combo_Add_Item SQLFLEX
-                Send Combo_Add_Item ODBC_DRV_ID
-                Send Combo_Add_Item MDSMySQL
-                Send Combo_Add_Item ODBC_DRV_ID
-                Send Combo_Add_Item ORAFLEX
                 Send Combo_Add_Item DB2_DRV_ID
                 Send Combo_Add_Item ODBC_DRV_ID
-                Send Combo_Add_Item MDSPgSQL
                 Send Combo_Add_Item DATAFLEX_ID
 
                 Case Begin

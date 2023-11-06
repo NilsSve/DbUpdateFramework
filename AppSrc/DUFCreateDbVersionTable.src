@@ -283,7 +283,7 @@ Object oCreateDbVersionTable_pnl is a BasicPanel
             Integer iSize iCount
 
             Send Delete_Data
-            Get UtilEnumerateColumnTypes of ghoDbUpdateFunctionLibrary DATAFLEX_ID EN_DbTypeDataFlex to ColumnTypeArray
+            Get _UtilEnumerateColumnTypes of ghoDbUpdateFunctionLibrary DATAFLEX_ID EN_DbTypeDataFlex to ColumnTypeArray
             Move (SizeOfArray(ColumnTypeArray)) to iSize
             Decrement iSize
             For iCount from 0 to iSize
@@ -449,7 +449,7 @@ Object oCreateDbVersionTable_pnl is a BasicPanel
                 Send Info_Box "The selected Filelist number must be in the range: 1-4095"
                 Procedure_Return
             End
-            Get UtilTableNumberIsInUse of ghoDbUpdateFunctionLibrary hTable to bOK
+            Get _UtilTableNumberIsInUse of ghoDbUpdateFunctionLibrary hTable to bOK
             If (bOK = True) Begin
                 Send Info_Box "The selected Filelist number exists and cannot be used to create a new table!"
                 Procedure_Return
