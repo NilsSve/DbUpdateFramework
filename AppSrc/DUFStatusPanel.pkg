@@ -169,7 +169,7 @@ Object Status_Panel is a cProcessStatusPanel
         Set FontPointHeight to 8
         Set Auto_Size_State to False
         Set Justification_Mode  to jMode_Center
-        Set Label to "Copyright 2001-2020 RDC Tools International"
+        Set Label to "Copyright 2001-2023 RDC Tools International"
     End_Object
 
     Object oProgressBar is a cProgressBar
