@@ -11,7 +11,7 @@ Object oApplication is a cApplication
     Set psCompany to 'RDC Tools International'
     Set psProduct to 'DUF Auto Update Program'
     Set psProgram to 'Internal use/test of a DUF Update Package'
-    Set psVersion to '20.1'
+    Set psVersion to '2023'
     Property String psCompileDateAndTime
 End_Object
 

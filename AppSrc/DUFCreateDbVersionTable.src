@@ -563,7 +563,7 @@ Object oCreateDbVersionTable_pnl is a BasicPanel
 
     Use StdAbout.pkg
     Procedure Activate_About
-        Send DoAbout "" "" ("Copyright 2016-2020" * psCompany(ghoApplication)) "Author: Nils Svedmyr" "AutoCreateTable.bmp" "E-mail: mailto:support@rdctools.com" "Web-site: www.rdctools.com" ("This tool was created with DataFlex" * String(C_DFVersion) * "from Data Access Worldwide. Please visit http://www.dataaccess.com for a free personal copy of DataFlex.")
+        Send DoAbout "" "" ("Copyright 2016-2023" * psCompany(ghoApplication)) "Author: Nils Svedmyr" "AutoCreateTable.bmp" "E-mail: mailto:support@rdctools.com" "Web-site: www.rdctools.com" ("This tool was created with DataFlex" * String(C_DFVersion) * "from Data Access Worldwide. Please visit http://www.dataaccess.com for a free personal copy of DataFlex.")
     End_Procedure
 
     Object oAbout_btn is a Button

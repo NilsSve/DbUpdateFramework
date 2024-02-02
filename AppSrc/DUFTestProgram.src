@@ -38,13 +38,10 @@ Object oApplication is a cApplication
     // This is used by the About object to display the compile date & time:
     Include_Resource CompileHeader.h as res_CompileHeader type DF_RESOURCE_TYPE_LINE
 
-    // DF 19 and up.
-    #IF (!@ > 182)
-        Object oConnection is a cConnection
-            Use LoginEncryption.pkg
-            Use DatabaseLoginDialog.dg
-        End_Object
-    #ENDIF
+    Object oConnection is a cConnection
+        Use LoginEncryption.pkg
+        Use DatabaseLoginDialog.dg
+    End_Object
 
     Procedure End_Construct_Object
         String sCompileTime  
@@ -154,14 +151,12 @@ Object oMain is a Panel
         End_Procedure
     #ENDIF
 
-    #IF (!@ >= 190)
-        Procedure OnCreateTabbedWorkspace Handle hoTabWorkspace Handle hoTabPaintManager
-            Set ComShowIcons of hoTabPaintManager to True
+    Procedure OnCreateTabbedWorkspace Handle hoTabWorkspace Handle hoTabPaintManager
+        Set ComShowIcons of hoTabPaintManager to True
 
-            // This will truncate the middle part of long items
-            Set ComDrawTextPathEllipsis of hoTabPaintManager to True
-        End_Procedure
-    #ENDIF
+        // This will truncate the middle part of long items
+        Set ComDrawTextPathEllipsis of hoTabPaintManager to True
+    End_Procedure
 
         // This is needed to get the "Key_Shift+Key_Tab" key combination to activate
         // the previous tab workspace view.
@@ -200,7 +195,6 @@ Object oMain is a Panel
                 Set pbControlBeginGroup to True
             End_Object
 
-        #IF (!@ > 180)
             Object oTheme_tb is a cCJMenuItem
                 Set peControlType to xtpControlLabel
                 Set psCaption to "Theme:"
@@ -243,7 +237,6 @@ Object oMain is a Panel
 
                 Procedure FillComboList Handle hoCombo
                     Send ComClear     of hoCombo
-                    #IF (!@ > 182)
                         Send AddTheme hoCombo "xtpThemeOffice2013Word" xtpThemeOffice2013Word
                         Send AddTheme hoCombo "xtpThemeOffice2013Outlook" xtpThemeOffice2013Outlook
                         Send AddTheme hoCombo "xtpThemeOffice2013Excel" xtpThemeOffice2013Excel
@@ -279,7 +272,6 @@ Object oMain is a Panel
                         Send AddTheme hoCombo "xtpThemeWhidbey" xtpThemeWhidbey
     
                         Send AddTheme hoCombo "xtpThemeNativeWinXP" xtpThemeNativeWinXP
-                    #ENDIF
                 End_Procedure
 
                 Function CurrentTheme Handle vCommandBarControl Returns Integer
@@ -331,7 +323,6 @@ Object oMain is a Panel
                 End_Function
 
             End_Object
-        #ENDIF
 
             Object oAbout_MenuItem is a cCJMenuItem
                 Set psCaption to "About"

@@ -576,6 +576,33 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
 
     // *** Sql View Messages ***
 
+    // First deletes the data cache file and then drops the passed Sql data view.
+    Function SqlViewRemove String sDataView Returns Boolean
+        String sDriverID sSQLString sDropViewKeyWord
+        Integer iRetval
+        Boolean bOK
+
+        Get psDriverID to sDriverID
+        Get _UtilDeleteCacheFile sDataView to iRetval
+
+        Get _SqlFindKeyWord CI_SQLDropView to sDropViewKeyWord
+        Move (sDropViewKeyWord * String(sDataView)) to sSQLString
+        Set psSQLStatementString to sSQLString
+
+        // As we don't check if the view exist or not, it might happen
+        // that it doesn't and that would through an error, so guard for that eventuality (just ignore it).
+        Move False to Err
+        Set Error_Report_Mode to DUF_ERROR_NO_REPORT
+        Send SqlUtilExecuteQuery sSQLString sDriverID
+        Set Error_Report_Mode to DUF_ERROR_REPORT
+        Move 0 to LastErr
+
+        // We also need to remove the cache-file since the table has been changed
+        Get _UtilDeleteCacheFile sDataView to bOK
+
+        Function_Return (Err = False)
+    End_Function
+
     Function SqlTableRename Handle hTable String sCurrentTableName String sNewtTableName Returns Boolean
         Boolean bOK
         Integer iDbType
@@ -8896,6 +8923,7 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
         Set piPosition   of ghoProgressBar to 0
         Set piAdvanceBy  of ghoProgressBar to 1
         Set piMaximum    of ghoProgressBar to iTables
+        Close DF_ALL
         Move 0 to hTable
         Get_Attribute DF_FILE_NEXT_USED of hTable to hTable
         Move False to bErr
