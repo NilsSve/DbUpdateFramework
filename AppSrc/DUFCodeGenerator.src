@@ -1,4 +1,4 @@
-#IF (!@ > 190)
+﻿#IF (!@ > 190)
     CompilerLevelWarning All On
 #ENDIF
 Use DFAllEnt.pkg
@@ -18,8 +18,8 @@ End_Object
 Define CS_PropertiesKeyWord     for "Properties"
 Define CS_ThemeKeyWord          for "Theme"
 
-#IF (!@ < 190)
-    Send Stop_Box "Nope, that won't work. You need at least DataFlex 19.0 to run this program."
+#IF (!@ < 210)
+    Send Stop_Box "Nope, that won't work. You need at least DataFlex 21.0 to run this program."
     Send Exit_Application
 #ENDIF
 
@@ -825,7 +825,7 @@ Object oMain is a Panel
         Use StdAbout.pkg
         Use CompareDatabases.rv
         Procedure Activate_About
-            Send DoAbout "" "" ("Copyright 2016-2023" * psCompany(ghoApplication)) "Author: Nils Svedmyr" "DUFUpdateCodeGenerator64x64.bmp" "E-mail: mailto:support@rdctools.com" "Web-site: www.rdctools.com" ("This tool was created with DataFlex" * String(C_DFVersion) * "from Data Access Worldwide. Please visit http://www.dataaccess.com for a free personal copy of DataFlex.")
+            Send DoAbout "" "" ("Copyright 2016-2024" * psCompany(ghoApplication)) "Author: Nils Svedmyr" "DUFUpdateCodeGenerator64x64.bmp" "E-mail: mailto:support@rdctools.com" "Web-site: www.rdctools.com" ("This tool was created with DataFlex" * String(C_DFVersion) * "from Data Access Worldwide. Please visit http://www.dataaccess.com for a free personal copy of DataFlex.")
         End_Procedure
 
         On_Key Key_Ctrl+Key_Tab           Send Switch_Next_View

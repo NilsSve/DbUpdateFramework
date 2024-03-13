@@ -1,4 +1,4 @@
-Use Windows.pkg
+﻿Use Windows.pkg
 Use Cursor.pkg
 Use cCJCommandBarSystem.pkg
 Use cRDCButtonDPI.pkg
@@ -294,7 +294,6 @@ Object oSQLMaintainConnections_dg is a ModalPanel
                         Set Current_Radio of oODBC_rgp to 2
                     End
                 End
-
             End_Procedure
 
             Procedure DbTypeUpdate Integer iDbType String sDriverID
@@ -359,7 +358,7 @@ Object oSQLMaintainConnections_dg is a ModalPanel
 
         Object oTrusted_cb is a cSQLCheckbox
             Set Size to 12 85
-            Set Location to 91 82
+            Set Location to 92 82
             Set Label to "Use Trusted Connection"
             Set psToolTip to "(Windows Authentication) When selected, SQL Server uses integrated login (Windows login information) security to establish connections using this data source, regardless of the current login security mode at the server."
             Set piItem to 8
@@ -391,9 +390,25 @@ Object oSQLMaintainConnections_dg is a ModalPanel
 
         End_Object
 
+        Object oConnOptions_fm is a cSQLForm
+            Set Size to 13 61
+            Set Location to 92 219
+            Set Label to "Options"
+            Set piItem to 10
+            Set Password_State to True
+            Set peAnchors to anTopRight
+            Set Label_Col_Offset to 0
+            Set Status_Help to "This text string value is added to the SQL connection string if needed. This is an addition to MS-SQL ODBC client software version 18 and up."
+
+            Procedure DbTypeUpdate Integer iDbType String sDriverID
+                Set Enabled_State to (sDriverID = MSSQLDRV_ID)
+            End_Procedure
+
+        End_Object
+
         Object oUserID_fm is a cSQLForm
             Set Size to 13 114
-            Set Location to 103 82
+            Set Location to 107 82
             Set Label to "User ID"
             Set psToolTip to "Enter the user name to use for authentication when you log on to the database."
             Set piItem to 9
@@ -402,20 +417,19 @@ Object oSQLMaintainConnections_dg is a ModalPanel
 
         Object oPassword_fm is a cSQLForm
             Set Size to 13 61
-            Set Location to 103 210
-            Set Label to "Password"
+            Set Location to 107 219
+            Set Label to "Pw"
             Set psToolTip to "Enter the password for your user name. The password will automatically be encrypted & decrypted when writing/reading from the ini file. Of Special Note: If the cConnection class is used with DataFlex 19 or later and such an .ini file is edited with this program you will get a question if you would like the program to 'touch' the password or not. If you answer No, the ini-file will keep working with the DataFlex tools. You should probably never try to change the password with this program for a DFConnid.ini file as the two programs uses different encryption/decryption algorithms."
             Set piItem to 10
             Set Password_State to True
             Set peAnchors to anTopRight
             Set Label_Col_Offset to 0
-            Set Label_Justification_Mode to JMode_Top
         End_Object
 
         Object oShowInfo_tb is a TextBox
             Set Auto_Size_State to False
-            Set Size to 10 114
-            Set Location to 119 82
+            Set Size to 10 112
+            Set Location to 122 82
             Set TextColor to clGreen
             Set Justification_Mode to JMode_Center
             Set peAnchors to anTopRight
@@ -423,7 +437,7 @@ Object oSQLMaintainConnections_dg is a ModalPanel
 
         Object oViewPassword_btn is a cRDCButton
             Set Size to 13 15
-            Set Location to 103 273
+            Set Location to 107 283
             Set psToolTip to "View/hide password"
             Set psImage to "ViewPassword1.ico"
             Set piImageMarginLeft to 2
@@ -445,7 +459,7 @@ Object oSQLMaintainConnections_dg is a ModalPanel
 
         Object oCheckLogin_btn is a cRDCButton
             Set Size to 13 78
-            Set Location to 119 210
+            Set Location to 123 210
             Set Label to "Check &Login"
             Set psImage to "ActionLogin1.ico"
             Set psToolTip to "You should always use this button when adding a new SQL Connection to ensure that the entered credentials are correct. (Ctrl+L)"
@@ -552,7 +566,7 @@ Object oSQLMaintainConnections_dg is a ModalPanel
         Object oLoginInfo_tb is a TextBox
             Set Auto_Size_State to False
             Set Size to 9 78
-            Set Location to 135 210
+            Set Location to 140 210
             Set TextColor to clGreen
             Set peAnchors to anTopRight
             Set Justification_Mode to JMode_Left
@@ -687,12 +701,15 @@ Object oSQLMaintainConnections_dg is a ModalPanel
 
         Object oDatabase_fm is a cSQLForm
             Set Size to 13 114
-            Set Location to 178 82
+            Set Location to 177 82
             Set Label to "Database"
             Set peAnchors to anTopLeftRight
             Set psToolTip to "Name of the SQL database. Note: If you are setting up your first connection for a workspace and your SQL database doesn't exist yet, leave the default 'Master' as it is always available. The 'SqlDatabaseCreate' function will take care of the rest when creating your new SQL database."
             Set piItem to 6
             Set Prompt_Button_Mode to PB_PromptOn
+            Set Prompt_Object to (oDatabaseSelection_sl(Self))
+
+            Property Handle phoPromptObject (oDatabaseSelection_sl(Self))
 
             Procedure Prompt
                 String[] sTheData
@@ -714,7 +731,8 @@ Object oSQLMaintainConnections_dg is a ModalPanel
             Procedure DbTypeUpdate Integer iDbType String sDriverID
                 Boolean bAdd
                 String sValue
-
+                Handle ho
+                
                 If (sDriverID <> "") Begin
                     Set Enabled_State to (sDriverID = MSSQLDRV_ID or (sDriverID = ODBC_DRV_ID and iDbType <> EN_DbTypeOracle))
                     If (Enabled_State(Self) = True) Begin
@@ -724,15 +742,13 @@ Object oSQLMaintainConnections_dg is a ModalPanel
                             Set Value to "master"
                         End
                         Else Begin
-                            Set Prompt_Button_Mode to PB_PromptOn
-                            Set Prompt_Object to (oDatabaseSelection_sl(Self))
                             If (Value(Self) = "master") Begin
                                 Set Value to ""
                             End
                         End
                     End
                     If (Enabled_State(Self) = False) Begin
-                        Set Value to ""
+//                        Set Value to ""
                     End
                 End
             End_Procedure
@@ -777,6 +793,7 @@ Object oSQLMaintainConnections_dg is a ModalPanel
             String sDbType
             Get SqlUtilDbTypeToString of ghoDbUpdateFunctionLibrary iDbType to sDbType
             Set Label to (sDbType * "Connection Details")
+            Set Enabled_State to (iDbType <> EN_DbTypeDataFlex)
         End_Procedure
 
     End_Object
@@ -911,11 +928,13 @@ Object oSQLMaintainConnections_dg is a ModalPanel
             Set piItem to 3
             
             Procedure Combo_Fill_List
+                Send Combo_Add_Item CS_DbTypeDataFlex
                 Send Combo_Add_Item CS_dbTypeMSSQL
                 Send Combo_Add_Item CS_dbTypeMySQL
                 Send Combo_Add_Item CS_dbTypeOracle
                 Send Combo_Add_Item CS_dbTypeDB2
                 Send Combo_Add_Item CS_dbTypePostgre
+                Set Value to CS_dbTypeMSSQL
             End_Procedure
 
             Procedure OnChange
@@ -924,9 +943,10 @@ Object oSQLMaintainConnections_dg is a ModalPanel
     
                 Get SelectedDbType to iDbType
                 Send Refill_Comboform of oDriverID_cf iDbType
-                Get Value of oDriverID_cf to sDriverID
+                Get Value of oDriverID_cf to sDriverID 
                 If (sDriverID = "") Begin
                     Move MSSQLDRV_ID to sDriverID
+                    Move EN_DbTypeMSSQL to iDbType
                 End
                 Send DbTypeUpdate of oSettings_grp iDbType sDriverID
             End_Procedure
@@ -1011,7 +1031,6 @@ Object oSQLMaintainConnections_dg is a ModalPanel
 
                 Get Value to sDriverID
                 If (sDriverID = "") Begin
-//                    Move MSSQLDRV_ID to sDriverID 
                     Procedure_Return
                 End
                 Get SelectedDbType of oDbType_cf to iDbType
@@ -1271,8 +1290,10 @@ Object oSQLMaintainConnections_dg is a ModalPanel
         End
         Get MoveSQLConnectionToStringArray SQLIniFileConnection to sConnectionData
 
-        Set Value of oDriverID_cf to SQLIniFileConnection.sDriverID
-        Set Value of oDbType_cf   to SQLIniFileConnection.iDbType
+        If (SQLIniFileConnection.sDriverID <> "") Begin
+            Set Value of oDriverID_cf to SQLIniFileConnection.sDriverID
+            Set Value of oDbType_cf   to SQLIniFileConnection.iDbType
+        End
         Broadcast Recursive Send ReadConnectionData sConnectionData
 
         // We need this message to "auto-default" certain fields.
@@ -1299,11 +1320,10 @@ Object oSQLMaintainConnections_dg is a ModalPanel
 
         Send Cursor_Ready of Cursor_Control
         Forward Send Page iPageObject
-
         Set Icon to "SQLConnections1.ico"
 
         Get pbNew to bNew
-        If (bNew = True) Begin
+        If (bNew = True) Begin   
             Move ("The" * CS_SQLIniFileName * "file doesn't exist yet for this workspace and needs to be created. Here's what you need to do:\n\n") to sText
             Move (sText * "1. Enter a Connection ID (the same that is being used by your workspace .int files) and other data that is used to login to the database.\n") to sText
             Move (sText * "2. Press the 'Test Login' button to ensure entered details are correct.\n") to sText
@@ -1388,9 +1408,8 @@ Procedure Activate_SQLMaintainConnections_dg Boolean bNew Integer iCurrentRow tS
     Get psIniFileName of (phoSQLConnectionIniFile(ghoSQLConnectionHandler)) to sSQLConnectionsFileName
     File_Exist (sPath + sSQLConnectionsFileName) bExists
     If (bExists = True) Begin
-     Set Label  of ho to ("Connection Properties" * "[" + String(sPath) + String(sSQLConnectionsFileName) + "]")
+        Set Label  of ho to ("Connection Properties" * "[" + String(sPath) + String(sSQLConnectionsFileName) + "]")
     End
-    
     Set pTheData                of ho to TheData
 
     Send Popup                  of ho
