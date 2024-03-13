@@ -1,4 +1,4 @@
-//****************************************************************************
+﻿//****************************************************************************
 // $Module type: Class
 // $Module name: cDbUpdateFunctionLibrary
 // $Author     : Nils Svedmyr, RDC Tools International, <mailto:support@rdctools.com>
@@ -2103,7 +2103,10 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
         Case Begin
             Case (sDriverID = MSSQLDRV_ID)
                 Get phoMSSQLHandler to hoSQLHandler
-                Get EnumerateServers of hoSQLHandler to iNumItems
+                Get EnumerateServersLocal of hoSQLHandler to iNumItems
+                If (iNumItems = 0) Begin
+                    Get EnumerateServers of hoSQLHandler to iNumItems 
+                End
                 For iCount from 0 to (iNumItems - 1)
                     Get String_Value of hoSQLHandler iCount to sServer
                     Move (Trim(sServer)) to sReturnArray[iCount]
@@ -8655,6 +8658,10 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
         String  sSqlServerClientVersionName
         
         Case Begin
+            Case (iClientVersion = SQLSERVER2019CLIENT)
+                Move SQLSERVER2019DRVRSTR to sSqlServerClientVersionName
+                Case Break
+
             Case (iClientVersion = SQLSERVER2017CLIENT)
                 Move SQLSERVER2017CLIENTNAME to sSqlServerClientVersionName
                 Case Break
@@ -8694,6 +8701,10 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
         String  sSqlServerClientDriverName
         
         Case Begin
+            Case (iClientVersion = SQLSERVER2019CLIENT)
+                Move SQLSERVER2019DRVRSTR to sSqlServerClientDriverName
+                Case Break
+
             Case (iClientVersion = SQLSERVER2017CLIENT)
                 Move SQLSERVER2017DRVRSTR to sSqlServerClientDriverName
                 Case Break
@@ -8898,6 +8909,7 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
         End
 
         Get Create (RefClass(cDbUpdateDatabaseDriver)) to hoDriver
+        Set Name of hoDriver to "oDbUpdateDatabaseDriver"
         Set psDriverID of hoDriver to SQLConnection.sDriverID
         Get DbLogin of hoDriver sConnectionString SQLConnection.sServer SQLConnection.sDatabase SQLConnection.bTrusted SQLConnection.sUserID SQLConnection.sPassword to bOK
         Send Destroy of hoDriver
