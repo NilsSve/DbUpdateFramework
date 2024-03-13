@@ -1,4 +1,4 @@
-//****************************************************************************
+﻿//****************************************************************************
 // $Module type: Class
 // $Module name: cSQLConnectionHandler.pkg
 // $Author     : Nils Svedmyr, RDC Tools International, <mailto:support@rdctools.com>
@@ -49,10 +49,15 @@ Use vWin32fh.pkg
 Class cSQLConnectionHandler is a cObject
 
     Procedure Construct_Object
+        Handle ho
         Forward Send Construct_Object
         Move Self to ghoSQLConnectionHandler
 
-        Property Handle phoSQLConnectionIniFile (Create(Self,RefClass(cSQLConnectionIniFile)))
+        Property Handle phoSQLConnectionIniFile 
+        Get  Create (RefClass(cSQLConnectionIniFile)) to ho
+        Set Name of ho to "oSQLConnectionIniFile"
+        Set phoSQLConnectionIniFile to ho
+        
 
         // These properties are used by the cDbUpdateVersion and cDbUpdateFunctionLibrary classes,
         // but put here so they can be set/get in both class objects. Those classes has "relay"

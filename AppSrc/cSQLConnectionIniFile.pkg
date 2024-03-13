@@ -1,4 +1,4 @@
-//****************************************************************************
+﻿//****************************************************************************
 // $Module type: Class
 // $Module name: cSQLConnectionIniFile.pkg
 //
@@ -497,6 +497,9 @@ Class cSQLConnectionIniFile is a cIniFile
     // corresponding to the passed sDbType string constant.
     Function SqlUtilDbTypeToInteger String sDbType  Returns Integer
         Integer iRetval
+        If (sDbType = CS_DbTypeDataFlex) Begin
+            Move EN_DbTypeDataFlex to iRetval
+        End
         If (sDbType = CS_dbTypeMSSQL) Begin
             Move EN_dbTypeMSSQL to iRetval
         End
@@ -570,7 +573,8 @@ Class cSQLConnectionIniFile is a cIniFile
         String sConnect
         Handle hoDriver
 
-        Get Create (RefClass(cDbUpdateDatabaseDriver)) to hoDriver
+        Get Create (RefClass(cDbUpdateDatabaseDriver)) to hoDriver 
+        Set Name of hoDriver to "oDbUpdateDatabaseDriver"
         Set psDriverID of hoDriver to sDriverID
         Get ConstructConnectionString of hoDriver sServer sDatabase bTrusted sUserID sPassword to sConnect
         Send Destroy of hoDriver
@@ -623,32 +627,24 @@ Class cSQLConnectionIniFile is a cIniFile
     // Use Base64
     Function EncryptPassword String sPassword Returns String
         String sRetval
-#IF (!@ > 190)
         Handle hoLoginEncryption
 
         Get Create (RefClass(cLoginEncryption)) to hoLoginEncryption
         Set psEncryptPassword of hoLoginEncryption to (psHashString(Self))
         Get EncryptPassword of hoLoginEncryption sPassword to sRetval
         Send Destroy of hoLoginEncryption
-#ELSE
-        Get EncodeString of oBase64Functions sPassword to sRetval
-#ENDIF
           
         Function_Return sRetval
     End_Function
 
     Function DecryptPassword String sPassword Returns String
         String sRetval
-#IF (!@ > 190)
         Handle hoLoginEncryption
 
         Get Create (RefClass(cLoginEncryption)) to hoLoginEncryption
         Set psEncryptPassword of hoLoginEncryption to (psHashString(Self))
         Get DecryptPassword of hoLoginEncryption sPassword to sRetval
         Send Destroy of hoLoginEncryption
-#ELSE
-        Get DecodeString of oBase64Functions sPassword to sRetval
-#ENDIF
 
         Function_Return sRetval
     End_Function

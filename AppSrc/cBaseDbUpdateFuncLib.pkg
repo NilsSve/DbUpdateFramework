@@ -1,4 +1,4 @@
-//****************************************************************************
+﻿//****************************************************************************
 // $Module type: Class
 // $Module name: cBaseDbUpdateFuncLib
 // $Author     : Nils Svedmyr, RDC Tools International, <mailto:support@rdctools.com>
@@ -46,6 +46,7 @@ Class cBaseDbUpdateFuncLib is a cObject
         // etc settings.
         If (ghoSQLConnectionHandler = 0) Begin
             Get Create (RefClass(cSQLConnectionHandler)) to ho
+            Set Name of ho to "oSQLConnectionHandler"
             Set phoSQLConnectionHandler to ho
         End
 
