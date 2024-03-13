@@ -1,4 +1,4 @@
-Use cSQLConnectionIniFile.inc
+﻿Use cSQLConnectionIniFile.inc
 
 Class cDbUpdateGenericDatabaseDriver is a cObject
     Procedure Construct_Object
@@ -22,7 +22,8 @@ Class cDbUpdateGenericDatabaseDriver is a cObject
 
     Function ConstructConnectionString String sServer String sDatabase Boolean bTrusted String sUserID String sPassword Returns String
         String sConnect sServerKeyWord sDriverID
-
+        Integer iClientVersion
+        
         Get psDriverID to sDriverID
         Get ServerKeyword sServer to sServerKeyWord
         Move (sConnect + sServerKeyWord + "=" + sServer) to sConnect
@@ -30,11 +31,6 @@ Class cDbUpdateGenericDatabaseDriver is a cObject
             Move "" to sDatabase
         End
         
-        // 2019-10-20 I think this was plain wrong for the DAW ODBC_DRV driver. At least it didn't work for login to an MS-SQL db.
-//        If (bTrusted = False and (sDriverID = ODBC_DRV_ID and sServerKeyWord = CS_SQLIniDSNKeyword)) Begin
-//            Function_Return sConnect
-//        End
-
         If (sDatabase <> "") Begin
             Move (sConnect + ";" + CS_SQLIniDatabaseKeyword + "=" + sDatabase) to sConnect
         End
@@ -44,6 +40,15 @@ Class cDbUpdateGenericDatabaseDriver is a cObject
         Else Begin
             Move (sConnect + ";" + CS_SQLIniUIDKeyword + "=" + sUserID + ";" + CS_SQLIniPWDKeyword + "=" + sPassword) to sConnect
         End
+        
+        If (sDriverID = MSSQLDRV_ID) Begin
+            Get SQLClientVersionInteger MSSQLDRV_ID to iClientVersion
+            If (iClientVersion >= 18) Begin
+                Append sConnect ";Encrypt=Optional;TrustServerCertificate=Yes"
+                Move (Replaces(" ", sConnect, "")) to sConnect
+            End
+        End
+        
         Function_Return sConnect
     End_Function
 
@@ -66,12 +71,92 @@ Class cDbUpdateGenericDatabaseDriver is a cObject
         Move (LastErr = 0) to bLoginSuccessful
         Function_Return bLoginSuccessful
     End_Function
+
+    Function SQLClientVersionInteger String sDriverID Returns Integer
+        Integer iNumberOfDrivers iCount iDriver iClientVersion
+        String sDriver
+        
+        Move 0 to iDriver
+        Get_Attribute DF_NUMBER_DRIVERS to iNumberOfDrivers
+        If (iNumberOfDrivers = 1) Begin
+            Load_Driver sDriverID
+            Get_Attribute DF_NUMBER_DRIVERS to iNumberOfDrivers
+        End
+        For iCount from 1 to iNumberOfDrivers
+            Get_Attribute DF_DRIVER_NAME of iCount to sDriver
+            If (Uppercase(sDriver) = Uppercase(sDriverID)) Begin
+                Move iCount to iDriver
+                Move iNumberOfDrivers to iCount // We're done.
+            End
+        Loop
+    
+        // This info is (at current) only available for the MS SQL driver:
+        If (iDriver <> 0 and sDriverID = MSSQLDRV_ID) Begin
+            Get_Attribute DF_DRIVER_SQLSERVER_CLIENT_VERSION of iDriver to iClientVersion
+        End
+        Function_Return iClientVersion
+    End_Function
+    
 End_Class
 
 Class cDbUpdateMSSQLDriver is a cDbUpdateGenericDatabaseDriver
     Function ServerKeyword String sServer Returns String
         Function_Return CS_SQLIniServerKeyword
     End_Function
+
+    Function DbLogin String sConnectionString String sServer String sDatabase Boolean bTrusted String sUserID String sPassword Returns Boolean
+        Integer iClientVersion
+        String sConnect
+        Boolean bLoginSuccessful
+        
+        Move (sConnect * "SERVER=" + sServer) to sConnect
+        If (sDatabase <> "") Begin
+            Move (sConnect * ";DATABASE=" + sDatabase) to sConnect
+        End
+        If (bTrusted = True) Begin
+            Move (sConnect * ";TRUSTED_CONNECTION=Yes") to sConnect
+        End
+        Else Begin
+            Move (sConnect * ";UID=" + sUserID * ";PWD=" + sPassword) to sConnect
+        End
+
+        Get SQLClientVersionInteger MSSQLDRV_ID to iClientVersion
+        If (iClientVersion >= 18) Begin
+            Append sConnect ";Encrypt=Optional;TrustServerCertificate=Yes"
+            Move (Replaces(" ", sConnect, "")) to sConnect
+        End
+        
+        Login sConnect "" "" MSSQLDRV_ID
+
+        Move (not(Err)) to bLoginSuccessful
+        Function_Return bLoginSuccessful
+    End_Function
+
+    Function SQLClientVersionInteger String sDriverID Returns Integer
+        Integer iNumberOfDrivers iCount iDriver iClientVersion
+        String sDriver
+        
+        Move 0 to iDriver
+        Get_Attribute DF_NUMBER_DRIVERS to iNumberOfDrivers
+        If (iNumberOfDrivers = 1) Begin
+            Load_Driver sDriverID
+            Get_Attribute DF_NUMBER_DRIVERS to iNumberOfDrivers
+        End
+        For iCount from 1 to iNumberOfDrivers
+            Get_Attribute DF_DRIVER_NAME of iCount to sDriver
+            If (Uppercase(sDriver) = Uppercase(sDriverID)) Begin
+                Move iCount to iDriver
+                Move iNumberOfDrivers to iCount // We're done.
+            End
+        Loop
+    
+        // This info is (at current) only available for the MS SQL driver:
+        If (iDriver <> 0 and sDriverID = MSSQLDRV_ID) Begin
+            Get_Attribute DF_DRIVER_SQLSERVER_CLIENT_VERSION of iDriver to iClientVersion
+        End
+        Function_Return iClientVersion
+    End_Function
+    
 End_Class
 
 Class cDbUpdateODBCDriver is a cDbUpdateGenericDatabaseDriver
@@ -151,27 +236,32 @@ Class cDbUpdateDatabaseDriver is a cObject
     End_Procedure
 
     Function CreateDriver Returns Handle
-        String sDriverID
+        String sDriverID sObjectName
         Handle hoDriver hcDriverClass
 
         Get psDriverID to sDriverID
         Case Begin
             Case (sDriverID = MSSQLDRV_ID)
                 Move (RefClass(cDbUpdateMSSQLDriver))    to hcDriverClass
+                Move "oDbUpdateMSSQLDriver" to sObjectName
                 Case Break
             Case (sDriverID = ODBC_DRV_ID)
                 Move (RefClass(cDbUpdateODBCDriver))     to hcDriverClass
+                Move "oDbUpdateODBCDriver" to sObjectName
                 Case Break
             Case (sDriverID = DB2_DRV_ID)
                 Move (RefClass(cDbUpdateDB2Driver))      to hcDriverClass
+                Move "oDbUpdateDB2Driver" to sObjectName
                 Case Break               
-            // DATAFLEX_ID = Default driver
             Case Else
+                // DATAFLEX_ID = Default driver
                 Move (RefClass(cDbUpdateDataFlexDriver)) to hcDriverClass
+                Move "oDbUpdateDataFlexDriver" to sObjectName
                 Move DATAFLEX_ID to sDriverID
         Case End
 
         Get Create hcDriverClass to hoDriver
+        Set Name of hoDriver to sObjectName
         Set psDriverID of hoDriver to sDriverID
         Set phoDriverSpecificObject to hoDriver
 
@@ -188,7 +278,10 @@ Class cDbUpdateDatabaseDriver is a cObject
         String sConnect
         Handle hoDriver
 
-        Get CreateDriver to hoDriver
+        Get phoDriverSpecificObject to hoDriver
+        If (hoDriver = 0) Begin
+            Get CreateDriver to hoDriver
+        End
         Get ConstructConnectionString of hoDriver sServer sDatabase bTrusted sUserID sPassword to sConnect
         Send DestroyDriver
         Function_Return sConnect
@@ -198,7 +291,10 @@ Class cDbUpdateDatabaseDriver is a cObject
         Boolean bLoginSuccessful
         Handle hoDriver
 
-        Get CreateDriver to hoDriver
+        Get phoDriverSpecificObject to hoDriver
+        If (hoDriver = 0) Begin
+            Get CreateDriver to hoDriver
+        End
         Get DbLogin of hoDriver sConnectionString sServer sDatabase bTrusted sUserID sPassword to bLoginSuccessful
         Send DestroyDriver
         Function_Return bLoginSuccessful
