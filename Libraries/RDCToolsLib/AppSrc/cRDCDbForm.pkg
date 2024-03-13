@@ -11,7 +11,8 @@ Class cRDCDbForm is a dbForm
 
         On_Key Key_Ctrl+Key_S Send Request_Save
         On_Key kCancel Send None
-        On_Key Key_F3  Send None
+        On_Key Key_F3  Send None 
+        On_Key Key_Ctrl+Key_F4 Send None
     End_Procedure
 
     Procedure End_Construct_Object

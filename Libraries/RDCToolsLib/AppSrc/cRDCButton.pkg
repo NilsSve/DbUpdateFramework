@@ -38,7 +38,7 @@ Class cRDCButton is a Button
         Forward Send Construct_Object
 
         { MethodType=Property InitialValue=False Category=Appearance }
-        Property Boolean pbAutoEnable False
+        Property Boolean pbAutoEnable True
 
         { Visibility=Private }
         Property Boolean pbEnabled True

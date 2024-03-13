@@ -24,6 +24,7 @@ Define clGreenGrey      for (RGB(64, 84, 93))
 Define clGreenGreyLight for (RGB(7, 117, 104))
 #ENDIF
 
+{ ClassType=Abstract }
 Class cRDCHeaderGroupImage is a cCommandLinkButton
     Procedure Construct_Object
         Forward Send Construct_Object
@@ -52,6 +53,7 @@ Class cRDCHeaderGroupImage is a cCommandLinkButton
 End_Class
 
 // Intermediate class - don't use.
+{ ClassType=Abstract }
 Class _cRDCHeaderGroup is a Container3d
 
     Procedure Construct_Object
@@ -122,7 +124,7 @@ Class cRDCHeaderGroup is a _cRDCHeaderGroup
 
         { Category=Appearance }
         Property Integer piImageColOffset 4
-        Property Integer piImageRowOffset 0
+        Property Integer piImageRowOffset -1
         { Category=Appearance }
         Property String psNote ""
         { Category=Appearance }
@@ -257,11 +259,11 @@ Class cRDCHeaderGroup is a _cRDCHeaderGroup
             Object oHeaderGroupTooltip_tb is a TextBox
                 Set Size to 10 10
                 If (bUseLargeFontHeight = True) Begin
-//                    Set Location to (piLabelRowOffset(Self)) iTextOffset //(Low(iSize) + (iTextOffset))
+                    //                    Set Location to (piLabelRowOffset(Self)) iTextOffset //(Low(iSize) + (iTextOffset))
                     Set Location to (piLabelRowOffset(Self)) (Low(iSize) + (iLabelColOffset * 2) + 10)
                 End
                 Else Begin
-//                    Set Location to (piLabelRowOffset(Self)) iTextOffset
+                    //                    Set Location to (piLabelRowOffset(Self)) iTextOffset
                     Set Location to (piLabelRowOffset(Self)) (Low(iSize) + iLabelColOffset + 25)
                 End
                 Set psToolTip to (private.psToolTip(Self))

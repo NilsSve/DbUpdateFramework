@@ -1,8 +1,3 @@
-[ReadDFDriverDefXML.src]
-0=msg_paint
-1=msg_notify_application_activation
-2=set_focus
-3=msg_onwmpaint
 [WriteDateTimeHeaderFile.src]
 0=msg_paint
 1=msg_notify_application_activation
@@ -13,7 +8,7 @@
 1=msg_notify_application_activation
 2=set_focus
 3=msg_onwmpaint
-[DUFSQLConnections.src]
+[DUFCodeGenerator.src]
 0=msg_paint
 1=msg_notify_application_activation
 2=set_focus
@@ -23,7 +18,12 @@
 1=msg_notify_application_activation
 2=set_focus
 3=msg_onwmpaint
-[DUFCodeGenerator.src]
+[ReadDFDriverDefXML.src]
+0=msg_paint
+1=msg_notify_application_activation
+2=set_focus
+3=msg_onwmpaint
+[DUFSQLConnections.src]
 0=msg_paint
 1=msg_notify_application_activation
 2=set_focus

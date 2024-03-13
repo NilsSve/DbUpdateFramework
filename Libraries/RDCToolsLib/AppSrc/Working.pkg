@@ -20,14 +20,14 @@ Global_Variable Handle ghoWorkingMessagePanel
 Object oWorkingMessagePanel is a ToolPanel
     Move Self to ghoWorkingMessagePanel
     Set Label to "Information"
-    Set Size to 41 137
+    Set Size to 61 137
     Set Locate_Mode to CENTER_ON_PARENT
     Set Popup_State to True
 
     Object oWorkingMessage is a Textbox
         Set Label to "Working..."
         Set Location to 8 7
-        Set Size to 12 121
+        Set Size to 32 121
         Set Auto_Size_State to False
         Set Justification_Mode to JMode_Center
         Set FontWeight to fw_Bold
@@ -35,7 +35,7 @@ Object oWorkingMessagePanel is a ToolPanel
 
     Object oProgressBar is a cProgressBar
         Set Size to 10 121
-        Set Location to 24 7
+        Set Location to 46 7
         Set pbSmooth to False
         Set piPosition to 0
 
@@ -103,7 +103,7 @@ Procedure StopWorkingMessage Global
 End_Procedure
 
 Procedure DoAdvanceProgressBar
-//Send DoAdvanceBy of (oProgressBar(ghoWorkingMessagePanel)) 1
+    //Send DoAdvanceBy of (oProgressBar(ghoWorkingMessagePanel)) 1
     Send DoPercentageAdvanceBy of (oProgressBar(ghoWorkingMessagePanel)) 1
 End_Procedure
 

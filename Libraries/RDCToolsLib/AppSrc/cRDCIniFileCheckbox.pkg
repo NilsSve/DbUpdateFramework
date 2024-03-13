@@ -21,14 +21,15 @@
 // $Rev History:
 //    2010-02-20  Module header created
 //****************************************************************************
-Use cRDCCheckbox.pkg
+//Use cRDCCheckbox.pkg
+Use cRDCSlideButton.pkg
 Use cRDCProjectIniFile.pkg
 
 #IFNDEF CS_IFCBTrue
-    Define CS_IFCBTrue  for "Yes"
+Define CS_IFCBTrue  for "Yes"
 #ENDIF
 #IFNDEF CS_IFCBFalse
-    Define CS_IFCBFalse for "No"
+Define CS_IFCBFalse for "No"
 #ENDIF
 
 Class cRDCIniFileCheckbox is a cRDCCheckBox

@@ -15,7 +15,6 @@ Define     GET_ONWINDOWSHOOK       for |CI$0544
 Define     WH_MOUSE for 7
 Define     WH_KEYBOARD for 2
 
-
 // suggestion lists use a global timer and a global suggestion list
 Global_Variable Handle ghoSuggestionList
 Move 0 to ghoSuggestionList
@@ -58,7 +57,7 @@ Class cSuggestionHookMouse is a DFWindowsMessageHook
         Integer ivoid hObj
         Handle hoOwner hoParent
         If (i1=0 and (i2=WM_LBUTTONDOWN or i2=WM_RBUTTONDOWN or i2=WM_MBUTTONDOWN or ;
-                      i2=WM_NCLBUTTONDOWN or i2=WM_NCRBUTTONDOWN or i2=WM_NCMBUTTONDOWN)) Begin
+            i2=WM_NCLBUTTONDOWN or i2=WM_NCRBUTTONDOWN or i2=WM_NCMBUTTONDOWN)) Begin
             Move (CopyMemory(AddressOf(MouseHook), i3, SizeOfType(tWinMouseHookStruct))) to iVoid
             GET_OBJECT_FROM_WINDOW MouseHook.hwnd to hObj
             Get Parent to hoParent
@@ -178,7 +177,7 @@ Class cSuggestionList is a cRichEdit
         Handle hoObj
         Get phoOwner to hoObj
         // Not necessary; SelectSuggestion will close the list.
-//        Send Activate of hoObj // move focus to owner, which will close the list
+        //        Send Activate of hoObj // move focus to owner, which will close the list
         Send SelectSuggestion of hoObj
     End_Procedure
 
@@ -272,15 +271,15 @@ Class cSuggestion_mixin is a Mixin
         Function_Return bErr
     End_Function
 
-
     // New message to add a suggestion from another data field:
     // Augment this message in your object:
     Procedure Add_Suggestion tSuggestion ByRef aSuggestion String sSerializeRowId String sValue1 String sValue2
         Move sSerializeRowId To aSuggestion.sRowId
         Move sValue1 To aSuggestion.aValues[0]
-        If (NUM_ARGUMENTS = 4) Move sValue2 To aSuggestion.aValues[1]
+        If (NUM_ARGUMENTS = 4) Begin
+            Move sValue2 To aSuggestion.aValues[1]
+        End
     End_Procedure
-
 
     { Visibility=Private }
     Procedure SuggestionsFindIncremental String sSearch tSuggestion[] ByRef aSuggestions
@@ -309,8 +308,6 @@ Class cSuggestion_mixin is a Mixin
                 Get_Attribute DF_FIELD_INDEX of iFile iField to iIndex
             End
 
-
-
             If (iIndex > 0) Begin
                 Get No_Relate_State of hoServer to bOldRelate
                 Get DDOConstraintNeedsRelate of hoServer iIndex to bNeedsRelate
@@ -336,10 +333,10 @@ Class cSuggestion_mixin is a Mixin
                     Get_Field_Value iFile iField to sVal
 
                     If ((NOT(bCase) AND Lowercase(Left(sVal, iLen)) = sLowSearch) OR (bCase AND Left(sVal, iLen) = sSearch)) Begin
-//ToDo: apc:
+                        //ToDo: apc:
                         Send Add_Suggestion (&aSuggestions[iRow]) (SerializeRowID(GetRowID(iFile))) (Trim(sVal))
-//                        Move (SerializeRowID(GetRowID(iFile)))  To aSuggestions[iRow].sRowId
-//                        Move (Trim(sVal))                       To aSuggestions[iRow].aValues[0]
+                        //                        Move (SerializeRowID(GetRowID(iFile)))  To aSuggestions[iRow].sRowId
+                        //                        Move (Trim(sVal))                       To aSuggestions[iRow].aValues[0]
                         Increment iRow
 
                         Move (iRow < iMax) to bContinue
@@ -398,7 +395,6 @@ Class cSuggestion_mixin is a Mixin
             Get DDOConstraintNeedsRelate of hoServer iIndex to bNeedsRelate
             Set No_Relate_State of hoServer to (not(bNeedsRelate))
 
-
             Move (Lowercase(sSearch)) to sLowSearch
             Move True to bContinue
             Move 0 to iRow
@@ -410,10 +406,10 @@ Class cSuggestion_mixin is a Mixin
                 Get_Field_Value iFile iField to sVal
 
                 If ((bCase and sVal contains sSearch) or (not(bCase) and Lowercase(sVal) contains sLowSearch)) Begin
-//ToDo: apc:
+                    //ToDo: apc:
                     Send Add_Suggestion (&aSuggestions[iRow]) (SerializeRowID(GetRowID(iFile))) (Trim(sVal))
-//                    Move (SerializeRowID(GetRowID(iFile)))  To aSuggestions[iRow].sRowId
-//                    Move (Trim(sVal))                       To aSuggestions[iRow].aValues[0]
+                    //                    Move (SerializeRowID(GetRowID(iFile)))  To aSuggestions[iRow].sRowId
+                    //                    Move (Trim(sVal))                       To aSuggestions[iRow].aValues[0]
                     Increment iRow
                 End
 
@@ -463,7 +459,6 @@ Class cSuggestion_mixin is a Mixin
             Set psSQLFilter of hoServer to sFilter
             Set pbUseDDSqlFilters of hoServer to True
 
-
             // this will optimize No_relate. If your DF constraint does not
             // need a post-relate test, we will disabled relates for this
             Get No_Relate_State of hoServer to bOldRelate
@@ -480,10 +475,10 @@ Class cSuggestion_mixin is a Mixin
                 Get_Field_Value iFile iField to sVal
 
                 If (Found) Begin // and ((bCase and sVal contains sSearch) or (not(bCase) and Lowercase(sVal) contains sLowSearch))) Begin
-//ToDo: apc:
+                    //ToDo: apc:
                     Send Add_Suggestion (&aSuggestions[iRow]) (SerializeRowID(GetRowID(iFile))) (Trim(sVal))
-//                    Move (SerializeRowID(GetRowID(iFile)))  To aSuggestions[iRow].sRowId
-//                    Move (Trim(sVal))                       To aSuggestions[iRow].aValues[0]
+                    //                    Move (SerializeRowID(GetRowID(iFile)))  To aSuggestions[iRow].sRowId
+                    //                    Move (Trim(sVal))                       To aSuggestions[iRow].aValues[0]
                     Increment iRow
 
                     Move (iRow < iMax) to bContinue
@@ -527,12 +522,10 @@ Class cSuggestion_mixin is a Mixin
                     Move (Lowercase(sSearch)) to sSearch
                 End
 
-
                 Move (SizeOfArray(aData)) to iCount
                 Move 0 to iRow
                 Move (Length(sSearch)) to iLen
                 Move True to bContinue
-
 
                 While (iFound < iMax and iRow < iCount and bContinue)
                     If (not(bCaseSensitive)) Begin
@@ -545,11 +538,11 @@ Class cSuggestion_mixin is a Mixin
                     End
 
                     If ((bFullText and (sVal contains sSearch)) or (not(bFullText) and (Left(sVal, iLen) = sSearch))) Begin
-//ToDo: apc:
+                        //ToDo: apc:
                         Send Add_Suggestion (&aSuggestions[iFound]) aData[iRow][0] aData[iRow][0] aData[iRow][1]
-//                        Move aData[iRow][0] to aSuggestions[iFound].sRowId
-//                        Move aData[iRow][0] to aSuggestions[iFound].aValues[0]
-//                        Move aData[iRow][1] To aSuggestions[iFound].aValues[1]
+                        //                        Move aData[iRow][0] to aSuggestions[iFound].sRowId
+                        //                        Move aData[iRow][0] to aSuggestions[iFound].aValues[0]
+                        //                        Move aData[iRow][1] To aSuggestions[iFound].aValues[1]
                         Increment iFound
                     End
                     Else Begin
@@ -562,7 +555,6 @@ Class cSuggestion_mixin is a Mixin
         End
 
     End_Procedure
-
 
     { MethodType=Event }
     Procedure OnFindSuggestions String sSearch tSuggestion[] ByRef aSuggestions
@@ -641,9 +633,7 @@ Class cSuggestion_mixin is a Mixin
         Function_Return (bChanged and Length(sValue)>=iStartAtChar)
     End_Function
 
-
 End_Class
-
 
 // This contains logic that deals with the Windows object. It relies on the interface in
 // sSuggestion_mixin, which means it must be mixed in as a sibling of this object (as is done
@@ -679,9 +669,9 @@ Class cSuggestionControl_mixin is a Mixin
             Move (Low(iX) max iMax) to iMax
             Move (Hi(iX)) to iY
         Loop
-//ToDo: apc: this value seems a little tight when multi-columns are used
-//ToDo: apc: would be better if the value was held in a property
-//        Move (iMax + 20) To imax
+        //ToDo: apc: this value seems a little tight when multi-columns are used
+        //ToDo: apc: would be better if the value was held in a property
+        //        Move (iMax + 20) To imax
         Move (iMax + 40) To imax
         Get pbFullWidth to bFullWidth
         If bFullWidth Begin
@@ -719,7 +709,6 @@ Class cSuggestionControl_mixin is a Mixin
     Procedure FindSuggestions
         String sSearch
         tSuggestion[] aResults
-        String[] aParams
         Get Value to sSearch
         Send OnFindSuggestions sSearch (&aResults)
         Set pSearchResults to aResults
@@ -752,7 +741,6 @@ Class cSuggestionControl_mixin is a Mixin
         // to replace or augment with grid to
         // cancel the edit control
     End_Procedure
-
 
     { Visibility=Private }
     Function ParentForSuggestion Returns Handle
@@ -819,17 +807,16 @@ Class cSuggestionControl_mixin is a Mixin
     { Visibility=Private }
     Procedure Up
         If (Focus(Desktop) = Self and ghoSuggestionList) Begin
-           Send ScrollUp of ghoSuggestionList
+            Send ScrollUp of ghoSuggestionList
         End
     End_Procedure
 
     { Visibility=Private }
     Procedure Down
         If (Focus(Desktop) = Self and ghoSuggestionList) Begin
-           Send ScrollDown of ghoSuggestionList
+            Send ScrollDown of ghoSuggestionList
         End
     End_Procedure
-
 
     { NoDoc=True }
     { Visibility=Private }
@@ -837,8 +824,8 @@ Class cSuggestionControl_mixin is a Mixin
         Integer iEndTicks
 
         If (Focus(Desktop) <> Self) Begin
-          Forward Send Key iKey
-          Procedure_Return
+            Forward Send Key iKey
+            Procedure_Return
         End
 
         Send DeActivateSuggestionList
@@ -847,7 +834,7 @@ Class cSuggestionControl_mixin is a Mixin
         If (piTimeOutTicks(Self) = 0) Begin
 
             If (ghoSuggestionTimer=0) Begin
-               Send CreateSuggestionTimer
+                Send CreateSuggestionTimer
             End
 
             Set pbEnabled of ghoSuggestionTimer to True

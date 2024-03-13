@@ -1,4 +1,4 @@
-// Written by Peter Bragg.
+﻿// Written by Peter Bragg.
 // Subclass for using hyperlinks in cDbCJGrid/cCJGrid column objects.
 //
 // Set pbHyperLink to True and it will call the Function "IsHyperLink" passing the Row Index.

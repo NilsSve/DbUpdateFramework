@@ -46,70 +46,65 @@ External_function ImageList_Destroy "ImageList_Destroy" comctl32.dll Handle himl
 #IFDEF GET_ImageList_LoadImage
 #ELSE
 External_function ImageList_LoadImage "ImageList_LoadImage" comctl32.dll Handle Hi Pointer lpbmp ;
-                      Integer cx Integer cGrow Integer crMask Integer uType Integer uFlags Returns Integer
+Integer cx Integer cGrow Integer crMask Integer uType Integer uFlags Returns Integer
 #ENDIF
-
-
-
 
 Class cIconPanel_Mixin Is a Mixin
     Procedure Define_cIconPanel_Mixin
-        Property String  private.psLargeTaskbarIcon Public ""
-        Property String  private.psSmallTaskbarIcon Public ""
-        Property Integer private.piTransparentColor Public (rgb(255,255,255))
-        Property Integer private.piTaskbarIconStyle Public IMAGE_BITMAP
+        Property String  private.psLargeTaskbarIcon        ""
+        Property String  private.psSmallTaskbarIcon        ""
+        Property Integer private.piTransparentColor        (rgb(255,255,255))
+        Property Integer private.piTaskbarIconStyle        IMAGE_BITMAP
 
-        Property Handle hpLargeIL   Public 0
-        Property Handle hpSmallIL   Public 0
-        Property Handle hpSmallIcon Public 0
-        Property Handle hpLargeIcon Public 0
+        Property Handle hpLargeIL          0
+        Property Handle hpSmallIL          0
+        Property Handle hpSmallIcon        0
+        Property Handle hpLargeIcon        0
     End_Procedure
     // Use this to set the filename of the large taskbaricon. This is the
     // icon users will see if they press the key-combination alt-tab.
     // Example: Set LargeTaskbarIcon To "file32.bmp"
     Procedure Set LargeTaskBarIcon String sFileName
-      Set Private.psLargeTaskbarIcon To sFileName
-    End_Procedure // Set LargeTaskBarIcon
+        Set Private.psLargeTaskbarIcon To sFileName
+    End_Procedure
 
     Function LargeTaskBarIcon Returns String
-      Function_Return (private.psLargeTaskbarIcon(Self))
-    End_Function // LargeTaskBarIcon
+        Function_Return (private.psLargeTaskbarIcon(Self))
+    End_Function
 
     // Use this to set the filename of the small taskbaricon. This is the
     // icon that you see in the taskbar next to te start-button and in the topleft-corner
     // of the application.
     // Example: Set LargeTaskbarIcon To "file32.bmp"
     Procedure Set SmallTaskBarIcon String sFileName
-      Set private.psSmallTaskbarIcon To sFileName
-    End_Procedure // Set SmallTaskBarIcon
+        Set private.psSmallTaskbarIcon To sFileName
+    End_Procedure
 
     Function SmallTaskBarIcon Returns String
-      Function_Return (private.psSmallTaskbarIcon(Self))
-    End_Function // SmallTaskBarIcon
+        Function_Return (private.psSmallTaskbarIcon(Self))
+    End_Function
 
     // This will set the transparantcolor of the icons. You can
     // set it to normal rgb values.
     // Example: Set IcontransparantColor To clGray
     Procedure Set IconTransparentColor Integer iColor
-      Set private.piTransparentColor To iColor
-    End_Procedure // Set IconTransparentColor
+        Set private.piTransparentColor To iColor
+    End_Procedure
 
     Function IconTransparentColor Returns Integer
-      Function_Return (private.piTransparentColor(Self))
-    End_Function // IconTransparentColor
+        Function_Return (private.piTransparentColor(Self))
+    End_Function
 
     // Use this to set the style of the tasskbaricon.
     // Valid values are: IMAGE_BITMAP, IMAGE_ICON and IMAGE_CURSOR
     // At the moment only the IMAGE_BITMAP style is supported.
     Procedure Set TaskbarIconStyle Integer iStyle
-      Set private.piTaskbarIconStyle To iStyle
-    End_Procedure // Set TaskbarIconStyle
+        Set private.piTaskbarIconStyle To iStyle
+    End_Procedure
 
     Function TaskbarIconStyle Returns Integer
-      Function_Return (private.piTaskbarIconStyle(Self))
-    End_Function // TaskbarIconStyle
-
-
+        Function_Return (private.piTaskbarIconStyle(Self))
+    End_Function
 
     // A function to retrieve the full pathname of the icon.
     // If a workspace is defined it will first look in the programpath and
@@ -119,7 +114,7 @@ Class cIconPanel_Mixin Is a Mixin
     Function IconFullPathName String sIcon Returns String
         Get_File_Path sIcon   To sIcon
         Function_Return sIcon
-    End_Function // IconFullPathName
+    End_Function
 
     // This procedure actually sets the taskbaricons.
     // Note that in here image_lists are created directly in windows. Its not necessary to
@@ -139,45 +134,42 @@ Class cIconPanel_Mixin Is a Mixin
         Move (OemToAnsi(pFile,pFile)) to iRetVal
 
         Move (ImageList_LoadImage(0,pFile, 32, 0, iTransparentColor, ;
-                                  iTaskbarIconStyle, (LR_LOADFROMFILE + LR_CREATEDIBSECTION))) To hWndImageList
+        iTaskbarIconStyle, (LR_LOADFROMFILE + LR_CREATEDIBSECTION))) To hWndImageList
         If hWndImageList Begin
-          Move (ImageList_GetIcon(hWndImageList, 0, ILD_NORMAL)) To hIcon
-          Send Windows_Message WM_SETICON ICON_LARGE hIcon
-          Set hpLargeIL   To hWndImageList
-          Set hpLargeIcon To hIcon
+            Move (ImageList_GetIcon(hWndImageList, 0, ILD_NORMAL)) To hIcon
+            Send Windows_Message WM_SETICON ICON_LARGE hIcon
+            Set hpLargeIL   To hWndImageList
+            Set hpLargeIcon To hIcon
         End // hWndImageList
-
 
         Move (IconFullPathName(self,(SmallTaskBarIcon(self)))) to sFile
         Move (sFile + (Character(0))) to sFile
         getaddress Of sFile to pFile
         Move (OemToAnsi(pFile,pFile)) to iRetVal
         Move (ImageList_LoadImage(0, pFile, 16, 0, iTransparentColor, ;
-                                  iTaskbarIconStyle, (LR_LOADFROMFILE + LR_CREATEDIBSECTION))) To hWndImageList
+        iTaskbarIconStyle, (LR_LOADFROMFILE + LR_CREATEDIBSECTION))) To hWndImageList
         If hWndImageList Begin
-          Move (ImageList_GetIcon(hWndImageList, 0, ILD_NORMAL)) To hIcon
-          Send Windows_Message WM_SETICON ICON_SMALL hIcon
-          Set hpSmallIL To hWndImageList
-          Set hpSmallIcon To hIcon
+            Move (ImageList_GetIcon(hWndImageList, 0, ILD_NORMAL)) To hIcon
+            Send Windows_Message WM_SETICON ICON_SMALL hIcon
+            Set hpSmallIL To hWndImageList
+            Set hpSmallIcon To hIcon
         End // hWndImageList
-    End_Procedure // DoSetTaskBarIcon
+    End_Procedure
 
     // Release the resources that were claimed for te taskbaricons and their
     // imagelists.
     Procedure DoDestroyIconResources
         Integer iRet
         If (hpLargeIL(Self)) Begin
-          Move (ImageList_Destroy( (hpLargeIL(self)) )) to iRet
-          Move (DestroyIcon( (hpLargeIcon(self)) )) to iRet
+            Move (ImageList_Destroy( (hpLargeIL(self)) )) to iRet
+            Move (DestroyIcon( (hpLargeIcon(self)) )) to iRet
         End
         If (hpSmallIL(Self)) Begin
-          Move (ImageList_Destroy( (hpSmallIL(self)) )) to iRet
-          Move (DestroyIcon( (hpSmallIcon(self)) )) to iRet
+            Move (ImageList_Destroy( (hpSmallIL(self)) )) to iRet
+            Move (DestroyIcon( (hpSmallIcon(self)) )) to iRet
         End
-    End_Procedure // DoDestroyIconResources
+    End_Procedure
 End_Class
-
-
 
 // So if you only need the mixin and dont have included the used DF classes...
 #IFDEF U_BasicPanel
@@ -185,25 +177,27 @@ End_Class
 Class cIconBasicPanel Is a BasicPanel
     Import_Class_Protocol cIconPanel_Mixin
     Procedure Construct_Object
-        Property Boolean pbShuttingDown Public False
+        Property Boolean pbShuttingDown        False
 
         Forward Send Construct_Object
         Send Define_cIconPanel_Mixin
-    End_Procedure // Construct_Object
+    End_Procedure
 
     Procedure Page_Object Integer bState
         Forward Send page_object bState
-        If BuildingObjectId Eq 0 Begin
-          If bState Eq 1 Send DoSetTaskBarIcon
+        If (BuildingObjectId = 0) Begin
+            If (bState = 1) Begin
+                Send DoSetTaskBarIcon
+            End
         End
-    End_Procedure // Page_Object
+    End_Procedure
 
     // Alt-F4, X-button
     Procedure Exit_Application
         Send DoDestroyIconResources
         Set pbShuttingDown To True
         Forward Send Exit_Application
-    End_Procedure // Exit_Application
+    End_Procedure
 
     // A close_panel request has been sent.
     // This will quit the application, but the exit_application message is never
@@ -212,9 +206,8 @@ Class cIconBasicPanel Is a BasicPanel
         Send DoDestroyIconResources
         Set pbShuttingDown To True
         Forward Send Close_Panel
-    End_Procedure // Close_Panel
-End_Class // cIconPanel
-
+    End_Procedure
+End_Class
 
 #ENDIF
 
@@ -224,8 +217,8 @@ End_Class // cIconPanel
 Class cIconPanel Is a Panel
     Import_Class_Protocol cIconPanel_Mixin
     Procedure Construct_Object
-        Property Boolean pbShuttingDown      Public False  // Set to true when the hammer is closed
-        Property Boolean pbWorkspaceChanging Public False  // Set to true when the hammer changes workspaces
+        Property Boolean pbShuttingDown             False  // Set to true when the hammer is closed
+        Property Boolean pbWorkspaceChanging        False  // Set to true when the hammer changes workspaces
 
         Forward Send Construct_Object
         Send Define_cIconPanel_Mixin
@@ -234,21 +227,23 @@ Class cIconPanel Is a Panel
         #IF (!@ >= 140)
         Set pbSizeToClientArea to False
         #ENDIF
-    End_Procedure // Construct_Object
+    End_Procedure
 
     Procedure Page_Object Integer bState
         Forward Send page_object bState
         If BuildingObjectId Eq 0 Begin
-          If bState Eq 1 Send DoSetTaskBarIcon
+            If (bState = 1) Begin
+                Send DoSetTaskBarIcon
+            End
         End
-    End_Procedure // Page_Object
+    End_Procedure
 
     // Alt-F4, X-button
     Procedure Exit_Application
         Send DoDestroyIconResources
         Set pbShuttingDown To True
         Forward Send Exit_Application
-    End_Procedure // Exit_Application
+    End_Procedure
 
     // A close_panel request has been sent.
     // This will quit the application, but the exit_application message is never
@@ -257,8 +252,7 @@ Class cIconPanel Is a Panel
         Send DoDestroyIconResources
         Set pbShuttingDown To True
         Forward Send Close_Panel
-    End_Procedure // Close_Panel
-End_Class // cIconPanel
-
+    End_Procedure
+End_Class
 
 #ENDIF

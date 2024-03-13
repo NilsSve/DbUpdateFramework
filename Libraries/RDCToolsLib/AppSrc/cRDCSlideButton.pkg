@@ -25,24 +25,25 @@ Define clGreenGreyLight for (RGB(7, 117, 104))
 #ENDIF
 
 Enum_List
-    Define RDCSlideButtonSmallImage  for 16
-    Define RDCSlideButtonMediumImage for 24
-End_Enum_List                  
+    Define CI_RDCSlideButtonSmallImage  for 16
+    Define CI_RDCSlideButtonMediumImage for 24
+End_Enum_List
 
 // Used by the "Page" message below to show
 // a rectangle around ComboForm and Checkbox objects.
 #IFNDEF WM_CHANGEUISTATE
-    Define WM_CHANGEUISTATE for |CI$0127
-    Define WM_UPDATEUISTATE for |CI$0128
-    Define WM_QUERYUISTATE  for |CI$0129
-    Define UIS_SET          for 1
-    Define UIS_CLEAR        for 2
-    Define UIS_INITIALIZE   for 3
-    Define UISF_HIDEFOCUS   for |CI$1
-    Define UISF_HIDEACCEL   for |CI$2
-    Define UISF_ACTIVE      for |CI$4
+Define WM_CHANGEUISTATE for |CI$0127
+Define WM_UPDATEUISTATE for |CI$0128
+Define WM_QUERYUISTATE  for |CI$0129
+Define UIS_SET          for 1
+Define UIS_CLEAR        for 2
+Define UIS_INITIALIZE   for 3
+Define UISF_HIDEFOCUS   for |CI$1
+Define UISF_HIDEACCEL   for |CI$2
+Define UISF_ACTIVE      for |CI$4
 #ENDIF
 
+{ ClassType=Abstract }
 Class cRDCSlideButtonImage is a cCommandLinkButton
     Procedure Construct_Object
         Forward Send Construct_Object
@@ -105,7 +106,8 @@ Class cRDCSlideTextbox is a CheckBox
 End_Class
 
 // Intermediate class - don't use.
-Class _cRDCSlideButton is a Container3d
+{ ClassType=Abstract }
+Class _cRDCSlideButtonContainer is a Container3d
 
     Procedure Construct_Object
         Forward Send Construct_Object
@@ -116,6 +118,8 @@ Class _cRDCSlideButton is a Container3d
         Property String private.psToolTip
         { Visibility=Private }
         Property String private.Status_Help
+        { Visibility=Private }
+        Property Handle private.Label_Object
 
         Set Border_Style to Border_None
     End_Procedure
@@ -129,6 +133,9 @@ Class _cRDCSlideButton is a Container3d
     { MethodType=Property }
     Procedure Set psLabel String sLabel
         Set private.psLabel to sLabel
+        If (private.Label_Object(Self) <> 0) Begin
+            Set Label of (private.Label_Object(Self)) to sLabel
+        End
     End_Procedure
 
     Function psLabel Returns String
@@ -151,23 +158,23 @@ Class _cRDCSlideButton is a Container3d
 
     Function psToolTip Returns String
         Function_Return (private.psToolTip(Self))
-    End_Function             
-    
+    End_Function
+
     Procedure Set Status_Help String sStatusHelp
         Set private.Status_Help to sStatusHelp
     End_Procedure
 
     Function Status_Help Returns String
         Function_Return (private.Status_Help(Self))
-    End_Function             
-    
+    End_Function
+
 End_Class
 
 { DesignerClass=cDTCheckBox }
 { HelpTopic=CheckBox }
 { OverrideProperty=Bitmap DesignTime=False }
 { OverrideProperty=Bitmap_Style DesignTime=False }
-Class cRDCSlideButton is a _cRDCSlideButton
+Class cRDCSlideButton is a _cRDCSlideButtonContainer
 
     Procedure Construct_Object
         Forward Send Construct_Object
@@ -175,8 +182,8 @@ Class cRDCSlideButton is a _cRDCSlideButton
         { Visibility=Private }
         Property Handle private.phoButton 0
         { Visibility=Private }
-        Property String private.psImage    
-        
+        Property String private.psImage
+
         { Visibility=Private }
         Property Boolean private.Checked_State False
         { Visibility=Private }
@@ -192,9 +199,9 @@ Class cRDCSlideButton is a _cRDCSlideButton
         { Visibility=Public Category="Appearance" }
         Property String psToggleOffImage "ToggleOff.ico"
         { Visibility=Public Category="Appearance" }
-        { EnumList="RDCSlideButtonSmallImage, RDCSlideButtonMediumImage" }
+        { EnumList="CI_RDCSlideButtonSmallImage, CI_RDCSlideButtonMediumImage" }
         { InitialValue=RDCSlideButtonMediumImage }
-        Property Integer piImageSize RDCSlideButtonMediumImage
+        Property Integer piImageSize CI_RDCSlideButtonMediumImage
 
         On_Key kSwitch Send Switch_Next_Area
     End_Procedure
@@ -230,13 +237,13 @@ Class cRDCSlideButton is a _cRDCSlideButton
 
     // This slight adjustment is needed so the control doesn't
     // "bump into" an object to the right of it that is located really close.
-//    Procedure Set Size Integer iHeight Integer iWidth
-//        If (iWidth > 5) Begin
-//            Move (iWidth -5) to iWidth
-//        End
-//
-//        Forward Set Size to iHeight iWidth
-//    End_Procedure
+    //    Procedure Set Size Integer iHeight Integer iWidth
+    //        If (iWidth > 5) Begin
+    //            Move (iWidth -5) to iWidth
+    //        End
+    //
+    //        Forward Set Size to iHeight iWidth
+    //    End_Procedure
 
     Procedure OnChange
         Handle hoButton
@@ -288,20 +295,20 @@ Class cRDCSlideButton is a _cRDCSlideButton
         String sImage sLabel
 
         Forward Send End_Construct_Object
-        
+
         Get piImageSize to iImageSize
         Case Begin
-            Case (iImageSize = RDCSlideButtonSmallImage)
+            Case (iImageSize = CI_RDCSlideButtonSmallImage)
                 Set private.piButtonHeight         to 14
-                Set private.piButtonWidth          to 14 
+                Set private.piButtonWidth          to 14
                 Set private.piButtonLocationOffset to -5
                 Case Break
-            Case (iImageSize = RDCSlideButtonMediumImage)
+            Case (iImageSize = CI_RDCSlideButtonMediumImage)
                 Set private.piButtonHeight         to 16
-                Set private.piButtonWidth          to 20 
+                Set private.piButtonWidth          to 20
                 Set private.piButtonLocationOffset to -6
                 Case Break
-        Case End               
+        Case End
 
         Move Self to hoParent
         Get Label of hoParent to sLabel
@@ -317,38 +324,40 @@ Class cRDCSlideButton is a _cRDCSlideButton
         Move (iOffset + iIconIndex -1) to iOffset
 
         Get CreateNamed (RefClass(cRDCSlideButtonImage)) "oRDCSlideButtonImage" to ho
-            Set Size                of ho to iHeight iWidth
-            Set Location            of ho to iOffset 0
-            Set psToolTip           of ho to (private.psToolTip(hoParent))
-            If (private.Status_Help(hoParent) = "") Begin
-                Set Status_Help     of ho to (private.psToolTip(hoParent))
-            End                                                
-            Else Begin
-                Set Status_Help     of ho to (private.Status_Help(hoParent))
-            End
-            Set psImage             of ho to sImage
+        Set Size                of ho to iHeight iWidth
+        Set Location            of ho to iOffset 0
+        Set psToolTip           of ho to (private.psToolTip(hoParent))
+        If (private.Status_Help(hoParent) = "") Begin
+            Set Status_Help     of ho to (private.psToolTip(hoParent))
+        End
+        Else Begin
+            Set Status_Help     of ho to (private.Status_Help(hoParent))
+        End
+        Set psImage             of ho to sImage
 #IF (!@ > 190)
-            Set pbAutoResizeIcons   of ho to True
+        Set pbAutoResizeIcons   of ho to True
 #ENDIF
-            Set piImageSize         of ho to (piImageSize(Self))
-            Set Focus_Mode          of ho to NonFocusable
-            Set private.phoParent   of ho to hoParent
+        Set piImageSize         of ho to (piImageSize(Self))
+        //            Set Focus_Mode          of ho to NonFocusable
+        Set private.phoParent   of ho to hoParent
         Set private.phoButton to ho
 
         Get CreateNamed (RefClass(cRDCSlideTextbox)) "cRDCSlideTextbox" to ho
-            Set Size                of ho to (Hi(iSize)) (Low(iSize) + iWidth)
-            Set Location            of ho to 2 iWidth
-            Set Label               of ho to sLabel
-            Set psToolTip           of ho to (private.psToolTip(Parent(ho)))
-            If (private.Status_Help(hoParent) = "") Begin
-                Set Status_Help     of ho to (private.psToolTip(hoParent))
-            End
-            Else Begin
-                Set Status_Help     of ho to (private.Status_Help(hoParent))
-            End
+        Set private.Label_Object to ho
+        Set Size                of ho to (Hi(iSize)) (Low(iSize) + iWidth)
+        Set Location            of ho to 2 iWidth
+        Set Label               of ho to sLabel
+        Set Focus_Mode          of ho to NonFocusable
+        Set psToolTip           of ho to (private.psToolTip(Parent(ho)))
+        If (private.Status_Help(hoParent) = "") Begin
+            Set Status_Help     of ho to (private.psToolTip(hoParent))
+        End
+        Else Begin
+            Set Status_Help     of ho to (private.Status_Help(hoParent))
+        End
 
-        Get psCurrentImage to sImage
-        Set psImage of ho to sImage
+        //        Get psCurrentImage to sImage
+        //        Set Bitmap of ho to sImage
         Send OnChangeEvent
     End_Procedure
 

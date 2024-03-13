@@ -1,4 +1,3 @@
-
 Use LanguageText.pkg
 Use Windows.pkg
 Use Dfclient.pkg
@@ -21,28 +20,6 @@ Register_Function phoWorkspace Returns Handle
 Register_Function Help_filename Returns String
 Register_Function GetHelpFile Returns String
 Register_Function pbEnterKeyAsTabKey Returns Boolean
-
-// Use of Mertech drivers:
-// Ad the line "Define DUF_Use_Mertech_Drivers" prior "Use" of this package to your source code if using Mertech drivers!
-#IFDEF DUF_Use_Mertech_Drivers
-    Use mertech.inc
-#ENDIF
-
-#IFNDEF ORAFLEX
-    Define ORAFLEX   for "ORA_DRV"
-#ENDIF
-
-#IFNDEF SQLFLEX
-    Define SQLFLEX   for "SQL_DRV"
-#ENDIF
-
-#IFNDEF MDSPgSQL
-    Define MDSPgSQL  for "MDSPGSQL"
-#ENDIF
-
-#IFNDEF MDSMySQL
-    Define MDSMySQL  for "MDSMYSQL"
-#ENDIF
 
 // *** Constant Declarations: ***
 //
@@ -72,7 +49,7 @@ Register_Function pbEnterKeyAsTabKey Returns Boolean
     #Replace C_$PleaseAdjustTxt                   |CS"Please adjust and try again."
     #Replace C_$ProgramWillExit_Text              |CS"The program will now exit."
     #Replace C_$DF_Studio_License_Text            |CS"Program run under Studio license. The Max number of users for database drivers could not be retrieved."
-    #Replace C_$Compile_Date                      |CS"Compile Date:"
+    #Replace C_$Compile_Date                      |CS"Compiled:"
     #IFNDEF C_$CopyToClipboard_Text
     #Replace C_$CopyToClipboard_Text              |CS"Content copied to Windows clipboard. Press Ctrl+V to paste the content in e.g. an e-mail."
     #ENDIF
@@ -99,7 +76,7 @@ Register_Function pbEnterKeyAsTabKey Returns Boolean
     #Replace C_$PleaseAdjustTxt                   |CS"Please adjust and try again."
     #Replace C_$ProgramWillExit_Text              |CS"The program will now exit."
     #Replace C_$DF_Studio_License_Text            |CS"Program run under Studio license. The Max number of users for database drivers could not be retrieved."
-    #Replace C_$Compile_Date                      |CS"Compile Date:"
+    #Replace C_$Compile_Date                      |CS"Compiled:"
     #IFNDEF C_$CopyToClipboard_Text
     #Replace C_$CopyToClipboard_Text              |CS"Content copied to Windows clipboard. Press Ctrl+V to paste the content in e.g. an e-mail."
     #ENDIF
@@ -107,9 +84,9 @@ Register_Function pbEnterKeyAsTabKey Returns Boolean
 
 #IFSame Language$Current = Language$Svenska
     #Replace C_$Computer_Name                     |CS"Datornamn: %1"
-    #Replace C_$Current_User_Count                |CS"Aktuellt antal anv├ñndare: %1"
-    #Replace C_$Max_Licensed_User_Count           |CS"Max antal licensierade anv├ñndare: %1"
-    #Replace C_$Max_DbDriver_Licensed_User_Count  |CS"Max antal dbDriver licensierade anv├ñndare: %1"
+    #Replace C_$Current_User_Count                |CS"Aktuellt antal användare: %1"
+    #Replace C_$Max_Licensed_User_Count           |CS"Max antal licensierade användare: %1"
+    #Replace C_$Max_DbDriver_Licensed_User_Count  |CS"Max antal dbDriver licensierade användare: %1"
     #Replace C_$Pervasive_Local_Engine_Version    |CS"Pervasive Local Engine Version: %1"
     #Replace C_$Pervasive_Server_Engine_Version   |CS"Pervasive Server Engine Version: %1"
     #Replace C_$SQLSERVER2016DRVRSTR              |CS"MS-SQL Server 2016 Client ODBC Driver 13 for SQL Server"
@@ -120,15 +97,15 @@ Register_Function pbEnterKeyAsTabKey Returns Boolean
     #Replace C_$SQL_Server_SQL_Server_2000_client |CS"SQL Server (SQL Server 2000 client (MDAC))"
     #Replace C_$SQLServerText                     |CS"Server/DSN:"
     #Replace C_$SQL_Client_Text                   |CS"Client Version:"
-    #Replace C_$SQL_Driver_Version_Min_Text       |CS"Databasdrivrutinens version skall som l├ñgst vara:"
-    #Replace C_$SQL_Client_Version_Min_Text       |CS"samt SQL Server  klientversionen skall som l├ñgst vara:"
-    #Replace C_$SQL_Versions_Are_Text             |CS"Men nuvarande versioner ├ñr:"
-    #Replace C_$PleaseAdjustTxt                   |CS"V├ñnligen justera och f├Ârs├Âk igen."
+    #Replace C_$SQL_Driver_Version_Min_Text       |CS"Databasdrivrutinens version skall som lägst vara:"
+    #Replace C_$SQL_Client_Version_Min_Text       |CS"samt SQL Server klientversionen skall som lägst vara:"
+    #Replace C_$SQL_Versions_Are_Text             |CS"Men nuvarande versioner är:"
+    #Replace C_$PleaseAdjustTxt                   |CS"Vänligen justera och försök igen."
     #Replace C_$ProgramWillExit_Text              |CS"Programmet kommer nu att avslutas."
-    #Replace C_$DF_Studio_License_Text            |CS"Programmet k├Ârs under DataFlex Studio licens. Max antal anv├ñndare f├Âr databas drivrutin kan ej best├ñmmas."
+    #Replace C_$DF_Studio_License_Text            |CS"Programmet körs under DataFlex Studio licens. Max antal användare för databas drivrutin kan ej bestämmas."
     #Replace C_$Compile_Date                      |CS"Kompilerad:"
     #IFNDEF C_$CopyToClipboard_Text
-    #Replace C_$CopyToClipboard_Text              |CS"Inneh├Ñll kopierat till Windows klippbord. Tryck p├Ñ Ctrl+V f├Âr att klistra in inneh├Ñllet i t ex ett e-mejl."
+    #Replace C_$CopyToClipboard_Text              |CS"Innehåll kopierat till Windows klippbord. Tryck på Ctrl+V för att klistra in innehållet i t ex ett e-mejl."
     #ENDIF
 #ENDIF
 
@@ -153,7 +130,7 @@ Register_Function pbEnterKeyAsTabKey Returns Boolean
     #Replace C_$PleaseAdjustTxt                   |CS"Please adjust and try again."
     #Replace C_$ProgramWillExit_Text              |CS"The program will now exit."
     #Replace C_$DF_Studio_License_Text            |CS"Program run under Studio license. The Max number of users for database drivers could not be retrieved."
-    #Replace C_$Compile_Date                      |CS"Compile Date:"
+    #Replace C_$Compile_Date                      |CS"Compiled:"
     #IFNDEF C_$CopyToClipboard_Text
     #Replace C_$CopyToClipboard_Text              |CS"Content copied to Windows clipboard. Press Ctrl+V to paste the content in e.g. an e-mail."
     #ENDIF
@@ -180,7 +157,7 @@ Register_Function pbEnterKeyAsTabKey Returns Boolean
     #Replace C_$PleaseAdjustTxt                   |CS"Please adjust and try again."
     #Replace C_$ProgramWillExit_Text              |CS"The program will now exit."
     #Replace C_$DF_Studio_License_Text            |CS"Program run under Studio license. The Max number of users for database drivers could not be retrieved."
-    #Replace C_$Compile_Date                      |CS"Compile Date:"
+    #Replace C_$Compile_Date                      |CS"Compiled:"
     #IFNDEF C_$CopyToClipboard_Text
     #Replace C_$CopyToClipboard_Text              |CS"Content copied to Windows clipboard. Press Ctrl+V to paste the content in e.g. an e-mail."
     #ENDIF
@@ -189,11 +166,11 @@ Register_Function pbEnterKeyAsTabKey Returns Boolean
 // 2016-12-12, Samuel:  Added section for Portuguese
 #IFSame Language$Current = Language$Portugues
     #Replace C_$Computer_Name                     |CS"Nome do Computador: %1"
-    #Replace C_$Current_User_Count                |CS"Quantidade atua de Usu├írios: %1"
-    #Replace C_$Max_Licensed_User_Count           |CS"Quantidade m├íxima de usu├írios licenciados: %1"
-    #Replace C_$Max_DbDriver_Licensed_User_Count  |CS"Quantidade m├íxima de usuarios licenciados para o dbDriver: %1"
-    #Replace C_$Pervasive_Local_Engine_Version    |CS"VersÔûîo do motor Local do Pervasive: %1"
-    #Replace C_$Pervasive_Server_Engine_Version   |CS"VersÔûîo do Motor do Servidor Pervasive: %1"
+    #Replace C_$Current_User_Count                |CS"Quantidade atua de Usuários: %1"
+    #Replace C_$Max_Licensed_User_Count           |CS"Quantidade máxima de usuários licenciados: %1"
+    #Replace C_$Max_DbDriver_Licensed_User_Count  |CS"Quantidade máxima de usuarios licenciados para o dbDriver: %1"
+    #Replace C_$Pervasive_Local_Engine_Version    |CS"Vers▌o do motor Local do Pervasive: %1"
+    #Replace C_$Pervasive_Server_Engine_Version   |CS"Vers▌o do Motor do Servidor Pervasive: %1"
     #Replace C_$SQLSERVER2016DRVRSTR              |CS"MS-SQL Server 2016 Client ODBC Driver 13 for SQL Server"
     #Replace C_$SQLSERVER2014DRVRSTR              |CS"MS-SQL Server 2014 Client ODBC Driver 11 for SQL Server"
     #Replace C_$SQL_Server_Native_Client_11_0     |CS"Cliente Nativo do SQL Server 11.0 (SQL Server 2012)"
@@ -207,10 +184,10 @@ Register_Function pbEnterKeyAsTabKey Returns Boolean
     #Replace C_$SQL_Versions_Are_Text             |CS"But the current versions are:"
     #Replace C_$PleaseAdjustTxt                   |CS"Please adjust and try again."
     #Replace C_$ProgramWillExit_Text              |CS"The program will now exit."
-    #Replace C_$DF_Studio_License_Text            |CS"Programa rodando sob Licensa do DataFlex Studios. Numero maximo de usuarios para o dbDriver nÔûîo pode ser recuperado."
-    #Replace C_$Compile_Date                      |CS"Data de Compila├ºÔûîo:"
+    #Replace C_$DF_Studio_License_Text            |CS"Programa rodando sob Licensa do DataFlex Studios. Numero maximo de usuarios para o dbDriver n▌o pode ser recuperado."
+    #Replace C_$Compile_Date                      |CS"Data de Compilaç▌o:"
     #IFNDEF C_$CopyToClipboard_Text
-    #Replace C_$CopyToClipboard_Text              |CS"Conte├║do copiado da Ôûîrea de Transfer├¬ncia do Windows. Pressione Ctrl+V para colar o conte├║do em p. ex. um e-mail."
+    #Replace C_$CopyToClipboard_Text              |CS"Conteúdo copiado da ▌rea de Transferência do Windows. Pressione Ctrl+V para colar o conteúdo em p. ex. um e-mail."
     #ENDIF
 #ENDIF
 
@@ -235,7 +212,7 @@ Register_Function pbEnterKeyAsTabKey Returns Boolean
     #Replace C_$PleaseAdjustTxt                   |CS"Please adjust and try again."
     #Replace C_$ProgramWillExit_Text              |CS"The program will now exit."
     #Replace C_$DF_Studio_License_Text            |CS"Program run under Studio license. The Max number of users for database drivers could not be retrieved."
-    #Replace C_$Compile_Date                      |CS"Compile Date:"
+    #Replace C_$Compile_Date                      |CS"Compiled:"
     #IFNDEF C_$CopyToClipboard_Text
     #Replace C_$CopyToClipboard_Text              |CS"Content copied to Windows clipboard. Press Ctrl+V to paste the content in e.g. an e-mail."
     #ENDIF
@@ -262,7 +239,7 @@ Register_Function pbEnterKeyAsTabKey Returns Boolean
     #Replace C_$PleaseAdjustTxt                   |CS"Please adjust and try again."
     #Replace C_$ProgramWillExit_Text              |CS"The program will now exit."
     #Replace C_$DF_Studio_License_Text            |CS"Program run under Studio license. The Max number of users for database drivers could not be retrieved."
-    #Replace C_$Compile_Date                      |CS"Compile Date:"
+    #Replace C_$Compile_Date                      |CS"Compiled:"
     #IFNDEF C_$CopyToClipboard_Text
     #Replace C_$CopyToClipboard_Text              |CS"Content copied to Windows clipboard. Press Ctrl+V to paste the content in e.g. an e-mail."
     #ENDIF
@@ -270,11 +247,11 @@ Register_Function pbEnterKeyAsTabKey Returns Boolean
 
 #IFSame Language$Current = Language$Espanol
     #Replace C_$Computer_Name                     |CS"Nome do Computador: %1"
-    #Replace C_$Current_User_Count                |CS"Quantidade atua de Usu├írios: %1"
-    #Replace C_$Max_Licensed_User_Count           |CS"Quantidade m├íxima de usu├írios licenciados: %1"
-    #Replace C_$Max_DbDriver_Licensed_User_Count  |CS"Quantidade m├íxima de usuarios licenciados para o dbDriver: %1"
-    #Replace C_$Pervasive_Local_Engine_Version    |CS"VersÔûîo do motor Local do Pervasive: %1"
-    #Replace C_$Pervasive_Server_Engine_Version   |CS"VersÔûîo do Motor do Servidor Pervasive: %1"
+    #Replace C_$Current_User_Count                |CS"Quantidade atua de Usuários: %1"
+    #Replace C_$Max_Licensed_User_Count           |CS"Quantidade máxima de usuários licenciados: %1"
+    #Replace C_$Max_DbDriver_Licensed_User_Count  |CS"Quantidade máxima de usuarios licenciados para o dbDriver: %1"
+    #Replace C_$Pervasive_Local_Engine_Version    |CS"Vers▌o do motor Local do Pervasive: %1"
+    #Replace C_$Pervasive_Server_Engine_Version   |CS"Vers▌o do Motor do Servidor Pervasive: %1"
     #Replace C_$SQLSERVER2016DRVRSTR              |CS"MS-SQL Server 2016 Client ODBC Driver 13 for SQL Server"
     #Replace C_$SQLSERVER2014DRVRSTR              |CS"MS-SQL Server 2014 Client ODBC Driver 11 for SQL Server"
     #Replace C_$SQL_Server_Native_Client_11_0     |CS"Cliente Nativo do SQL Server 11.0 (SQL Server 2012)"
@@ -288,10 +265,10 @@ Register_Function pbEnterKeyAsTabKey Returns Boolean
     #Replace C_$SQL_Versions_Are_Text             |CS"But the current versions are:"
     #Replace C_$PleaseAdjustTxt                   |CS"Please adjust and try again."
     #Replace C_$ProgramWillExit_Text              |CS"The program will now exit."
-    #Replace C_$DF_Studio_License_Text            |CS"Programa rodando sob Licensa do DataFlex Studios. Numero maximo de usuarios para o dbDriver nÔûîo pode ser recuperado."
-    #Replace C_$Compile_Date                      |CS"Data de Compila├ºÔûîo:"
+    #Replace C_$DF_Studio_License_Text            |CS"Programa rodando sob Licensa do DataFlex Studios. Numero maximo de usuarios para o dbDriver n▌o pode ser recuperado."
+    #Replace C_$Compile_Date                      |CS"Data de Compilaç▌o:"
     #IFNDEF C_$CopyToClipboard_Text
-    #Replace C_$CopyToClipboard_Text          |CS"Conte├║do copiado da Ôûîrea de Transfer├¬ncia do Windows. Pressione Ctrl+V para colar o conte├║do em p. ex. um e-mail."
+    #Replace C_$CopyToClipboard_Text          |CS"Conteúdo copiado da ▌rea de Transferência do Windows. Pressione Ctrl+V para colar o conteúdo em p. ex. um e-mail."
     #ENDIF
 #ENDIF
 
@@ -315,10 +292,10 @@ Register_Function pbEnterKeyAsTabKey Returns Boolean
     #Replace C_$SQL_Versions_Are_Text             |CS"But the current versions are:"
     #Replace C_$PleaseAdjustTxt                   |CS"Please adjust and try again."
     #Replace C_$ProgramWillExit_Text              |CS"The program will now exit."
-    #Replace C_$DF_Studio_License_Text            |CS"Programmet kj┬óres under DataFlex Studio lisens. Maks. antal brukere for databasedriverrutine kan ikke fastsettes."
+    #Replace C_$DF_Studio_License_Text            |CS"Programmet kj¢res under DataFlex Studio lisens. Maks. antal brukere for databasedriverrutine kan ikke fastsettes."
     #Replace C_$Compile_Date                      |CS"Kompilert:"
     #IFNDEF C_$CopyToClipboard_Text
-    #Replace C_$CopyToClipboard_Text              |CS"Innehold kopiert til Windows utklippstavle. Trykk Ctrl+V for ├Ñ lime inn i for eksempel en e-post."
+    #Replace C_$CopyToClipboard_Text              |CS"Innehold kopiert til Windows utklippstavle. Trykk Ctrl+V for å lime inn i for eksempel en e-post."
     #ENDIF
 #ENDIF
 
@@ -343,7 +320,7 @@ Register_Function pbEnterKeyAsTabKey Returns Boolean
     #Replace C_$PleaseAdjustTxt                   |CS"Please adjust and try again."
     #Replace C_$ProgramWillExit_Text              |CS"The program will now exit."
     #Replace C_$DF_Studio_License_Text            |CS"Program run under Studio license. The Max number of users for database drivers could not be retrieved."
-    #Replace C_$Compile_Date                      |CS"Compile Date:"
+    #Replace C_$Compile_Date                      |CS"Compiled:"
     #IFNDEF C_$CopyToClipboard_Text
     #Replace C_$CopyToClipboard_Text              |CS"Content copied to Windows clipboard. Press Ctrl+V to paste the content in e.g. an e-mail."
     #ENDIF
@@ -370,7 +347,7 @@ Register_Function pbEnterKeyAsTabKey Returns Boolean
     #Replace C_$PleaseAdjustTxt                   |CS"Please adjust and try again."
     #Replace C_$ProgramWillExit_Text              |CS"The program will now exit."
     #Replace C_$DF_Studio_License_Text            |CS"Program run under Studio license. The Max number of users for database drivers could not be retrieved."
-    #Replace C_$Compile_Date                      |CS"Compile Date:"
+    #Replace C_$Compile_Date                      |CS"Compiled:"
     #IFNDEF C_$CopyToClipboard_Text
     #Replace C_$CopyToClipboard_Text              |CS"Content copied to Windows clipboard. Press Ctrl+V to paste the content in e.g. an e-mail."
     #ENDIF
@@ -397,7 +374,7 @@ Register_Function pbEnterKeyAsTabKey Returns Boolean
     #Replace C_$PleaseAdjustTxt                   |CS"Please adjust and try again."
     #Replace C_$ProgramWillExit_Text              |CS"The program will now exit."
     #Replace C_$DF_Studio_License_Text            |CS"Program run under Studio license. The Max number of users for database drivers could not be retrieved."
-    #Replace C_$Compile_Date                      |CS"Compile Date:"
+    #Replace C_$Compile_Date                      |CS"Compiled:"
     #IFNDEF C_$CopyToClipboard_Text
     #Replace C_$CopyToClipboard_Text              |CS"Content copied to Windows clipboard. Press Ctrl+V to paste the content in e.g. an e-mail."
     #ENDIF
@@ -445,7 +422,6 @@ Define CS_DefAuthVerPolicy   for "/pa"
 Define SEE_MASK_NOCLOSEPROCESS for 64 //(0x00000040)
 
 // *** Struct Declarations: ***
-
 Struct AboutSHELLEXECUTEINFO
     DWord   cbSize
     Integer fMask
@@ -455,11 +431,17 @@ Struct AboutSHELLEXECUTEINFO
     Pointer lpParameters
     Pointer lpDirectory
     Integer nShow
+#IFDEF IS$WIN64
+    Integer iMissingAlignment1
+#ENDIF
     Pointer hInstApp
     Pointer lpIDList
     Pointer lpClass
     Handle  hkeyClass
     DWord   dwHotKey
+#IFDEF IS$WIN64
+    Integer iMissingAlignment2
+#ENDIF
     Handle  hIconMonitor // Union
     //Handle  hMonitor     // Union
     Handle  hProcess
@@ -529,7 +511,6 @@ External_Function WNetGetUserW "WNetGetUserW" MPR.DLL ;
 
         Function_Return dwResult
     End_Function
-
 #ENDIF
 
 #IFNDEF get_WNetGetUser
@@ -967,29 +948,21 @@ Class SysinfoDisplay is a cTextEdit
         Function_Return bOK
     End_Function
 
-    Function IsMertechDriver String sDriverID Returns Boolean
-        Boolean bOK
-        #IFDEF DUF_Use_Mertech_Drivers
-        Move (sDriverID = SQLFLEX or sDriverID = ORAFLEX or sDriverID = MDSPgSQL or sDriverID = MySQLFlex) to bOK
-        #ENDIF
-        Function_Return bOK
-    End_Function
-
     //***
     //*** BW
     //*** Procedure: Show_Drivers
     //*** Purpose  : Show loaded database drivers
     //***
 
+//#IF (Required_FMAC_Build > 106)
+//    #Warning -3
+//#ENDIF
     { Visibility=Private }
-#IF (Required_FMAC_Build > 106)
-#warning -3
-#ENDIF
     Procedure Show_Drivers
         String sDriverID sVersion sClient sValue
         Integer iNumberOfDrivers iDriver iClient iUsersMax iSerialNo iNumServers iCount
         Handle hoCLIHandler hoBtrvHandler
-        Boolean bStudioLicense bIsDAWDriver bIsMertechDriver
+        Boolean bStudioLicense bIsDAWDriver
 
         Move False to bStudioLicense
 
@@ -1003,14 +976,6 @@ Class SysinfoDisplay is a cTextEdit
 //        Load_Driver DB2_DRV_ID
 //        Send Trap_Error of Error_Object_Id DFERR_CANT_LOAD_DLL
 //
-//        #IFDEF DUF_Use_Mertech_Drivers
-//            Send Ignore_Error of Error_Object_Id DFERR_CANT_LOAD_DLL
-//            Load_Driver SQLFLEX
-//            Load_Driver MDSPgSQL
-//            Load_Driver MDSMySQL
-//            Load_Driver ORAFLEX
-//            Send Trap_Error of Error_Object_Id DFERR_CANT_LOAD_DLL
-//        #ENDIF
         Move False to Err
 
         // Loop through all loaded drivers.
@@ -1019,16 +984,12 @@ Class SysinfoDisplay is a cTextEdit
             Send AppendTextLn ""
         End
         For iDriver from 1 to iNumberOfDrivers
-            // For some weird reason it can happen that - when using Mertech drivers - that the driver index
-            // was increased in the CLI array, but it has no value. In that case a "Bad parameter..." error
-            // would be thrown, so we safeguard from that here.
             Send Ignore_Error of Error_Object_Id DFERR_BAD_PARAMETER
             Get_Attribute DF_DRIVER_NAME of iDriver to sDriverID
             Send Trap_Error of Error_Object_Id DFERR_BAD_PARAMETER
             Get IsDAWSQLDriver  sDriverID to bIsDAWDriver
-            Get IsMertechDriver sDriverID to bIsMertechDriver
 
-            If (sDriverID = DFBTRDRV_ID or bIsDAWDriver = True or bIsMertechDriver = True) Begin
+            If (sDriverID = DFBTRDRV_ID or bIsDAWDriver = True) Begin
 
                 // Pervasive/Btrieve database
                 If (sDriverID = DFBTRDRV_ID) Begin
@@ -1055,12 +1016,6 @@ Class SysinfoDisplay is a cTextEdit
                             Get SQLClientVersion sDriverID iClient to sClient
                         End
                         Get CKRevision of hoCLIHandler to sVersion
-                    End
-
-                    If (bIsMertechDriver = True) Begin
-                        #IFDEF DUF_Use_Mertech_Drivers
-                        GET_DRIVER_REVISION to sVersion
-                        #ENDIF
                     End
 
                     // If the serialnumber is = 0, it means that the
@@ -1230,7 +1185,9 @@ Class SysInfoDialog is a ModalPanel
         Object oCloseButton is a Button
             Set Label to C_$Close
             Set Location to 120 210
-            Set Message item 0 to msg_Close_Panel
+            CompilerWarnings Off
+            Set Message Item 0 to msg_Close_Panel
+            CompilerWarnings On
             Set Default_State To True
             // In case someone likes to make the AboutDialog's Border_Style to thick,
             // and changes its peAnchors, we might as well prepare this object
@@ -1482,8 +1439,8 @@ Class AboutDialog is a ModalPanel
         Handle hoVersionInfo
         Boolean bIncluded
         Integer iMajor iMinor iRelease iBuild
-        Date dCompileDate
-        String sCertInfo
+//        Date dCompileDate
+        String sCertInfo sCompileDateAndTime
 
         If (sVersion = "") Begin
             // This automatically shows the program version of the program, if available.
@@ -1504,10 +1461,14 @@ Class AboutDialog is a ModalPanel
         End
 
         // Display the compiled date as the next row in the edit object, after the program version.
-        Get GetCompileDate to dCompileDate
-        If (sVersion <> "") Begin
-            Send Add_Lineln (sVersion + (Character(13)) + C_$Compile_Date * String(dCompileDate))
+        Get psCompileDateAndTime of ghoApplication to sCompileDateAndTime
+        If (sCompileDateAndTime <> "") Begin
+            Send Add_Lineln (sVersion + (Character(13)) + C_$Compile_Date * String(sCompileDateAndTime))
         End
+//        Get GetCompileDate to dCompileDate
+//        If (sVersion <> "") Begin
+//            Send Add_Lineln (sVersion + (Character(13)) + C_$Compile_Date * String(dCompileDate))
+//        End
 
         Get IsProgramDigitallySigned to sCertInfo
         If (sCertInfo <> "-1") Begin
@@ -1520,7 +1481,7 @@ Class AboutDialog is a ModalPanel
         End
     End_Procedure
 
-    Function IsDate Desktop String sDate Returns Boolean
+    Function IsDate String sDate Returns Boolean
         Boolean bIsDate
         String sGoodCharacters sChar
         Integer iCount iLength
@@ -1543,8 +1504,8 @@ Class AboutDialog is a ModalPanel
         Date dCompileDate
         String sAppFilename sProgram sData sCompileDate
         Integer iChannel iPos iDateFormat iCount iSize
-        Boolean bIsValid
-
+        Boolean bIsValid   
+        
         Move 0 to dCompileDate
         // Get full path to the current running executable
         Get GetApplicationFileName of ghoApplication to sAppFilename
@@ -1553,12 +1514,12 @@ Class AboutDialog is a ModalPanel
         //Read the current file  up to where the data we're interesting in is (this was hand calced and so could vary)
         Get Seq_Open_Input_Channel ("binary:" * sAppFilename) to iChannel
 
+#IF (!@ < 201)
         Get_Argument_Size to iSize
-#IF (!@ < 200)
-        Set_Argument_Size 15000000
+        Set_Argument_Size 9000000
 #ENDIF
-        Read_Block channel iChannel sData 15000000   // This must be big enough to reach the compile date location
-        Move (Pos(sProgram,sData)) to iPos
+        Read_Block channel iChannel sData 9000000   // This must be big enough to reach the compile date location
+        Move (Pos(sProgram, sData)) to iPos
         If (iPos > 0) Begin
             // The compile date is 10 characters long and starts 3 characters after the program name
             Move (Mid(sData, 10, iPos + Length(sProgram) + 3)) to sCompileDate  // In US format
@@ -1566,65 +1527,23 @@ Class AboutDialog is a ModalPanel
             // If the current date format is non US, we need to temporary
             // change the format and then move the string to the date variable.
             Get_Attribute DF_DATE_FORMAT to iDateFormat
-            Set_Attribute DF_DATE_FORMAT to DF_DATE_USA
+            Set_Attribute DF_DATE_FORMAT to DF_DATE_USA  
+            Send Ignore_Error of Error_Object_Id 16 
+            If (Left(sCompileDate, 1) = "0") Begin
+                Move ("1" + String(sCompileDate)) to sCompileDate
+            End
             Move (Date(sCompileDate))    to dCompileDate
+            Send Trap_Error of Error_Object_Id 16
             Set_Attribute DF_DATE_FORMAT to iDateFormat // Reset date format
         End
-//        Else Begin
-//            Error DFERR_PROGRAM "Compile Date location in .exe not found"
-//        End
+        Else Begin
+            Error DFERR_PROGRAM "Compile Date location in .exe not found"
+        End
 
         Send Seq_Close_Channel iChannel
-#IF (!@ < 200)
+#IF (!@ < 201)
         Set_Argument_Size iSize
-#ENDIF
-//        Read_Block channel iChannel sData (8 * 1024)    // First 8K is .exe header skip it
-//        Read_Block channel iChannel sData 75            // The compile information we're interested in
-
-        // The data is padded with Character(0)s. Strip them out
-//        Move (CString(sData)) to sData
-
-        // The compile date is after the first ", ", so string parsing is required
-//        Move (Pos(", ", sData)) to iPos
-//        Move (Mid(sData, 10, (iPos + 2) ))  to sCompileDate // In US format
-        // If the current date format is non US, we need to temporary
-        // change the format and then move the string to the date variable.
-//        Get_Attribute DF_DATE_FORMAT        to iDateFormat
-//        Set_Attribute DF_DATE_FORMAT        to DF_DATE_USA
-//
-//        // Note the build in IsDateValid can return the wrong result
-//        // when controls characters are part of the sCompileDate.
-//        Get IsDate sCompileDate))           to bIsValid
-//        If (bIsValid = True) Begin
-//            Move (Date(sCompileDate))       to dCompileDate
-//        End
-//
-//        // As of DataFlex 19.1 the header has changed; and so has the compile date location.
-//        // It seems to me that the position for the compilation date can vary. So we read line-by-line
-//        // until we encounter the program name that appears just in front of the compile date.
-//        // Although I'm not sure about if/how the position varies, the below seems to work just fine.
-//        If (dCompileDate = 0) Begin
-//            Move "" to sCompileDate
-//            Move 30000 to iSize
-//            For iCount from 1 to iSize
-//                Readln channel iChannel sData
-//                Move (Pos(sProgram, sData)) to iPos
-//                If (iPos <> 0) Begin
-//                    Move (Mid(sData, 10, (iPos + (Length(sProgram) + 2)))) to sCompileDate
-//                    Move (Trim(sCompileDate)) to sCompileDate
-//                    Move iSize to iCount // We're out of here.
-//                End
-//            Loop
-//            If (Left(sCompileDate, 1) = "0") Begin
-//                Move ("1" + String(sCompileDate)) to sCompileDate
-//            End
-//            Get IsDate sCompileDate)) to bIsValid
-//            If (bIsValid = True) Begin
-//                Move (Date(sCompileDate)) to dCompileDate
-//            End
-//        End
-//        Send Seq_Close_Channel iChannel
-//        Set_Attribute DF_DATE_FORMAT to iDateFormat // Reset date format
+#ENDIF        
 
         Function_Return dCompileDate
     End_Function

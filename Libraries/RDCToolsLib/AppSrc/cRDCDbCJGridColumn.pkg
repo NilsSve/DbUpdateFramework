@@ -4,6 +4,7 @@ Class cRDCDbCJGridColumn is a cDbCJGridColumn
 
     Procedure Construct_Object
         Forward Send Construct_Object
+        Set psToolTip to "Right-click grid for context sensitive menu options"
 
     End_Procedure
 
@@ -12,11 +13,10 @@ Class cRDCDbCJGridColumn is a cDbCJGridColumn
 
     End_Procedure
 
-    Function OnGetTooltip Integer iRow String sValue String sText Returns String
-        String sRetVal
-        Forward Get OnGetTooltip iRow sValue sText to sRetVal
-
-        Function_Return sRetVal
-    End_Function
+//    Function OnGetTooltip Integer iRow String sValue String sText Returns String
+//        String sRetVal
+//        Forward Get OnGetTooltip iRow sValue sText to sRetVal
+//        Function_Return sRetVal
+//    End_Function
 
 End_Class

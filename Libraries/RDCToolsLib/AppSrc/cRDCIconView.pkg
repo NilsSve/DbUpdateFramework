@@ -27,15 +27,17 @@ Class cIconView Is a View
     Procedure Page_Object Integer bState
         Forward Send page_object bState
         If BuildingObjectId Eq 0 Begin
-          If bState Eq 1 Send DoSetTaskBarIcon
+            If (bState = 1) Begin
+                Send DoSetTaskBarIcon
+            End
         End
-    End_Procedure // Page_Object
+    End_Procedure
 
     // Alt-F4, X-button
     Procedure Exit_Application
         Send DoDestroyIconResources
         Forward Send Exit_Application
-    End_Procedure // Exit_Application
+    End_Procedure
 
     // A close_panel request has been sent.
     // This will quit the application, but the exit_application message is never
@@ -43,7 +45,7 @@ Class cIconView Is a View
     Procedure Close_Panel
         Send DoDestroyIconResources
         Forward Send Close_Panel
-    End_Procedure // Close_Panel
+    End_Procedure
 
     Procedure CloseFile
         Send Close_Panel
@@ -60,15 +62,17 @@ Class cIcondbView Is a dbView
     Procedure Page_Object Integer bState
         Forward Send page_object bState
         If BuildingObjectId Eq 0 Begin
-          If bState Eq 1 Send DoSetTaskBarIcon
+            If (bState = 1) Begin
+                Send DoSetTaskBarIcon
+            End
         End
-    End_Procedure // Page_Object
+    End_Procedure
 
     // Alt-F4, X-button
     Procedure Exit_Application
         Send DoDestroyIconResources
         Forward Send Exit_Application
-    End_Procedure // Exit_Application
+    End_Procedure
 
     // A close_panel request has been sent.
     // This will quit the application, but the exit_application message is never
@@ -76,7 +80,7 @@ Class cIcondbView Is a dbView
     Procedure Close_Panel
         Send DoDestroyIconResources
         Forward Send Close_Panel
-    End_Procedure // Close_Panel
+    End_Procedure
     Procedure CloseFile
         Send Close_Panel
     End_Procedure
