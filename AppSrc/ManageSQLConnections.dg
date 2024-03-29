@@ -358,9 +358,9 @@ Object oSQLMaintainConnections_dg is a ModalPanel
 
         Object oTrusted_cb is a cSQLCheckbox
             Set Size to 12 85
-            Set Location to 92 82
-            Set Label to "Use Trusted Connection"
-            Set psToolTip to "(Windows Authentication) When selected, SQL Server uses integrated login (Windows login information) security to establish connections using this data source, regardless of the current login security mode at the server."
+            Set Location to 94 82
+            Set Label to "Use Windows Authentication"
+            Set psToolTip to "(Trusted Connection) When selected, SQL Server uses integrated login (Windows login information) security to establish connections using this data source, regardless of the current login security mode at the server."
             Set piItem to 8
 
             Procedure OnChange
