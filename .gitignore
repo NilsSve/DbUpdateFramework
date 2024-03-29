@@ -50,3 +50,11 @@ loginEncryptionkey.inc
 **/capture
 **/dfrefactor backup
 **/*.mp4
+AppSrc/DUFTestProgram.prn
+IdeSrc/nilss_Studio.dsk
+IdeSrc/nilss_TraceOpts.dsk
+IdeSrc/StudioMetaData64.mtd
+Programs/DUFCodeGenerator.dbg
+Programs/DUFCodeGenerator.exe
+Programs/DUFTestProgram.dbg
+Programs/DUFTestProgram.exe
