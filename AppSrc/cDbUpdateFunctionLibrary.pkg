@@ -1376,7 +1376,7 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
     // Pass the full path to the data folder and the name of the connection id (string value).
     // Pass a True for the bShowResult parameter to show work in progress (showln's).
     Procedure SqlUtilChangeIntFilesToConnectionIDs String sDataPath String sConnectionID Boolean bShowResult
-        String sFileName sDriverID sDriverFile sConnectionString
+        String sFileName sDriverID sDriverFile sConnectionString sPath
         String[] sFilesData
         Boolean bOK bCancel
         Integer iSize iCount
@@ -1427,6 +1427,10 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
         If (sFileName <> "") Begin
             Move "" to sDriverFile
             Get_File_Path sFileName to sDriverFile
+            Get ParseFolderName sDriverFile to sPath
+            If (sDataPath <> sPath) Begin
+                Move "" to sDriverFile
+            End
             If (sDriverFile <> "") Begin
                 Get psConnectionString to sConnectionString
                 Get _UtilChangeSourceCodeLine sDriverFile CS_SQLConnectionIDText (CS_SQLConnectionIDText * String(sConnectionID) + "," * String(sConnectionString) * String(",0")) bShowResult to bOK
