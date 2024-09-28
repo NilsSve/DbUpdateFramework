@@ -51,8 +51,8 @@ Object oTableDUFCodeGenerator is a dbView
     Property String psOrgOpenPath
     Property Handle phtable
     Property String psTableName
-    Property Integer piDbVersionFileNumber  -1
-    Property Integer piDbVersionFieldNumber -1
+    Property Integer piDbVersionFileNumber  255
+    Property Integer piDbVersionFieldNumber 1
     Property Number pnSourcePackageVersion -1
     
     // Set psOrgOpenPath at startup
