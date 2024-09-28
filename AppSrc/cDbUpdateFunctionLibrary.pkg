@@ -1375,12 +1375,13 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
     // OR changes an existing connection id to a new id.
     // Pass the full path to the data folder and the name of the connection id (string value).
     // Pass a True for the bShowResult parameter to show work in progress (showln's).
-    Procedure SqlUtilChangeIntFilesToConnectionIDs String sDataPath String sConnectionID Boolean bShowResult
+    Function SqlUtilChangeIntFilesToConnectionIDs String sDataPath String sConnectionID Boolean bShowResult Returns Integer
         String sFileName sDriverID sDriverFile sConnectionString sPath
         String[] sFilesData
         Boolean bOK bCancel
-        Integer iSize iCount
+        Integer iSize iCount iFileErrors
 
+        Move 0 to iFileErrors
         Get SqlUtilEnumerateIntFiles sDataPath to sFilesData
         Move (SizeOfArray(sFilesData))    to iSize
         If (iSize = 0) Begin
@@ -1390,7 +1391,7 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
                 End
             End
             Send Info_Box CS_DUF_NoIntFilesFound
-            Procedure_Return
+            Function_Return 0
         End
 
         Move (Trim(sConnectionID)) to sConnectionID
@@ -1400,12 +1401,15 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
             Move sFilesData[iCount] to sFileName
             // This makes sure that we also can change an existing connection id to something new:
             Get _UtilChangeSourceCodeLine (sDataPath + sFileName) CS_SERVER_NAME (CS_SERVER_NAME * CS_DFCONNID + "=" + sConnectionID) bShowResult to bOK
+            If (bOK = False) Begin
+                Increment iFileErrors
+            End
             If (ghoStatusPanel <> 0) Begin
                 If (Active_State(ghoStatusPanel)) Begin
                     Get Check_StatusPanel of ghoStatusPanel to bCancel
                     If (bCancel = True) Begin
                         Send Deactivate of ghoStatusPanel
-                        Procedure_Return
+                        Function_Return iFileErrors
                     End
                 End
             End
@@ -1435,8 +1439,10 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
                 Get psConnectionString to sConnectionString
                 Get _UtilChangeSourceCodeLine sDriverFile CS_SQLConnectionIDText (CS_SQLConnectionIDText * String(sConnectionID) + "," * String(sConnectionString) * String(",0")) bShowResult to bOK
             End
-        End
-    End_Procedure
+        End     
+        
+        Function_Return iFileErrors
+    End_Function
 
     // Checks if the database exists in SQL. Returns = True if it does.
     Function SqlUtilCheckIfDatabaseExists String sDatabase Returns Boolean
@@ -8824,14 +8830,15 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
     //       so in that case we "cheat" and report those tables were opened OK.
     Function OpenTableExclusive Handle hTable Returns Boolean
         Integer iMode iErrorObject
-        Boolean bOpened
+        Boolean bOpened bExitIfDebuggerActive
         String sTableName 
         Handle hoCurrentErrorHandler
-
+        
+        Get pbExitIfDebuggerActive of ghoDbUpdateHandler to bExitIfDebuggerActive
         Set Error_Report_Mode to DUF_ERROR_NO_REPORT
         // Can't open a table properly if run through the Debugger/Studio,
         // so we generate an error here:
-        If (IsDebuggerPresent()) Begin
+        If (IsDebuggerPresent() and bExitIfDebuggerActive = True) Begin
             Move Error_Object_Id to hoCurrentErrorHandler
             Get piOrgErrorHandlerID to iErrorObject
             If (iErrorObject <> 0) Begin
@@ -8844,13 +8851,6 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
         End
         Get_Attribute DF_FILE_OPENED of hTable to bOpened
         If (bOpened) Begin
-//            If (IsDebuggerPresent()) Begin
-//                Get_Attribute DF_FILE_LOGICAL_NAME of hTable to sTableName
-//                If (Uppercase(sTableName) = "CODEMAST" or Uppercase(sTableName) = "CODETYPE") Begin
-//                    Set Error_Report_Mode to DUF_ERROR_REPORT
-//                    Function_Return True
-//                End
-//            End
             Get_Attribute DF_FILE_OPEN_MODE of hTable to iMode
             If (iMode=DF_EXCLUSIVE) Begin
                     Set Error_Report_Mode to DUF_ERROR_REPORT

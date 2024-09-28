@@ -317,7 +317,7 @@ Object oUtilFunctions_vw is a dbView
                     Procedure OnClick
                         String sDataPath sConnectionID
                         Boolean bExists bActive
-                        Integer iRetval
+                        Integer iRetval iChangedFiles
 
                         Get Value of oSelectDataPath_fm to sDataPath
                         Get vFolderExists sDataPath to bExists
@@ -349,7 +349,7 @@ Object oUtilFunctions_vw is a dbView
 
                         Send Initialize_StatusPanel of ghoStatusPanel "The Database Update Framework" "Changing Connection ID's in .int files" ""
                         Send Start_StatusPanel of ghoStatusPanel
-                        Send SqlUtilChangeIntFilesToConnectionIDs of ghoDbUpdateFunctionLibrary sDataPath sConnectionID True
+                        Get SqlUtilChangeIntFilesToConnectionIDs of ghoDbUpdateFunctionLibrary sDataPath sConnectionID True to iChangedFiles
 
                         Get Active_State of ghoStatusPanel to bActive
                         If (bActive = False) Begin
@@ -357,7 +357,7 @@ Object oUtilFunctions_vw is a dbView
                         End
                         Else Begin
                             Send Stop_StatusPanel of ghoStatusPanel
-                            Send Info_Box "Ready! All .int files changed."
+                            Send Info_Box ("Ready!" * String(iChangedFiles) * String(".int files changed."))
                         End
                     End_Procedure
 
