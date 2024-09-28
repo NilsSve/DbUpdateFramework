@@ -1,4 +1,4 @@
-﻿//****************************************************************************
+//****************************************************************************
 // $Module type: Class
 // $Module name: cDbUpdateFunctionLibrary
 // $Author     : Nils Svedmyr, RDC Tools International, <mailto:support@rdctools.com>
@@ -32,6 +32,7 @@
 //
 Use cBaseDbUpdateFuncLib.pkg
 
+Register_Function pbExitIfDebuggerActive Returns Boolean
 Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
 
     Procedure Construct_Object
@@ -1375,7 +1376,7 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
     // OR changes an existing connection id to a new id.
     // Pass the full path to the data folder and the name of the connection id (string value).
     // Pass a True for the bShowResult parameter to show work in progress (showln's).
-    Function SqlUtilChangeIntFilesToConnectionIDs String sDataPath String sConnectionID Boolean bShowResult Returns Integer
+    Function SqlUtilChangeIntFilesToConnectionIDs String sDataPath String sConnectionID Boolean bShowResult String[] ByRef asErrorFiles Returns Integer
         String sFileName sDriverID sDriverFile sConnectionString sPath
         String[] sFilesData
         Boolean bOK bCancel
@@ -1399,9 +1400,11 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
         Decrement iSize
         For iCount from 0 to iSize
             Move sFilesData[iCount] to sFileName
+            If (Lowercase(sFileName) <> "mssqldrv.int" and Lowercase(sFileName) <> "db2_drv.int" and Lowercase(sFileName) <> "odbc_drv.int") Begin
             // This makes sure that we also can change an existing connection id to something new:
             Get _UtilChangeSourceCodeLine (sDataPath + sFileName) CS_SERVER_NAME (CS_SERVER_NAME * CS_DFCONNID + "=" + sConnectionID) bShowResult to bOK
             If (bOK = False) Begin
+                    Move sFileName to asErrorFiles[SizeOfArray(asErrorFiles)]
                 Increment iFileErrors
             End
             If (ghoStatusPanel <> 0) Begin
@@ -1410,6 +1413,7 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
                     If (bCancel = True) Begin
                         Send Deactivate of ghoStatusPanel
                         Function_Return iFileErrors
+                        End
                     End
                 End
             End
@@ -8834,7 +8838,10 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
         String sTableName 
         Handle hoCurrentErrorHandler
         
+        Move False to bExitIfDebuggerActive
+        If (ghoDbUpdateHandler <> 0) Begin
         Get pbExitIfDebuggerActive of ghoDbUpdateHandler to bExitIfDebuggerActive
+        End
         Set Error_Report_Mode to DUF_ERROR_NO_REPORT
         // Can't open a table properly if run through the Debugger/Studio,
         // so we generate an error here:
