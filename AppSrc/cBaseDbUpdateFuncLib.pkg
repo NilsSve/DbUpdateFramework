@@ -1,4 +1,4 @@
-﻿//****************************************************************************
+//****************************************************************************
 // $Module type: Class
 // $Module name: cBaseDbUpdateFuncLib
 // $Author     : Nils Svedmyr, RDC Tools International, <mailto:support@rdctools.com>
@@ -914,18 +914,18 @@ Class cBaseDbUpdateFuncLib is a cObject
 
     // Returns a string array with all tables for the current database.
     Function _SqlUtilEnumerateTables String sDriverID String sDatabase String sSchema Returns String[]
-        String[] sReturnArray sArray
+        String[] asReturnArray
         String sConnectionString sSelect
         Integer iSize iCount iDbType
         Boolean bOK
 
         If (sDriverID = DATAFLEX_ID) Begin
-            Function_Return sArray
+            Function_Return asReturnArray
         End
 
         Get _SqlCheckCurrentDriver sDriverID to bOK
         If (bOK = False) Begin
-            Function_Return sReturnArray
+            Function_Return asReturnArray
         End
         If (sSchema = "") Begin
             Get _SqlFindKeyWord CI_SQLDBO to sSchema
@@ -950,15 +950,15 @@ Class cBaseDbUpdateFuncLib is a cObject
 
         Case Begin
             Case (sDriverID = MSSQLDRV_ID)
-                Get _SqlTableArrayDAW to sReturnArray
+                Get _SqlTableArrayDAW to asReturnArray
                 Case Break
 
             Case (sDriverID = DB2_DRV_ID)
-                Get _SqlTableArrayDAW to sReturnArray
+                Get _SqlTableArrayDAW to asReturnArray
                 Case Break
 
             Case (sDriverID = ODBC_DRV_ID)
-                Get _SqlTableArrayDAW to sReturnArray
+                Get _SqlTableArrayDAW to asReturnArray
                 Case Break
 
             Case Else
@@ -966,7 +966,7 @@ Class cBaseDbUpdateFuncLib is a cObject
                 Case Break
         Case End
 
-        Function_Return sReturnArray
+        Function_Return asReturnArray
     End_Function
 
     // Returns all table spaces as a string array for the passed driver id.
@@ -4301,7 +4301,7 @@ Class cBaseDbUpdateFuncLib is a cObject
         Loop
         Send Seq_Close_Channel iCh
 
-        Sleep 1 // Wait for Windows to close the file
+//        Sleep 1 // Wait for Windows to close the file
 
         Get Seq_Open_Output_Channel sFileName to iCh
         If (iCh < 1) Begin
@@ -4387,6 +4387,10 @@ Class cBaseDbUpdateFuncLib is a cObject
         Move False to bExists
         Get psDatabase to sDatabase
         Get psSchema   to sSchema
+        If (sDriverID = DATAFLEX_ID or sDatabase = "") Begin
+            Error DFERR_PROGRAM ("Function _SqlUtilCheckIfTableNameExists: psDatabase =" * String(sDatabase) * "psDriver =" * String(sDriverID))
+            Function_Return False
+        End
         Get _SqlUtilEnumerateTables sDriverID sDatabase sSchema to sTablesArray
         Move (SizeOfArray(sTablesArray)) to iSize
         Decrement iSize
