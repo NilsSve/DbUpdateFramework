@@ -220,22 +220,20 @@ Object oApplication is a cApplication
 End_Object
 
 Object oDbUpdateHandler is a cDbUpdateHandler
-    Set piDbVersionFileNumber  to 1
+    Set piDbVersionFileNumber  to 255
     Set piDbVersionFieldNumber to 1
     Set phoDbUpdateHandler of ghoApplication to Self
-
+    Set pbExitIfDebuggerActive to False
+    
     Procedure OnPreUpdate
-        String sVersionInfo                     // DF 18.2 MSSQLDRV
+//        String sVersionInfo                     // DF 18.2 MSSQLDRV
 //        Get MinMSSQLDRV_And_ClientVersion "6.1.0.32"  SQLSERVER2012CLIENT True True to sVersionInfo
-                                                // DF 19.1 MSSQLDRV
-        Get MinMSSQLDRV_And_ClientVersion "6.3.0.13" SQLSERVER2016CLIENT True True to sVersionInfo
+//                                                // DF 19.1 MSSQLDRV
+//        Get MinMSSQLDRV_And_ClientVersion "6.3.0.13" SQLSERVER2016CLIENT True True to sVersionInfo
     End_Procedure  
 
     Object oDbUpdateVersion1_0 is a cDbUpdateVersion
         Set pnVersionNumber to 1.0
-//        Procedure OnUpdate
-//            Boolean bOK 
-//        End_Procedure
     End_Object
 
 End_Object
