@@ -1,4 +1,4 @@
-﻿//****************************************************************************
+//****************************************************************************
 // $Module type: Class
 // $Module name: cSQLConnectionHandler.pkg
 // $Author     : Nils Svedmyr, RDC Tools International, <mailto:support@rdctools.com>
@@ -603,9 +603,11 @@ Class cSQLConnectionHandler is a cObject
             // The DbType is a bit special. If the piDbType has _not_ been setup in object code we try to derave
             // the value from the driver id:
             Get SqlUtilDbTypeFromDriver of (phoSQLConnectionIniFile(Self)) Connection.sDriver to SQLConnection.iDbType
+            If (SQLConnection.iDbType = 0) Begin
             // ...but in case it has been explicitly set in the object we use that value.
             Get piDbType                                     to iDbType
-            If (iDbType <> SQLConnection.iDbType) Begin
+            End
+            If (iDbType > 0 and SQLConnection.iDbType = 0) Begin
                 Move iDbType to SQLConnection.iDbType
             End
             Get psBaseTableSpace                             to SQLConnection.sBaseTableSpace
