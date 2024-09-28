@@ -170,7 +170,8 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary // cObject
         Property Boolean Private.pbUpdateVersionObjectError False
         { Category="Error Handling" MethodType=Property Visibility=Private }
         Property String[] paSQLQueryMessages
-
+        
+        Property Boolean pbExitIfDebuggerActive True
         { Visibility=Private }
         Property Integer piOrgErrorHandlerID Error_Object_Id
         { Visibility=Private }
@@ -938,14 +939,14 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary // cObject
             Procedure_Return
         End
 
+        Get piDbVersionFileNumber to iDbVersionFileNumber
         Get pbAutoCreateDbVersionTable to bAutoCreateDbVersionTable
-        If (bAutoCreateDbVersionTable = True and iDbVersionFileNumber = -1) Begin
+        If (bAutoCreateDbVersionTable = True and iDbVersionFileNumber < 1) Begin
             Move (piCurrentErrorHandlerID(Self)) to Error_Object_Id
             Error DFERR_PROGRAM "The iDbVersionFileSlotNumber = -1. It MUST be set to a free Filelist.cfg slot in the cDbUpdateHandler object. Could not auto-create the DbVersion table.\nProgram will now exit!"
             Send Exit_Application
         End
 
-        Get piDbVersionFileNumber to iDbVersionFileNumber
         Get _UtilTableExists of ghoDbUpdateFunctionLibrary iDbVersionFileNumber to bTableExists
         If (bTableExists = True) Begin
             Set Private.pbDbVersionCheckDone to True
