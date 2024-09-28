@@ -36,7 +36,7 @@ Procedure WriteProgramCode Integer iCh String sSourcePackageName Number nSourceP
     Writeln channel iCh "    Set psCompany to 'RDC Tools International'"
     Writeln channel iCh "    Set psProduct to 'DUF Auto Update Program'"
     Writeln channel iCh "    Set psProgram to 'Internal use/test of a DUF Update Package'"
-    Writeln channel iCh "    Set psVersion to '19.1'"
+    Writeln channel iCh "    Set psVersion to " FMAC_VERSION "." FMAC_REVISION
     Writeln channel iCh "End_Object"
     Writeln channel iCh 
     Writeln channel iCh 'Get YesNo_Box ("This is a DUF test program written for INTERNAL usage only.\n\nUpdate your DEVELOPMENT DATABASE to version: ' (String(nSourcePackageVersion)) ' now?") to WindowIndex'
