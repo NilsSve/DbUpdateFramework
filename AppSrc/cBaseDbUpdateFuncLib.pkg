@@ -4245,10 +4245,11 @@ Class cBaseDbUpdateFuncLib is a cObject
         Integer iCh iRow iItems iCount
         String sValue sRow
         String[] sFileArray
-        Boolean bExists bIsActive
+        Boolean bExists bIsActive bFileChange
 
         Move False to Err
         Move 0 to iRow
+        Move False to bFileChange
 
         If (ghoStatusPanel <> 0) Begin
             Get Active_state of ghoStatusPanel to bIsActive
@@ -4291,17 +4292,9 @@ Class cBaseDbUpdateFuncLib is a cObject
         While (not(SeqEof))
             Readln channel iCh sRow
             If (Uppercase(sRow) contains Uppercase(sChangeFrom)) Begin
-//                If (bShowResult = True) Begin
-//                    If (bIsActive = True) Begin
-//                        Send Update_StatusPanel of ghoStatusPanel ("Changed from:" * String(sRow) * "to:" * String(sChangeTo))
-//                    End
-//                    Else Begin
-//                        Showln "Changed from: " sRow " to: " sChangeTo
-//                    End
-//                End
                 // Change the whole line to the new connection id:
-                Move sChangeTo to sRow
-                // Move (Replaces(sChangeFrom, sRow, sChangeTo)) to sValue
+                Move sChangeTo to sRow 
+                Move True to bFileChange
             End
             Move sRow to sFileArray[iRow]
             Increment iRow
@@ -4323,7 +4316,7 @@ Class cBaseDbUpdateFuncLib is a cObject
         Loop
         Send Seq_Close_Channel iCh
 
-        Function_Return (Err = False)
+        Function_Return bFileChange
     End_Function
 
     // This message creates an error log in the "Home" folder named "SQLErrorLog.txt",
