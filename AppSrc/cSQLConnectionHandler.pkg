@@ -161,16 +161,22 @@ Class cSQLConnectionHandler is a cObject
 
     // Reads the driver .int file and sets class properties of the cDbUpdateFunctionLibrary accordingly.
     Procedure SetupDriverDefaults String sDriverID
-        String sAttributeValue
+        String sAttributeValue sServer
         Integer iDriverID
         Boolean bNULL bSQLDriver
-
+        Handle hDatabase
+        
         Get IsSQLDriver sDriverID to bSQLDriver
         If (bSQLDriver = False) Begin
             Procedure_Return
         End                                      
         
-        Get DriverIndex sDriverID to iDriverID
+        Get DriverIndex sDriverID to iDriverID  
+        
+        // ToDo: Testing!
+//        Get psServer of ghoDbUpdateFunctionLibrary to sServer
+//        Get SqlUtilDatabaseHandle of ghoDbUpdateFunctionLibrary sDriverID sServer to hDatabase
+//        Set_Attribute DF_DATABASE_IGNORE_WARNINGS of iDriverID hDatabase to True 
 
         // Driver default values for various data types:
         Get_Attribute DF_DRIVER_DEFAULT_DEFAULT_ASCII of iDriverID      to sAttributeValue
