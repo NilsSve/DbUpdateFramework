@@ -448,6 +448,39 @@ Object oTableDUFCodeGenerator is a dbView
 
         End_Object
 
+        Object oSelectAll_btn is a Button
+            Set Size to 14 62
+            Set Location to 10 246
+            Set Label to "Select All"
+            Set psImage to "SelectAll.ico"
+            Set peAnchors to anTopRight
+            Procedure OnClick
+                Set SelectItems of oFilelist_grd to cx_Select_All
+            End_Procedure
+        End_Object
+
+        Object oSelectNone_btn is a Button
+            Set Size to 14 62
+            Set Location to 10 312
+            Set Label to "Select None"
+            Set psImage to "SelectNone.ico"
+            Set peAnchors to anTopRight
+            Procedure OnClick
+                Set SelectItems of oFilelist_grd to cx_Select_None
+            End_Procedure
+        End_Object
+
+        Object oSelectInvert_btn is a Button
+            Set Size to 14 74
+            Set Location to 10 378
+            Set Label to "Invert Selections"
+            Set psImage to "SelectInvert.ico"
+            Set peAnchors to anTopRight
+            Procedure OnClick
+                Set SelectItems of oFilelist_grd to cx_Select_Invert
+            End_Procedure
+        End_Object
+
         // Needed to not close the view when Esc is hit in the grid.
         On_Key kCancel Send None
     End_Object
@@ -879,6 +912,7 @@ Object oTableDUFCodeGenerator is a dbView
             Function_Return GenerateOpenTableError
         End
 
+        Write channel iCh C_BOM_UTF8
         Writeln channel iCh "/" "/ " CS_DatabaseUpdateFramework
         Writeln channel iCh ("/" + "/ Created by: 'DUF Update Code Generator'. Created:" * String(dtCreationTime))
         Writeln channel iCh ("Use cDbUpdateVersion.pkg")
@@ -937,24 +971,25 @@ Object oTableDUFCodeGenerator is a dbView
                 Move sRootName                    to APITableNameInfo.sRootName
 
                 Move TheData[iTable].sDisplayName to APITableNameInfo.sDisplayName
-                Move TheData[iTable].bIsAlias     to bIsAlias
-                Move bIsAlias                     to APITableNameInfo.bIsAlias
+                Move TheData[iTable].bIsAlias     to APITableNameInfo.bIsAlias
                 Get _UtilTableIsSql of ghoDbUpdateFunctionLibrary hTable to APITableNameInfo.bIsSQL
+                Get_Attribute DF_FILE_IS_SYSTEM_FILE of hTable to APITableNameInfo.bIsSystemFile
 
                 // Get the Driver ID
                 Get_Attribute DF_FILE_DRIVER of hTable to sDriverID
                 Get IsDAWSQLDriver of ghoDbUpdateFunctionLibrary sDriverID to bDawSqlDriver
                 Get IsSQLDriver    of ghoDbUpdateFunctionLibrary sDriverID to bSqlDriver
 
-                If (bIsAlias = False) Begin
-                    Set Action_Text of ghoStatusPanel to ("Number:" * String(APITableNameInfo.iTableNumber) * String(APITableNameInfo.sLogicalName))
-                    Get UtilColumnsStructFill of ghoDbUpdateFunctionLibrary hTable to APIColumns
-                    If (APIColumns[0].bError = True) Begin
-                        Function_Return GenerateError
-                    End
-                    If (APIColumns[0].bCancel = True) Begin
-                        Function_Return GenerateUserCancel
-                    End
+                Set Action_Text of ghoStatusPanel to ("Number:" * String(APITableNameInfo.iTableNumber) * String(APITableNameInfo.sLogicalName))
+                Get UtilColumnsStructFill of ghoDbUpdateFunctionLibrary hTable to APIColumns
+                If (APIColumns[0].bError = True) Begin
+                    Function_Return GenerateError
+                End
+                If (APIColumns[0].bCancel = True) Begin
+                    Function_Return GenerateUserCancel
+                End
+
+                If (APITableNameInfo.bIsAlias = False) Begin
                     Move (SizeOfArray(APIColumns)) to iSize
                     Decrement iSize
                     If (iSize >= 0) Begin
@@ -970,7 +1005,7 @@ Object oTableDUFCodeGenerator is a dbView
                         Writeln channel iCh
                         Writeln channel iCh ("        // Table:" * '"' + APITableNameInfo.sLogicalName + '"' * "Column: 1")
                     End
-
+    
                     For iCount from 0 to iSize
                         Writeln channel iCh ("        Move" *       String(APIColumns[iCount].iFieldNumber)       * "to APIColumns[iCount].iFieldNumber")
                         Writeln channel iCh ("        Move" * '"' + String(APIColumns[iCount].sFieldName)   + '"' * "to APIColumns[iCount].sFieldName")
@@ -1085,9 +1120,9 @@ Object oTableDUFCodeGenerator is a dbView
                     Writeln channel iCh
                 End
 
-                If (bIsAlias = True) Begin
-                    // Create Alias Table Definition:
-                    Writeln channel iCh ("        // Create Alias Table Definition:")
+                Else If (APITableNameInfo.bIsAlias = True) Begin
+                    Writeln channel iCh ("        // Logical Table Name:" * '"' + APITableNameInfo.sLogicalName + '"' * "Filelist.cfg Number:" * String(APITableNameInfo.iTableNumber))
+                    Writeln channel iCh ("        // Alias Table properties:")
                     Writeln channel iCh ("        Move" * String(hTable) * "to hTable")
                     If (bSqlDriver = True and not(APITableNameInfo.sRootName contains sDriverID)) Begin
                         Writeln channel iCh ("        Set_Attribute DF_FILE_ROOT_NAME    of hTable to" * '"' + sDriverID + ":" + APITableNameInfo.sRootName    + '"')

@@ -28,6 +28,8 @@ Use Dfabout.pkg
     End_Function
 #ENDIF
 
+Register_Procedure Set Private.pbProcessingError Boolean bProcessingError
+
 Class cBaseDbUpdateFuncLib is a cObject
     Import_Class_Protocol cDbUpdateFunctionLibrary_Mixin
     #Include ParseKeyWord.pkg
@@ -4035,6 +4037,7 @@ Class cBaseDbUpdateFuncLib is a cObject
 
         Get Error_Report_Mode to iErrorMode
         If (iErrorMode = DUF_ERROR_NO_REPORT) Begin
+            Set Private.pbProcessingError to False
             Procedure_Return
         End
 

@@ -96,10 +96,7 @@ Use cDbUpdateFunctionLibrary.pkg
 { OverrideProperty=pbCompareDate_DateTime Visibility=Private }
 { OverrideProperty=pbCompareIndexAscending Visibility=Private }
 { OverrideProperty=pbCompareIndexUppercase Visibility=Private }
-    // Note: We import all functionality of the DatabaseFunctionLibrary into the class:
-Class cDbUpdateHandler is a cDbUpdateFunctionLibrary // cObject
-//    Import_Class_Protocol cDbUpdateFunctionLibrary
-//    Import_Class_Protocol cDbUpdateFunctionLibrary_Mixin
+Class cDbUpdateHandler is a cDbUpdateFunctionLibrary
 
     Procedure Construct_Object
         tUserCount UserCount
@@ -1824,7 +1821,6 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary // cObject
     Procedure Error_Report Integer iErrorNumber Integer iErrorLine String sErrorText
         Number nVersion
         Handle hoLogFile 
-//        String sErrExtraText
         
         If (Private.pbProcessingError(Self)) Begin
             Procedure_Return
@@ -1836,13 +1832,14 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary // cObject
         // As we don't want to trigger an error in that very specific case,
         // we just ignore it here.
         //
-        // If no report mode, just set the err indicator to true.
+        // If no report mode, just set the err indicator to false.
         If (Error_Report_Mode(Self) = DUF_ERROR_NO_REPORT) Begin
-            Move False to Err
+            Set Private.pbProcessingError to False
             Procedure_Return
         End
 
         If (iErrorNumber = DFERR_UNSUPPORTED_ATTRIBUTE) Begin
+            Set Private.pbProcessingError to False
             Procedure_Return
         End
 

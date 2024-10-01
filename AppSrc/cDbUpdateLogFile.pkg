@@ -208,6 +208,7 @@ Class cDbUpdateLogFile is a cObject
             Append_Output channel iCh sFileName
                 If (bQuickWrite = True) Begin
                     If (iSize = 0) Begin
+                        Write channel iCh C_BOM_UTF8
                         Writeln channel iCh CS_DatabaseUpdateFramework
                         Set pbEmptyLogFile to False
                     End

@@ -3357,9 +3357,9 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
     Function ApiTableUpdate tAPITableNameInfo APITableNameInfoFrom tAPIColumn[] aColumnsFrom tAPIIndex[] aIndexesFrom tAPIRelation[] aRelationsFrom Returns Boolean
         Handle hTable
         String sTableName
-        String sDriverIDFrom sDriverIDTo
+        String sDriverIDFrom sDriverIDTo sLogicalNameTo
         Integer iDbType
-        Boolean bOk bOpened bApiTableUpdateAuto
+        Boolean bOk bOpened bApiTableUpdateAuto bLogicalNameOK
         Boolean bUseConnectionID bToANSI bRecnum bCopyData bCompareDate_DateTime bCompareIndexAscending bCompareIndexUppercase bTableExists
         Boolean bIsSame bFilelistError bIsAliasFrom bIsSQLTableFrom bIsSQLTableTo
         tSQLConnection SQLConnection
@@ -3373,7 +3373,8 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
         If (Lowercase(sTableName) = "dbversion") Begin
             Function_Return False
         End
-
+        
+        Move True to bOk
         Move APITableNameInfoFrom.sDriverID     to sDriverIDFrom
         Get piDbType                            to iDbType
         Get pbRecnum                            to bRecnum
@@ -3387,7 +3388,7 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
 
         Move APITableNameInfoFrom.iTableNumber  to hTable
         Set Private.phCurrentTable              to hTable
-        Get _UtilTableExists  hTable             to bTableExists
+        Get _UtilTableExists  hTable            to bTableExists
 
         If (ghoProgressBar <> 0) Begin
             Send DoAdvance of ghoProgressBar
@@ -3398,7 +3399,7 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
 
         Move APITableNameInfoFrom.bIsAlias      to bIsAliasFrom
         Move APITableNameInfoFrom.bIsSQL        to bIsSQLTableFrom
-        Get _UtilTableIsSql hTable               to bIsSQLTableTo
+        Get _UtilTableIsSql hTable              to bIsSQLTableTo
         Get UtilDriverFromTableNumber hTable    to sDriverIDTo
         Move True                               to APITableFrom.bFromTable
         Move hTable                             to APITableFrom.hTable
@@ -3407,8 +3408,18 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
         Move aIndexesFrom                       to APITableFrom.aApiIndexes
         Move aRelationsFrom                     to APITableFrom.aApiRelations
 
-        If (bIsSQLTableFrom = True and bIsSQLTableTo = False) Begin
+        // Check both the Filelist slot AND the LogicalName are the same! Else declare an error and break out of here!
+        If (bTableExists = True and sDriverIDTo <> DATAFLEX_ID) Begin
+            Get _SqlUtilCheckIfTableNameExists APITableFrom.ApiTableInfo.sLogicalName sDriverIDTo to bLogicalNameOK
             Get SqlUtilCheckIfTableHandleExists hTable sDriverIDFrom to bOk
+            If (bOk = True and bLogicalNameOK = False) Begin
+                Get_Attribute DF_FILE_LOGICAL_NAME of hTable to sLogicalNameTo
+                Error DFERR_PROGRAM ("The Filelist slot:" * String(hTable) * "exists on the client, but the Logical names are differnt! New Logical Name:" ;
+                                      * String(APITableFrom.ApiTableInfo.sLogicalName) * "existing Logical Name:" * String(sLogicalNameTo) * "- The file needs to be manually moved to another file slot (or removed) before this process can be started!")
+                Function_Return False
+            End
+        End
+        If (bIsSQLTableFrom = True and bIsSQLTableTo = False) Begin 
             If (bOk = True) Begin
                 Get ApiTableAttachToSql hTable True to bOk
                 Function_Return bOk
@@ -3431,11 +3442,12 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
             Get UtilRelationCombineFromAndToArrays APITableFrom.aApiRelations APITableTo.aApiRelations  to aAPIRelationCompare
         End
 
+        Move True to bOk
         Move False to Err
         Case Begin
             // Alias table:
             Case (bIsAliasFrom = True)
-                Get _UtilTableCheckChangeFilelistNames APITableNameInfoFrom to bOk
+                // Do nothing. Get _UtilTableCheckChangeFilelistNames is called below
                 Case Break
 
             // New Table:
@@ -3499,24 +3511,27 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
                 Move False to bOk
         Case End
         
-        // Note: If the from table was SQL; we should either connect to an existing SQL to table,
-        // or convert an embedded table to SQL
-        If (bIsSQLTableFrom = True and bIsSQLTableTo = False) Begin
-            Get SqlUtilCheckIfTableHandleExists hTable sDriverIDFrom to bOk
-            If (bOk = False) Begin
-                Get ApiTableConvertToSql_Ex hTable sDriverIDFrom bUseConnectionID bToANSI bRecnum bCopyData to bOK
+        If (bOk = True) Begin
+            // Note: If the from table was SQL; we should either connect to an existing SQL to table,
+            // or convert an embedded table to SQL
+            If (bIsSQLTableFrom = True and bIsSQLTableTo = False) Begin
+                Get SqlUtilCheckIfTableHandleExists hTable sDriverIDFrom to bOk
+                If (bOk = False) Begin
+                    Get ApiTableConvertToSql_Ex hTable sDriverIDFrom bUseConnectionID bToANSI bRecnum bCopyData to bOK
+                End
             End
-        End
-        Else If (bIsSQLTableFrom = False and bIsSQLTableTo = True) Begin
-            Get SqlTableConvertToEmbedded hTable True to bOk
+            Else If (bIsSQLTableFrom = False and bIsSQLTableTo = True) Begin
+                Get SqlTableConvertToEmbedded hTable True to bOk
+            End
+            
+            // Filelist Names:
+            Get _UtilTableCheckChangeFilelistNames APITableNameInfoFrom to bOk
         End
         
-        // Filelist Names:
-        Get _UtilTableCheckChangeFilelistNames APITableNameInfoFrom to bOk
         Close hTable
         Set TableName_Text of ghoStatusPanel to ""
 
-        Function_Return (bOK = True)
+        Function_Return bOK
     End_Function
 
     // * Dummy function for the Studio's Code Explorer *
@@ -4243,7 +4258,6 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
         for iCount from 0 to iSize
             If (Uppercase(aAPIColumnCompare[iCount].sFieldNameFrom) <> Uppercase(aAPIColumnCompare[iCount].sFieldNameTo)) Begin
                 Set Error_Report_Mode to DUF_ERROR_NO_REPORT
-                Send Ignore_Error of Error_Object_Id DFERR_CANT_FIND_FIELD
 
                 Field_Map hTable aAPIColumnCompare[iCount].sFieldNameFrom to iFieldTo
                 If (aAPIColumnCompare[iCount].bExistsFrom = True and iFieldTo = 0) Begin
@@ -4269,7 +4283,6 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
         Move False to Err
         Move 0 to LastErr
         Set Error_Report_Mode to DUF_ERROR_REPORT
-        Send Trap_Error of Error_Object_Id DFERR_CANT_FIND_FIELD
         Function_Return aAPIColumnsToInsert
     End_Function
 
@@ -4332,22 +4345,25 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
         Decrement iSize
         for iCount from 0 to iSize
             Set Error_Report_Mode to DUF_ERROR_NO_REPORT
-            Send Ignore_Error of Error_Object_Id DFERR_ARRAY_INDEX_OUT_OF_BOUNDS
             If (aAPIColumnsToMove[iCount].bExistsFrom = True and aAPIColumnsToMove[iCount].bExistsTo = True) Begin
                 Get ApiColumnMove hTable aAPIColumnsToMove[iCount].iFieldNumberTo aAPIColumnsToMove[iCount].iFieldNumber aAPIColumnsToMove[iCount].bIsSQLTypeFrom aAPIColumnsToMove[iCount].iLengthFrom aAPIColumnsToMove[iCount].iPrecisionFrom to bOK
-                Get UtilColumnsStructFill hTable to aColumnsTo
-                Get UtilColumnCombineFromAndToArrays aColumnsFrom aColumnsTo to aAPIColumnCompare
-                Get UtilColumnsCheckForMoves hTable aAPIColumnCompare to aAPIColumnsToMove
-                If (SizeOfArray(aAPIColumnsToMove)) Begin
-                    Move (SizeOfArray(aAPIColumnsToMove)) to iSize
-                    Decrement iSize
-                    Move 0 to iCount
+                If (bOK = True) Begin
+                    Get UtilColumnsStructFill hTable to aColumnsTo
+                    Get UtilColumnCombineFromAndToArrays aColumnsFrom aColumnsTo to aAPIColumnCompare
+                    Get UtilColumnsCheckForMoves hTable aAPIColumnCompare to aAPIColumnsToMove
+                    If (SizeOfArray(aAPIColumnsToMove)) Begin
+                        Move (SizeOfArray(aAPIColumnsToMove)) to iSize
+                        Decrement iSize
+                        Move 0 to iCount
+                    End
+                End
+                Else Begin
+                    Move iSize to iCount // We're out of here! Else there will be an error generated for each field.
                 End
             End
         Loop
 
         Set Error_Report_Mode to DUF_ERROR_REPORT
-        Send Trap_Error of Error_Object_Id DFERR_ARRAY_INDEX_OUT_OF_BOUNDS
         If (LastErr = DFERR_ARRAY_INDEX_OUT_OF_BOUNDS) Begin
             Move 0 to LastErr
         End
@@ -4357,8 +4373,8 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
     // Takes a tAPIColumnCompare struct as parameter and returns True if;
     // - Field Numbers, Data Types, Lengths and Precisions are all equal.
     // - The "FROM" field name is <> "TO" field name
-//    // - The "FROM" field name also exists in the "TO" table; or the "TO" is part
-//    //   of the "FROM" field name. E.g. "FROM" = LATEST_REPL_COST_DATE, "TO" = Latest_Repl_Cos would results in a TRUE.
+    // - The "FROM" field name also exists in the "TO" table; or the "TO" is part
+    //   of the "FROM" field name. E.g. "FROM" = LATEST_REPL_COST_DATE, "TO" = Latest_Repl_Cos would results in a TRUE.
     Function UtilColumnShouldBeRenamed tAPIColumnCompare aAPIColumnCompare Returns Boolean
         Boolean bShouldRename
         String sFieldNameFrom sFieldNameTo
@@ -4557,6 +4573,7 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
             End
         End
 
+        Move False to Err
         // We can now continue to make standard field changes:
         Get OpenTableExclusive hTable to bIsOpen
         Set Private.phCurrentTable to hTable
@@ -4696,6 +4713,10 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
                             Move iColumns to iCount 
                         End
                     End
+                End 
+                If (Err = True) Begin 
+                    Move False to bOK
+                    Move iColumns to iCount
                 End
             Loop
 
@@ -5639,12 +5660,9 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
         Set Private.phCurrentTable to hTable
         Set Private.piCurrentField to 0
 
-//        Set Error_Report_Mode to DUF_ERROR_NO_REPORT
         Open hTable
         Get_Attribute DF_FILE_OPENED of hTable to bOpen
-//        Set Error_Report_Mode to DUF_ERROR_REPORT
         If (bOpen = False) Begin
-//            Error DFERR_PROGRAM ("Table could not be opened." * String(hTable))
             Function_Return aDateFieldsEmpty
         End
 
@@ -5848,6 +5866,8 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
         Get pbCompareIndexAscending to bCompareIndexAscending
         Get pbCompareIndexUppercase to bCompareIndexUppercase
         Move APITableFrom.ApiTableInfo.iTableNumber to hTableFrom
+        Set Private.phCurrentTable to hTableFrom
+        
         Move APITableTo.ApiTableInfo.iTableNumber   to hTableTo
 
         Move APITableFrom.ApiTableInfo.sRootName to sRootName
@@ -8178,37 +8198,39 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
         
         // If the table has the same root and logical name it can't be an alias,
         // so we can safely return a "False".
-        If (Uppercase(sRootName) = Uppercase(sLogicalName)) Begin
-            Function_Return False
+        If (Uppercase(sRootName) <> Uppercase(sLogicalName)) Begin
+            Function_Return True
         End
+        
+        Function_Return False
         
         // Now we need to find a master table with the same root name (sRootName above),
         // as the passed hTable root name.
-        // A master table always has the same root and logical name.
-        Move 0 to hTable
-        Repeat
-            Get_Attribute DF_FILE_NEXT_USED of hTable to hTable
-            If (hTable > 0 and hTable <> 50) Begin
-                Get_Attribute DF_FILE_ROOT_NAME of hTable to sRootNameCompare
-                Get _TableNameOnly sRootNameCompare to sRootNameCompare
-                // If we found another table with the same root and logical name
-                // we have found a master table.
-                If (Uppercase(sRootName) = Uppercase(sRootNameCompare)) Begin
-                    Get_Attribute DF_FILE_LOGICAL_NAME of hTable to sLogicalNameCompare
-                    Get _TableNameOnly sLogicalNameCompare to sLogicalNameCompare     
-                    If (Uppercase(sRootNameCompare) = Uppercase(sLogicalNameCompare)) Begin
-                        Move hTable to hMasterTable   
-                        Move 0 to hTable // To end the loop.
-                    End
-                End
-            End
-        Until (hTable = 0)
-        
-        If (hMasterTable <> 0 and hMasterTable <> hInTable) Begin
-            Move True to bIsAlias
-        End
-        
-        Function_Return bIsAlias
+        // A master table always has the same root and logical name (except for any driver name prefix or .int suffix).
+//        Move 0 to hTable
+//        Repeat
+//            Get_Attribute DF_FILE_NEXT_USED of hTable to hTable
+//            If (hTable > 0 and hTable <> 50) Begin
+//                Get_Attribute DF_FILE_ROOT_NAME of hTable to sRootNameCompare
+//                Get _TableNameOnly sRootNameCompare to sRootNameCompare
+//                // If we found another table with the same root and logical name
+//                // we have found a master table.
+//                If (Uppercase(sRootName) = Uppercase(sRootNameCompare)) Begin
+//                    Get_Attribute DF_FILE_LOGICAL_NAME of hTable to sLogicalNameCompare
+//                    Get _TableNameOnly sLogicalNameCompare to sLogicalNameCompare     
+//                    If (Uppercase(sRootNameCompare) = Uppercase(sLogicalNameCompare)) Begin
+//                        Move hTable to hMasterTable   
+//                        Move 0 to hTable // To end the loop.
+//                    End
+//                End
+//            End
+//        Until (hTable = 0)
+//        
+//        If (hMasterTable <> 0 and hMasterTable <> hInTable) Begin
+//            Move True to bIsAlias
+//        End
+//        
+//        Function_Return bIsAlias
     End_Function
 
     // To Open a table with any driver.
@@ -8826,7 +8848,7 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
             CompilerWarnings On
         Loop
         
-        Function_Return (iVersion > iSQLVersion)
+        Function_Return (iVersion >= iSQLVersion)
     End_Function
 
     // Returns TRUE if table is opened exclusive, otherwise FALSE

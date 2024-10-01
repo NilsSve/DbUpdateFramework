@@ -117,10 +117,6 @@ Class cDbUpdateFunctionLibrary_Mixin is a Mixin
             Function_Return (LT)
         If (SQLKeywords1.iSQLWord   > SQLKeywords2.iSQLWord and SQLKeywords1.iSQLDbType > SQLKeywords2.iSQLDbType) ;
             Function_Return (GT)
-//        If (SQLKeywords1.iSQLDbType < SQLKeywords2.iSQLDbType) ;
-//            Function_Return (LT)
-//        If (SQLKeywords1.iSQLDbType > SQLKeywords2.iSQLDbType) ;
-//            Function_Return (GT)
 
         Function_Return (EQ)
     End_Function

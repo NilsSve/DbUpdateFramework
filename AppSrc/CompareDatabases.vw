@@ -488,7 +488,8 @@ Object oCompareDatabases_vw is a dbView
         Get Value of oFilelistPathFrom_fm to sFilelistFrom
         Get Value of oFilelistPathTo_fm   to sFilelistTo
         Move (CurrentDateTime()) to dtCreationTime
-
+        
+        Write channel iCh C_BOM_UTF8
         Writeln channel iCh CS_ReportHeaderUnderWrite
         Writeln channel iCh CS_DatabaseUpdateFramework
         Writeln channel iCh (" ***  DATABASE DIFFERENCES REPORT  ***")
