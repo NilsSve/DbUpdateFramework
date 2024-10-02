@@ -280,7 +280,7 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary
         { MethodType=Property Category="Check int. Files" InitialValue=False }
         Property Boolean pbCheckIntFiles False   
         { MethodType=Property Category="Check int. Files" InitialValue=False }
-        Property Handle  phIntFilesTable 2048
+        Property Handle  phIntFilesTable 256
         { Visibility=Private }
         Property Boolean Private.pbIntFilesTablesCheckDone False
         
@@ -318,9 +318,20 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary
     //
     // Note: If an error occurrs the application will exit, as it means that at least one
     // .int file is in error or the Filelist.cfg was missing and couldn't be recreated.
+
+    // Note: Include_Resource is a compiler directive!
+    // It will embedd the Filelist.cfg from the developers machine
+    // into the executable.        
+    //
+    // There is a pickle with the Filelist.cfg as it is "busy" as it is open in the Studio,
+    // when we get here and then the compiler can't embedd it!        
+    // NOTE: This relies on the "WriteDateTimeHeaderFile" program and that each Project has
+    //       been setup to run it as the "Before Compilation Process:" (See: Project - Project Properties - Compiler tab-page)
+    Include_Resource FilelistBackupFile.cfg as res_EmbeddedFilelistCfg type DF_RESOURCE_TYPE_BINARY
+        
     Procedure CheckIntFilesIntegrity
-        Boolean bCheckIntFiles bExists bOK bSaved bIsSQL bFileListExist bResult bDevelop bZipExists bIntFilesTablesCheckDone
-        String sPaths sDataPath sIntFileName sRootFileNname sFileListName sDDSrcPath sCurrentFolder
+        Boolean bCheckIntFiles bExists bOK bSaved bIsSQL bFileListExist bResult bDevelop bZipExists bIntFilesTablesCheckDone bNewer
+        String sPaths sDataPath sIntFileName sRootFileName sFileListName sFileListNameBackup sDDSrcPath sCurrentFolder
         String sFileListZipFile sParam sProgram sFile 
         Integer iDataPaths iCount
         Handle hTable hIntFilesTable                    
@@ -333,49 +344,45 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary
             Procedure_Return
         End
         
-        Move True to bResult        
-        
-        // Note: Include_Resource is a compiler directive!
-        // It will embedd the Filelist.cfg from the developers machine
-        // into the executable. Thus the file _must_ be named "Filelist.cfg", or you
-        // need to change the next code line.         
-        //
-        // There is a pickle with the Filelist.cfg as it is "busy" as it is open in the Studio,
-        // when we get here and then the compiler can't embedd it!        
-        // ToDo: Change compiler directives in Project properties (?)
-//        Include_Resource Filelist2.cfg as res_EmbeddedFilelistCfg type DF_RESOURCE_TYPE_BINARY
-//        Get ReadFileListResource "res_EmbeddedFilelistCfg" to asFileListArray
-        
         Get psFileList of (phoWorkspace(ghoApplication)) to sFileListName
-        Get vFilePathExists sFileListName to bExists 
-        If (bExists = True) Begin
-            Get ParseFolderName sFileListName to sDataPath    
-            Get vFolderFormat sDataPath to sDataPath                              
-            Get ParseFileName sFileListName to sFile
-            // We need to create a backup copy of Filelist.cfg.
-            Get vCopyFile sFileListName (sDataPath + CS_FilelistBackupFile) to bOK
-            Get vFilePathExists (sDataPath + CS_FilelistBackupFile) to bOK
-            If (bOK = False) Begin
-                Move False to bResult
-                Error DFERR_PROGRAM ("Could not create a copy of Filelist.cfg for backup purposed! ***Please investigte the reason why this happened ***")
-            End
+        Get psDataPath of (phoWorkspace(ghoApplication)) to sDataPath 
+        Move (sDataPath + "\" + CS_FilelistBackupFile)   to sFileListNameBackup
+        Get IsFileTimeNewer sFileListName sFileListNameBackup to bNewer
+        Get vFilePathExists sFileListNameBackup to bOK
+        If (bOK = False or bNewer = True) Begin
+            Get ReadFileListResource "res_EmbeddedFilelistCfg" to asFileListArray
+            Get WriteFileListResource asFileListArray sFileListName to bOK  
         End
-        // If the Filelist.cfg is missing - create it from a previous backup copy.
-        Else Begin
-            Get vCopyFile (sDataPath + CS_FilelistBackupFile) sFileListName to bOK
-//            Get WriteFileListResource asFileListArray sFileListName to bOK  
-            If (bOK = False) Begin   
-                Move False to bResult
-                Error DFERR_PROGRAM ("Filelist.cfg file is missing and couldn't be created!" * String(sFileListName))
-            End
-        End
+        
+        Move True to bResult        
+//        Get vFilePathExists sFileListName to bExists 
+//        If (bExists = True) Begin
+//            Get ParseFolderName sFileListName to sDataPath    
+//            Get vFolderFormat sDataPath to sDataPath                              
+//            Get ParseFileName sFileListName to sFile
+//            // We need to create a backup copy of Filelist.cfg.
+//            Get vCopyFile sFileListName (sDataPath + "\" + CS_FilelistBackupFile) to bOK
+//            Get vFilePathExists (sDataPath + CS_FilelistBackupFile) to bOK
+//            If (bOK = False) Begin
+//                Move False to bResult
+//                Error DFERR_PROGRAM ("Could not create a copy of Filelist.cfg for backup purposed! ***Please investigte the reason why this happened ***")
+//            End
+//        End
+//        // If the Filelist.cfg is missing - create it from a previous backup copy.
+//        Else Begin
+//            Get vCopyFile (sDataPath + CS_FilelistBackupFile) sFileListName to bOK
+//            If (bOK = False) Begin   
+//                Move False to bResult
+//                Error DFERR_PROGRAM ("Filelist.cfg file is missing and couldn't be created!" * String(sFileListName))
+//            End
+//        End
         
         Get phIntFilesTable to hIntFilesTable
-        Get_Attribute DF_FILE_ROOT_NAME of hIntFilesTable to sRootFileNname
-        Get _TableNoPrefix sRootFileNname to sRootFileNname
+        Get_Attribute DF_FILE_ROOT_NAME of hIntFilesTable to sRootFileName
+        Get _TableNoPrefix sRootFileName to sRootFileName
         // This will automatically create the phIntFilesTable if not exists.
         // It is used to save data from the current set of .int files.
-        If (sRootFileNname <> CS_IntFilesTableRootName) Begin
+        If (sRootFileName <> CS_IntFilesTableRootName) Begin
             Send AutoCreateIntFilesTable
             Get Private.pbIntFilesTablesCheckDone to bIntFilesTablesCheckDone
             If (bIntFilesTablesCheckDone = False) Begin
