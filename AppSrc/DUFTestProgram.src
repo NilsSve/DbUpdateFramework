@@ -28,42 +28,21 @@ Object oApplication is a cApplication
 
     // Note: These help file settings gets changed by the Help toolbar button(s).
     Set psHelpFile to "Developer5.chm"
-//    Set psHelpFile to "http://www.rdctools.com/HTMLHelp/Developer5.htm"
 
     Set pbPreserveEnvironment to True
     Set psProduct to "Database Update Framework Lab"
     Set psCompany to "RDC Tools International" 
-
-    Property String psCompileDateAndTime
-    // This is used by the About object to display the compile date & time:
-    Include_Resource CompileHeader.h as res_CompileHeader type DF_RESOURCE_TYPE_LINE
 
     Object oConnection is a cConnection
         Use LoginEncryption.pkg
         Use DatabaseLoginDialog.dg
     End_Object
 
-    Procedure End_Construct_Object
-        String sCompileTime  
-        Integer iPos
-        
-        Forward Send End_Construct_Object
-        Direct_Input "resource: res_CompileHeader"
-        Readln sCompileTime
-        Move (Pos('"', sCompileTime)) to iPos
-        If (iPos <> 0) Begin
-            Move (Mid(sCompileTime, Length(sCompileTime), (iPos + 1))) to sCompileTime
-            Move (Replaces('"', sCompileTime, '')) to sCompileTime
-            Set psCompileDateAndTime to sCompileTime
-        End
-        Close_Input
-    End_Procedure
-
 End_Object   
 
 Object oDbUpdateHandler is a cDbUpdateHandler 
+    Set piDbVersionFileNumber to 255
     Set piDbVersionFieldNumber to 1
-    Set piDbVersionFileNumber to 1
     
 End_Object
 
