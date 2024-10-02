@@ -14,5 +14,4 @@ Project0=DUFCodeGenerator.src
 Project1=DUFTestProgram.src
 Project2=DUFSQLConnections.src
 Project3=ReadDFDriverDefXML.src
-Project4=DUFInternalUpdateProgram.src
-Project5=WriteDateTimeHeaderFile.src
+Project4=WriteDateTimeHeaderFile.src
