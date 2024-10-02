@@ -4433,4 +4433,42 @@ Class cBaseDbUpdateFuncLib is a cObject
         Function_Return bIsEmbedded
     End_Function
 
+    // Returns the DateTime of the passed file name was modified, with seconds (only) precision.
+    Function FileModTime String sFileName Returns DateTime
+        Date dDate
+        Integer iYY iHH iMM iSS
+        Boolean bExists
+        DateTime dtFileDateTime
+
+        Move (NullDateTime()) to dtFileDateTime
+        Get vFilePathExists sFileName to bExists
+        If (bExists = True) Begin
+            Get_File_Mod_Time sFileName to dDate iHH iMM iSS
+            Move dDate            to dtFileDateTime
+            Move (DateGetYear       (dtFileDateTime))      to iYY
+            Move (DateSetYear       (dtFileDateTime, iYY)) to dtFileDateTime
+            Move (DateSetHour       (dtFileDateTime, iHH)) to dtFileDateTime
+            Move (DateSetMinute     (dtFileDateTime, iMM)) to dtFileDateTime
+            Move (DateSetSecond     (dtFileDateTime, iSS)) to dtFileDateTime
+            Move (DateSetMillisecond(dtFileDateTime, 0))   to dtFileDateTime
+        End
+
+        Function_Return dtFileDateTime
+    End_Function
+
+    // Returns True if the file passed as sFileName1 is newer than sFileName2.
+    Function IsFileTimeNewer String sFileName1 String sFileName2 Returns Boolean
+        Boolean bExists bIsNewer
+        DateTime dtFileDateTime1 dtFileDateTime2
+
+        Move False to bIsNewer
+        Get vFilePathExists sFileName1 to bExists
+        If (bExists = True) Begin
+            Get FileModTime sFileName1  to dtFileDateTime1
+            Get FileModTime sFileName2  to dtFileDateTime2
+            Move (dtFileDateTime1 > dtFileDateTime2) to bIsNewer
+        End
+        Function_Return bIsNewer
+    End_Function
+
 End_Class
