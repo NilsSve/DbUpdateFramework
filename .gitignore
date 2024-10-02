@@ -58,3 +58,17 @@ Programs/DUFCodeGenerator.dbg
 Programs/DUFCodeGenerator.exe
 Programs/DUFTestProgram.dbg
 Programs/DUFTestProgram.exe
+AppSrc/DUFCodeGenerator.prn
+AppSrc/DUFTestProgram.dep
+AppSrc/DUFTestProgram.prn
+AppSrc/DUFCodeGenerator.dep
+AppSrc/DUFTestProgram.x64.dep
+AppSrc/DUFTestProgram.x64.prn
+Data/DUFUpdateLog.txt
+Data/intfilestable.int
+Data/TableStructLog.txt
+IdeSrc/nilss_FindInFiles.dsk
+IdeSrc/nilss_Studio.dsk
+IdeSrc/nilss_TraceOpts.dsk
+IdeSrc/StudioMetaData64.mtd
+Programs/DUFTestProgram64.dbg
