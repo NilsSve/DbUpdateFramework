@@ -37,10 +37,6 @@ Object oApplication is a cApplication
     Property Integer[] piaDifferences
     Property String psOrgOpenPath ""
 
-    Property String psCompileDateAndTime
-    // This is used by the About object to display the compile date & time:
-    Include_Resource CompileHeader.h as res_CompileHeader type DF_RESOURCE_TYPE_LINE
-    
     Function psWorkspaceHomePath Returns String
         String sPath 
         Get psHome of (phoWorkspace(Self)) to sPath
@@ -201,35 +197,19 @@ Object oApplication is a cApplication
     End_Object
     #ENDIF
 
-    Procedure End_Construct_Object
-        String sCompileTime  
-        Integer iPos
-        
-        Forward Send End_Construct_Object
-        Direct_Input "resource: res_CompileHeader"
-        Readln sCompileTime
-        Move (Pos('"', sCompileTime)) to iPos
-        If (iPos <> 0) Begin
-            Move (Mid(sCompileTime, Length(sCompileTime), (iPos + 1))) to sCompileTime
-            Move (Replaces('"', sCompileTime, '')) to sCompileTime
-            Set psCompileDateAndTime to sCompileTime
-        End
-        Close_Input
-    End_Procedure
-
 End_Object
 
 Object oDbUpdateHandler is a cDbUpdateHandler
     Set piDbVersionFileNumber  to 255
     Set piDbVersionFieldNumber to 1
+    Set phIntFilesTable to 256
+    Set pbCheckIntFiles to True
     Set phoDbUpdateHandler of ghoApplication to Self
     Set pbExitIfDebuggerActive to False
     
     Procedure OnPreUpdate
-//        String sVersionInfo                     // DF 18.2 MSSQLDRV
-//        Get MinMSSQLDRV_And_ClientVersion "6.1.0.32"  SQLSERVER2012CLIENT True True to sVersionInfo
-//                                                // DF 19.1 MSSQLDRV
-//        Get MinMSSQLDRV_And_ClientVersion "6.3.0.13" SQLSERVER2016CLIENT True True to sVersionInfo
+//        String sVersionInfo                        // "ODBC Driver 18 for SQL Server"
+//        Get MinMSSQLDRV_And_ClientVersion "24.0.29.10" SQLSERVER2019CLIENT True True to sVersionInfo
     End_Procedure  
 
     Object oDbUpdateVersion1_0 is a cDbUpdateVersion
