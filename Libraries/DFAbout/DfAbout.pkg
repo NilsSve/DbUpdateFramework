@@ -1434,12 +1434,17 @@ Class AboutDialog is a ModalPanel
         Set Value of oAuthor to sText
     End_Procedure
 
+    // This is used by the About object to display the compile date & time:
+    // Note: It relies on that each project (program) has been setup to use the "WriteDateTimeHeaderFile64.exe"
+    //       program as a pre-compile!
+    //       Add it here: "Before Compilation Process:" (See Studio's: Project - Project Properties - Compiler tab-page)
+    Include_Resource CompileHeader.h as res_CompileHeader type DF_RESOURCE_TYPE_LINE
+
     { MethodType=Property }
     Procedure Set Version String sVersion
         Handle hoVersionInfo
         Boolean bIncluded
-        Integer iMajor iMinor iRelease iBuild
-//        Date dCompileDate
+        Integer iMajor iMinor iRelease iBuild iPos
         String sCertInfo sCompileDateAndTime
 
         If (sVersion = "") Begin
@@ -1461,14 +1466,18 @@ Class AboutDialog is a ModalPanel
         End
 
         // Display the compiled date as the next row in the edit object, after the program version.
-        Get psCompileDateAndTime of ghoApplication to sCompileDateAndTime
+        Direct_Input "resource: res_CompileHeader"
+        Readln sCompileDateAndTime
+        Move (Pos('"', sCompileDateAndTime)) to iPos
+        If (iPos <> 0) Begin
+            Move (Mid(sCompileDateAndTime, Length(sCompileDateAndTime), (iPos + 1))) to sCompileDateAndTime
+            Move (Replaces('"', sCompileDateAndTime, '')) to sCompileDateAndTime
+        End
+        Close_Input
+
         If (sCompileDateAndTime <> "") Begin
             Send Add_Lineln (sVersion + (Character(13)) + C_$Compile_Date * String(sCompileDateAndTime))
         End
-//        Get GetCompileDate to dCompileDate
-//        If (sVersion <> "") Begin
-//            Send Add_Lineln (sVersion + (Character(13)) + C_$Compile_Date * String(dCompileDate))
-//        End
 
         Get IsProgramDigitallySigned to sCertInfo
         If (sCertInfo <> "-1") Begin
