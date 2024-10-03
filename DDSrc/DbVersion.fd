@@ -1,3 +1,0 @@
-#REPLACE FILE1 DbVersion
-#REPLACE DbVersion.Recnum |FN1,0
-#REPLACE DbVersion.DatabaseVersion |FN1,1

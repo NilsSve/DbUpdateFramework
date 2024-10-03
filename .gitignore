@@ -75,3 +75,4 @@ Programs/DUFTestProgram64.dbg
 *.dbg
 *.mtd
 *.dsk
+*.dep
