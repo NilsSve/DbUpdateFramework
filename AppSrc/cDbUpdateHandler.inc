@@ -6,8 +6,7 @@ Use seq_chnl.pkg
 Use vWin32fh.pkg
 Use DUFLanguageConstants.inc
 
-Define CS_IntFilesTableRootName for "IntFilesTable"
-Define CS_FilelistZipFile       for "FilelistBackupFile.zip"
+Define CS_IntFilesTableLogicalName for "IntFilesTable"
 // Do *not* change this name as it is used by the CheckIntFilesIntegrity
 // procedure and the explicit file name is used with the Include_Resource command.
 Define CS_FilelistBackupFile    for "FilelistBackupFile.cfg"
