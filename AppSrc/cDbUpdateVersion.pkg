@@ -44,7 +44,6 @@ Class cDbUpdateVersion is a cObject
             If (bUseCustomDbVersion = False) Begin
                 Delegate Send CheckAutoCreateDbVersionTable 
             End
-            Delegate Send CheckIntFilesIntegrity
             Delegate Send OnCreate
             Delegate Set Private.pbOnCreateExecuted to True
         End
