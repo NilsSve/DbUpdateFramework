@@ -6179,7 +6179,7 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
         Get_Attribute DF_FILE_DRIVER       of hTable to APITableNameInfo.sDriverID
 
         Get UtilTableIsAlias                  hTable to APITableNameInfo.bIsAlias
-        Get _UtilTableIsSql                    hTable to APITableNameInfo.bIsSQL
+        Get _UtilTableIsSql                   hTable to APITableNameInfo.bIsSQL
 
         Function_Return APITableNameInfo
     End_Function
