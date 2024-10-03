@@ -72,3 +72,6 @@ IdeSrc/nilss_Studio.dsk
 IdeSrc/nilss_TraceOpts.dsk
 IdeSrc/StudioMetaData64.mtd
 Programs/DUFTestProgram64.dbg
+*.dbg
+*.mtd
+*.dsk
