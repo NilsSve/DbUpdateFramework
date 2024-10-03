@@ -277,6 +277,17 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary
             Set phoSQLConnectionHandler to ho
         End             
         
+        // Do *not* set this property in this object!
+        // Instead use logic to set it in the Procedure OnCreate of the cApplication
+        // object. Aka, use phoCommandLine to retrieve an e.g. "-restore" parameter on
+        // the command line to the program. If such param has been passed, set  pbRestoreIntFilesNow = True.
+        // The user will then be informed that .int files will be restored and then the program will exit.
+        { Visibility=Private }
+        Property Boolean pbRestoreIntFilesNow False   
+        // In parallell with the above property, the pbSaveIntFilesNow can be set. That same property
+        // also needs to be created in the ghoApplication object.
+        { Visibility=Private }
+        Property Boolean pbSaveIntFilesNow False
         { MethodType=Property Category="Check int. Files" InitialValue=False }
         Property Boolean pbCheckIntFiles False   
         { MethodType=Property Category="Check int. Files" InitialValue=False }
@@ -303,6 +314,9 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary
     Procedure OnCreate
     End_Procedure        
                                  
+    // Note: If you get a compile Error 4295: "xxx Can't include resource FILELISTBACKUPFILE.CFG",
+    //       you will need to manually make a copy of the Filelist.cfg in the Data folder -> "FilelistBackupFile.cfg"
+    Include_Resource FilelistBackupFile.cfg as res_EmbeddedFilelistCfg type DF_RESOURCE_TYPE_BINARY
     // *** MAIN .Int file (and Filelist.cfg) Integrity Check Message ***
     //                                                
     // The logic is activated by setting the property "pbCheckIntFiles = True" in the
@@ -327,79 +341,142 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary
     // when we get here and then the compiler can't embedd it!        
     // NOTE: This relies on the "WriteDateTimeHeaderFile" program and that each Project has
     //       been setup to run it as the "Before Compilation Process:" (See: Project - Project Properties - Compiler tab-page)
-    Include_Resource FilelistBackupFile.cfg as res_EmbeddedFilelistCfg type DF_RESOURCE_TYPE_BINARY
-        
-    Procedure CheckIntFilesIntegrity
-        Boolean bCheckIntFiles bExists bOK bSaved bIsSQL bFileListExist bResult bDevelop bZipExists bIntFilesTablesCheckDone bNewer
-        String sPaths sDataPath sIntFileName sRootFileName sFileListName sFileListNameBackup sDDSrcPath sCurrentFolder
+    Procedure SaveUpdateIntFiles
+        Boolean bCheckIntFiles bExists bOK bSaved bIsSQL bFileListExist bResult bDevelop bZipExists bIntFilesTablesCheckDone bNewer bIsIntFileTable  bIsAlias
+        String sPaths sDataPath sIntFileName sRootName sFileListName sFileListNameBackup sDDSrcPath sCurrentFolder
         String sFileListZipFile sParam sProgram sFile 
         Integer iDataPaths iCount
         Handle hTable hIntFilesTable                    
         UChar[] asFileListArray 
         String[] asSavedIntFile
         tDUFIntFile[] DUFIntFiles
-        
-        Get pbCheckIntFiles to bCheckIntFiles
-        If (bCheckIntFiles = False) Begin
-            Procedure_Return
-        End
-        
-        Get psFileList of (phoWorkspace(ghoApplication)) to sFileListName
-        Get psDataPath of (phoWorkspace(ghoApplication)) to sDataPath 
-        Move (sDataPath + "\" + CS_FilelistBackupFile)   to sFileListNameBackup
-        Get IsFileTimeNewer sFileListName sFileListNameBackup to bNewer
-        Get vFilePathExists sFileListNameBackup to bOK
-        If (bOK = False or bNewer = True) Begin
-            Get ReadFileListResource "res_EmbeddedFilelistCfg" to asFileListArray
-            Get WriteFileListResource asFileListArray sFileListName to bOK  
-        End
-        
-        Move True to bResult        
-//        Get vFilePathExists sFileListName to bExists 
-//        If (bExists = True) Begin
-//            Get ParseFolderName sFileListName to sDataPath    
-//            Get vFolderFormat sDataPath to sDataPath                              
-//            Get ParseFileName sFileListName to sFile
-//            // We need to create a backup copy of Filelist.cfg.
-//            Get vCopyFile sFileListName (sDataPath + "\" + CS_FilelistBackupFile) to bOK
-//            Get vFilePathExists (sDataPath + CS_FilelistBackupFile) to bOK
-//            If (bOK = False) Begin
-//                Move False to bResult
-//                Error DFERR_PROGRAM ("Could not create a copy of Filelist.cfg for backup purposed! ***Please investigte the reason why this happened ***")
-//            End
-//        End
-//        // If the Filelist.cfg is missing - create it from a previous backup copy.
-//        Else Begin
-//            Get vCopyFile (sDataPath + CS_FilelistBackupFile) sFileListName to bOK
-//            If (bOK = False) Begin   
-//                Move False to bResult
-//                Error DFERR_PROGRAM ("Filelist.cfg file is missing and couldn't be created!" * String(sFileListName))
-//            End
-//        End
-        
-        Get phIntFilesTable to hIntFilesTable
-        Get_Attribute DF_FILE_ROOT_NAME of hIntFilesTable to sRootFileName
-        Get _TableNoPrefix sRootFileName to sRootFileName
+
         // This will automatically create the phIntFilesTable if not exists.
         // It is used to save data from the current set of .int files.
-        If (sRootFileName <> CS_IntFilesTableRootName) Begin
+        // We do this on both developer & client machines.
+        Get IsIntFileTable to bIsIntFileTable
+        If (bIsIntFileTable = False) Begin
             Send AutoCreateIntFilesTable
-            Get Private.pbIntFilesTablesCheckDone to bIntFilesTablesCheckDone
-            If (bIntFilesTablesCheckDone = False) Begin
+            Get Private.pbIntFilesTablesCheckDone to bOK
+            If (bOK = False) Begin
                 Send Info_Box CS_DUF_DbUpdatedErrorText
                 Send Exit_Application of ghoApplication
             End
         End                                                       
         
-        // Check if this is a development machine. *Only* then we will attempt to read .int files to the internal table. 
-        // ToDo: Or should this always be attempted? Else the 
-        Get psDdSrcPath of (phoWorkspace(ghoApplication)) to sDDSrcPath
+        // Check Filelist.cfg & backup file
+        Get psFileList of (phoWorkspace(ghoApplication)) to sFileListName
+        Get psDataPath of (phoWorkspace(ghoApplication)) to sDataPath 
+        Move (sDataPath + "\" + CS_FilelistBackupFile)   to sFileListNameBackup
+        Get IsFileTimeNewer sFileListName sFileListNameBackup to bNewer
+
         Move (IsDebuggerPresent()) to bDevelop
+        // Is this a client machine?
         If (bDevelop = False) Begin
-            Get vFolderExists sDDSrcPath to bDevelop
+            If (bNewer = True) Begin
+                // Create filelist.cfg from resource backup file.
+                Get ReadFileListResource "res_EmbeddedFilelistCfg" to asFileListArray
+                Get WriteFileListResource asFileListArray sFileListName to bOK  
+            End
         End
+
+        Else If (bDevelop = True) Begin
+            Get psDdSrcPath of (phoWorkspace(ghoApplication)) to sDDSrcPath
+            If (bNewer = True) Begin
+                Get vDeleteFile sFileListNameBackup to bOK
+                Get vCopyFile sFileListName sFileListNameBackup to bOK
+                Send Info_Box "A new backup copy of the Filelist.cfg file was made. In order to include a backup copy of the file into the program, as a resource, you will need to re-compile/restart the program.\n\nThe program will now exit."
+                Send Exit_Application
+            End
+        End
+        
+        Move True to bResult        
+        Send StartStatusPanel
+        Get phIntFilesTable to hIntFilesTable
         Get psDataPath of (phoWorkspace(ghoApplication)) to sPaths
         Get CountOfPaths of (phoWorkspace(ghoApplication)) sPaths to iDataPaths
+
+        For iCount from 1 to iDataPaths
+            Get PathAtIndex of (phoWorkspace(ghoApplication)) sPaths iCount to sDataPath   
+            Get vFolderFormat sDataPath to sDataPath 
+            Get vFolderExists sDataPath to bExists
+            If (bExists = True) Begin                  
+                Move 0 to hTable
+                Repeat
+                    Get_Attribute DF_FILE_NEXT_USED of hTable to hTable
+                    If (hTable <> 0 and hTable <> 50) Begin
+                        Get_Attribute DF_FILE_ROOT_NAME of hTable to sIntFileName 
+                        Set Message_Text of ghoStatusPanel to ("Saving info about:" * String(sIntFileName))
+                        Get _UtilTableIsSqlByRootName sIntFileName to bIsSQL
+                        Get UtilTableIsAlias hTable to bIsAlias 
+                        If (bIsSQL = True and bIsAlias = False) Begin
+                            If (bIsSQL = True) Begin     
+                                Get _TableNameOnly sIntFileName to sIntFileName
+                                Move (sIntFileName + ".int")    to sIntFileName
+                                Get IsIntFileSaved sIntFileName to bSaved  
+                                Move True to bOK            
+                                
+                                // Save .int file to database if not done previously (both on development- and customer-machines).
+                                If (bSaved = False) Begin
+                                    Get SaveIntFileData sDataPath sIntFileName to bOK
+                                    If (bOK = False) Begin
+                                        Move False to bResult    
+                                    End
+                                End         
+                                Else Begin
+                                    Get HasIntFileChanged sDataPath sIntFileName to asSavedIntFile
+                                    If (SizeOfArray(asSavedIntFile) <> 0) Begin
+                                        Get UpdateIntFileData sDataPath sIntFileName asSavedIntFile to bOK
+                                        If (bOK = False) Begin
+                                            Move False to bResult
+                                            Error DFERR_PROGRAM ("Could not update .int file data to the internal database table:" * String(sIntFileName))
+                                        End
+                                    End
+                                End
+                            End
+                        End
+                    End
+                Until (hTable = 0)
+            End
+        Loop       
+        
+        Send Stop_StatusPanel of ghoStatusPanel
+        // If an error occured we need to exit the application as we cannot start with an uncomplete set of .int files.
+        If (bResult = False) Begin  
+            Send Info_Box CS_DUF_DbUpdatedErrorText 
+            Send Exit_Application
+        End 
+        Else Begin
+            Send LogError ("The *.int file backup table was updated:" * String(CS_IntFilesTableLogicalName)) False
+        End
+    End_Procedure               
+
+    // It checks that *.int files on disk corresponds with the content in the
+    // .int file backup table phIntFilesTable.
+    Procedure RestoreIntFiles
+        Boolean bCheckIntFiles bIsIntFileTable bExists bIsSQL bRestored bOK
+        String sPaths sDataPath sIntFileName 
+        String[] asSavedIntFile
+        Integer iDataPaths iCount iRetval
+        Handle hTable hIntFilesTable
+
+        Get IsIntFileTable to bIsIntFileTable
+        If (bIsIntFileTable = False) Begin
+            Send Info_Box "The 'IntFilesTable' has not been created. Thus no backup info for .int files exists. The property pbCheckIntFiles must have been set to True in the cDbUpdateHandler object for automatic creation of the table and save of all .int files."
+            Procedure_Return
+        End
+        
+        Get YesNo_Box "This will restore the content of .int files. Current .int files will be compared to the content in the backup table. If different, files on disk will be updated. Cash files (.cch) will be removed.\n\n Continue?" to iRetval
+        If (iRetval <> MBR_Yes) Begin
+            Procedure_Return
+        End
+
+        Send StartStatusPanel
+        Move False to bRestored
+        Get phIntFilesTable to hIntFilesTable
+        Get psDataPath of (phoWorkspace(ghoApplication)) to sPaths
+        Get CountOfPaths of (phoWorkspace(ghoApplication)) sPaths to iDataPaths
+
         For iCount from 1 to iDataPaths
             Get PathAtIndex of (phoWorkspace(ghoApplication)) sPaths iCount to sDataPath   
             Get vFolderFormat sDataPath to sDataPath 
@@ -410,41 +487,20 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary
                     Get_Attribute DF_FILE_NEXT_USED of hTable to hTable    
                     If (hTable <> 0) Begin
                         Get_Attribute DF_FILE_ROOT_NAME of hTable to sIntFileName 
+                        Set Message_Text of ghoStatusPanel to ("Checking info for." * String(sIntFileName))
                         Get _UtilTableIsSqlByRootName sIntFileName to bIsSQL
                         If (bIsSQL = True) Begin     
                             Get _TableNameOnly sIntFileName to sIntFileName
                             Move (sIntFileName + ".int")    to sIntFileName
-                            Get IsIntFileSaved sIntFileName to bSaved  
-                            Move True to bOK            
-                            
-                            // Save .int file to database if not done previously.
-                            // We only attempt to read .int files on a development machine.
-                            If (bDevelop = True) Begin
-                                If (bSaved = False) Begin
-                                    Get SaveIntFileData sDataPath sIntFileName to bOK
-                                    If (bOK = False) Begin
-                                        Move False to bResult    
-                                    End
-                                End         
-                                If (bOK = True) Begin
-                                    Get HasIntFileChanged sDataPath sIntFileName to asSavedIntFile
-                                    If (SizeOfArray(asSavedIntFile)) Begin
-                                        Get UpdateIntFileData sDataPath sIntFileName asSavedIntFile to bOK
-                                        If (bOK = False) Begin
-                                            Move False to bResult
-                                            Error DFERR_PROGRAM ("Could not update .int file data to the internal database table:" * String(sIntFileName))
-                                        End
-                                    End
+                            Get HasIntFileChanged sDataPath sIntFileName to asSavedIntFile
+                            If (SizeOfArray(asSavedIntFile) <> 0) Begin
+                                Set Message_Text of ghoStatusPanel to ("Restoring .int file:" * String(sIntFileName))
+                                Get CreateIntFileFromSavedData sIntFileName sDataPath to bOK
+                                If (bRestored = False and bOK = True) Begin
+                                    Move True to bRestored
                                 End
-                            End
-                            
-                            Get vFilePathExists (sDataPath + sIntFileName) to bExists
-                            If (bExists = False) Begin                           
-                                // If the .int file is missing on disk; create it from database.
-                                Get CreateIntFileFromSavedData hIntFilesTable sIntFileName sDataPath to bOK
-                                If (bOK = False) Begin         
-                                    Move False to bResult
-                                    Error DFERR_PROGRAM ("Could not create .int file:" * String(sIntFileName))
+                                If (bOK = False) Begin
+                                    Error DFERR_PROGRAM ("Could not create the .int file" * String(sIntFileName) * "from the internal database table:" * String(CS_IntFilesTableLogicalName))
                                 End
                             End
                         End
@@ -453,37 +509,50 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary
             End
         Loop       
         
-        // If an error occured we need to exit the application.
-        If (bResult = False) Begin  
-            Send Info_Box CS_DUF_DbUpdatedErrorText 
+        Send Stop_StatusPanel of ghoStatusPanel
+        If (bRestored = True) Begin
+            Send Info_Box "Ready! All .int files checked and updated if different. The program will now exit."
             Send Exit_Application
         End
-        
-    End_Procedure               
+    End_Procedure
 
+    Function IsIntFileTable Returns Boolean
+        Boolean bExists
+        Handle hTable
+        String sLogicalName
+        Move False to bExists
+        Get phIntFilesTable to hTable
+        If (hTable > 0) Begin
+            Get_Attribute DF_FILE_LOGICAL_NAME of hTable to sLogicalName
+            Move (sLogicalName = CS_IntFilesTableLogicalName) to bExists
+        End
+        Function_Return bExists    
+    End_Function
+    
     // To update currently saved IntFile data to the database.
     // Because it is much easier, we first delete all current records and
     // then saves the changed .int file to the database.
     Function UpdateIntFileData String sDataPath String sIntFileName String[] asSavedIntFile Returns Boolean
         Boolean bOK
-        
         Move False to bOK
-
+        Move (Lowercase(sIntFileName)) to sIntFileName
         Get DeleteIntFileData sDataPath sIntFileName to bOK
         If (bOK = True) Begin
             Get SaveIntFileData sDataPath sIntFileName to bOK
         End
-        
         Function_Return bOK
     End_Function
     
+    // Note: We use vFind here as the IntFileName may not yet have been created,
+    //       and thus we cannot compile.
     Function IsIntFileSaved String sIntFileName Returns Boolean
         Handle hTable
         Boolean bOK
         Integer iColumn iIndex   
         String sFileName
         
-        Move False to bOK
+        Move (Lowercase(sIntFileName)) to sIntFileName
+        Move False to bOK  
         Get phIntFilesTable to hTable
         Move 2              to iColumn // This is the "InfFileName" field no.
         Move 2              to iIndex  // This is the IntFileName + ID index.
@@ -507,8 +576,9 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary
         String[] asIntFileOrg asIntFile asSavedIntFile asReturnIntFile
         Boolean bIsSame
         
-        Get ReadIntFileData    sDataPath sIntFileName to asIntFileOrg   
-        Get CurrentIntFileData sDataPath sIntFileName to asSavedIntFile
+        Move (Lowercase(sIntFileName)) to sIntFileName
+        Get ReadIntFileData  sDataPath sIntFileName to asIntFileOrg   
+        Get SavedIntFileData sDataPath sIntFileName to asSavedIntFile
         Get RemoveBlankLines asIntFileOrg   to asIntFile
         Get RemoveBlankLines asSavedIntFile to asSavedIntFile
         
@@ -556,6 +626,9 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary
         String sFileName
         String[] asIntFile
         
+        // Note: We will lowercase all .int file names, to not get into having duplicates in the database
+        Move (Lowercase(sIntFileName)) to sIntFileName
+        
         Move Err to bErr
         Move False to Err
         Move False to bOK
@@ -582,7 +655,7 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary
         If (iID = 999999999999) Begin
             Move 0 to iID
         End
-        Increment iID        
+        Increment iID
         
         Lock
             For iCount from 0 to iSize
@@ -612,6 +685,7 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary
         String sVal
         String[] asIntFile
         
+        Move (Trim(Lowercase(sIntFileName))) to sIntFileName
         Move Err to bErr
         Move False to Err
         Move False to bOK
@@ -624,12 +698,14 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary
         Set_Field_Value hTable iFileCol to sIntFileName
         Vfind hTable iIndex GE
         Get_Field_Value hTable iFileCol to sVal
-        Move (Found and Trim(sVal) = Trim(sIntFileName)) to bFound
+        Move (Trim(Lowercase(sVal))) to sVal
+        Move (Found and sVal = sIntFileName) to bFound
         While (bFound = True)
             Delete hTable
             Vfind hTable iIndex GT
             Get_Field_Value hTable iFileCol to sVal
-            Move (Found and Trim(sVal) = Trim(sIntFileName)) to bFound
+            Move (Trim(Lowercase(sVal))) to sVal
+            Move (Found and sVal = sIntFileName) to bFound
         Loop
         Unlock
         Close hTable
@@ -642,13 +718,14 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary
 
     // Returns all saved phIntFilesTable records for the passed 
     // sIntFileName value as a string array.
-    Function CurrentIntFileData String sPath String sIntFileName Returns String[]
+    Function SavedIntFileData String sPath String sIntFileName Returns String[]
         Handle hTable
         Boolean bOK bErr bFound
         Integer iFileCol iTextCol iIndex
         String sVal sFileName
         String[] asIntFile asEmptyArray
         
+        Move (Trim(Lowercase(sIntFileName))) to sIntFileName
         Move Err to bErr
         Move False to Err
         Move False to bOK
@@ -657,15 +734,17 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary
         Move 2              to iIndex  // This is the IntFileName + ID index.
         Get phIntFilesTable to hTable  
         Open hTable  
-
+        
         // Find the first record
         Set_Field_Value hTable iFileCol to sIntFileName
         Vfind hTable iIndex GE
         Get_Field_Value hTable iFileCol to sFileName
-        Move (Found and Trim(sFileName) = Trim(sIntFileName)) to bFound
+        Move (Trim(Lowercase(sFileName))) to sFileName
+        Move (Found and sFileName = sIntFileName) to bFound
         While (bFound = True)
-            Get_Field_Value hTable iFileCol to sFileName
-            Move (Found and Trim(sFileName) = Trim(sIntFileName)) to bFound
+            Get_Field_Value hTable iFileCol   to sFileName
+            Move (Trim(Lowercase(sFileName))) to sFileName
+            Move (Found and sFileName = sIntFileName) to bFound
             If (bFound = True) Begin
                 Get_Field_Value hTable iTextCol to sVal
                 Move (Trim(sVal)) to asIntFile[SizeOfArray(asIntFile)]
@@ -690,6 +769,7 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary
         String sFileName sLine
         Integer iCh iSize iCount
         
+        Move (Lowercase(sIntFileName)) to sIntFileName
         Get vFolderFormat sPath to sPath
         If (not(sIntFileName contains ".")) Begin
             Move (sIntFileName + ".int") to sIntFileName
@@ -703,7 +783,7 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary
         Repeat
             Readln channel iCh sLine
             If (SeqEof = False) Begin
-                Move sLine to asIntFile[SizeOfArray(asIntFile)]
+                Move (Trim(sLine)) to asIntFile[SizeOfArray(asIntFile)]
             End
         Until (SeqEof = True)
         Send Seq_Close_Channel iCh    
@@ -770,17 +850,18 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary
 
     // Writes an .int for the passed sIntFileName file to disk by reading data from the phIntFilesTable data table.
     // It first deletes the .cch file (if any).
-    Function CreateIntFileFromSavedData Handle hTable String sIntFileName String sDataPath Returns Boolean
+    Function CreateIntFileFromSavedData String sIntFileName String sDataPath Returns Boolean
         Boolean bOK bFound bExists bErr
         Integer iCh iSize iCount
         String sFileName sCCHFileName sVal
         String[] asIntFile
         
+        Move (Lowercase(sIntFileName)) to sIntFileName
         Move Err to bErr   
         Move False to Err
         Move False to bOK
 
-        Get CurrentIntFileData sDataPath sIntFileName to asIntFile
+        Get SavedIntFileData sDataPath sIntFileName to asIntFile
         Move (SizeOfArray(asIntFile)) to iSize
         If (iSize = 0) Begin
             Function_Return False        
@@ -793,7 +874,7 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary
         End   
         
         // Before we start to actually create the new .int file, make sure we delete
-        // the .cch file first.                                     
+        // the .cch file.                                     
         Move (Uppercase(sIntFileName)) to sCCHFileName
         Move (Replace(".INT", sCCHFileName, ".CCH")) to sCCHFileName
         Get vFilePathExists (sDataPath + sCCHFileName) to bExists
@@ -821,9 +902,9 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary
     // We only need to make this test this once, but because the message is called
     // from each child cDbUpdateVersion object (and it needs to be called from there),
     // we use property Private.pbIntFilesTablesCheckDone to ensure it is only run once.
-    Procedure AutoCreateIntFilesTable 
+    Procedure AutoCreateIntFilesTable
         Integer hTable 
-        Boolean bIntFilesTablesCheckDone bTableExists
+        Boolean bIntFilesTablesCheckDone bTableExists bOK
         String sInfoTxt 
         
         Get phIntFilesTable to hTable  
@@ -838,19 +919,17 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary
             Error DFERR_PROGRAM "The phIntFilesTable has been set to 0 (!). The default value is 2048 and if changed MUST be set to a free Filelist.cfg slot in the cDbUpdateHandler object.\nProgram will now exit!"
             Procedure_Return
         End
-
-        Get _UtilTableExists of ghoDbUpdateFunctionLibrary hTable to bTableExists
+        
+        Get IsIntFileTable hTable to bTableExists
         If (bTableExists = True) Begin
             Set Private.pbIntFilesTablesCheckDone to True
             Procedure_Return
         End
 
-        Send CreateIntFilesTable hTable
-        Get Private.pbIntFilesTablesCheckDone to bIntFilesTablesCheckDone
-        Set Private.pbIntFilesTablesCheckDone to bIntFilesTablesCheckDone
-    End_Function
+        Send SubCreateIntFilesTable hTable
+    End_Procedure
                 
-    Procedure CreateIntFilesTable Handle hTable
+    Procedure SubCreateIntFilesTable Handle hTable
         String sTableName sColumnName sInfoTxt sDriverID sDataPath
         Boolean bTableExists bOK bUseConnectionID bExists
         tAPIColumn[] APIColumn
@@ -864,7 +943,7 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary
         Get psDriverID to sDriverID
         Get IsSQLDriver of ghoDbUpdateFunctionLibrary sDriverID to bUseConnectionID
 
-        Move CS_IntFilesTableRootName to sTableName
+        Move CS_IntFilesTableLogicalName to sTableName
 
         Move 1                  to APIColumn[0].iFieldNumber
         Move "ID"               to APIColumn[0].sFieldName
@@ -910,20 +989,22 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary
             Move ("ERROR" * "Indexes for Int Files Table:" + sTableName * "could NOT be created" * "at filelist slot:" * String(hTable) * "\Program will now exit.") to sInfoTxt
             Error DFERR_PROGRAM sInfoTxt
             Procedure_Return
-        End                    
+        End
         
         // Check if the new .int file was created. If so and a .dat file exists - delete it.
-        Get psDataPath of (phoWorkspace(ghoApplication)) to sDataPath
-        Get vFolderFormat sDataPath to sDataPath
-        Move (CS_IntFilesTableRootName + ".int") to sTableName
-        Get vFilePathExists (sDataPath + sTableName) to bExists
-        If (bExists = True) Begin
-            Move CS_IntFilesTableRootName to sTableName
-            Get vFilePathExists (sDataPath + sTableName + ".dat") to bExists
+        If (sDriverID <> DATAFLEX_ID) Begin
+            Get psDataPath of (phoWorkspace(ghoApplication)) to sDataPath
+            Get vFolderFormat sDataPath to sDataPath
+            Move (CS_IntFilesTableLogicalName + ".int") to sTableName
+            Get vFilePathExists (sDataPath + sTableName) to bExists
             If (bExists = True) Begin
-                Get vDeleteFile (sDataPath + sTableName + ".dat") to bOK
-                Get vDeleteFile (sDataPath + sTableName + ".hdr") to bOK
-                Get vDeleteFile (sDataPath + sTableName + ".k??") to bOK
+                Move CS_IntFilesTableLogicalName to sTableName
+                Get vFilePathExists (sDataPath + sTableName + ".dat") to bExists
+                If (bExists = True) Begin
+                    Get vDeleteFile (sDataPath + sTableName + ".dat") to bOK
+                    Get vDeleteFile (sDataPath + sTableName + ".hdr") to bOK
+                    Get vDeleteFile (sDataPath + sTableName + ".k??") to bOK
+                End
             End
         End
         
@@ -1450,6 +1531,12 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary
         Send Cleanup
     End_Procedure
     
+    Procedure StartStatusPanel
+        Send EnableCancelButton     of ghoStatusPanel (pbEnableCancelButton(Self))
+        Send Initialize_StatusPanel of ghoStatusPanel ("   " + CS_DUF_WorkingUpdateText) CS_DUF_WorkingHeaderText ""
+        Send Start_StatusPanel      of ghoStatusPanel
+    End_Procedure
+    
     { Visibility=Private }
     // This event is triggered by the cDbUpdateVersion child class when
     // a database change is to be started, and is considered private.
@@ -1476,10 +1563,7 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary
             End
         End
         
-        Send EnableCancelButton     of ghoStatusPanel (pbEnableCancelButton(Self))
-        Send Initialize_StatusPanel of ghoStatusPanel ("   " + CS_DUF_WorkingUpdateText) CS_DUF_WorkingHeaderText ""
-        Send Start_StatusPanel      of ghoStatusPanel
-
+        Send StartStatusPanel
         // This will save the status of all open tables including Master/Alias settings,
         // so we can restore them later;
         Send SaveOpenTables
@@ -1625,7 +1709,7 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary
     { Visibility=Private }
     // Automatically send after all processing is done, but before the OnPostUpdate event.
     Procedure Cleanup
-        Boolean bDatabaseWasUpdated bError
+        Boolean bDatabaseWasUpdated bError bCheckIntFiles
 
         Send CheckAutoCreateDbVersionTable
         Send RestoreOpenTables
@@ -1642,6 +1726,14 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary
 
         Get pbDatabaseWasUpdated to bDatabaseWasUpdated
         Get pbDbUpdateErrorHasOccured to bError
+        If (bDatabaseWasUpdated = True and bError = False) Begin
+            // Check/create/update *.int files backup table:
+            Get pbCheckIntFiles to bCheckIntFiles
+            If (bCheckIntFiles = True) Begin
+                Send SaveUpdateIntFiles
+            End
+        End            
+            
         If (bDatabaseWasUpdated = True or bError = True) Begin
 
             // We should always create the log as it also contains info about
@@ -1668,7 +1760,6 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary
                     Else Begin
                         Send Info_Box CS_DUF_DatabaseCheckedText
                     End
-
                 End
             End
         End
