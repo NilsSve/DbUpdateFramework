@@ -203,7 +203,7 @@ Object oDbUpdateHandler is a cDbUpdateHandler
     Set piDbVersionFileNumber  to 255
     Set piDbVersionFieldNumber to 1
     Set phIntFilesTable to 256
-    Set pbCheckIntFiles to True
+    Set pbUseIntFilesBackup to True
     Set phoDbUpdateHandler of ghoApplication to Self
     Set pbExitIfDebuggerActive to False
     
