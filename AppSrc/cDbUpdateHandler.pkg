@@ -63,6 +63,67 @@
 //
 //                End_Object
 //
+// *** To use the pbRestoreIntFilesNow & pbSaveIntFilesNow properties, the pbUseIntFilesBackup property needs to be True.
+//     Sample Code:
+//                Object oApplication is a cApplication
+//                    Set peHelpType to htHtmlHelp
+//                
+//                    Object oConnection is a cConnection
+//                        Use LoginEncryption.pkg
+//                        Use DatabaseLoginDialog.dg
+//                    End_Object
+//                
+//                    Property Boolean pbRestoreIntFilesNow False
+//                    Property Boolean pbSaveIntFilesNow False
+//                    // This allows the program to have the parameter "-restore" passed on the command line.
+//                    // If found, it will call the "RestoreIntFiles" of the cDbUpdateHandler object.
+//                    Procedure OnCreate
+//                        Handle hoCmdLine
+//                        Integer iSize iCount
+//                        String sParam
+//                        
+//                        Get phoCommandLine to hoCmdLine
+//                        Get CountOfArgs of hoCmdLine to iSize
+//                        For iCount from 1 to iSize
+//                            Get Argument of hoCmdLine iCount to sParam
+//                            If (Lowercase(sParam) contains "restore") Begin
+//                                Set pbRestoreIntFilesNow to True
+//                            End
+//                            Else If (Lowercase(sParam) contains "save") Begin
+//                                Set pbSaveIntFilesNow to True
+//                            End
+//                        Loop
+//                    End_Procedure
+//                
+//                End_Object
+//
+//                Object oDbUpdateHandler is a cDbUpdateHandler
+//                    Set piDbVersionFileNumber  to 255
+//                    Set piDbVersionFieldNumber to 1
+//                    Set phIntFilesTable to 256
+//                    Set pbUseIntFilesBackup to True
+//                    Set pbExitIfDebuggerActive to False
+//                
+//                    Procedure OnCreate
+//                        String sVersionInfo
+//                        Boolean bRestoreIntFilesNow bSaveIntFilesNow
+//                        
+//                        Get pbRestoreIntFilesNow of ghoApplication to bRestoreIntFilesNow
+//                        If (bRestoreIntFilesNow = True) Begin
+//                            Send RestoreIntFiles
+//                        End
+//                        Get pbSaveIntFilesNow of ghoApplication to bSaveIntFilesNow
+//                        If (bSaveIntFilesNow = True) Begin
+//                            Send SaveUpdateIntFiles    
+//                        End 
+//                        
+//                        // To check for correct the driver and db client versions, when the program starts (each-Time it is started!)
+//                        Get MinMSSQLDRV_And_ClientVersion "24.0.29.10" SQLSERVER2019CLIENT True True to sVersionInfo
+//                    End_Procedure
+// ******************
+
+
+
 //
 // $Rev History:
 //    2016-09-27  Module header created
@@ -289,7 +350,7 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary
         { Visibility=Private }
         Property Boolean pbSaveIntFilesNow False
         { MethodType=Property Category="Check int. Files" InitialValue=False }
-        Property Boolean pbCheckIntFiles False   
+        Property Boolean pbUseIntFilesBackup False   
         { MethodType=Property Category="Check int. Files" InitialValue=False }
         Property Handle  phIntFilesTable 256
         { Visibility=Private }
@@ -319,7 +380,7 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary
     Include_Resource FilelistBackupFile.cfg as res_EmbeddedFilelistCfg type DF_RESOURCE_TYPE_BINARY
     // *** MAIN .Int file (and Filelist.cfg) Integrity Check Message ***
     //                                                
-    // The logic is activated by setting the property "pbCheckIntFiles = True" in the
+    // The logic is activated by setting the property "pbUseIntFilesBackup = True" in the
     // cDbUpdateHandler object.
     //
     // Checks that all .int files are intact, or else writes new copies to disk. 
@@ -462,7 +523,7 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary
 
         Get IsIntFileTable to bIsIntFileTable
         If (bIsIntFileTable = False) Begin
-            Send Info_Box "The 'IntFilesTable' has not been created. Thus no backup info for .int files exists. The property pbCheckIntFiles must have been set to True in the cDbUpdateHandler object for automatic creation of the table and save of all .int files."
+            Send Info_Box "The 'IntFilesTable' has not been created. Thus no backup info for .int files exists. The property pbUseIntFilesBackup must have been set to True in the cDbUpdateHandler object for automatic creation of the table and save of all .int files."
             Procedure_Return
         End
         
@@ -1709,7 +1770,7 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary
     { Visibility=Private }
     // Automatically send after all processing is done, but before the OnPostUpdate event.
     Procedure Cleanup
-        Boolean bDatabaseWasUpdated bError bCheckIntFiles
+        Boolean bDatabaseWasUpdated bError bUseIntFilesBackup
 
         Send CheckAutoCreateDbVersionTable
         Send RestoreOpenTables
@@ -1728,8 +1789,8 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary
         Get pbDbUpdateErrorHasOccured to bError
         If (bDatabaseWasUpdated = True and bError = False) Begin
             // Check/create/update *.int files backup table:
-            Get pbCheckIntFiles to bCheckIntFiles
-            If (bCheckIntFiles = True) Begin
+            Get pbUseIntFilesBackup to bUseIntFilesBackup
+            If (bUseIntFilesBackup = True) Begin
                 Send SaveUpdateIntFiles
             End
         End            
