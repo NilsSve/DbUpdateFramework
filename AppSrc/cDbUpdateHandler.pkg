@@ -105,8 +105,8 @@
 //                    Set pbExitIfDebuggerActive to False
 //                
 //                    Procedure OnCreate
-//                        String sVersionInfo
-//                        Boolean bRestoreIntFilesNow bSaveIntFilesNow
+//                        String sVersionInfo sErrorText
+//                        Boolean bRestoreIntFilesNow bSaveIntFilesNow bOK
 //                        
 //                        Get pbRestoreIntFilesNow of ghoApplication to bRestoreIntFilesNow
 //                        If (bRestoreIntFilesNow = True) Begin
@@ -114,7 +114,7 @@
 //                        End
 //                        Get pbSaveIntFilesNow of ghoApplication to bSaveIntFilesNow
 //                        If (bSaveIntFilesNow = True) Begin
-//                            Send SaveUpdateIntFiles    
+//                            Get SaveUpdateIntFiles (&sErrorText) to bOK
 //                        End 
 //                        
 //                        // To check for correct the driver and db client versions, when the program starts (each-Time it is started!)
@@ -402,7 +402,7 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary
     // when we get here and then the compiler can't embedd it!        
     // NOTE: This relies on the "WriteDateTimeHeaderFile" program and that each Project has
     //       been setup to run it as the "Before Compilation Process:" (See: Project - Project Properties - Compiler tab-page)
-    Procedure SaveUpdateIntFiles
+    Function SaveUpdateIntFiles String ByRef sErrorText Returns Boolean
         Boolean bCheckIntFiles bExists bOK bSaved bIsSQL bFileListExist bResult bDevelop bZipExists bIntFilesTablesCheckDone bNewer bIsIntFileTable  bIsAlias
         String sPaths sDataPath sIntFileName sRootName sFileListName sFileListNameBackup sDDSrcPath sCurrentFolder
         String sFileListZipFile sParam sProgram sFile 
@@ -420,8 +420,8 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary
             Send AutoCreateIntFilesTable
             Get Private.pbIntFilesTablesCheckDone to bOK
             If (bOK = False) Begin
-                Send Info_Box CS_DUF_DbUpdatedErrorText
-                Send Exit_Application of ghoApplication
+                Move CS_DUF_DbUpdatedErrorText to sErrorText
+                Function_Return False
             End
         End                                                       
         
@@ -446,8 +446,8 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary
             If (bNewer = True) Begin
                 Get vDeleteFile sFileListNameBackup to bOK
                 Get vCopyFile sFileListName sFileListNameBackup to bOK
-                Send Info_Box "A new backup copy of the Filelist.cfg file was made. In order to include a backup copy of the file into the program, as a resource, you will need to re-compile/restart the program.\n\nThe program will now exit."
-                Send Exit_Application
+                Move "A new backup copy of the Filelist.cfg file was made. In order to include a backup copy of the file into the program, as a resource, you will need to re-compile/restart the program.\n\nThe program will now exit." to sErrorText
+                Function_Return True
             End
         End
         
@@ -504,13 +504,14 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary
         Send Stop_StatusPanel of ghoStatusPanel
         // If an error occured we need to exit the application as we cannot start with an uncomplete set of .int files.
         If (bResult = False) Begin  
-            Send Info_Box CS_DUF_DbUpdatedErrorText 
-            Send Exit_Application
+            Move CS_DUF_DbUpdatedErrorText to sErrorText
+            Function_Return False
         End 
         Else Begin
             Send LogError ("The *.int file backup table was updated:" * String(CS_IntFilesTableLogicalName)) False
         End
-    End_Procedure               
+        Function_Return True
+    End_Function
 
     // It checks that *.int files on disk corresponds with the content in the
     // .int file backup table phIntFilesTable.
@@ -1770,8 +1771,10 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary
     { Visibility=Private }
     // Automatically send after all processing is done, but before the OnPostUpdate event.
     Procedure Cleanup
-        Boolean bDatabaseWasUpdated bError bUseIntFilesBackup
-
+        Boolean bDatabaseWasUpdated bError bUseIntFilesBackup bOK
+        String sErrorText
+        
+        Move "" to sErrorText
         Send CheckAutoCreateDbVersionTable
         Send RestoreOpenTables
 
@@ -1787,11 +1790,18 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary
 
         Get pbDatabaseWasUpdated to bDatabaseWasUpdated
         Get pbDbUpdateErrorHasOccured to bError
-        If (bDatabaseWasUpdated = True and bError = False) Begin
+        // Note: We make backup of .int files even if an error occured.
+        If (bDatabaseWasUpdated = True) Begin
             // Check/create/update *.int files backup table:
             Get pbUseIntFilesBackup to bUseIntFilesBackup
             If (bUseIntFilesBackup = True) Begin
-                Send SaveUpdateIntFiles
+                Get SaveUpdateIntFiles (&sErrorText) to bOK
+                If (bOK = False) Begin
+                    Send LogError sErrorText True
+                End
+                Else If (sErrorText <> "") Begin
+                    Send LogError sErrorText False
+                End
             End
         End            
             
