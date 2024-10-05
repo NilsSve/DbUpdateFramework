@@ -1050,7 +1050,7 @@ Class cBaseDbUpdateFuncLib is a cObject
 
     // Returns a string array with all table indexes for the passed table handle and driver id.
     Function _SqlUtilEnumerateIndexes String sTableName String sDriverID Returns String[]
-        String[] sReturnArray sReturnArray2
+        String[] asReturnArray asReturnArray2
         String sConnectionString sSelect sSchema
         Boolean bOK
         Integer iCount iSize
@@ -1058,7 +1058,7 @@ Class cBaseDbUpdateFuncLib is a cObject
         Get _SqlCheckCurrentDriver sDriverID to bOK
         If (bOK = False) Begin
             Error DFERR_PROGRAM ("Unsupported driver. A list of table columns could not be retrieved for:" * sDriverID + ".")
-            Function_Return sReturnArray
+            Function_Return asReturnArray
         End
 
         Get psConnectionString to sConnectionString
@@ -1067,13 +1067,13 @@ Class cBaseDbUpdateFuncLib is a cObject
         Case Begin
             Case (sDriverID = MSSQLDRV_ID)
                 Move ("select * from sys.indexes where object_id = (select object_id from sys.objects where name = '" + sTableName + "')") to sSelect
-                Get _SqlEnumerateEsqlDAW sSelect 2 to sReturnArray
+                Get _SqlEnumerateEsqlDAW sSelect 2 to asReturnArray
                 Case Break
 
             Case (sDriverID = DB2_DRV_ID)
                 Error "Not implemented yet! The select statement has not been finalized."
 //                Move () to sSelect
-//                Get _SqlEnumerateEsqlDAW sSelect 2 to sReturnArray
+//                Get _SqlEnumerateEsqlDAW sSelect 2 to asReturnArray
                 Case Break
 
             Case Else
@@ -1081,15 +1081,15 @@ Class cBaseDbUpdateFuncLib is a cObject
                 Case Break
         Case End
 
-        Move (SizeOfArray(sReturnArray)) to iSize
+        Move (SizeOfArray(asReturnArray)) to iSize
         Decrement iSize
         For iCount from 0 to iSize
-            If (Trim(sReturnArray[iCount]) <> "") Begin
-                Move sReturnArray[iCount] to sReturnArray2[SizeOfArray(sReturnArray2)]
+            If (Trim(asReturnArray[iCount]) <> "") Begin
+                Move asReturnArray[iCount] to asReturnArray2[SizeOfArray(asReturnArray2)]
             End
         Loop
 
-        Function_Return sReturnArray2
+        Function_Return asReturnArray2
     End_Function
 
     // Returns a string array with all table names the passed table handle has relation ships with.
@@ -2029,11 +2029,19 @@ Class cBaseDbUpdateFuncLib is a cObject
 
     // The table must already exist in the filelist for this function to work.
     // It creates a rudimentary .int file in the first Data folder of the psDataPath property.
+    // Note: This is not enough to re-create an .int file!
+    //       It is also necessary (as the DUF framework does when it is called) to call a Structure_Start/Structure_End,
+    //       to have the driver make a proper update of the .int file.
+    //       Sample:
+    //               Open hTable
+    //               Structure_Start hTable sDriver
+    //               Structure_End hTable DF_STRUCTEND_OPT_FORCE
+    //               Note the "DF_STRUCTEND_OPT_FORCE" to force a restructure(!)
     Function _SqlUtilCreateIntFile Handle hTable String sDriverID String sConnectionID Boolean bAnsi Boolean bSysFile Returns Boolean
         Boolean bOK bExists bUseConnectionID 
-        String sDataPath sRootName sLogicalName sPhysicalFileName sConnectionString sDatabaseName sSchemaName sANSI_OEM
-        String[] sIndexArray
-        Integer iCount iCh iSize
+        String sDataPath sRootName sLogicalName sPhysicalFileName sConnectionString sDatabaseName sSchemaName sANSI_OEM sNoDriverRootName
+        String[] asIndexArray
+        Integer iCount iCh iSize iPos
 
         Move (Trim(sConnectionID) <> "") to bUseConnectionID
         Get psConnectionString to sConnectionString
@@ -2051,7 +2059,14 @@ Class cBaseDbUpdateFuncLib is a cObject
         End
         Get vFolderFormat sDataPath to sDataPath
 
-        Get_Attribute DF_FILE_ROOT_NAME    of hTable to sRootName
+        Get_Attribute DF_FILE_ROOT_NAME    of hTable to sRootName 
+        Move (Pos(":", sRootName)) to iPos
+        If (iPos <> 0) Begin
+            Move (Mid(sRootName, Length(sRootName), iPos +1)) to sNoDriverRootName
+        End
+        Else Begin
+            Move sRootName to sNoDriverRootName
+        End
         Get_Attribute DF_FILE_LOGICAL_NAME of hTable to sLogicalName
         Get _TableNameOnly sRootName to sDatabaseName
         Move sLogicalName  to sPhysicalFileName
@@ -2068,8 +2083,8 @@ Class cBaseDbUpdateFuncLib is a cObject
             Get vRenameFile (sDataPath + sPhysicalFileName) (sDataPath + sPhysicalFileName + ".bak") to bOK
         End
 
-        Get _UtilDeleteCacheFile sRootName to bOK
-        Get _SqlUtilEnumerateIndexes sRootName sDriverID to sIndexArray
+        Get _UtilDeleteCacheFile sNoDriverRootName to bOK
+        Get _SqlUtilEnumerateIndexes sNoDriverRootName sDriverID to asIndexArray
 
         Get Seq_Open_Output_Channel (sDataPath + sPhysicalFileName) to iCh
             Writeln channel iCh CS_DRIVER_NAME     " " sDriverID
@@ -2092,8 +2107,8 @@ Class cBaseDbUpdateFuncLib is a cObject
             End
 
             If (bSysFile = False) Begin
-                Move (SizeOfArray(sIndexArray)) to iSize
-                Move (SortArray(sIndexArray)) to sIndexArray
+                Move (SizeOfArray(asIndexArray)) to iSize
+                Move (SortArray(asIndexArray)) to asIndexArray
                 If (iSize > 0) Begin
                     Writeln channel iCh (CS_PRIMARY_INDEX * String("0"))
                     Writeln channel iCh // Just an empty line
@@ -2101,7 +2116,7 @@ Class cBaseDbUpdateFuncLib is a cObject
                 Decrement iSize
                 for iCount from 0 to iSize
                     Writeln channel iCh (CS_INDEX_NUMBER * String(iCount))
-                    Writeln channel iCh (CS_INDEX_NAME   * String(sIndexArray[iCount]))
+                    Writeln channel iCh (CS_INDEX_NAME   * String(asIndexArray[iCount]))
                     Writeln channel iCh
                 Loop
             End
