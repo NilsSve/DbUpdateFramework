@@ -224,7 +224,7 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary
         Property Boolean pbDbUpdateErrorHasOccured False
         { Visibility=Private }
         // Don't touch. It is being used by the cDbUpdateVersion
-        // subclass to tell if that particular update went OK or not.
+        // subclass to tell if that particular update was a success or not.
         Property Boolean Private.pbUpdateVersionObjectError False
         { Category="Error Handling" MethodType=Property Visibility=Private }
         Property String[] paSQLQueryMessages
@@ -352,7 +352,7 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary
         { MethodType=Property Category="Check int. Files" InitialValue=False }
         Property Boolean pbUseIntFilesBackup False   
         { MethodType=Property Category="Check int. Files" InitialValue=False }
-        Property Handle  phIntFilesTable 256
+        Property Handle  phIntFilesTable -1
         { Visibility=Private }
         Property Boolean Private.pbIntFilesTablesCheckDone False
         
@@ -420,7 +420,7 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary
             Send AutoCreateIntFilesTable
             Get Private.pbIntFilesTablesCheckDone to bOK
             If (bOK = False) Begin
-                Move CS_DUF_DbUpdatedErrorText to sErrorText
+//                Move CS_DUF_DbUpdatedErrorText to sErrorText
                 Function_Return False
             End
         End                                                       
@@ -467,7 +467,7 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary
                     Get_Attribute DF_FILE_NEXT_USED of hTable to hTable
                     If (hTable <> 0 and hTable <> 50) Begin
                         Get_Attribute DF_FILE_ROOT_NAME of hTable to sIntFileName 
-                        Set Message_Text of ghoStatusPanel to ("Saving info about:" * String(sIntFileName))
+                        Set Message_Text of ghoStatusPanel to ("Saving/updating IntFilesTable:" * String(sIntFileName))
                         Get _UtilTableIsSqlByRootName sIntFileName to bIsSQL
                         Get UtilTableIsAlias hTable to bIsAlias 
                         If (bIsSQL = True and bIsAlias = False) Begin
@@ -481,6 +481,7 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary
                                 If (bSaved = False) Begin
                                     Get SaveIntFileData sDataPath sIntFileName to bOK
                                     If (bOK = False) Begin
+                                        Error DFERR_PROGRAM ("The 'SaveIntFileData' function for the internal database table:" * String(sIntFileName) * "failed.")
                                         Move False to bResult    
                                     End
                                 End         
@@ -504,12 +505,9 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary
         Send Stop_StatusPanel of ghoStatusPanel
         // If an error occured we need to exit the application as we cannot start with an uncomplete set of .int files.
         If (bResult = False) Begin  
-            Move CS_DUF_DbUpdatedErrorText to sErrorText
             Function_Return False
         End 
-        Else Begin
-            Send LogError ("The *.int file backup table was updated:" * String(CS_IntFilesTableLogicalName)) False
-        End
+        Send LogError ("The *.int file backup table was updated:" * String(CS_IntFilesTableLogicalName)) False
         Function_Return True
     End_Function
 
@@ -1185,60 +1183,17 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary
         If (sCallback_Text contains "Creating index") Begin
             Move (Replace("Creating index", sCallback_Text, CS_DUF_CreatingIndex)) to sCallback_Text
         End
+        If (bVerboseState = True and (iCallback_Type <> DF_Message_Progress_Value)) Begin
+            Send LogError of hoLogFile nVersion 0 sCallback_Text 0 False True
+        End
+        If (iCallback_Type <> DF_Message_Progress_Value) Begin
+            Set Message_Text of ghoStatusPanel to sCallback_Text
+            Set Action_Text  of ghoStatusPanel to ""
+        End
 
         Case Begin
-            Case (iCallback_Type = DF_Message_Text)
-                Set Message_Text of ghoStatusPanel to sCallback_Text
-                Set Action_Text  of ghoStatusPanel to ""
-                If (bVerboseState = True) Begin
-                    Send LogError of hoLogFile nVersion 0 sCallback_Text 0 False True
-                End
-                Case Break
-            Case (iCallback_Type = DF_Message_Heading_1)
-                Set Message_Text of ghoStatusPanel to sCallback_Text
-                If (bVerboseState = True) Begin
-                    Send LogError of hoLogFile nVersion 0 sCallback_Text 0 False True
-                End
-                Case Break
-            Case (iCallback_Type = DF_Message_Heading_2)
-                Set Message_Text of ghoStatusPanel to sCallback_Text
-                Set Action_Text  of ghoStatusPanel to ""
-                If (bVerboseState = True) Begin
-                    Send LogError of hoLogFile nVersion 0 sCallback_Text 0 False True
-                End
-                Case Break
-            Case (iCallback_Type = DF_Message_Heading_3)
-                Set Message_Text of ghoStatusPanel to sCallback_Text
-                Set Action_Text  of ghoStatusPanel to ""
-                If (bVerboseState = True) Begin
-                    Send LogError of hoLogFile nVersion 0 sCallback_Text 0 False True
-                End
-                Case Break
-            Case (iCallback_Type = DF_Message_Heading_4)
-                Set Message_Text of ghoStatusPanel to sCallback_Text
-                Set Action_Text  of ghoStatusPanel to ""
-                If (bVerboseState = True) Begin
-                    Send LogError of hoLogFile nVersion 0 sCallback_Text 0 False True
-                End
-                Case Break
-            Case (iCallback_Type = DF_Message_Heading_5)
-                Set Message_Text of ghoStatusPanel to sCallback_Text
-                Set Action_Text  of ghoStatusPanel to ""
-                If (bVerboseState = True) Begin
-                    Send LogError of hoLogFile nVersion 0 sCallback_Text 0 False True
-                End
-                Case Break
-            Case (iCallback_Type = DF_Message_Warning)
-                If (bVerboseState = True) Begin
-                    Send LogError of hoLogFile nVersion 0 sCallback_Text 0 False True
-                End
-                Case Break
             Case (iCallback_Type = DF_Message_Progress_Title)
-                Set Message_Text of ghoStatusPanel to sCallback_Text
                 Set Action_Text  of ghoStatusPanel to ""
-                If (bVerboseState = True) Begin
-                    Send LogError of hoLogFile nVersion 0 sCallback_Text 0 False True
-                End
                 Case Break
             Case (iCallback_Type = DF_Message_Progress_Value)
                 //*** Interpret numbers
@@ -1248,9 +1203,9 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary
                 Set Action_Text of ghoStatusPanel to (String(iPerc) * String("% (Total:") * String(nTotal) + ")")
                 Set piPosition of ghoProgressBar to iPerc
                 Case Break
-            Case Else
-                Set Message_Text to ""
-                Set Action_Text  to ""
+//            Case Else
+//                Set Message_Text of ghoStatusPanel to ""
+//                Set Action_Text  of ghoStatusPanel to ""
         Case End
 
         Send ProcessEvents of ghoStatusPanel
