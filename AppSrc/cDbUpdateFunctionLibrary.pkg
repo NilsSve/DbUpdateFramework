@@ -26,7 +26,7 @@
 
 
 // DF_DATABASE_DEFAULT_MAP_DF_TO_SQL_TYPE_SCHEMA
-// Determines for all DataFlex data types, which SQL native types willbe used when creating new columns.
+// Determines for all DataFlex data types, which SQL native types will be used when creating new columns.
 // Set_Attribute DF_DATABASE_DEFAULT_MAP_DF_TO_SQL_TYPE_SCHEMA of {driverNumber} {databaseHandle} ;
 // to {MAP_DF_TO_SQL_TYPE_SQL2000|MAP_DF_TO_SQL_TYPE_SQL2005|MAP_DF_TO_SQL_TYPE_SQL2008|MAP_DF_TO_SQL_TYPE_SQL2012}
 //
@@ -2114,7 +2114,7 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
 
         Case Begin
             Case (sDriverID = MSSQLDRV_ID)
-                Get phoMSSQLHandler to hoSQLHandler
+                Get phoMSSQLHandler to hoSQLHandler 
                 Get EnumerateServersLocal of hoSQLHandler to iNumItems
                 If (iNumItems = 0) Begin
                     Get EnumerateServers of hoSQLHandler to iNumItems 
@@ -2573,7 +2573,7 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
         String sPhysicalName sRootName sLogicalName sDisplayName sConnectionID sConnectionString
         String sANSI_OEM sSchema sBaseTableSpace sLongTableSpace sIndexTableSpace sDatabase sGUIDName sWarning
         tSQLConnection SQLConnection
-
+        // ToDo: Redo logic. Instead create the new table!
         Get _UtilTableExists hTable to bExists
         If (bExists = False) Begin
             Set Private.phCurrentTable to hTable
@@ -3065,7 +3065,7 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
 
         Set TableName_Text of ghoStatusPanel to ""
         Close hTable
-        Function_Return (bOK = True)
+        Function_Return bOK
     End_Function
 
     Function ApiTableCreateAlias String sFileName String sDisplayName String sAliasName Integer iFilelistSlot Returns Boolean
@@ -3167,14 +3167,14 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
         Get _UtilTableExists hTableFrom to bOK
         If (bOK = False) Begin
             Set Private.phCurrentTable to hTableFrom
-            Error DFERR_PROGRAM "Table exists in Filelist.cfg but not on disk or SQL back-end."
+            Error DFERR_PROGRAM ("Func: ApiTableRelate. From Table:" * String(hTableFrom) * "exists in Filelist.cfg but not on disk or SQL back-end.")
             Function_Return False
         End
 
         Get _UtilTableExists hTableTo to bOK
         If (bOK = False) Begin
             Set Private.phCurrentTable to hTableTo
-            Error DFERR_PROGRAM "Table exists in Filelist.cfg but not on disk or SQL back-end."
+            Error DFERR_PROGRAM ("Func: ApiTableRelate. To Table:" * String(hTableTo) * "exists in Filelist.cfg but not on disk or SQL back-end.")
             Function_Return False
         End
 
@@ -3351,7 +3351,6 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
         Function_Return (Err = False)
     End_Function
 
-    // Note: This table update function does _not_ convert an embedded table to SQL. Use function ApiTableConvertToSQL first for that.
     Function ApiTableUpdate tAPITableNameInfo APITableNameInfoFrom tAPIColumn[] aColumnsFrom tAPIIndex[] aIndexesFrom tAPIRelation[] aRelationsFrom Returns Boolean
         Handle hTable
         String sTableName
@@ -3417,18 +3416,11 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
                 Function_Return False
             End
         End
-        If (bIsSQLTableFrom = True and bIsSQLTableTo = False) Begin 
-            If (bOk = True) Begin
-                Get ApiTableAttachToSql hTable True to bOk
-                Function_Return bOk
-            End 
-        End
 
         If (bTableExists = True) Begin
             If (bIsSQLTableTo = True) Begin
                 Get _UtilDeleteCacheFile APITableFrom.ApiTableInfo.sLogicalName to bOk
             End
-
             Get OpenTableExclusive hTable to bOpened
             If (bOpened = False) Begin
                 Send UserError DFERR_PROGRAM ("Could not open table number:" * String(hTable) * "Table could not be updated.")
@@ -3448,6 +3440,12 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
                 // Do nothing. Get _UtilTableCheckChangeFilelistNames is called below
                 Case Break
 
+            Case (bIsSQLTableFrom = True and bIsSQLTableTo = False and bTableExists = True)
+                    Get ApiTableConvertToSql_Ex hTable sDriverIDFrom bUseConnectionID bToANSI bRecnum bCopyData to bOk
+                    If (bOk = True) Begin
+                        Send LogError ("DataFlex table:" * String(APITableNameInfoFrom.sLogicalName) * "successfully converted to use driver:" * String(sDriverIDFrom)) False
+                    End
+                Case Break
             // New Table:
             Case (bTableExists = False)
                 Get ApiTableCreate      hTable APITableNameInfoFrom.sRootName APITableNameInfoFrom.sDisplayName APITableNameInfoFrom.sLogicalName bUseConnectionID bToANSI bRecnum aColumnsFrom to bOk
@@ -3813,7 +3811,7 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
             If (bIsSqlTable = True) Begin
                 If (aColumns[iCount].bIsSQLType = True) Begin
                     Get UtilSQLColumnTypeToDataFlexType sDriverID iDbType iType aColumns[iCount].iLength to iDataFlexType
-                    Set_Attribute DF_FIELD_TYPE          of hTable iColumn to iDataFlexType
+//                    Set_Attribute DF_FIELD_TYPE          of hTable iColumn to iDataFlexType
                     Set_Attribute DF_FIELD_NATIVE_TYPE   of hTable iColumn to iType
                     Set_Attribute DF_FIELD_NULL_ALLOWED  of hTable iColumn to aColumns[iCount].bAllowNULL
 
@@ -3914,13 +3912,12 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
 
         Structure_Start hTable
             Set_Attribute DF_FIELD_NAME              of hTable iColumn to sFieldNameFrom
-//            If (bIsSqlTable = False) Begin
+            If (bIsSqlTable = False) Begin
                 Set_Attribute DF_FIELD_TYPE          of hTable iColumn to iTypeFrom
-//            End
-//            Else Begin
-//                Set_Attribute DF_FIELD_TYPE          of hTable iColumn to iTypeFrom
-//                Set_Attribute DF_FIELD_NATIVE_TYPE   of hTable iColumn to iTypeFrom
-//            End
+            End
+            Else Begin
+                Set_Attribute DF_FIELD_NATIVE_TYPE   of hTable iColumn to iTypeFrom
+            End
             Set_Attribute DF_FIELD_LENGTH            of hTable iColumn to (iLengthFrom + iPrecFrom)
             Set_Attribute DF_FIELD_PRECISION         of hTable iColumn to iPrecFrom
             Set Action_Text of ghoStatusPanel to "Restructures table..."
@@ -4084,7 +4081,7 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
     // To move an existing field to another position in a table.
     Function ApiColumnMove Handle hTable Integer iOld Integer iNew Boolean bIsSQLType Integer iLength Integer iPrecision Returns Boolean
         String sColumn sDriverID
-        Integer iType
+        Integer iType iSQLType
         Boolean bOK bIsDate
 
         Close hTable
@@ -4100,50 +4097,51 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
             Function_Return False
         End
 
+        Set Action_Text of ghoStatusPanel to "Restructures table..."
         Get_Attribute DF_FIELD_NAME of hTable iOld to sColumn
         Get_Attribute DF_FIELD_TYPE of hTable iOld to iType
-        Get UtilColumnIsDateType iType bIsSQLType  to bIsDate
+        If (bIsSQLType = True) Begin
+            Get_Attribute DF_FIELD_NATIVE_TYPE of hTable iOld to iSQLType
+            Get UtilColumnIsDateType iSQLType bIsSQLType  to bIsDate
+        End
+        Else Begin
+            Get UtilColumnIsDateType iType bIsSQLType  to bIsDate
+        End
 
         Set Private.phCurrentTable to hTable
         Set Private.piCurrentField to iOld
-
-//        If (bIsDate = False) Begin
-//            Get_Attribute DF_FIELD_LENGTH    of hTable iOld to iLength
-//            Get_Attribute DF_FIELD_PRECISION of hTable iOld to iPrecision
-//        End
-//        Else Begin
-//            Move 6 to iLength
-//            Move 0 to iPrecision
-//        End
 
         Move False to Err
 
         Structure_Start hTable
             Delete_Field hTable iOld
             Create_Field hTable At iNew
+            
+            // This one is the crucial line:
             Set_Attribute DF_FIELD_OLD_NUMBER of hTable iNew to iOld
-
             Set_Attribute DF_FIELD_NAME of hTable iNew to sColumn
-            If (bIsSQLType = False) Begin
-                Set_Attribute DF_FIELD_TYPE of hTable iNew to iType
+            
+            // If SQL table it is important that we don't try to change the field type, as MS-SQL then will generate an error.
+            If (bIsSQLType = True and bIsDate = False) Begin
+                Set_Attribute DF_FIELD_NATIVE_TYPE of hTable iNew to iSQLType
             End
-            Else Begin
-                Set_Attribute DF_FIELD_TYPE of hTable iNew to iType
-//                Set_Attribute DF_FIELD_NATIVE_TYPE of hTable iNew to iSQLType
-            End
-
             If (bIsDate = False) Begin
-                Set_Attribute DF_FIELD_LENGTH    of hTable iNew to iLength
+                Set_Attribute DF_FIELD_TYPE   of hTable iNew to iType
+                Set_Attribute DF_FIELD_LENGTH of hTable iNew to iLength
+            End
+            If (iType = DF_BCD) Begin
                 Set_Attribute DF_FIELD_PRECISION of hTable iNew to iPrecision
             End
 
-            Set Action_Text of ghoStatusPanel to "Restructures table..."
         Structure_End hTable DF_STRUCTEND_OPT_NONE "." ghoDbUpdateHandler
 
         Set Action_Text of ghoStatusPanel to ""
-        Function_Return (Err = False)
-    End_Function
-
+        Move (not(Err)) to bOK
+        Move False to Err
+        Move 0 to LastErr
+        Function_Return bOK
+    End_Function 
+    
     // Deletes a column name for the passed table number (and column number).
     Function ApiColumnRemove Handle hTable String sFieldName Returns Boolean
         Integer iColumn
@@ -4482,7 +4480,7 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
         Boolean bDateType
 
         If (bIsSQLTableTo = True) Begin
-            Move (iType = SQL_TYPE_DATE or iType = SQL_TYPE_TIMESTAMP or iType = SQL_TYPE_TIMESTAMP2) to bDateType
+            Move (iType = SQL_DATE or iType = SQL_TYPE_DATE or iType = SQL_TYPE_TIMESTAMP or iType = SQL_TYPE_TIMESTAMP2) to bDateType
         End
         Else Begin
             Move (iType = DF_DATE or iType = DF_DATETIME) to bDateType
@@ -4552,16 +4550,8 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
             Get UtilColumnCombineFromAndToArrays aColumnsFrom aColumnsTo to aAPIColumnCompare
         End
 
-        // 4) Remove fields if more fields currently exists compared to the new table definition.
-//        Get utilColumnsCheckForRemoves hTable aAPIColumnCompare to aAPIRemoveColumns
-//        If (SizeOfArray(aAPIRemoveColumns)) Begin
-//            Get UtilColumnsRemove hTable aAPIRemoveColumns to bOK
-//            If (bOK = False) Begin
-//                Function_Return False
-//            End
-//            Get UtilColumnsStructFill hTable to aColumnsTo
-//            Get UtilColumnCombineFromAndToArrays aColumnsFrom aColumnsTo to aAPIColumnCompare
-//        End
+        // Note: Fields will be removed if needed in the Structure_Start/End below.
+        // Get utilColumnsCheckForRemoves hTable aAPIColumnCompare to aAPIRemoveColumns
 
         // If any of the fields were changed by "Insert", "Rename" or "Move", we need to compare the fields again:
         If (SizeOfArray(aApiInsertColumns) or SizeOfArray(aAPIRenameColumns) or SizeOfArray(aAPIMoveColumns)) Begin
@@ -4595,8 +4585,8 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
                         Move aAPIColumnCompare[iCount].iLengthFrom      to iLengthFrom
                         Move aAPIColumnCompare[iCount].iPrecisionFrom   to iPrecisionFrom
                         Move aAPIColumnCompare[iCount].iOptionsFrom     to iOptionFrom
-
                         Move aAPIColumnCompare[iCount].iTypeFrom        to iTypeFrom
+
                         Get UtilSQLColumnTypeToDataFlexType sDriverIDFrom iDbType iTypeFrom iLengthFrom to iDataFlexType
                         If (iTypeFrom < -1490) Begin
                             Move (iTypeFrom + 1500)                     to iTypeFrom
@@ -4635,7 +4625,9 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
                             Set_Attribute DF_FIELD_NAME of hFile iColumn to sFieldNameFrom
                         End
 
-                        If (bIsSQLTableFrom = True and bIsSQLTableTo = True and aAPIColumnCompare[iCount].iOptionsFrom <> C_tAPIColumn_Identity) Begin
+                        // Note: In MS-SQL it is vital that *nothing* gets changed for e.g. a "datetime" column, else error: 22018 is generated by the SQL backend:
+                        //       "Explicit conversion from data type int to datetime2 is not allowed", which will make the update to fail, and all changes for the table is rollbacked. 
+                        If (bIsSQLTableFrom = True and bIsSQLTableTo = True and aAPIColumnCompare[iCount].iOptionsFrom <> C_tAPIColumn_Identity and bSkipTypeChange = False) Begin
                             Set_Attribute DF_FIELD_NULL_ALLOWED  of hFile iColumn to aAPIColumnCompare[iCount].bAllowNULLFrom
                             Move aAPIColumnCompare[iCount].sDefaultValueFrom to sDefaultValue
                             If (iDataFlexType = DF_BCD and Left(String(sDefaultValue), 1) <> "[") Begin
@@ -4660,13 +4652,12 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
 
                         Get UtilColumnIsDateType iTypeFrom bIsSQLTableTo to bIsDateType
                         // We can't set the length or precision for Date type columns (they are fixed).
-                        If (bIsDateType = False) Begin
-                            If (iLengthFrom <> iLengthTo) Begin
-                                Set_Attribute DF_FIELD_LENGTH of hFile iColumn to iLengthFrom
-                            End
-                            If (iPrecisionFrom <> iPrecisionTo) Begin
-                                Set_Attribute DF_FIELD_PRECISION of hFile iColumn to iPrecisionFrom
-                            End
+                        If (bIsDateType = False and iLengthFrom <> iLengthTo) Begin
+                            Set_Attribute DF_FIELD_LENGTH of hFile iColumn to iLengthFrom
+                        End
+                        // We do want to set the precision for e.g. DateTime2 (can be 3 or 7, but DataFlex can just handle "3").
+                        If (iPrecisionFrom <> iPrecisionTo) Begin
+                            Set_Attribute DF_FIELD_PRECISION of hFile iColumn to iPrecisionFrom
                         End
 
                         If (bIsSQLTableTo = True and iOptionFrom =  C_tAPIColumn_Identity and iOptionTo <> C_tAPIColumn_Identity) Begin
@@ -4718,11 +4709,11 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
                 End
             Loop
 
-            Set Action_Text of ghoStatusPanel to "Restructures table..."
+            Set Action_Text of ghoStatusPanel to "Restructuring table..."
         Structure_End hFile DF_STRUCTEND_OPT_NONE "." ghoDbUpdateHandler
 
         Set Action_Text of ghoStatusPanel to ""
-        Function_Return (Err = False)
+        Function_Return (Not(Err))
     End_Function
 
     // * Dummy function for the Studio's Code Explorer *
@@ -6799,10 +6790,10 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
     End_Function
 
     Function UtilColumnsStructFill Handle hTable Returns tAPIColumn[]
-        Integer iNumColumns iColumn iCount iOptions iDbType iType iCheckFieldNumber
-        Boolean bIdentityKey bDawSqlDriver bSqlDriver bIsOpen bExists bIsSqlTable bUserCancel
+        Integer iNumColumns iColumn iCount iOptions iDbType iType iCheckFieldNumber iDriverID
+        Boolean bIdentityKey bSqlDriver bIsOpen bExists bIsSqlTable bUserCancel
         tAPIColumn[] APIColumns APIColumnsEmpty
-        String sDriverID sRootName sLogicalName
+        String sDriverID sRootName sLogicalName sDataType
 
         Set Error_Report_Mode to DUF_ERROR_NO_REPORT
         Get piDbType to iDbType
@@ -6824,8 +6815,6 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
 
         Get_Attribute DF_FILE_DRIVER of hTable to sDriverID
         Get IsSQLDriver    sDriverID to bSqlDriver
-        Get IsDAWSQLDriver sDriverID to bDawSqlDriver
-
         Get _UtilTableIsSqlByRootName sRootName to bIsSqlTable
         If (bIsSqlTable = True) Begin
             Get _UtilTableExists hTable to bExists
@@ -6834,6 +6823,10 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
                 Function_Return APIColumnsEmpty
             End
         End
+//        Get DriverIndex sDriverID to iDriverID
+//        If (sDriverID = MSSQLDRV_ID) Begin
+//            Set_Attribute DF_DRIVER_MAP_DFDATETIME_TO_SQLTYPE of iDriverId to 'datetime2'
+//        End
 
         Move 0 to iCount
         Get_Attribute DF_FILE_NUMBER_FIELDS of hTable to iNumColumns
@@ -6846,52 +6839,65 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
             Move 0     to LastErr
             Move bIsSqlTable to APIColumns[iCount].bIsSQLType
             Set piPosition of ghoProgressBar to iColumn
-            If (bDawSqlDriver = True) Begin
-                Send Ignore_Error of Error_Object_Id DFERR_UNSUPPORTED_ATTRIBUTE
-                If (bIsSqlTable = True) Begin
-                    Get_Attribute DF_FIELD_NATIVE_TYPE      of hTable iColumn to iType
-                    Move iType                                                to APIColumns[iCount].iType
-                    Get_Attribute DF_FIELD_NATIVE_TYPE_NAME of hTable iColumn to APIColumns[iCount].sType
-                    Get_Attribute DF_FIELD_NULL_ALLOWED     of hTable iColumn to APIColumns[iCount].bAllowNULL
-                    Get_Attribute DF_FIELD_DEFAULT_VALUE    of hTable iColumn to APIColumns[iCount].sDefaultValue
-                End
-                Else Begin
-                    Get_Attribute DF_FIELD_TYPE             of hTable iColumn to APIColumns[iCount].iType
-                    Get UtilColumnTypeToString sDriverID iDbType APIColumns[iCount].iType to APIColumns[iCount].sType
-                End
 
-                // If the array value is out of bounce it means that this column doesn't exist on the backend.
-                Get_Attribute DF_Field_Number of hTable iColumn to iCheckFieldNumber
-                Move (iCheckFieldNumber >= 0) to bExists
-                If (bExists = False) Begin
-                    Move 0 to APIColumns[iCount].iType
-                End
-                If (bExists = True) Begin
-                    #IF (!@ > 170)
-                        Get_Attribute DF_FIELD_IS_IDENTITY of hTable iColumn to bIdentityKey
-                    #ENDIF
-                End
-                Send Trap_Error of Error_Object_Id DFERR_UNSUPPORTED_ATTRIBUTE
-                If (bIdentityKey = True) Begin
-                    Move C_tAPIColumn_Identity to APIColumns[iCount].iOptions
-                End
+            Send Ignore_Error of Error_Object_Id DFERR_UNSUPPORTED_ATTRIBUTE
+            If (bIsSqlTable = True) Begin 
+//                If (iType = DF_DATE) Begin
+//                    // Note: This is actually the same as SQL_DATETIME
+//                    Move SQL_DATE to iType
+//                    Move 3 to APIColumns[iCouknt].iPrecision
+//                End
+//                Else If (iType = DF_DATET Get_Attribute DF_FIELD_NATIVE_TYPE of hTable iColumn to iTypeIME) Begin
+//                    // In modern MS-SQL databases SQL_DATETIME will be = to "datetime2".
+//                    // By default MS-SQL will create such a field with 7 (!) decimal places.
+//                    // This is just a waste because DataFlex will truncate that to 3 decimal
+//                    // places. Therefore, we hard-code the precision to be only thee decimals.
+//                    Move SQL_DATETIME to iType
+//                    Move 3 to APIColumns[iCount].iPrecision
+//                End
+//                Move iType                                                to APIColumns[iCount].iType
+                Get_Attribute DF_FIELD_NATIVE_TYPE      of hTable iColumn to APIColumns[iCount].iType
+                Get_Attribute DF_FIELD_NATIVE_TYPE_NAME of hTable iColumn to APIColumns[iCount].sType
+                Get_Attribute DF_FIELD_NULL_ALLOWED     of hTable iColumn to APIColumns[iCount].bAllowNULL
+                Get_Attribute DF_FIELD_DEFAULT_VALUE    of hTable iColumn to APIColumns[iCount].sDefaultValue
             End
             Else Begin
-                Move False to Err
-                Move 0     to LastErr
-                If (bIsSqlTable = True) Begin
-                    Get_Attribute DF_FIELD_NATIVE_TYPE of hTable iColumn to APIColumns[iCount].iType
-                End
-                Else Begin
-                    Get_Attribute DF_FIELD_TYPE        of hTable iColumn to APIColumns[iCount].iType
-                    Get UtilColumnTypeToString sDriverID iDbType APIColumns[iCount].iType to APIColumns[iCount].sType
-                End
-                // If the array value is out of bounce it means that this column doesn't exist on the backend.
-                Move (LastErr <> DFERR_ARRAY_INDEX_OUT_OF_BOUNDS) to bExists
-                If (bExists = False) Begin
-                    Move 0 to APIColumns[iCount].iType
-                End
+                Get_Attribute DF_FIELD_TYPE             of hTable iColumn to APIColumns[iCount].iType
+                Get UtilColumnTypeToString sDriverID iDbType APIColumns[iCount].iType to APIColumns[iCount].sType
             End
+
+            // If the array value is out of bounce it means that this column doesn't exist on the backend.
+            Get_Attribute DF_Field_Number of hTable iColumn to iCheckFieldNumber
+            Move (iCheckFieldNumber >= 0) to bExists
+            If (bExists = False) Begin
+                Move 0 to APIColumns[iCount].iType
+            End
+            If (bExists = True) Begin
+                #IF (!@ > 170)
+                    Get_Attribute DF_FIELD_IS_IDENTITY of hTable iColumn to bIdentityKey
+                #ENDIF
+            End
+            Send Trap_Error of Error_Object_Id DFERR_UNSUPPORTED_ATTRIBUTE
+            If (bIdentityKey = True) Begin
+                Move C_tAPIColumn_Identity to APIColumns[iCount].iOptions
+            End
+
+//            Else Begin
+//                Move False to Err
+//                Move 0     to LastErr
+//                If (bIsSqlTable = True) Begin
+//                    Get_Attribute DF_FIELD_NATIVE_TYPE of hTable iColumn to APIColumns[iCount].iType
+//                End
+//                Else Begin
+//                    Get_Attribute DF_FIELD_TYPE        of hTable iColumn to APIColumns[iCount].iType
+//                    Get UtilColumnTypeToString sDriverID iDbType APIColumns[iCount].iType to APIColumns[iCount].sType
+//                End
+//                // If the array value is out of bounce it means that this column doesn't exist on the backend.
+//                Move (LastErr <> DFERR_ARRAY_INDEX_OUT_OF_BOUNDS) to bExists
+//                If (bExists = False) Begin
+//                    Move 0 to APIColumns[iCount].iType
+//                End
+//            End
 
             If (bExists = True) Begin
                 Move iColumn to APIColumns[iCount].iFieldNumber
@@ -6901,8 +6907,10 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
 //                    Get_Attribute DF_FIELD_NATIVE_SIZE of hTable iColumn to APIColumns[iCount].iLength
 //                    Get_Attribute DF_FIELD_PRECISION   of hTable iColumn to APIColumns[iCount].iPrecision
 //                End
-                Get_Attribute DF_FIELD_LENGTH      of hTable iColumn to APIColumns[iCount].iLength
-                Get_Attribute DF_FIELD_PRECISION   of hTable iColumn to APIColumns[iCount].iPrecision
+                Get_Attribute DF_FIELD_LENGTH      of hTable iColumn to APIColumns[iCount].iLength 
+                If (APIColumns[iCount].iPrecision = 0) Begin
+                    Get_Attribute DF_FIELD_PRECISION   of hTable iColumn to APIColumns[iCount].iPrecision
+                End
 
                 // If the length was zero we might have an Overlap(!) field.
                 // We then need check the DF_FIELD_TYPE if it really is and reset data for this array item.
@@ -6930,11 +6938,11 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
         Set Error_Report_Mode to DUF_ERROR_REPORT
         Function_Return APIColumns
     End_Function
-
-    // This will return a struct array with the combined data for the passed FROM and TO index arrays.
-    // The combined data will be sorted on the first struct member: iIndexNumber
-    // This is needed because index numbers can start at any number. The range for a particular table might also
-    // have "holes" in the series of index numbers.
+     
+    // ToDo: Shouldn't this be the other way round? The From bit last? That is what should be of interest??
+    // *** 
+    // This will return a struct array with the combined data for the passed FROM and TO column arrays.
+    // The combined data will be sorted on the first struct member: iFieldNumber
     Function UtilColumnCombineFromAndToArrays tAPIColumn[] APIColumnFrom tAPIColumn[] APIColumnTo Returns tAPIIndexCompare[]
         tAPIColumnCompare[] aAPIColumnCompare
         tAPIColumnCompare   APIColumnCompare
@@ -6963,7 +6971,7 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
         Decrement iSizeTo
         for iCount from 0 to iSizeTo
             Move APIColumnTo[iCount].iFieldNumber       to APIColumnCompare.iFieldNumber
-            // Search if the field number already exists in the array; else add it.
+            // Search if the field number already exists in the "to" array; else add it. <
             Move (SearchArray(APIColumnCompare, aAPIColumnCompare)) to iItem
             If (iItem = -1) Begin
                 Move (SizeOfArray(aAPIColumnCompare))   to iItem
@@ -7057,7 +7065,7 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
     End_Function
 
     // To convert between a data type string name and its integer constant declaration. E.g."VarChar" -> SQL_VarChar
-    // The reciprocal function is UtilColumnTypeToInteger.
+    // The reciprocal function is UtilColumnTypeToString.
     Function UtilColumnTypeToInteger String sDriverID Integer iDbType String sDataType Returns Integer
         tColumnType RetvalType
 
@@ -7591,7 +7599,7 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
         Function_Return APIRelations
     End_Function
 
-    // This will return a struct array with the combined data for the passed FROM and TO index arrays.
+    // This will return a struct array with the combined data for the passed FROM and TO relation arrays.
     // The combined data will be sorted on the first 4 struct members: hTableFrom, iColumnFrom, hTableTo and iColumnTo
     Function UtilRelationCombineFromAndToArrays tAPIRelation[] aAPIRelationFrom tAPIRelation[] aAPIRelationTo Returns tAPIIndexCompare[]
         tAPIRelation[] aAPIRelationFromAndTo
@@ -8860,7 +8868,7 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
         
         Move False to bExitIfDebuggerActive
         If (ghoDbUpdateHandler <> 0) Begin
-        Get pbExitIfDebuggerActive of ghoDbUpdateHandler to bExitIfDebuggerActive
+            Get pbExitIfDebuggerActive of ghoDbUpdateHandler to bExitIfDebuggerActive
         End
         Set Error_Report_Mode to DUF_ERROR_NO_REPORT
         // Can't open a table properly if run through the Debugger/Studio,
@@ -8879,8 +8887,8 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
         Get_Attribute DF_FILE_OPENED of hTable to bOpened
         If (bOpened) Begin
             Get_Attribute DF_FILE_OPEN_MODE of hTable to iMode
-            If (iMode=DF_EXCLUSIVE) Begin
-                    Set Error_Report_Mode to DUF_ERROR_REPORT
+            If (iMode = DF_EXCLUSIVE) Begin
+                Set Error_Report_Mode to DUF_ERROR_REPORT
                 Function_Return True
             End
             Close hTable
@@ -8955,10 +8963,11 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
     //      tables are not locked as DataFlex tables are.
     Function IsDatabaseInUse Returns Boolean
         Handle  hTable
-        String  sRootName
+        String  sRootName sDatabase sSchema sDriverID
         Boolean bOpen bErr bAlias bOK bIsSQLTable bFlexErrs bExists
         Integer iCount iTables
-
+        String[] asTablesArray asTablesArrayEmpty
+        
         Move 0 to iTables
         Set Action_Text of ghoStatusPanel to "Database in use check..."
         Get AutoConnectionIDLogin to bOK
@@ -8972,6 +8981,11 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
         Move False to bErr
         Send Ignore_Error of Error_Object_Id DFERR_FILE_ACCESS_VIOLATION
 
+        Get psDriverID to sDriverID
+        Get psDatabase to sDatabase
+        Get psSchema   to sSchema
+        Get _SqlUtilEnumerateTables sDriverID sDatabase sSchema to asTablesArray
+        Set pasSQLDataTables to asTablesArray
         Repeat
             Set piPosition of ghoProgressBar to iCount
             Increment iCount
@@ -8981,7 +8995,9 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
             // This test is only applicable for DataFlex embedded tables; so skip test if driver based table.
             Get _UtilTableIsSqlByRootName sRootName to bIsSQLTable
             Move False to bOpen
-            Get _UtilTableExists hTable to bExists
+            // _UtilTableExists_Ex is a variant of "_UtilTableExists", but it needs that the pasSQLDataTables
+            // property has been set/updated before usage! This makes the loop much faster.
+            Get _UtilTableExists_Ex hTable to bExists
             // Don't bother about CodeType (253, CodeMast (254) or) FlexErrs (Normally table 50)
             If (bIsSQLTable = False and bExists = True and hTable <> 0 and hTable <> 253 and hTable <> 254 and bFlexErrs = False) Begin
                 Set Error_Report_Mode to DUF_ERROR_NO_REPORT
@@ -8999,13 +9015,15 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
                         End
                     End
                 End
-                Close hTable
             End
+            Close hTable
             Get_Attribute DF_FILE_NEXT_USED of hTable to hTable
             If (bErr = True ) ;
                 Break
         Until (not(hTable))
 
+        // Reset the temporary used data tables property to blank:
+        Set pasSQLDataTables to asTablesArrayEmpty
         Set Action_Text of ghoStatusPanel to ""
         Send Trap_Error of Error_Object_Id DFERR_FILE_ACCESS_VIOLATION
         Move False to Err
