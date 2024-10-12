@@ -46,8 +46,8 @@ Object oCompareDatabases_vw is a dbView
     Set piMinSize to 89 211
     Set Border_Style To Border_Thick
     Set pbAutoActivate to True
-    Set pbAcceptDropFiles to True
-
+    Set pbAcceptDropFiles to True  
+    
     Object oFromFilelist_grp is a cRDCHeaderGroup
         Set Size to 50 462
         Set Location to 8 15
@@ -246,43 +246,53 @@ Object oCompareDatabases_vw is a dbView
     Procedure MainProcess
         String sFilelistFrom sFilelistTo
         Integer[] iaDifferences
-        Integer iSize iRetval hTable
+        Integer iSize iRetval
         Boolean bFromExists bToExists
         tAPITableBooleans CompareCheckBoxes
-        DateTime dtExecStart dtExecEnd
+        DateTime dtExecStart
         TimeSpan tsTotalTime
-
+    
         Move (CurrentDateTime()) to dtExecStart
         Get Value of oFilelistPathFrom_fm to sFilelistFrom
-        Get vFilePathExists sFilelistFrom to bFromExists
         Get Value of oFilelistPathTo_fm   to sFilelistTo
+        Get vFilePathExists sFilelistFrom to bFromExists
         Get vFilePathExists sFilelistTo   to bToExists
-
-        If (bFromExists = False or bToExists = False) Begin
-            Send Info_Box "You first need to select a 'FROM' and a 'TO' Filelist.cfg."
+    
+        If (not(bFromExists) or not(bToExists)) Begin
+            Send Info_Box "You first need to select both a 'FROM' and a 'TO' Filelist.cfg."
             Procedure_Return
         End
-
+        
         Move 0 to giDifferenceTables
+        // Initialize CompareCheckBoxes
         Get Checked_State of oCompareDate_DataTime_cb    to CompareCheckBoxes.bCompareDate_DateTime
         Get Checked_State of oCompareIndexAscending_cb   to CompareCheckBoxes.bCompareIndexAscending
         Get Checked_State of oCompareIndexUppercase_cb   to CompareCheckBoxes.bCompareIndexUppercase
         Get Checked_State of oIgnoreFilelistUppercase_cb to CompareCheckBoxes.bCompareFilelistUppercase
-
+    
         Get CompareAndOutputDiffs sFilelistFrom sFilelistTo CompareCheckBoxes dtExecStart to iaDifferences
         Set piaDifferences of ghoApplication to iaDifferences
-
+    
         Send Stop_StatusPanel of ghoStatusPanel
-        Move (CurrentDateTime()) to dtExecEnd
-        Move (dtExecEnd - dtExecStart) to tsTotalTime
+        Move (CurrentDateTime() - dtExecStart) to tsTotalTime
         Move (SizeOfArray(iaDifferences)) to iSize
-
+    
+        Send HandleComparisonResult iSize iaDifferences tsTotalTime
+    
+        Send Activate of oFilelistPathFrom_fm
+    End_Procedure
+    
+    Procedure HandleComparisonResult Integer iSize Integer[] iaDifferences TimeSpan tsTotalTime
+        Integer iRetval hTable
+        String sMessage
+    
         Case Begin
             Case (iSize = 0)
-                Send Info_Box "No differences found. The two databases should be identical."
+                Send Info_Box "No differences found. The two databases are identical."
                 Case Break
             Case (iaDifferences[0] >= 1)
-                Get YesNo_Box ("Ready! (Time elapsed:" * String(tsTotalTime) + ")\n" + String(iSize) * "Differences found. View the report now?") to iRetval
+                Move ("Ready! (Time elapsed:" + String(tsTotalTime) + ")\n" + String(iSize) + " Differences found. View the report now?") to sMessage
+                Get YesNo_Box sMessage to iRetval
                 If (iRetval = MBR_Yes) Begin
                     Send DoShowReport of oViewReport_Btn
                 End
@@ -291,17 +301,179 @@ Object oCompareDatabases_vw is a dbView
                 Send Info_Box "Process interrupted."
                 Case Break
             Case (iaDifferences[0] < -1)
-                Move iaDifferences[0]  to hTable
-                Move (999999 + hTable * -1) to hTable
-                Send Info_Box ("Process not complete. Couldn't open table number:" * String(hTable))
+                Move (999999 + iaDifferences[0] * -1) to hTable
+                Send Info_Box ("Process not complete. Couldn't open table number:" + String(hTable))
                 Send DoShowReport of oViewReport_Btn
                 Case Break
             Case Else
-                Send Info_Box "An unknown error occured. Process interrupted."
+                Send Info_Box "An unknown error occurred. Process interrupted."
         Case End
-
-        Send Activate of oFilelistPathFrom_fm
     End_Procedure
+
+//    Function SetupPathingAndGetDatabaseInfo String sFilelist Boolean bIsFrom String ByRef sDatabaseCollation Returns Boolean
+//        Boolean bOK bIsEmbedded
+//        String sDatabase
+//
+//        Get ChangeFilelistPathing of ghoApplication sFilelist to bOK
+//        If (bOK = False) Begin
+//            Function_Return False
+//        End
+//        
+//        Get UtilIsAllFilelistEntriesDataFlexTables of ghoDbUpdateFunctionLibrary to bIsEmbedded
+//        If (bIsEmbedded = False) Begin
+//            Get psDatabase of ghoDbUpdateFunctionLibrary to sDatabase
+//            Get SqlDatabaseCollationQuery of ghoDbUpdateFunctionLibrary sDatabase True to sDatabaseCollation
+//        End 
+//        Else Begin
+//            Move "Embedded Database (DataFlex)" to sDatabaseCollation
+//        End
+//        
+//        Function_Return True
+//    End_Function
+//
+//    Function CompareAndOutputDiffs String sFilelistFrom String sFilelistTo tAPITableBooleans CompareCheckBoxes DateTime dtExecStart Returns Integer[]
+//        Integer iSize iCount iNoOfTablesFrom iNoOfTablesTo iCh
+//        Boolean bIsSame bFilelistError bUserCancel bOK bCollationDiff bIsEmbedded
+//        Handle hTable
+//        String sLogicalName sDatabaseCollationFrom sDatabaseCollationTo sDatabase
+//        tAPITable[] aFromStructure aToStructure
+//        tAPITableCompare[] aAPITableCompare
+//        Integer[] iaDifferences iaDifferencesEmpty 
+//
+//        Set Message_Text of ghoStatusPanel to ""
+//        
+//        // Set up the pathing and get database information for 'FROM' Filelist.cfg
+//        Get SetupPathingAndGetDatabaseInfo sFilelistFrom True (&sDatabaseCollationFrom) to bOK
+//        If (bOK = False) Begin
+//            Function_Return iaDifferencesEmpty
+//        End
+//        
+//        // Fill the 'FROM' structure with data
+//        Get UtilTablesStructArrayFill of ghoDbUpdateFunctionLibrary True True True to aFromStructure
+//        If (aFromStructure[0].bCancel = True) Begin
+//            Move -1 to iaDifferencesEmpty[0]
+//            Function_Return iaDifferencesEmpty
+//        End
+//        If (aFromStructure[0].bError = True) Begin
+//            Move aFromStructure[0].ApiTableInfo.iTableNumber to hTable
+//            Move (-999999 - hTable) to iaDifferencesEmpty[0]
+//            Function_Return iaDifferencesEmpty
+//        End
+//        
+//        // Set up the pathing for the 'TO' Filelist.cfg
+//        Get SetupPathingAndGetDatabaseInfo sFilelistTo False (&sDatabaseCollationTo) to bOK
+//
+//        If (bOK = False) Begin
+//            Function_Return iaDifferencesEmpty
+//        End
+//        // Fill the 'TO' structure with data
+//        Get UtilTablesStructArrayFill of ghoDbUpdateFunctionLibrary True True False to aToStructure
+//        If (aToStructure[0].bCancel = True) Begin
+//            Move -1 to iaDifferencesEmpty[0]
+//            Function_Return iaDifferencesEmpty
+//        End
+//        If (aToStructure[0].bError = True) Begin
+//            Move aToStructure[0].ApiTableInfo.iTableNumber to hTable
+//            Move (-999999 - hTable) to iaDifferencesEmpty[0]
+//            Function_Return iaDifferencesEmpty
+//        End
+//
+//        Set Message_Text of ghoStatusPanel to "Comparing and Writing Differences: (3 of 3)"
+//        Move 0 to hTable
+//        Move 0 to iCount
+//        Get WriteReportHeader sDatabaseCollationFrom sDatabaseCollationTo to iCh
+//
+//        Get UtilTableCombineFromAndToArrays of ghoDbUpdateFunctionLibrary aFromStructure aToStructure to aAPITableCompare
+//        Move (SizeOfArray(aAPITableCompare))   to iSize
+//        Set piMaximum of ghoProgressBar        to iSize
+//        Set piMaximum of ghoProgressBarOverall to iSize
+//        Decrement iSize
+//
+//        For iCount from 0 to iSize
+//            Move True to bIsSame
+//            Set piPosition of ghoProgressBarOverall to iCount
+//            Move aAPITableCompare[iCount].hTable to hTable
+//
+//            If (aAPITableCompare[iCount].bExistsFrom = True) Begin
+//                Move aAPITableCompare[iCount].APITableNameInfoCompare.sLogicalNameFrom to sLogicalName
+//            End
+//            Else Begin
+//                Move aAPITableCompare[iCount].APITableNameInfoCompare.sLogicalNameTo   to sLogicalName
+//            End
+//            Set Action_Text of ghoStatusPanel to ("Name:" * sLogicalName * String("Number:") * String(hTable))
+//
+//            Get UtilTableCompare_Ex of ghoDbUpdateFunctionLibrary aAPITableCompare[iCount] CompareCheckBoxes False (&bFilelistError) to bIsSame
+//
+//            If (bIsSame = False) Begin
+//                Send MainReport (&aAPITableCompare[iCount]) (&CompareCheckBoxes) iCh
+//                Move hTable to iaDifferences[SizeOfArray(iaDifferences)]
+//            End
+//
+//            Get Check_StatusPanel of ghoStatusPanel to bUserCancel
+//            If (bUserCancel = True) Begin
+//                Move -1 to iaDifferencesEmpty[0]
+//                Function_Return iaDifferencesEmpty
+//            End
+//        Loop
+//        
+//        Move False to bCollationDiff
+//        If (Uppercase(sDatabaseCollationFrom) <> Uppercase(sDatabaseCollationTo)) Begin
+//            Move True to bCollationDiff
+//        End
+//        Send WriteReportFooter (SizeOfArray(iaDifferences)) bCollationDiff iCh dtExecStart
+//        Close DF_ALL DF_PERMANENT
+//
+//        Function_Return iaDifferences
+//    End_Function
+//
+//    Function FillStructureData Boolean bIsFrom tAPITable[] ByRef aStructure Returns Integer[]
+//        Integer[] iaDifferences
+//        
+//        Get UtilTablesStructArrayFill of ghoDbUpdateFunctionLibrary True True bIsFrom to aStructure
+//        
+//        If (aStructure[0].bCancel = True) Begin
+//            Move -1 to iaDifferences[0]
+//            Function_Return iaDifferences
+//        End
+//        
+//        If (aStructure[0].bError = True) Begin
+//            Move (aStructure[0].ApiTableInfo.iTableNumber * -1 - 999999) to iaDifferences[0]
+//            Function_Return iaDifferences
+//        End
+//        
+//        Function_Return iaDifferences
+//    End_Function
+//
+//    Function ProcessTableComparison Integer iCount tAPITableCompare[] ByRef aAPITableCompare tAPITableBooleans ByRef CompareCheckBoxes Integer[] ByRef iaDifferences Integer iCh Returns Boolean
+//        Boolean bIsSame bFilelistError bUserCancel
+//        Handle hTable
+//        String sLogicalName
+//        
+//        Set piPosition of ghoProgressBarOverall to iCount
+//        Move aAPITableCompare[iCount].hTable to hTable
+//        
+//        If (aAPITableCompare[iCount].bExistsFrom = True) Begin
+//            Move aAPITableCompare[iCount].APITableNameInfoCompare.sLogicalNameFrom to sLogicalName
+//        End
+//        Else Begin
+//            Move aAPITableCompare[iCount].APITableNameInfoCompare.sLogicalNameTo to sLogicalName
+//        End
+//        Set Action_Text of ghoStatusPanel to ("Name:" + sLogicalName + " Number:" + String(hTable))
+//
+//        Get UtilTableCompare_Ex of ghoDbUpdateFunctionLibrary aAPITableCompare[iCount] CompareCheckBoxes False (&bFilelistError) to bIsSame
+//
+//        If (bIsSame = False) Begin
+//            Send MainReport (&aAPITableCompare[iCount]) (&CompareCheckBoxes) iCh
+//            Move hTable to iaDifferences[SizeOfArray(iaDifferences)]
+//        End
+//
+//        Get Check_StatusPanel of ghoStatusPanel to bUserCancel
+//        If (bUserCancel = True) Begin
+//            Function_Return False
+//        End
+//        
+//        Function_Return True
+//    End_Function
 
     Function CompareAndOutputDiffs String sFilelistFrom String sFilelistTo tAPITableBooleans CompareCheckBoxes DateTime dtExecStart Returns Integer[]
         Integer iSize iCount iNoOfTablesFrom iNoOfTablesTo iCh
