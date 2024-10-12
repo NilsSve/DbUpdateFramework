@@ -123,8 +123,8 @@ End_Struct
 
 #IFNDEF struct_tColumnType
 Struct tColumnType
-    String  sSQLType
     Integer iSQLType
+    String  sSQLType
     Boolean bCanEditSize
     Integer iDefaultSize
     Integer iMinSize
