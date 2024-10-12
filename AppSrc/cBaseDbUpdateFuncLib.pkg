@@ -42,6 +42,9 @@ Class cBaseDbUpdateFuncLib is a cObject
         Send CreateDbUpdateLibraryProperties
         { Visibility=Private }
         Property String private.psCollation "Latin1_General_CS_AS"
+        Property String[] pasSQLDataTables
+        Property tFilelist[] pFileListArray  
+        Property tFilelist[] pErrorTables
 
         // If no ghoSQLConnectionHandler object has been created prior to this object,
         // we will create one as it is used for all ConnectionID, ConnectionString
@@ -869,25 +872,19 @@ Class cBaseDbUpdateFuncLib is a cObject
     // Returns the index for the passed sTableName
     // Returns >= 0 if successful. It is e.g. needed to get the SchemaName for a table.
     Function _SqlUtilEnumerateTableIndex String sTableName String sDriverID Returns Integer
-        Integer iIndex iSize iCount
-        String[] sTablesArray
+        Integer iIndex iSize iCount iItem
+        String[] asTablesArray
         String sDatabase sSchema sVal sConnectionString
 
         Move -1 to iIndex
         Get psConnectionString to sConnectionString
         Get psDatabase to sDatabase
         Get psSchema   to sSchema
-        Get _SqlUtilEnumerateTables sDriverID sDatabase sSchema to sTablesArray
-        Move (SizeOfArray(sTablesArray)) to iSize
-        Decrement iSize
-        For iCount from 0 to iSize
-            Move sTablesArray[iCount] to sVal
-            If (Uppercase(sVal) = Uppercase(sTableName)) Begin
-                Move iCount to iIndex // We found it!
-                Move iSize to iCount  // End the loop
-            End
-        Loop
-
+        Get _SqlUtilEnumerateTables sDriverID sDatabase sSchema to asTablesArray
+        Move (SearchArray(sTableName, asTablesArray, Desktop, (RefFunc(DFSTRICMP)))) to iItem
+        If (iItem <> -1) Begin
+            Move iItem to iIndex
+        End
         Function_Return iIndex
     End_Function
 
@@ -1928,27 +1925,27 @@ Class cBaseDbUpdateFuncLib is a cObject
     End_Function
 
     Function _SqlUtilUpdateIntFile Integer hTable Returns Boolean
-        String sOrgFormat sNewFormat sRootName sDatabaseName sPhysicalFileName sDriverID sDataPath
+        String sOrgFormat sNewFormat sRootName hTableName sPhysicalFileName sDriverID sDataPath
         Boolean bOpened bOK
 
+        // ToDo: This needs further investigation but for now we just skip CodeMast & CodeType .int files update...
         // For some reason this .int file update screws up of CodeMast & CodeType .int files
         // which makes the program unable to run because they can't be opened.
-        // ToDo: This needs further investigation but for now we just skip CodeMast & CodeType .int files update...
         // Also note that there is another helper function "UtilTableCreateCodeMastCodeTypeIntFiles" to create
         // proper .int files for the two tables.
-        If (Uppercase(sDatabaseName) = "CODETYPE" or Uppercase(sDatabaseName) = "CODEMAST") Begin
-            Function_Return True
-        End
+//        If (Uppercase(hTableName) = "CODETYPE" or Uppercase(hTableName) = "CODEMAST") Begin
+//            Function_Return True
+//        End
 
         Get_Attribute DF_FILE_ROOT_NAME of hTable to sRootName
-        Get _TableNameOnly sRootName to sDatabaseName
+        Get _TableNameOnly sRootName to hTableName
         Move CS_OEM_Txt  to sOrgFormat
         Move CS_ANSI_Txt to sNewFormat
         Get AutoConnectionIDLogin to bOK
 
         // It seems this can be called to quickly; causing a 13001 error "Cannot open cache file for write"
-        Sleep 1
-
+//        Sleep 1  
+        Get _UtilDeleteCacheFile hTableName to bOK
         Get_Attribute DF_FILE_OPENED of hTable to bOpened
         If (bOpened = False) Begin
             Open hTable
@@ -1973,7 +1970,7 @@ Class cBaseDbUpdateFuncLib is a cObject
             Structure_Start hTable
                 Set_Attribute DF_FILE_TABLE_CHARACTER_FORMAT of hTable to sNewFormat
                 Set_Attribute DF_FILE_TABLE_CHARACTER_FORMAT of hTable to sOrgFormat
-            Structure_End hTable DF_STRUCTEND_OPT_NONE "." ghoDbUpdateHandler
+            Structure_End hTable DF_STRUCTEND_OPT_FORCE "." ghoDbUpdateHandler
         End
         Else Begin
             Set_Attribute DF_FILE_TABLE_CHARACTER_FORMAT of hTable to sNewFormat
@@ -2039,7 +2036,7 @@ Class cBaseDbUpdateFuncLib is a cObject
     //               Note the "DF_STRUCTEND_OPT_FORCE" to force a restructure(!)
     Function _SqlUtilCreateIntFile Handle hTable String sDriverID String sConnectionID Boolean bAnsi Boolean bSysFile Returns Boolean
         Boolean bOK bExists bUseConnectionID 
-        String sDataPath sRootName sLogicalName sPhysicalFileName sConnectionString sDatabaseName sSchemaName sANSI_OEM sNoDriverRootName
+        String sDataPath sRootName sLogicalName sPhysicalFileName sConnectionString hTableName sSchemaName sANSI_OEM sNoDriverRootName
         String[] asIndexArray
         Integer iCount iCh iSize iPos
 
@@ -2068,7 +2065,7 @@ Class cBaseDbUpdateFuncLib is a cObject
             Move sRootName to sNoDriverRootName
         End
         Get_Attribute DF_FILE_LOGICAL_NAME of hTable to sLogicalName
-        Get _TableNameOnly sRootName to sDatabaseName
+        Get _TableNameOnly sRootName to hTableName
         Move sLogicalName  to sPhysicalFileName
         Move (sPhysicalFileName + ".int") to sPhysicalFileName
 
@@ -2094,17 +2091,15 @@ Class cBaseDbUpdateFuncLib is a cObject
             Else Begin
                 Writeln channel iCh CS_SERVER_NAME " " CS_SERVER "=" sConnectionString
             End
-            Writeln channel iCh CS_DATABASE_NAME          " " sDatabaseName
+            Writeln channel iCh CS_DATABASE_NAME          " " hTableName
             Writeln channel iCh CS_SCHEMA_NAME            " " (Lowercase(sSchemaName))
             // There seems to be a new order how these are set from DF19.
             If (bSysFile = True) Begin
                 Writeln channel iCh CS_RECNUM_TABLE       " " "NO"
+                Writeln channel iCh CS_SYSTEM_FILE        " " "YES"
             End
             Writeln channel iCh CS_TABLE_CHARACTER_FORMAT " " sANSI_OEM
             Writeln channel iCh CS_USE_DUMMY_ZERO_DATE    " " "YES" // ToDo: We maybe need to paramerize this setting?
-            If (bSysFile = True) Begin
-                Writeln channel iCh CS_SYSTEM_FILE        " " "YES"
-            End
 
             If (bSysFile = False) Begin
                 Move (SizeOfArray(asIndexArray)) to iSize
@@ -2120,12 +2115,37 @@ Class cBaseDbUpdateFuncLib is a cObject
                     Writeln channel iCh
                 Loop
             End
-        Send Seq_Close_Channel iCh
+        Send Seq_Close_Channel iCh 
+        
+        Open hTable
+        Structure_Start hTable sDriverID
+        Structure_End hTable DF_STRUCTEND_OPT_FORCE
 
         // Wait a sec for Windows to finish writing the file:
-        Sleep 1
+//        Sleep 1
 
         Function_Return (bOK = True)
+    End_Function 
+    
+    Function _SqlUtilRefreshIntFile Handle hTable String sDriverID String sConnectionID Boolean bAnsi Boolean bSysFile Returns Boolean        
+        String sOrgFormat sNewFormat
+        
+        Move False to Err
+        Open hTable
+        If (Err = True) Begin
+            Function_Return False
+        End
+        
+//        Get_Attribute DF_FILE_TABLE_CHARACTER_FORMAT of hTable to sOrgFormat
+//        Move (Uppercase(sOrgFormat)) to sOrgFormat
+//        // Lets swap the OEM/ANSI format, just to make a change in Structure_Start below (and back),
+//        // to "touch" the table so the driver feels there has been a change and updates the .int file.
+//        Move (If(sOrgFormat = CS_OEM_Txt, CS_ANSI_Txt, CS_OEM_Txt)) to sNewFormat
+
+        Structure_Start hTable
+//            Set_Attribute DF_FILE_TABLE_CHARACTER_FORMAT of hTable to sNewFormat
+//            Set_Attribute DF_FILE_TABLE_CHARACTER_FORMAT of hTable to sOrgFormat
+        Structure_End hTable DF_STRUCTEND_OPT_FORCE "." ghoDbUpdateHandler
     End_Function
 
     Function _UtilDeleteCacheFile String sTableName Returns Boolean
@@ -2146,6 +2166,136 @@ Class cBaseDbUpdateFuncLib is a cObject
         Function_Return bOK
     End_Function
 
+    // Collects all tables from the SQL Database backend and sets the pasSQLTables property.
+    Procedure UtilFillSQLTables
+        String[] asSQLTables
+        String sDataBase
+        Integer iSize iCount
+
+        Get psDatabase to sDataBase
+        Get _SqlUtilEnumerateTables MSSQLDRV_ID sDataBase "" to asSQLTables
+        Set pasSQLDataTables to asSQLTables
+    End_Procedure
+
+    // This collects *all* filelist entries and sets the pFileListArray struct property.
+    Procedure UtilFillFileListStruct
+        tFilelist[] Tables
+        String sRootName sLogicalName sDisplayName sDriver sNoDriverRootname
+        Handle hTable
+        Integer iItem iCount
+        Boolean bIsSystem bIsAlias bOpened
+        
+        Move 0 to iItem
+        Move 0 to hTable 
+        Repeat
+            Get_Attribute DF_FILE_NEXT_USED of hTable to hTable
+            // 0 = no more table in Filelist.cfg, 50 = Flexerrs.
+            If (hTable <> 0 and hTable <> 50) Begin  
+                Move False to Err
+                Move False to bIsSystem
+                Get_Attribute DF_FILE_ROOT_NAME    of hTable to sRootName
+                Get _DriverIDFromRootName sRootName to sDriver
+                Set Message_Text of ghoStatusPanel to ("Opening table" * String(hTable) * "RootName =" * sRootName)
+                Send Ignore_All of Error_Object_Id
+                Open hTable
+                Get_Attribute DF_FILE_OPENED         of hTable to bOpened
+                Get_Attribute DF_FILE_IS_SYSTEM_FILE of hTable to bIsSystem
+                Send Trap_All of Error_Object_Id
+                Close hTable
+                Get_Attribute DF_FILE_LOGICAL_NAME of hTable to sLogicalName
+                Get_Attribute DF_FILE_DISPLAY_NAME of hTable to sDisplayName
+                Get _TableNameOnly sRootName to sNoDriverRootname
+                Move hTable              to Tables[iItem].hTable
+                Move sRootName           to Tables[iItem].sRootName
+                Move sLogicalName        to Tables[iItem].sLogicalName
+                Move sDisplayName        to Tables[iItem].sDisplayName
+                Move sNoDriverRootname   to Tables[iItem].sNoDriverRootname
+                Move sDriver             to Tables[iItem].sDriver 
+                Move bIsSystem           to Tables[iItem].bIsSystemFile
+                Move (bOpened = False)   to Tables[iItem].bErrorOpening
+                Get _IsAliasTable hTable to Tables[iItem].bIsAlias 
+                Move False to Err
+                Increment iItem
+            End
+        Until (hTable = 0)
+        
+        Set Message_Text of ghoStatusPanel to ""
+        Set pFileListArray to Tables
+    End_Procedure   
+    
+    // Special array search function for the tFilelistLogicalName struct.
+    // Used by e.g. UtilAliasToMasterTableHandle
+    Function CompareFileListTable tFilelistLogicalName FileListTable1 tFilelistLogicalName FileListTable2 Returns Integer
+        If (Lowercase(FileListTable1.sLogicalName) < Lowercase(FileListTable2.sLogicalName)) ;
+            Function_Return (LT)
+        If (Lowercase(FileListTable1.sLogicalName) > Lowercase(FileListTable2.sLogicalName)) ;
+            Function_Return (GT)
+
+        If (Lowercase(FileListTable1.sNoDriverRootname) < Lowercase(FileListTable2.sNoDriverRootname)) ;
+            Function_Return (LT)
+        If (Lowercase(FileListTable1.sNoDriverRootname) > Lowercase(FileListTable2.sNoDriverRootname)) ;
+            Function_Return (GT)
+            
+        Function_Return (EQ)
+    End_Function
+
+    // Finds the corresponding Master table for the passed Alias handle
+    Function UtilAliasToMasterTableHandle Handle hTable Returns Handle
+        Handle hMasterTable
+        String sDriver sRootNameAlias sNoDriverRootnameAlias
+        Boolean bIsAlias bFound bIsIntTable
+        Integer iSize iCount iItem 
+        tFilelistLogicalName[] FilelistLogicalTables
+        tFilelistLogicalName FileListTable
+        
+        Get _IsAliasTable hTable to bIsAlias
+        If (bIsAlias = False) Begin
+            Function_Return 0
+        End
+        
+        Move 0 to hMasterTable
+        Get_Attribute DF_FILE_ROOT_NAME of hTable to sRootNameAlias 
+        Get _TableNameOnly sRootNameAlias to sNoDriverRootnameAlias
+        Get _IsIntEntry hTable to bIsIntTable
+        Get pFilelistLogicalTables  to FilelistLogicalTables
+        Move sNoDriverRootnameAlias to FileListTable.sLogicalName
+        Move sNoDriverRootnameAlias to FileListTable.sNoDriverRootname
+        Move (SearchArray(FileListTable, FilelistLogicalTables, Self, (RefFunc(CompareFileListTable)))) to iItem
+        If (iItem = -1) Begin
+            Function_Return 0
+        End
+        Move (Lowercase(sNoDriverRootnameAlias) = Lowercase(FilelistLogicalTables[iItem].sNoDriverRootname) and Lowercase(FilelistLogicalTables[iItem].sNoDriverRootname) = Lowercase(FilelistLogicalTables[iItem].sLogicalName)) to bFound
+        If (bFound = True) Begin
+            Move FilelistLogicalTables[iItem].hTable to hMasterTable
+            Function_Return hMasterTable
+        End
+        
+        Function_Return hMasterTable
+    End_Function
+     
+    Function pFilelistLogicalTables Returns tFilelistLogicalName
+        tFilelistLogicalName[] FilelistLogicalTables
+        tFilelist[] FileListTables
+        Integer iSize iCount
+        
+        Get pFileListArray to FileListTables
+        Move (SizeOfArray(FileListTables)) to iSize
+        Decrement iSize
+        for iCount from 0 to iSize
+            Move FileListTables[iCount].bErrorOpening       to FilelistLogicalTables[iCount].bErrorOpening    
+            Move FileListTables[iCount].bIsAlias            to FilelistLogicalTables[iCount].bIsAlias
+            Move FileListTables[iCount].bIsSystemFile       to FilelistLogicalTables[iCount].bIsSystemFile
+            Move FileListTables[iCount].hTable              to FilelistLogicalTables[iCount].hTable
+            Move FileListTables[iCount].sDisplayName        to FilelistLogicalTables[iCount].sDisplayName
+            Move FileListTables[iCount].sDriver             to FilelistLogicalTables[iCount].sDriver
+            Move FileListTables[iCount].sLogicalName        to FilelistLogicalTables[iCount].sLogicalName
+            Move FileListTables[iCount].sNoDriverRootname   to FilelistLogicalTables[iCount].sNoDriverRootname
+            Move FileListTables[iCount].sRootName           to FilelistLogicalTables[iCount].sRootName
+        Loop
+        Move (SortArray(FilelistLogicalTables)) to FilelistLogicalTables
+        Function_Return FilelistLogicalTables
+    End_Function 
+    
     // Checks that the passed hTable number both exists in Filelist.cfg and
     // that the embedded .dat file exists on disk _or_ that the SQL table exists
     // if it is an SQL table
@@ -2176,6 +2326,38 @@ Class cBaseDbUpdateFuncLib is a cObject
         Function_Return bExists
     End_Function
 
+    // Note: This variant uses the pasSQLDataTables property!
+    //       Thus, that property needs to have been initialized before
+    //       calling.
+    // It checks that the SQL table exists on the SQL end, *or*
+    // if embedded database, that the .dat file exists on disk.
+    Function _UtilTableExists_Ex Handle hTable Returns Boolean
+        Boolean bExists bIsSQLTable
+        String sDataPath sRootName
+
+        Get _UtilTableNumberIsInUse hTable to bExists
+        If (bExists = False) Begin
+            Function_Return False
+        End
+
+        Move False to bIsSQLTable
+        If (hTable > 0) Begin
+            Get_Attribute DF_FILE_ROOT_NAME of hTable to sRootName
+            Move (sRootName contains ":") to bIsSQLTable
+        End
+        If (bIsSQLTable = True) Begin
+            Get _UtilTableIsSql_Ex hTable to bExists
+            Function_Return bExists
+        End
+        Else Begin
+            Get psDataPath of (phoWorkspace(ghoApplication)) to sDataPath
+            Get vFolderFormat sDataPath to sDataPath
+            Get vFilePathExists (sDataPath + sRootName + ".dat") to bExists
+        End
+
+        Function_Return bExists
+    End_Function
+
     // Pass a table handle
     // Returns True if the table exists in filelist.cfg.
     Function _UtilTableNumberIsInUse Handle hCheckTable Returns Boolean
@@ -2195,7 +2377,7 @@ Class cBaseDbUpdateFuncLib is a cObject
                 Break
         Until (hTable = 0)
 
-        Function_Return (bFound = True)
+        Function_Return bFound
     End_Function
 
     // DataFlex Embedded Database Data Types:
@@ -3208,7 +3390,7 @@ Class cBaseDbUpdateFuncLib is a cObject
 
     // Internal usage. Use the UtilColumnTypeXXX functions instead.
     Function _UtilColumnType String sDriverID Integer iDbType Integer iType String sType Boolean bIntegerInputType Returns tColumnType
-        Integer iValue iSize iCount iStart
+        Integer iValue iSize iCount iStart iItem
         tColumnType[] ColumnTypeArray
         tColumnType RetvalType
         String sValue
@@ -3226,58 +3408,21 @@ Class cBaseDbUpdateFuncLib is a cObject
         End
 
         Get _UtilEnumerateColumnTypes sDriverID iDbType to ColumnTypeArray
-
-        Move (SizeOfArray(ColumnTypeArray)) to iSize
-        Decrement iSize
-
-        For iCount from iStart to iSize
-            Move ColumnTypeArray[iCount].iSQLType to iValue
-            Move ColumnTypeArray[iCount].sSQLType to sValue
-            If (bIntegerInputType = True) Begin
-                If (iValue = iType) Begin
-                    Move ColumnTypeArray[iCount].sSQLType       to RetvalType.sSQLType
-                    Move iType                                  to RetvalType.iSQLType
-                    Move ColumnTypeArray[iCount].sDataFlexType  to RetvalType.sDataFlexType
-                    Move ColumnTypeArray[iCount].iDataFlexType  to RetvalType.iDataFlexType
-                    Move ColumnTypeArray[iCount].sPrecision     to RetvalType.sPrecision
-                    Move ColumnTypeArray[iCount].bCanEditSize   to RetvalType.bCanEditSize
-                    Move iSize to iCount // We're done!
-                End
-            End
-            Else Begin
-                Move (Uppercase(sValue)) to sValue
-                If (sValue = sType) Begin
-                    Move sType                                  to RetvalType.sSQLType
-                    Move ColumnTypeArray[iCount].iSQLType       to RetvalType.iSQLType
-                    Move ColumnTypeArray[iCount].sDataFlexType  to RetvalType.sDataFlexType
-                    Move ColumnTypeArray[iCount].iDataFlexType  to RetvalType.iDataFlexType
-                    Move ColumnTypeArray[iCount].sPrecision     to RetvalType.sPrecision
-                    Move ColumnTypeArray[iCount].bCanEditSize   to RetvalType.bCanEditSize
-                    Move iSize to iCount // We're done!
-                End
-            End
-        Loop
-
-        // If no match was found it was probably because it was a DataFlex standard type that was passed.
-        // In which case we search for a match in DataFlex standard types:
-        If (RetvalType.sSQLType = "Undefined") Begin
+        Move iType to RetvalType.iSQLType
+        Move sType to RetvalType.sSQLType 
+        Move (SearchArray(RetvalType, ColumnTypeArray)) to iItem
+        
+        If (iItem = -1) Begin
             Get _UtilEnumerateDataFlexTypes to ColumnTypeArray
-            Move (SizeOfArray(ColumnTypeArray)) to iSize
-            Decrement iSize
-
-            For iCount from iStart to iSize
-                Move ColumnTypeArray[iCount].iSQLType to iValue
-                Move ColumnTypeArray[iCount].sSQLType to sValue
-                If (iValue = iType) Begin
-                    Move ColumnTypeArray[iCount].sSQLType       to RetvalType.sSQLType
-                    Move iType                                  to RetvalType.iSQLType
-                    Move ColumnTypeArray[iCount].sDataFlexType  to RetvalType.sDataFlexType
-                    Move ColumnTypeArray[iCount].iDataFlexType  to RetvalType.iDataFlexType
-                    Move ColumnTypeArray[iCount].sPrecision     to RetvalType.sPrecision
-                    Move ColumnTypeArray[iCount].bCanEditSize   to RetvalType.bCanEditSize
-                    Move iSize to iCount // We're done!
-                End
-            Loop
+            Move (SearchArray(RetvalType, ColumnTypeArray)) to iItem
+        End
+        If (iItem <> -1) Begin
+            Move ColumnTypeArray[iItem].sSQLType       to RetvalType.sSQLType
+            Move ColumnTypeArray[iItem].iSQLType       to RetvalType.iSQLType
+            Move ColumnTypeArray[iItem].sDataFlexType  to RetvalType.sDataFlexType
+            Move ColumnTypeArray[iItem].iDataFlexType  to RetvalType.iDataFlexType
+            Move ColumnTypeArray[iItem].sPrecision     to RetvalType.sPrecision
+            Move ColumnTypeArray[iItem].bCanEditSize   to RetvalType.bCanEditSize
         End
 
         Function_Return RetvalType
@@ -4081,41 +4226,152 @@ Class cBaseDbUpdateFuncLib is a cObject
 
     // *** Miscellanous Helper Functions ***
     //
-    // Helper function. Takes a DF_FILE_XXXX_NAME value as parameter and
-    // returns the table name only; stripped of any path or filename extension.
-    Function _TableNameOnly String sName Returns String
-        String sPath sExt
-
-        Get ParseFolderName sName to sPath
-        If (sPath <> "") Begin
-            Move (Replace(sPath, sName, "")) to sName
-        End
-        Get ParseFileExtension sName to sExt
-        If (sExt <> "") Begin
-            Move (Replace(("." + sExt), sName, "")) to sName
-        End
-
-        Function_Return sName
+    // Helper function. Takes a DF_FILE_ROOT_NAME value as parameter and
+    // returns the table name only; stripped of any prefix, path or filename extension.
+    Function _TableNameOnly String sTableName Returns String
+        Integer iPos
+        Move (Pos(":", sTableName)) to iPos
+        If (iPos <> 0) Begin
+            Move (Mid(sTableName, Length(sTableName), (iPos +1))) to sTableName
+        End  
+        Move (Pos(".int", Lowercase(sTableName))) to iPos
+        If (iPos <> 0) Begin
+            Move (Left(sTableName, (iPos -1))) to sTableName
+        End  
+        Function_Return sTableName
     End_Function
 
-    // Removes any prefix to a table name.
+    // Removes any prefix from a table name.
     // Example mssqldrv:mytable returns mytable
     //         dbo.mytable returns mytable
     Function _TableNoPrefix String sName Returns String
         Integer iPos
-
         Move (Pos(":", sName)) to iPos
         If (iPos <> 0) Begin
-            Move (Mid(sName, 999, (iPos + 1))) to sName
+            Move (Mid(sName, Length(sName), (iPos + 1))) to sName
         End
         Move (Pos(".", sName)) to iPos
         If (iPos <> 0) Begin
-            Move (Mid(sName, 999, (iPos + 1))) to sName
+            Move (Mid(sName, Length(sName), (iPos + 1))) to sName
         End
-
         Function_Return sName
     End_Function
+    
+    Function _DriverIDFromRootName String sRootName Returns String
+        String sDriverID
+        Integer iPos
+        Move DATAFLEX_ID to sDriverID
+        Move (Pos(":", sRootName)) to iPos
+        If (iPos <> 0) Begin
+            Move (Left(sRootName, (iPos -1))) to sDriverID
+        End
+        Function_Return sDriverID
+    End_Function
+    // Does the Rootname points to a .dat file?
+    Function _IsDatEntry Handle hTable Returns Boolean
+        Boolean bFound bIsIntEntry
+        String sRootName sNoDriverRootname sDriver
+        Get_Attribute DF_FILE_ROOT_NAME of hTable to sRootName
+        Get _DriverIDFromRootName sRootName to sDriver
+        Get _TableNameOnly sRootName to sNoDriverRootname
+        Get _IsIntEntry hTable to bIsIntEntry
+        Move (bIsIntEntry = False and sDriver = DATAFLEX_ID) to bFound
+        Function_Return bFound
+    End_Function
 
+    // Checks that the RootName points to a .dat file and that the .dat file exists on disk.
+    Function _DatFileExists Handle hTable Returns Boolean
+        Boolean bExists
+        String sDataPath sRootName sNoDriverRootname
+        Get_Attribute DF_FILE_ROOT_NAME of hTable to sRootName
+        Get _TableNameOnly sRootName to sNoDriverRootname
+        Get psDataPath of (phoWorkspace(ghoApplication)) to sDataPath
+        File_Exist (sDataPath + "\" + sNoDriverRootname + ".dat") bExists
+        Function_Return bExists
+    End_Function
+    
+    // Does the Rootname contain a ".int" suffix.
+    Function _IsIntEntry Handle hTable Returns Boolean
+        Boolean bFound
+        String sRootName
+        Get_Attribute DF_FILE_ROOT_NAME of hTable to sRootName
+        Move (Lowercase(sRootName) contains ".int") to bFound
+        Function_Return bFound
+    End_Function
+
+    // Checks to see if the .int file actually exists in the Data folder.
+    Function _IntFileExists Handle hTable Returns Boolean
+        Boolean bExists bIsIntFile
+        String sDataPath sIntFileName
+        Integer iPos
+        
+        Move False to bExists
+        Get psDataPath of (phoWorkspace(ghoApplication)) to sDataPath
+        Get_Attribute DF_FILE_ROOT_NAME of hTable to sIntFileName
+        Get _TableNameOnly sIntFileName to sIntFileName
+        Move (Pos(".int", Lowercase(sIntFileName))) to iPos
+        If (iPos = 0) Begin
+            Move (sIntFileName + ".int") to sIntFileName
+        End
+        File_Exist (sDataPath + "\" + sIntFileName) bExists
+        Function_Return bExists    
+    End_Function
+        
+    // Returns True if the hTable's RootName has a driver <> DataFlex
+    Function _IsSQLEntry Handle hTable Returns Boolean
+        Boolean bFound bIsIntFile
+        String sLogicalName sRootName sNoDriverRootname sDriver
+        
+        Get_Attribute DF_FILE_ROOT_NAME of hTable to sRootName
+        Get _DriverIDFromRootName sRootName to sDriver
+        Get _IsIntEntry hTable to bIsIntFile
+        Get _TableNameOnly sRootName to sNoDriverRootname
+        Move (bIsIntFile = True or sDriver <> DATAFLEX_ID) to bFound
+        Function_Return bFound
+    End_Function
+
+    // This is used in place of the DF_FILE_OPENED table attribute, because
+    // the table then needs to be open, which takes time.
+    Function _IsAliasTable Handle hTable Returns Boolean
+        Boolean bFound bIsIntTable
+        String sLogicalName sRootName sNoDriverRootname
+        
+        Get_Attribute DF_FILE_LOGICAL_NAME of hTable to sLogicalName
+        Get_Attribute DF_FILE_ROOT_NAME    of hTable to sRootName
+        Get _TableNameOnly sRootName to sNoDriverRootname
+        Get _IsIntEntry hTable to bIsIntTable
+        // Do we have an Alias table?
+        Move (Lowercase(sLogicalName) <> Lowercase(sNoDriverRootname)) to bFound
+        Function_Return bFound
+    End_Function
+
+    // If the SQL table cannot be opened, we do this checking a bit different.
+    Function _IsSystemFile Handle hTable Returns Boolean
+        Boolean bIsSystem bIsSQL bExists
+        String sRootName sDataPath sDriver
+        String[] asIndexes
+        Move False to bIsSystem
+        
+        Get_Attribute DF_FILE_ROOT_NAME of hTable to sRootName
+        Get _DriverIDFromRootName sRootName to sDriver
+        Get _TableNameOnly sRootName to sRootName
+        Get psDataPath of (phoWorkspace(ghoApplication)) to sDataPath
+        Get _IsSQLEntry hTable to bIsSQL
+        If (bIsSQL = False) Begin
+            File_Exist (sDataPath + "\" + sRootName + ".dat") bExists
+            If (bExists = True) Begin
+                Open (sDataPath + "\" + sRootName + ".dat") as hTable
+                Get_Attribute DF_FILE_IS_SYSTEM_FILE of hTable to bIsSystem 
+                Close hTable
+            End
+        End 
+        Else Begin
+            Get _SqlUtilEnumerateIndexes sRootName sDriver to asIndexes
+            Move (SizeOfArray(asIndexes) = 0) to bIsSystem
+        End
+        Function_Return bIsSystem
+    End_Function
+                          
     // Returns the first datapath found in the psDataPath property.
     // The returned path always ends with a "\"
     Function psDataPathFirstPart Returns String
@@ -4401,6 +4657,27 @@ Class cBaseDbUpdateFuncLib is a cObject
         Function_Return bIsSQL
     End_Function
 
+    // Note: This version uses the pasSQLDataTables array(!)
+    //       Thus that property needs to have been initialized before
+    //       calling this function.
+    Function _UtilTableIsSql_Ex Handle hTable Returns Boolean
+        String sRootName sDriverID
+        Boolean bIsSQL
+
+        Move False to bIsSQL
+        If (hTable > 0) Begin
+            Get_Attribute DF_FILE_ROOT_NAME of hTable to sRootName
+            Get _UtilTableIsSqlByRootName sRootName to bIsSQL
+            If (bIsSQL = True) Begin
+                Get psDriverID to sDriverID
+                Get _TableNameOnly sRootName to sRootName
+                Get _SqlUtilCheckIfTableNameExists_Ex sRootName sDriverID to bIsSQL
+            End
+        End
+
+        Function_Return bIsSQL
+    End_Function
+
     Function _UtilTableIsSqlByRootName String sRootName Returns Boolean
         Boolean bIsSQL
         Move (sRootName contains ":") to bIsSQL
@@ -4411,8 +4688,8 @@ Class cBaseDbUpdateFuncLib is a cObject
     Function _SqlUtilCheckIfTableNameExists String sTableName String sDriverID Returns Boolean
         String sDatabase sSchema sVal
         Boolean bExists
-        String[] sTablesArray
-        Integer iSize iCount
+        String[] asTablesArray
+        Integer iItem
 
         Move False to bExists
         Get psDatabase to sDatabase
@@ -4421,17 +4698,34 @@ Class cBaseDbUpdateFuncLib is a cObject
             Error DFERR_PROGRAM ("Function _SqlUtilCheckIfTableNameExists: psDatabase =" * String(sDatabase) * "psDriver =" * String(sDriverID))
             Function_Return False
         End
-        Get _SqlUtilEnumerateTables sDriverID sDatabase sSchema to sTablesArray
-        Move (SizeOfArray(sTablesArray)) to iSize
-        Decrement iSize
-        for iCount from 0 to iSize
-            Move sTablesArray[iCount] to sVal
-            If (Uppercase(sVal) = Uppercase(sTableName)) Begin
-                Move True to bExists
-                Move iSize to iCount // We're done!
-            End
-        Loop
+        Get _SqlUtilEnumerateTables sDriverID sDatabase sSchema to asTablesArray
+        Move (SearchArray(sTableName, asTablesArray, Desktop, (RefFunc(DFSTRICMP)))) to iItem
+        If (iItem <> -1) Begin
+            Move True to bExists
+        End
+        Function_Return bExists
+    End_Function
 
+    // Checks if a table exists as an SQL table. Returns = True if it does.
+    // This alternative is much faster as it first enumerates all SQL tables
+    Function _SqlUtilCheckIfTableNameExists_Ex String sTableName String sDriverID Returns Boolean
+        String sDatabase sSchema sVal
+        Boolean bExists
+        String[] asTablesArray
+        Integer iItem
+
+        Move False to bExists
+        Get psDatabase to sDatabase
+        Get psSchema   to sSchema
+        If (sDriverID = DATAFLEX_ID or sDatabase = "") Begin
+            Error DFERR_PROGRAM ("Function _SqlUtilCheckIfTableNameExists: psDatabase =" * String(sDatabase) * "psDriver =" * String(sDriverID))
+            Function_Return False
+        End
+        Get pasSQLDataTables to asTablesArray
+        Move (SearchArray(sTableName, asTablesArray, Desktop, (RefFunc(DFSTRICMP)))) to iItem
+        If (iItem <> -1) Begin
+            Move True to bExists
+        End
         Function_Return bExists
     End_Function
 
