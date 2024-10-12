@@ -74,10 +74,9 @@ Object oLogFileDialog_dg is a ModalPanel
 
     End_Object
 
-
     Object oFirstRun_btn is a cRDCButtonDPI
         Set Location to 209 260
-        Set Label to "Beginning"
+        Set Label to "Top"
         Set peAnchors to anBottomRight
     
         Procedure OnClick
@@ -85,10 +84,11 @@ Object oLogFileDialog_dg is a ModalPanel
         End_Procedure
     
     End_Object
+
     { Description = This is a documentation comment}
     Object oLatestRun_btn is a cRDCButtonDPI
         Set Location to 209 317
-        Set Label to "End"
+        Set Label to "Bottom"
         Set peAnchors to anBottomRight
     
         Procedure OnClick
