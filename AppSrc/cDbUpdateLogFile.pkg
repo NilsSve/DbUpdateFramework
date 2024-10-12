@@ -138,7 +138,7 @@ Class cDbUpdateLogFile is a cObject
             If (pbQuickWrite(Self) = True) Begin
                 Send WriteErrorLog
                 // Flush the error log array
-                Set paDbUpdateErrorArray to DbUpdateErrorArrayEmpty
+                Set paDbUpdateErrorArray to DbUpdateErrorArrayEmpty 
             End
         End
     End_Procedure   
@@ -213,7 +213,7 @@ Class cDbUpdateLogFile is a cObject
                         Set pbEmptyLogFile to False
                     End
                     Writeln channel iCh
-                    Writeln channel iCh ("Database Update Started:      " + String(dtUpdateStart))
+                    Writeln channel iCh ("*** Database Update Started:      " + String(dtUpdateStart))
                 End
             Close_Output channel iCh
         End
@@ -284,15 +284,16 @@ Class cDbUpdateLogFile is a cObject
 
         Append_Output channel iCh sFileName
         If (bQuickWrite = True and iSize < 0) Begin
-            Writeln channel iCh ("Database Update Finished:  " + String(dtUpdateEnd) * "Time Elapsed:" * String(tsElapsed))
+            Writeln channel iCh ("*** Database Update Finished:  " + String(dtUpdateEnd) * "Time Elapsed:" * String(tsElapsed))
         End
         Else If (bQuickWrite = False) Begin
             Writeln channel iCh
-            Writeln channel iCh ("Database Update Started:" * String(dtUpdateStart) * "and finished at:" * String(dtUpdateEnd) * "Time Elapsed:" * String(tsElapsed))
+            Writeln channel iCh ("*** Database Update Started:" * String(dtUpdateStart) * "and finished at:" * String(dtUpdateEnd) * "Time Elapsed:" * String(tsElapsed))
         End   
         If (iSize >= 0) Begin
             If (aDbUpdateErrorArray[0].bShortFormat = False) Begin
-                Writeln channel iCh "[Err No:] [pnVersionNumber:] [Status Text:]"
+//                Writeln channel iCh "[Err No:] [pnVersionNumber:] [Status Text:]"
+                Writeln channel iCh "[Err No:] [Version:] [Status Text:]"
             End
         End
 
@@ -306,13 +307,18 @@ Class cDbUpdateLogFile is a cObject
             Move aDbUpdateErrorArray[iCount].iField         to iField
             
             Get PadLeft (String(iError)) 8 to sErrorNo
+            If (iError = 0) Begin
+                Move " Info  " to sErrorNo
+            End
             If (aDbUpdateErrorArray[iCount].bError = True) Begin
-                Get PadLeft (String(nVersion)) (27 - Length(sErrorNo)) to sVersion
+                Get PadLeft (String(nVersion)) (19 - Length(sErrorNo)) to sVersion
+//                Get PadLeft (String(nVersion)) (27 - Length(sErrorNo)) to sVersion
                 Move (sErrorNo + sVersion + "   " + sErrorText * "[ErrLine:" * String(iErrorLine) + "]" + "    (Table:" * sRootName * String(hTable) + "." + String(iField) + ")") to sText
             End
             Else Begin
-                Get PadLeft (String(nVersion)) 27 to sVersion
-                Move (sVersion + "   " + sErrorText) to sText
+                Get PadLeft (String(nVersion)) (19 - Length(sErrorNo)) to sVersion
+//                Get PadLeft (String(nVersion)) (27 - Length(sErrorNo)) to sVersion
+                Move (sErrorNo + sVersion + "   " + sErrorText) to sText
             End
             Writeln channel iCh sText
             If (aDbUpdateErrorArray[iCount].sOrgErrorText <> "") Begin
