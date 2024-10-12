@@ -190,7 +190,7 @@ Object oSQLMaintainConnections_dg is a ModalPanel
             Set psToolTip to "Server/DSN: Depending on the selected database type the label can either display as 'Server' or 'DSN'. Either enter the name - if you know it - or by using the selection list (F4). Tip: If you are using Microsoft SQL Server and you are testing on the same machine as the MS SQL Server instance is running and you are using SQLEXPRESS you can enter e.g. '.\SQLEXPRESS'. That will mean use the SQLEXPRESS instance of Microsoft SQL Server running on this machine. If you press [F4] and the selection list comes up empty for Microsoft SQL Server it probably is because the service hasn't been started. Type 'Services' in Windows menu system to start Windows Services app. Type 'SQL' to jump to the SQL Server services. Check that the 'SQL Server Browser' service is started and set to 'Automatic'."
             Set piItem to 5
             Set peAnchors to anTopLeftRight
-
+            Set Prompt_Button_Mode to PB_PromptOn  
             Property Handle phoPromptObject (oServerSelection_sl(Self))
 
             Procedure Prompt
