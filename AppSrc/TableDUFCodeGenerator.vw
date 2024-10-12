@@ -18,6 +18,7 @@ Use WriteTestProgram.pkg
 Use cRDCCommandLinkButton.pkg
 Use cRDCSlideButton.pkg                                 
 Use cRDCCJSelectionGrid.pkg
+Use cRDCCJGridColumnSuggestion.pkg
 Use cRDCForm.pkg
 
 Enum_List
@@ -78,7 +79,7 @@ Object oTableDUFCodeGenerator is a dbView
         Set psNote to "The development/latest version of the database"   
         Set psToolTip to "Select the Filelist.cfg for your development database. This is a suggestion form. So if used before - start typing what you're looking for."
 
-        Object oFilelistPath_fm is a cRDCSuggestionIniForm
+        Object oFilelistPath_fm is a cRDCForm //cRDCSuggestionIniForm
             Set Size to 12 424
             Set Location to 29 29
             Set Label_Col_Offset to 0
@@ -163,7 +164,8 @@ Object oTableDUFCodeGenerator is a dbView
             End_Function
 
             On_Key Key_Ctrl+Key_W Send None
-            On_Key Key_Ctrl+Key_Q Send None
+            On_Key Key_Ctrl+Key_Q Send None 
+            On_Key kPrompt Send Prompt
         End_Object
 
     End_Object
@@ -175,13 +177,24 @@ Object oTableDUFCodeGenerator is a dbView
         Set psImage to "SelectTables1.ico"
         Set psLabel to "Select Tables"
         Set psNote to "Right click grid for options"  
-        Set psToolTip to "Select one or more tables to generate 'DUF' database update code for. (Ctrl+A = 'Select All Tables'. Right-click grid for selection options."
+        Set psToolTip to "Select one or more tables to generate 'DUF' database update code for. (Ctrl+A = 'Select All Tables'. Right-click grid for selection options. The columns: 'Filelist No' and 'Logical Name' are suggestion lists! Just start typing in any of those columns, what to search for."
 
         Object oFilelist_grd is a cRDCCJSelectionGrid
             Set Size to 56 423
             Set Location to 27 29
-            Set piLayoutBuild to 6
             Set Status_Help to "Select with the spacebar, or use the selection buttons above the grid"
+            Set piLayoutBuild to 8
+            Set piTooltipMaxWidth to 400
+            Set pbAllowInsertRow to False
+            Set pbHeaderPrompts to False
+            Set pbSelectionEnable to True
+            Set pbShowFooter to True
+            Set pbAllowAppendRow to False
+            Set pbShowRowFocus to True
+            Set pbReadOnly to False
+            Set pbAllowEdit to True
+            Set pbAllowDeleteRow to False 
+            Set pbEditOnClick to False
 
             Property Handle phDbVersion
             Property Integer piCurrentRow -1
@@ -190,20 +203,18 @@ Object oTableDUFCodeGenerator is a dbView
                 Set piWidth to 26
             End_Object
                          
-            Object oFilelistNumber_col is a cCJGridColumn
+            Object oFilelistNumber_col is a cRDCCJGridColumnSuggestion
                 Set piWidth to 74
                 Set psCaption to "Filelist No"
-                Set psToolTip to (psCaption(Self) * "(Read-Only)")
-                Set peDataType to Mask_Numeric_Window
-                Set pbEditable to False
-                Set peTextAlignment to xtpAlignmentCenter
+                Set psToolTip to (psCaption(Self) * "(Suggestion List)")
+                Set piFindIndex to 1
             End_Object
 
-            Object oLogicalName_col is a cCJGridColumn
+            Object oLogicalName_col is a cRDCCJGridColumnSuggestion
                 Set piWidth to 121
                 Set psCaption to "Logical Name"
-                Set psToolTip to (psCaption(Self) * "(Read-Only)")
-                Set pbEditable to False
+                Set psToolTip to (psCaption(Self) * "(Suggestion List)")
+                Set piFindIndex to 1
                 Set psFooterText to "No of Tables:"
             End_Object
 
@@ -412,6 +423,17 @@ Object oTableDUFCodeGenerator is a dbView
                 Loop
 
                 Function_Return GeneratorRowArray
+            End_Function
+
+            // We need to be able to show the suggestion list for the first two columns:
+            Function CanEditColumn Integer iCol Returns Boolean
+                Handle hoCol1 hoCol2
+                Get piColumnId of oFilelistNumber_col to hoCol1
+                Get piColumnId of oLogicalName_col    to hoCol2
+                If (iCol = hoCol1 or iCol = hoCol2) Begin
+                    Function_Return True
+                End
+                Function_Return False
             End_Function
 
             Procedure Request_Clear
@@ -1224,7 +1246,6 @@ Object oTableDUFCodeGenerator is a dbView
         End
         Decrement iSize
         If (iSize > 0) Begin
-//            Send KeyAction of oDeSelectAll_btn  
             Set SelectItems of oFilelist_grd to cx_Select_None
         End
 
