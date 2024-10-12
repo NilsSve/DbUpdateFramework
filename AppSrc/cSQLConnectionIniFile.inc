@@ -2,7 +2,7 @@
 // $Module type: Include file
 // $Module name: cSQLConnectionIniFile.inc
 //
-// $Author     : Nils G. Svedmyr, RDC Tools International.
+// $Author     : Nils Svedmyr, RDC Tools International.
 // Copyright (c) 2012 RDC Tools International
 // E-mail      : support@rdctools.com
 // Web-site    : http://www.rdctools.com
@@ -143,4 +143,28 @@ Struct tSQLConnection
     Boolean bSilentLogin            // 15. True=Silent login. (i.e. don't show Database login dialog if database login to fails). Same as driver "Options" parameter.
     Boolean bError                  // 16. Set to true on error.
     Boolean bDAWConnection          // 17. True if a DFConnId.ini file (from DAW) has been used instead of a DUF SQLConnections.ini file.
+End_Struct
+
+Struct tFilelist
+    String sRootName
+    String sLogicalName
+    String sDisplayName    
+    String sNoDriverRootname
+    String sDriver
+    Handle hTable
+    Boolean bIsSystemFile 
+    Boolean bErrorOpening
+    Boolean bIsAlias
+End_Struct
+
+Struct tFilelistLogicalName
+    String sLogicalName
+    String sNoDriverRootname
+    String sRootName
+    String sDisplayName    
+    String sDriver
+    Handle hTable
+    Boolean bIsSystemFile 
+    Boolean bErrorOpening
+    Boolean bIsAlias
 End_Struct
