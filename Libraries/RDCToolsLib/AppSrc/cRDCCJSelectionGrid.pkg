@@ -316,7 +316,7 @@ Class cRDCCJSelectionGrid is a cCJGrid
         End_Object
 
         If (ghoApplication <> 0) Begin
-        Get ReadString of ghoApplication CS_Settings CS_GridRowBackgroundColor clGreenGreyLight to sColor
+            Get ReadString of ghoApplication CS_Settings CS_GridRowBackgroundColor clGreenGreyLight to sColor
         End
         If (sColor = "clBlueGreyLight") Begin
             Move "clGreenGrey" to sColor
