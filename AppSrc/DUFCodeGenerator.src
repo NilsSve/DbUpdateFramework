@@ -93,11 +93,12 @@ Object oApplication is a cApplication
 
     Function ChangeFilelistPathing String sFileList Returns Boolean
         String sPath sSQLConnectionsIniName sDataPath sDriverID sServer sOrgOpenPath
-        Boolean bExists bEmbedded bIsSQLDriver bErr
+        Boolean bExists bEmbedded bIsSQLDriver bErr bDFConnId
         Handle hoDbUpdateHandler hoSQLConnectionHandler hoSQLConnectionIniFile
         tSQLConnection SQLConnection
         Integer iRetval iDriverID
-
+        
+        Get pbDFConnId of ghoSQLConnectionHandler to bDFConnId
         Move False to Err
         Move (Trim(sFileList)) to sFileList
         Get vFilePathExists sFileList to bExists
@@ -159,16 +160,22 @@ Object oApplication is a cApplication
         Get vFilePathExists (sPath + sSQLConnectionsIniName) to bExists
         If (bExists = False) Begin
             Get UtilIsAllFilelistEntriesDataFlexTables of ghoDbUpdateFunctionLibrary to bEmbedded
-            If (bEmbedded = False) Begin
-                Send Cursor_Ready of Cursor_Control
-                Get YesNo_Box ("Couldn't find the DUF SQLConnections.ini file in the workspace Programs folder. Is there a DataFlex DFConnId.ini file in the Data folder that you want to open instead?") to iRetval
+            If (bEmbedded = False) Begin     
+                If (bDFConnId = False) Begin
+                    Send Cursor_Ready of Cursor_Control
+                    Get YesNo_Box ("Couldn't find the DUF SQLConnections.ini file in the workspace Programs folder. Is there a DataFlex DFConnId.ini file in the Data folder that you want to open instead?") to iRetval
+                End
+                Else Begin
+                    Move MBR_Yes to iRetval    
+                End
                 If (iRetval = MBR_Yes) Begin
+                    Set pbDFConnId of ghoSQLConnectionHandler to True
                     Send Cursor_Wait of Cursor_Control
-                    Move "DFConnId.ini" to sSQLConnectionsIniName
+//                    Move "DFConnId.ini" to sSQLConnectionsIniName
                     #IF (!@ > 182)
                         Send UnRegisterAllConnections of ghoConnection
                         Get AddAllConnections of ghoConnection to bExists
-                        Set psIniFileName of (phoSQLConnectionIniFile(ghoSQLConnectionHandler)) to sSQLConnectionsIniName
+//                        Set psIniFileName of (phoSQLConnectionIniFile(ghoSQLConnectionHandler)) to sSQLConnectionsIniName
                         Set psIniFilePath of (phoSQLConnectionIniFile(ghoSQLConnectionHandler)) to sPath
                         Get SetupSQLConnection of ghoSQLConnectionHandler True False to SQLConnection
                     #ENDIF
