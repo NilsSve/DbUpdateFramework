@@ -1188,4 +1188,14 @@ Class cSQLConnectionHandler is a cObject
         Function_Return bRetval
     End_Function
 
+    Procedure Set pbDFConnid Boolean bState
+        Set pbDFConnid of (phoSQLConnectionIniFile(Self)) to bState
+    End_Procedure
+    
+    Function pbDFConnid Returns Boolean
+        Boolean bState
+        Get pbDFConnid of (phoSQLConnectionIniFile(Self)) to bState
+        Function_Return bState
+    End_Function
+
 End_Class
