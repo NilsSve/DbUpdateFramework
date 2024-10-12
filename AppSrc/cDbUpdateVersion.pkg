@@ -597,6 +597,8 @@ Class cDbUpdateVersion is a cObject
         Integer hTable iColumn
         Boolean bVersionUpdate bDbUpdateErrorHasOccured bUseCustomDbVersion
 
+        Move False to Err
+        Move 0 to LastErr
         // This is a property of the container class; cDbUpdateHandler that gets set when
         // an error occurres when processing ESQL or database API messages of the cDbUpdateFunctionLibrary.
         Delegate Get pbDbUpdateErrorHasOccured to bDbUpdateErrorHasOccured
