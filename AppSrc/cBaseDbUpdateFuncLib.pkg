@@ -2175,8 +2175,8 @@ Class cBaseDbUpdateFuncLib is a cObject
         Get psDatabase to sDataBase
         Get _SqlUtilEnumerateTables MSSQLDRV_ID sDataBase "" to asSQLTables
         Set pasSQLDataTables to asSQLTables
-    End_Procedure
-
+    End_Procedure 
+    
     // This collects *all* filelist entries and sets the pFileListArray struct property.
     Procedure UtilFillFileListStruct
         tFilelist[] Tables
@@ -2195,7 +2195,8 @@ Class cBaseDbUpdateFuncLib is a cObject
                 Move False to bIsSystem
                 Get_Attribute DF_FILE_ROOT_NAME    of hTable to sRootName
                 Get _DriverIDFromRootName sRootName to sDriver
-                Set Message_Text of ghoStatusPanel to ("Opening table" * String(hTable) * "RootName =" * sRootName)
+                Set Message_Text of ghoStatusPanel to ("Reading table" * String(hTable) * "RootName =" * sRootName)
+                Send DoAdvance of ghoProgressBar
                 Send Ignore_All of Error_Object_Id
                 Open hTable
                 Get_Attribute DF_FILE_OPENED         of hTable to bOpened
@@ -2378,6 +2379,23 @@ Class cBaseDbUpdateFuncLib is a cObject
         Until (hTable = 0)
 
         Function_Return bFound
+    End_Function
+
+    // Returns number of tables in filelist.cfg.
+    Function _UtilNumberOfFileListTables Returns Boolean
+        Handle hTable
+        Integer iCount
+
+        Move 0 to iCount
+        Move 0 to hTable
+        Repeat
+            Get_Attribute DF_FILE_NEXT_USED of hTable to hTable
+            If (hTable > 0) Begin
+                Increment iCount
+            End
+        Until (hTable = 0)
+
+        Function_Return iCount
     End_Function
 
     // DataFlex Embedded Database Data Types:
@@ -4372,6 +4390,184 @@ Class cBaseDbUpdateFuncLib is a cObject
         Function_Return bIsSystem
     End_Function
                           
+    // Removes any driver prefix and any .int suffix from the Rootname
+    // If any driver found, it will be placed in the ByRef param: sDriver.
+    Function _RemoveDriverFromRootName String sRootname String ByRef sDriver Returns String
+        String sNoDriverRootname
+        Integer iPos
+        
+        Move sRootname to sNoDriverRootname
+        Move (Pos(":", sRootname)) to iPos
+        If (iPos <> 0) Begin
+            Move (Left(sRootname, iPos -1)) to sDriver
+            Move (Mid(sRootname, Length(sRootname), iPos +1)) to sNoDriverRootname    
+        End
+        Else Begin
+            Move DATAFLEX_ID to sDriver
+        End
+        Move (Pos(".int", Lowercase(sNoDriverRootname))) to iPos
+        If (iPos <> 0) Begin
+            Move (Left(sNoDriverRootname, iPos -1)) to sNoDriverRootname
+        End
+        Function_Return sNoDriverRootname    
+    End_Function
+
+    Function _CountFilelistSystemTables Returns Integer
+        tFilelist[] FileListTables
+        Integer iCount iSize iItems
+        
+        Move 0 to iItems
+        Get pFileListArray to FileListTables
+        Move (SizeOfArray(FileListTables)) to iSize
+        If (iSize <> 0) Begin
+            Decrement iSize
+            for iCount from 0 to iSize
+                If (FileListTables[iCount].bIsSystemFile = True) Begin
+                    Increment iItems
+                End
+            Loop
+        End
+        Function_Return iItems    
+    End_Function
+
+    Function _CountFileListAliasTables Returns Integer
+        tFilelist[] FileListTables
+        Integer iCount iSize iItems
+        
+        Move 0 to iItems
+        Get pFileListArray to FileListTables
+        Move (SizeOfArray(FileListTables)) to iSize
+        If (iSize <> 0) Begin
+            Decrement iSize
+            for iCount from 0 to iSize
+                If (FileListTables[iCount].bIsAlias = True) Begin
+                    Increment iItems
+                End
+            Loop
+        End
+        Function_Return iItems    
+    End_Function
+
+    Function _CountFileListMasterTables Returns Integer
+        String sRootName sLogicalName sDriver sNoDriverRootname
+        Handle hTable
+        Integer iSize iItems
+        Boolean bIsAlias bIsIntTable
+        
+        Move 0 to iItems
+        Move 0 to hTable 
+        Repeat
+            Get_Attribute DF_FILE_NEXT_USED of hTable to hTable
+            If (hTable <> 0 and hTable <> 50) Begin
+                Get _IsAliasTable hTable to bIsAlias
+                If (bIsAlias = False) Begin
+                    Get_Attribute DF_FILE_ROOT_NAME    of hTable to sRootName
+                    Get_Attribute DF_FILE_LOGICAL_NAME of hTable to sLogicalName                    
+                    Get _RemoveDriverFromRootName sRootName (&sDriver) to sNoDriverRootname
+                    Get _IsIntEntry hTable to bIsIntTable
+                    If (sDriver <> DATAFLEX_ID and Lowercase(sNoDriverRootname) = Lowercase(sLogicalName)) Begin
+                        Increment iItems
+                    End
+                End
+            End
+        Until (hTable = 0)
+        
+        Function_Return iItems
+    End_Function
+
+    Function _CountFileListOpenErrors Returns Integer
+        tFilelist[] FileListTables
+        Integer iCount iSize iItems
+        
+        Move 0 to iItems
+        Get pFileListArray to FileListTables
+        Move (SizeOfArray(FileListTables)) to iSize
+        If (iSize <> 0) Begin
+            Decrement iSize
+            for iCount from 0 to iSize
+                If (FileListTables[iCount].bErrorOpening = True) Begin
+                    Increment iItems
+                End
+            Loop
+        End
+        Function_Return iItems    
+    End_Function 
+
+    // Checks all Alias Filelist entries for errors,
+    // and return them as a string array of RootNames.
+    Function _CountFileListAliasErrors Returns tFilelist[]
+        Integer iCount iItem
+        Handle hTable
+        Boolean bIsAlias bOK
+        String sRootName
+        tFilelist[] FileListArray
+        
+        Move 0 to iCount
+        Move 0 to hTable
+        Repeat
+            Get_Attribute DF_FILE_NEXT_USED of hTable to hTable
+            If (hTable <> 0 and hTable <> 50) Begin
+                Get _IsAliasTable hTable to bIsAlias
+                If (bIsAlias = True) Begin
+                    Get _FindAliasEntryError hTable to iItem
+                    If (iItem <> 0) Begin
+                        Get_Attribute DF_FILE_ROOT_NAME of hTable to sRootName
+                        Move hTable    to FileListArray[iCount].hTable
+                        Move sRootName to FileListArray[iCount].sRootName
+                    End
+                    Add iItem to iCount
+                End
+            End
+        Until (hTable = 0)
+        
+        Function_Return FileListArray
+    End_Function
+
+    // Helper function for _CountFileListAliasErrors.
+    // Checks to see if an Alias Filelist entry is correct
+    // What it does:
+    //  1. Checks that the Filelist entry is an Alias table
+    //  2. If an Alias, checks if the RootName points to a valid Table
+    Function _FindAliasEntryError Handle hTable Returns Integer
+        Handle hMasterTable
+        String sDataPath sDriver sLogicalNameAlias sRootNameAlias sNoDriverRootnameAlias sLogicalNameMaster sRootNameMaster sNoDriverRootnameMaster
+        Boolean bOK bFound bIsAlias bIsAliasSQL bIsMasterSQL bIsIntFile
+        Integer iRetval
+        
+        Get _IsAliasTable hTable to bIsAlias
+        If (bIsAlias = False) Begin
+            Function_Return 0
+        End
+        
+        Move 0 to iRetval
+        Move False to bOK
+        Move False to bIsAliasSQL
+        Move False to bIsMasterSQL
+
+        Get _IsIntEntry hTable to bIsIntFile
+        Get_Attribute DF_FILE_ROOT_NAME    of hTable to sRootNameAlias
+        Get_Attribute DF_FILE_LOGICAL_NAME of hTable to sLogicalNameAlias
+        Get _TableNameOnly sRootNameAlias to sNoDriverRootnameAlias
+        Get UtilAliasToMasterTableHandle hTable to hMasterTable
+        Move (hMasterTable <> 0) to bOK
+        If (bOK = True) Begin
+            Get _IsSQLEntry hTable       to bIsAliasSQL
+            Get _IsSQLEntry hMasterTable to bIsMasterSQL 
+            Move (bIsAliasSQL = bIsMasterSQL) to bOK
+        End
+        
+        // Checks that the .int file exists in the Data folder
+        If (bIsIntFile = True) Begin
+            Get psDataPath of (phoWorkspace(ghoApplication)) to sDataPath
+            File_Exist (sDataPath + "\" + sNoDriverRootnameAlias) bOK
+        End
+
+        If (bOK = False) Begin
+            Move 1 to iRetval
+        End
+        Function_Return iRetval
+    End_Function
+        
     // Returns the first datapath found in the psDataPath property.
     // The returned path always ends with a "\"
     Function psDataPathFirstPart Returns String
