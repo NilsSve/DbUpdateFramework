@@ -111,7 +111,7 @@ Object oAddToStudio_dg is a ModalPanel
     End_Object
 
     Function AddProgramToStudioToolsMenu String sStudioVersion Returns Integer
-        Boolean bOk bExists bOpen
+        Boolean bOk bExists bOpen bIs64
         String sKey sValue sProgramPath sProgram sProduct sStudioPath
         Handle hoReg hoArray
         Integer i iItems iCreated iRetval
@@ -125,8 +125,13 @@ Object oAddToStudio_dg is a ModalPanel
         Get psProgramPath of (phoWorkspace(ghoApplication)) to sProgramPath
         Get PathAtIndex of (phoWorkspace(ghoApplication)) sProgramPath 1 to sProgramPath
         Get vFolderFormat sProgramPath to sProgramPath
-        Get psProduct     of (phoWorkspace(ghoApplication)) to sProduct
-        Get Module_Name to sProgram
+        Get psProduct   of (phoWorkspace(ghoApplication)) to sProduct
+        Get Module_Name to sProgram 
+#IFDEF IS$WIN64
+        If (not(sProgram contains "64")) Begin
+            Append sProgram "64"
+        End
+#ENDIF
         Get Create (RefClass(cRegistry)) to hoReg
         Set phRootKey of hoReg to HKEY_CURRENT_USER
 
@@ -182,15 +187,8 @@ Object oAddToStudio_dg is a ModalPanel
                     Get CreateKey of hoReg (sStudioPath + "\" + String(iItems)) to iCreated
                     If (iCreated = 0) Begin
                         Send WriteString of hoReg CS_Name sProduct
-                        // From DataFlex 16 and up the params for the Studio's Tools menu changed slightly:
-                        If (sStudioVersion >= "16.0") Begin
-                            Send WriteString of hoReg CS_Command (sProgramPath + sProgram)
-                            Send WriteString of hoReg CS_CommandLine (psTag(Self))
-                        End
-                        Else Begin
-                            Send WriteString of hoReg CS_CommandLine ('"' + sProgramPath + sProgram + ".exe" + '"' * psTag(Self))
-                            Move CX_InstalledOkVdfUnder16 to iRetval
-                        End
+                        Send WriteString of hoReg CS_Command (sProgramPath + sProgram)
+                        Send WriteString of hoReg CS_CommandLine (psTag(Self))
                         Send WriteDword  of hoReg CS_Separator 1
                         Move cx_RegKeyCreated to iRetval
                     End
