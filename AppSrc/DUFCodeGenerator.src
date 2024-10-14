@@ -37,6 +37,41 @@ Object oApplication is a cApplication
     Property Integer[] piaDifferences
     Property String psOrgOpenPath ""
 
+    // Removes any trailing backslash from a path.
+    Function RemoveTrailingBackslash String sPath Returns String    
+        If (Right(sPath, 1) ="\") Begin
+            Move (Left(sPath, Length(sPath) -1)) to sPath
+        End
+        Function_Return sPath
+    End_Function
+
+    Procedure OnCreate
+        Integer eOpened iRetval
+        Handle hoCmdLine hoIniFile
+        String sArgument sPath sWsFile sFileList
+        Boolean bExists
+
+        Get phoCommandLine to hoCmdLine
+        Get Argument of hoCmdLine 1 to sArgument  
+        // 1. Open the .sws file and look for the config.ws file
+        // 2. Open the config.ws file and read the filelist.cfg param.
+        If (Lowercase(sArgument) contains ".sws") Begin
+            Get Create (RefClass(cIniFile)) to hoIniFile
+            Set psFileName of hoIniFile to sArgument
+            Get ParseFolderName sArgument to sPath  
+            Get RemoveTrailingBackslash sPath to sPath
+            Get ReadString of hoIniFile "WorkspacePaths" "ConfigFile" "" to sWsFile 
+            Move (Replace(".", sWsFile, "")) to sWsFile
+            Move (sPath + sWsFile) to sWsFile
+            Set psFileName of hoIniFile to sWsFile
+            Get ReadString of hoIniFile "Workspace" "Filelist" "" to sFileList
+            Move (Replace(".", sFileList, "")) to sFileList
+            Move (sPath + sFileList) to sFileList
+            Set psFilelistFrom to sFileList 
+            Send Destroy of hoIniFile
+        End
+    End_Procedure
+    
     Function psWorkspaceHomePath Returns String
         String sPath 
         Get psHome of (phoWorkspace(Self)) to sPath
@@ -60,7 +95,6 @@ Object oApplication is a cApplication
     End_Procedure
 
     Procedure OnWorkspaceOpened
-        Forward Send OnWorkspaceOpened
         Send Save_DF_OPEN_PATH
     End_Procedure
 
@@ -171,11 +205,9 @@ Object oApplication is a cApplication
                 If (iRetval = MBR_Yes) Begin
                     Set pbDFConnId of ghoSQLConnectionHandler to True
                     Send Cursor_Wait of Cursor_Control
-//                    Move "DFConnId.ini" to sSQLConnectionsIniName
                     #IF (!@ > 182)
                         Send UnRegisterAllConnections of ghoConnection
                         Get AddAllConnections of ghoConnection to bExists
-//                        Set psIniFileName of (phoSQLConnectionIniFile(ghoSQLConnectionHandler)) to sSQLConnectionsIniName
                         Set psIniFilePath of (phoSQLConnectionIniFile(ghoSQLConnectionHandler)) to sPath
                         Get SetupSQLConnection of ghoSQLConnectionHandler True False to SQLConnection
                     #ENDIF
@@ -211,12 +243,10 @@ Object oDbUpdateHandler is a cDbUpdateHandler
     Set piDbVersionFieldNumber to 1
     Set phIntFilesTable to 256
     Set pbUseIntFilesBackup to True
-    Set phoDbUpdateHandler of ghoApplication to Self
     Set pbExitIfDebuggerActive to False
+    Set phoDbUpdateHandler of ghoApplication to Self
     
     Procedure OnPreUpdate
-//        String sVersionInfo                        // "ODBC Driver 18 for SQL Server"
-//        Get MinMSSQLDRV_And_ClientVersion "24.0.29.10" SQLSERVER2019CLIENT True True to sVersionInfo
     End_Procedure  
 
     Object oDbUpdateVersion1_0 is a cDbUpdateVersion
@@ -495,6 +525,8 @@ Object oMain is a Panel
                 
                 Procedure OnExecute Variant vCommandBarControl
                     Forward Send OnExecute vCommandBarControl
+                    Set psTag of (oAddToStudio_dg(oAddToStudio_dg(Client_Id(phoMainPanel(ghoApplication))))) ;
+                        to "<workspace>"
                     Send Popup of (oAddToStudio_dg(Client_Id(phoMainPanel(ghoApplication))))
                 End_Procedure
                 
