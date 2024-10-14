@@ -203,7 +203,8 @@ Object Status_Panel is a cProcessStatusPanel
     End_Object
 
     Procedure Set Progress_Bar_Overall_Visible_State Boolean bVisible
-        Set pbVisible of ghoProgressBarOverall to bVisible
+        Set pbVisible of ghoProgressBarOverall to bVisible 
+        Set Visible_State of oOverallProgress_tb to bVisible
     End_Procedure
 
     Function Progress_Bar_Overall_Visible_State Returns Boolean
@@ -264,8 +265,20 @@ Object Status_Panel is a cProcessStatusPanel
 
     Procedure Set License_Text String sText
 //        Set Label of oLicense_txt to sText
+    End_Procedure 
+    
+    Procedure Set piMaximum Integer iSize
+        Set piMaximum of ghoProgressBar to iSize
+    End_Procedure  
+    
+    Procedure Set piAdvanceBy Integer iCount
+        Set piAdvanceBy of ghoProgressBar to iCount
     End_Procedure
 
+    Procedure DoAdvance
+        Send DoAdvance of ghoProgressBar
+    End_Procedure
+    
     // gets called when status panel is activated passing whether a button
     // should appear
     Procedure EnableCancelButton Boolean bEnable
