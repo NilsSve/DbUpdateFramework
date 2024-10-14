@@ -79,7 +79,7 @@ Object oTableDUFCodeGenerator is a dbView
         Set psNote to "The development/latest version of the database"   
         Set psToolTip to "Select the Filelist.cfg for your development database. This is a suggestion form. So if used before - start typing what you're looking for."
 
-        Object oFilelistPath_fm is a cRDCForm //cRDCSuggestionIniForm
+        Object oFilelistPath_fm is a cRDCForm
             Set Size to 12 424
             Set Location to 29 29
             Set Label_Col_Offset to 0
@@ -453,7 +453,6 @@ Object oTableDUFCodeGenerator is a dbView
 
             Procedure Set SelectItems Integer iState
                 String sSourceFile
-
                 Forward Set SelectItems to iState
                 Get GenerateSourceFileName  to sSourceFile
                 Set Value of oSourceName_fm to sSourceFile
@@ -461,11 +460,17 @@ Object oTableDUFCodeGenerator is a dbView
             
             Procedure ToggleCurrentItem 
                 String sSourceFile
-
                 Forward Send ToggleCurrentItem
                 Get GenerateSourceFileName  to sSourceFile
-                Set Value of oSourceName_fm to sSourceFile
-                
+                Set Value of oSourceName_fm to sSourceFile                
+            End_Procedure
+
+            Procedure Activating
+                String sFileList              
+                Get psFilelistFrom of ghoApplication to sFileList
+                If (sFileList <> "") Begin
+                    Set Value of oFilelistPath_fm to sFileList
+                End
             End_Procedure
 
         End_Object
@@ -1282,8 +1287,8 @@ Object oTableDUFCodeGenerator is a dbView
             End
             Set Value of oFilelistPath_fm to sFilename
         End
-    End_Procedure
-
+    End_Procedure 
+    
 //    On_Key Key_Ctrl+Key_A  Send KeyAction of oSelectAll_btn
 //    On_Key Key_Ctrl+Key_N  Send KeyAction of oDeSelectAll_btn
 //    On_Key Key_Ctrl+Key_I  Send KeyAction of oInvertSelection_btn
