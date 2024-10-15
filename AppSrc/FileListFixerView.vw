@@ -1121,7 +1121,7 @@ Object oFilelistFixerView is a dbView
         End
     End_Function
     
-    // Helper procedures for progress bar
+    // Helper procedures for status panel/progress bar
     Procedure InitializeStatusPanel String sMessage String sMessage2 Integer iSize
         If (iSize <> 0) Begin
             Set Progress_Bar_Visible_State of ghoStatusPanel to True

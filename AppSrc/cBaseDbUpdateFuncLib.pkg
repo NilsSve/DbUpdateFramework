@@ -2136,15 +2136,7 @@ Class cBaseDbUpdateFuncLib is a cObject
             Function_Return False
         End
         
-//        Get_Attribute DF_FILE_TABLE_CHARACTER_FORMAT of hTable to sOrgFormat
-//        Move (Uppercase(sOrgFormat)) to sOrgFormat
-//        // Lets swap the OEM/ANSI format, just to make a change in Structure_Start below (and back),
-//        // to "touch" the table so the driver feels there has been a change and updates the .int file.
-//        Move (If(sOrgFormat = CS_OEM_Txt, CS_ANSI_Txt, CS_OEM_Txt)) to sNewFormat
-
         Structure_Start hTable
-//            Set_Attribute DF_FILE_TABLE_CHARACTER_FORMAT of hTable to sNewFormat
-//            Set_Attribute DF_FILE_TABLE_CHARACTER_FORMAT of hTable to sOrgFormat
         Structure_End hTable DF_STRUCTEND_OPT_FORCE "." ghoDbUpdateHandler
     End_Function
 
