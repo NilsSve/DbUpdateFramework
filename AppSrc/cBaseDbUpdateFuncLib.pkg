@@ -2025,15 +2025,8 @@ Class cBaseDbUpdateFuncLib is a cObject
     End_Function
 
     // The table must already exist in the filelist for this function to work.
-    // It creates a rudimentary .int file in the first Data folder of the psDataPath property.
-    // Note: This is not enough to re-create an .int file!
-    //       It is also necessary (as the DUF framework does when it is called) to call a Structure_Start/Structure_End,
-    //       to have the driver make a proper update of the .int file.
-    //       Sample:
-    //               Open hTable
-    //               Structure_Start hTable sDriver
-    //               Structure_End hTable DF_STRUCTEND_OPT_FORCE
-    //               Note the "DF_STRUCTEND_OPT_FORCE" to force a restructure(!)
+    // It creates an .int file in the first Data folder of the psDataPath property. 
+    // It is important that the hTable can be opened.
     Function _SqlUtilCreateIntFile Handle hTable String sDriverID String sConnectionID Boolean bAnsi Boolean bSysFile Returns Boolean
         Boolean bOK bExists bUseConnectionID 
         String sDataPath sRootName sLogicalName sPhysicalFileName sConnectionString hTableName sSchemaName sANSI_OEM sNoDriverRootName
@@ -2127,6 +2120,8 @@ Class cBaseDbUpdateFuncLib is a cObject
         Function_Return (bOK = True)
     End_Function 
     
+    // Simplier version of the _SqlUtilCreateIntFile. It can be used if there is something wrong with the .int file and it needs
+    // to be refreshed by the driver. 
     Function _SqlUtilRefreshIntFile Handle hTable String sDriverID String sConnectionID Boolean bAnsi Boolean bSysFile Returns Boolean        
         String sOrgFormat sNewFormat
         
@@ -2147,7 +2142,7 @@ Class cBaseDbUpdateFuncLib is a cObject
 
         If (sTableName contains ".") Begin
             Move (Pos(".", sTableName)) to iPos
-            Move (Mid(sTableName, 999, (iPos +1))) to sTableName
+            Move (Mid(sTableName, Length(sTableName), (iPos +1))) to sTableName
         End
 
         Get psDriverID to sDriverID
