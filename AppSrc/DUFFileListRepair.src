@@ -240,7 +240,7 @@ Use oDEOEditContextMenu17.pkg
 Object oMain is a Panel
     Set Label to (psProduct(ghoApplication))
     Set Location to 4 3
-    Set Size to 496 613
+    Set Size to 442 572
 
     Object oCommandBarSystem is a cCJCommandBarSystem
         Set pbTimerUpdate to True
@@ -254,89 +254,181 @@ Object oMain is a Panel
             Forward Send OnCreateCommandBars
         End_Procedure
 
-        Object oMenuBar is a cCJMenuBar
-
-            Object oFileMenu is a cCJMenuItem
-                Set peControlType to xtpControlPopup          
-                Set psCaption   to "&File"
-                Set psDescription to "Find, Save, Delete, Clear information or quit this application."
-                Set psCategory to "Menus"
-
-                Object oClearMenuItem is a cCJClearMenuItem
-                    Set pbAddToDesignerMenu to True
-                End_Object
-
-                Object oClearAllMenu is a cCJClearAllMenuItem
-                    Set pbAddToDesignerMenu to True
-                End_Object
-
-                Object oPromptMenuItem is a cCJPromptMenuItem
-                    Set pbAddToDesignerMenu to True
-                    Set pbControlBeginGroup to True
-                End_Object
-
-                Object oFindMenuItem is a cCJFindMenuItem
-                    Set pbAddToDesignerMenu to True
-                    Set pbControlBeginGroup to True
-                End_Object
-
-                Object oFindNextMenu is a cCJFindNextMenuItem
-                    Set pbAddToDesignerMenu to True
-                End_Object
-
-                Object oFindPreviousMenu is a cCJFindPreviousMenuItem
-                    Set pbAddToDesignerMenu to True
-                End_Object
-
-                Object oFindFirstMenu is a cCJFindFirstMenuItem
-                    Set pbAddToDesignerMenu to True
-                End_Object
-
-                Object oFindLastMenu is a cCJFindLastMenuItem
-                    Set pbAddToDesignerMenu to True
-                End_Object
-
-                Object oSaveMenuItem is a cCJSaveMenuItem
-                    Set pbAddToDesignerMenu to True
-                    Set pbControlBeginGroup to True
-                End_Object
-
-                Object oDeleteMenuItem is a cCJDeleteMenuItem
-                    Set pbAddToDesignerMenu to True
-                End_Object
-
-                Object oExitMenu is a cCJExitMenuItem
-                    Set pbControlBeginGroup to True
-                End_Object
-
-            End_Object
-
-            Object oHelpMenu is a cCJMenuItem
-                Set peControlType to xtpControlPopup    
-                Set psCaption to "&Help"
-                Set psDescription to "Access Information for learning and using this DataFlex application."
-                Set psToolTip to "Help"
-
-                Object oHelpMenuItem is a cCJHelpMenuItem 
-                End_Object
-
-                Object oAboutMenuItem is a cCJAboutMenuItem
-                End_Object
-
-            End_Object
-
-        End_Object
-
+//        Object oMenuBar is a cCJMenuBar
+//
+//            Object oFileMenu is a cCJMenuItem
+//                Set peControlType to xtpControlPopup          
+//                Set psCaption   to "&File"
+//                Set psDescription to "Find, Save, Delete, Clear information or quit this application."
+//                Set psCategory to "Menus"
+//
+//                Object oClearMenuItem is a cCJClearMenuItem
+//                    Set pbAddToDesignerMenu to True
+//                End_Object
+//
+//                Object oClearAllMenu is a cCJClearAllMenuItem
+//                    Set pbAddToDesignerMenu to True
+//                End_Object
+//
+//                Object oPromptMenuItem is a cCJPromptMenuItem
+//                    Set pbAddToDesignerMenu to True
+//                    Set pbControlBeginGroup to True
+//                End_Object
+//
+//                Object oFindMenuItem is a cCJFindMenuItem
+//                    Set pbAddToDesignerMenu to True
+//                    Set pbControlBeginGroup to True
+//                End_Object
+//
+//                Object oFindNextMenu is a cCJFindNextMenuItem
+//                    Set pbAddToDesignerMenu to True
+//                End_Object
+//
+//                Object oFindPreviousMenu is a cCJFindPreviousMenuItem
+//                    Set pbAddToDesignerMenu to True
+//                End_Object
+//
+//                Object oFindFirstMenu is a cCJFindFirstMenuItem
+//                    Set pbAddToDesignerMenu to True
+//                End_Object
+//
+//                Object oFindLastMenu is a cCJFindLastMenuItem
+//                    Set pbAddToDesignerMenu to True
+//                End_Object
+//
+//                Object oSaveMenuItem is a cCJSaveMenuItem
+//                    Set pbAddToDesignerMenu to True
+//                    Set pbControlBeginGroup to True
+//                End_Object
+//
+//                Object oDeleteMenuItem is a cCJDeleteMenuItem
+//                    Set pbAddToDesignerMenu to True
+//                End_Object
+//
+//                Object oExitMenu is a cCJExitMenuItem
+//                    Set pbControlBeginGroup to True
+//                End_Object
+//
+//            End_Object
+//
+//            Object oHelpMenu is a cCJMenuItem
+//                Set peControlType to xtpControlPopup    
+//                Set psCaption to "&Help"
+//                Set psDescription to "Access Information for learning and using this DataFlex application."
+//                Set psToolTip to "Help"
+//
+//                Object oHelpMenuItem is a cCJHelpMenuItem 
+//                End_Object
+//
+//                Object oAboutMenuItem is a cCJAboutMenuItem
+//                End_Object
+//
+//            End_Object
+//
+//        End_Object
+//
+//        Object oEditToolBar is a cCJToolbar
+//            Set psTitle to "Edit Toolbar"
+//
+//            Object oCutToolbarItem is a cCJCutMenuItem
+//            End_Object
+//
+//            Object oCopyToolbarItem is a cCJCopyMenuItem
+//            End_Object
+//
+//            Object oPasteToolbarItem is a cCJPasteMenuItem
+//            End_Object
+//
+//            Object oAddToStudio_MenuItem is a cCJMenuItem
+//                Set psCaption to "Add to Studio"
+//                Set psDescription to "Add to Studio"
+//                Set psToolTip to "Add this tool to the DataFlex Studio's 'Tools' menu"
+//                Set psImage to "ActionAddStudio1.ico"
+//                Set pbControlBeginGroup to True   
+//                
+//                Procedure OnExecute Variant vCommandBarControl
+//                    Forward Send OnExecute vCommandBarControl 
+//                    Set psTag of (oAddToStudio_dg(oAddToStudio_dg(Client_Id(phoMainPanel(ghoApplication))))) ;
+//                        to "<workspace>"
+//                    Send Popup of (oAddToStudio_dg(Client_Id(phoMainPanel(ghoApplication))))
+//                End_Procedure
+//                
+//            End_Object
+//
+//        End_Object
+        
         Object oEditToolBar is a cCJToolbar
             Set psTitle to "Edit Toolbar"
+            Set pbCloseable to False
+            Set pbCustomizable to False
+            Set pbShowExpandButton to False
 
             Object oCutToolbarItem is a cCJCutMenuItem
+                Set psImage to "ActionCut1.ico"
             End_Object
 
             Object oCopyToolbarItem is a cCJCopyMenuItem
+                Set psImage to "ActionCopy1.ico"
+
             End_Object
 
             Object oPasteToolbarItem is a cCJPasteMenuItem
+                Set psImage to "ActionPaste1.ico"
+            End_Object
+
+//            Object oDeleteEditToolbarItem is a cCJDeleteEditMenuItem
+//                Set psImage to "ActionDelete1.ico"
+//                Set pbControlBeginGroup to True
+//            End_Object
+
+            Object oPromptToolItem is a cCJPromptMenuItem
+                Set psImage to "ActionPrompt1.ico"
+                Set pbControlBeginGroup to True
+            End_Object
+
+//            Object oClearToolItem is a cCJClearMenuItem
+//                Set peControlStyle to xtpButtonIconAndCaption
+//                Set psCaption      to "Clear/Add"
+//                Set pbControlBeginGroup to True
+//                Set psImage to "ActionClear1.ico"  
+//                
+//                Function IsEnabled Returns Boolean
+//                    Function_Return True
+//                End_Function
+//
+//            End_Object
+
+            Object oOpenContainingFolder_MenuItem is a cCJMenuItem
+                Set psImage to "ActionOpenContainingFolder1.ico"
+                Set psCaption to "Containing Folder"
+                Set psToolTip to "Open containing folder"
+                Set psDescription to "Open Containing Folder"
+                Set pbActiveUpdate to True
+                Set pbControlBeginGroup to True
+
+                Procedure OnExecute Variant vCommandBarControl
+                    String sPath sFile       
+                    Boolean bExists
+
+                    Forward Send OnExecute vCommandBarControl
+                    Get psFilelistFrom of ghoApplication to sFile
+                    Get ParseFolderName sFile to sPath
+                    Get vFilePathExists sFile to bExists
+                    // We want to have that file to be selected in Windows Explorer;
+                    If (bExists = True) Begin
+                        Move ("/select, " + sFile) to sPath
+                    End
+                    Send vShellExecute "open" "explorer.exe" sPath ""
+                End_Procedure
+
+                Function IsEnabled Returns Boolean
+                    String sFile
+                    Boolean bExists
+                    Get psFilelistFrom of ghoApplication to sFile
+                    Get vFilePathExists sFile to bExists
+                    Function_Return (bExists = True)
+                End_Function
+
             End_Object
 
             Object oAddToStudio_MenuItem is a cCJMenuItem
@@ -347,7 +439,7 @@ Object oMain is a Panel
                 Set pbControlBeginGroup to True   
                 
                 Procedure OnExecute Variant vCommandBarControl
-                    Forward Send OnExecute vCommandBarControl 
+                    Forward Send OnExecute vCommandBarControl
                     Set psTag of (oAddToStudio_dg(oAddToStudio_dg(Client_Id(phoMainPanel(ghoApplication))))) ;
                         to "<workspace>"
                     Send Popup of (oAddToStudio_dg(Client_Id(phoMainPanel(ghoApplication))))
@@ -355,8 +447,54 @@ Object oMain is a Panel
                 
             End_Object
 
+            Object oAbout_MenuItem is a cCJMenuItem
+                Set psCaption to "About"
+                Set psToolTip to "About Info"
+                Set psDescription to "About the program"
+                Set psImage to "ActionAbout1.ico"
+                Set pbControlBeginGroup to True
+                Procedure OnExecute Variant vCommandBarControl
+                    Forward Send OnExecute vCommandBarControl
+                    Send Activate_About of (Client_Id(ghoCommandBars))
+                End_Procedure
+            End_Object
+
+            Object oHelpMenuItem is a cCJHelpMenuItem
+                Set peControlType to xtpControlSplitButtonPopup
+                Set psImage to "ActionHelp1.ico"
+
+                Procedure OnExecute Variant vCommandBarControl
+                    Send ShowProgramHelp
+                End_Procedure
+
+                Object oHelpMenuItemLocal is a cCJMenuItem
+                    Set psCaption to "Local HTML Help"
+                    Set psImage to "ActionHelp1.ico"
+                    Procedure OnExecute Variant vCommandBarControl
+                        Send ShowProgramHelp
+                    End_Procedure
+                End_Object
+
+                Object oHelpMenuItemInternetBrowser is a cCJMenuItem
+                    Set psCaption to "Online HTML Help"
+                    Set psImage to "ActionHelpInternet1.ico"
+                    Procedure OnExecute Variant vCommandBarControl
+                        Runprogram Shell Background "http://www.rdctools.com/HTMLHelpDUF/Developer5.htm"
+                    End_Procedure
+
+                End_Object
+
+            End_Object
+
+            Object oExitMenuItem is a cCJExitMenuItem
+                Set psToolTip to "Exit application"
+                Set psDescription to "Exit the program (Alt+F4)"
+                Set psImage to "ActionExit1.ico"
+                Set pbControlBeginGroup to True
+            End_Object
+
         End_Object
-        
+
         Object oStatusBar is a cCJStatusBar
             Set StatusBar_Id to Self
             Set psIdleText to "No Action"  
@@ -385,6 +523,14 @@ Object oMain is a Panel
         End_Procedure
 
     End_Object
+
+    // Note that we have overriden the cHtmlHelp "GetHelpFile" function
+    // in the oHtmlHelp object, so we need to explitetly send the message
+    // to that object.
+    Procedure ShowProgramHelp
+        Set psHelpFile of ghoApplication to "Developer5.chm"
+        Send DoDisplayKeyword of oHtmlHelp "" //"DUF Code Generator"
+    End_Procedure
 
 End_Object
 

@@ -60,7 +60,6 @@ Object oMainPanel is a BasicPanel
         Object oDriverXMLFileName_fm is a Form
             Set Size to 13 298
             Set Location to 20 43
-//            Set Label to "XML Driver Filename to Read:"
             Set Label_Justification_Mode to JMode_Top
             Set Label_Col_Offset to 0
             Set Prompt_Button_Mode to PB_PromptOn
@@ -76,8 +75,6 @@ Object oMainPanel is a BasicPanel
                 If (sFileName <> "") Begin
                     Move (Left(sFileName, 2))     to sDrive
                     Get ParseFolderName sFileName to sPath
-//                    Get Parse_Drive sFileName to sDrive
-//                    Get Parse_Path  sFileName to sPath
                 End
                 If (sPath <> "") Begin
                     Set Initial_Folder of oFileNameDialog to (sDrive - sPath)
@@ -98,18 +95,6 @@ Object oMainPanel is a BasicPanel
                     Set psOutputFileName of oOutputFilename_fm to sValue
                     
                 End
-            End_Procedure
-
-            Procedure OnStartUp
-                String sBinPath sXMLFileName
-
-                Get DFBinPath of ghoApplication to sBinPath
-                Move "\MSSQLDRV_DriverDef.xml" to sXMLFileName
-                Set Value to (sBinPath + sXMLFileName) 
-                
-                Set Value of oDriverID_cf to "MSSQLDRV_ID"
-                Set Value of oDbType_cf   to "EN_dbTypeMSSQL"
-
             End_Procedure
 
         End_Object
@@ -136,7 +121,6 @@ Object oMainPanel is a BasicPanel
 
             Procedure OnChange
                 Integer iDbType
-    
                 Get SelectedDbType to iDbType
                 Send Refill_Comboform of oDriverID_cf iDbType
             End_Procedure
@@ -144,10 +128,11 @@ Object oMainPanel is a BasicPanel
             Function SelectedDbType Returns Integer
                 Integer iRetval
                 String sDbType
-    
                 Get Value to sDbType
+                If (sDbType = "1") Begin
+                    Move CS_dbTypeMSSQL to sDbType
+                End
                 Get SqlUtilDbTypeToInteger of ghoDbUpdateFunctionLibrary sDbType to iRetval
-    
                 Function_Return iRetval
             End_Function
 
@@ -206,7 +191,7 @@ Object oMainPanel is a BasicPanel
                     Move MSSQLDRV_ID to sDriverID
                 End
                 Get SelectedDbType of oDbType_cf to iDbType
-            End_Procedure 
+            End_Procedure
             
         End_Object
 
@@ -478,7 +463,9 @@ Object oMainPanel is a BasicPanel
             
             // Some data types does not have a iDefaultSize, Min or Max size.
             // Then denote "not defined" by a "-1":
+            Send Ignore_Error of Error_Object_Id DFERR_BAD_OPERATOR
             Get ComGetChildContent of hoChild       "defaultSize"   to ColumnType.iDefaultSize
+            Send Trap_Error   of Error_Object_Id DFERR_BAD_OPERATOR
             If (ColumnType.iDefaultSize = 0) Begin
                 Move    -1                                          to ColumnType.iDefaultSize
             End
@@ -595,8 +582,18 @@ Object oMainPanel is a BasicPanel
         Send Info_Box "Ready!"    
     End_Procedure
     
-    Send OnStartUp of oDriverXMLFileName_fm
-    
+    Procedure OnStartUp
+        String sBinPath sXMLFileName
+        Get DFBinPath of ghoApplication to sBinPath
+        // The .xml files now resides in the .\Lib folder
+        Move (Replace("\bin", sBinPath, "\Lib")) to sBinPath
+        Move "\MSSQLDRV_DriverDef.xml" to sXMLFileName
+        Set Value of oDriverXMLFileName_fm to (sBinPath + sXMLFileName) 
+        Set Value of oDbType_cf   to EN_DbTypeMSSQL
+//        Set Value of oDriverID_cf to MSSQLDRV_ID
+    End_Procedure
+    Send OnStartUp
+
     On_Key Key_Ctrl+Key_R Send KeyAction of oReadButton
     On_Key Key_Ctrl+Key_W Send KeyAction of oWriteButton
 End_Object

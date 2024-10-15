@@ -30,15 +30,15 @@ Object oFilelistFixerView is a dbView
     Set Size to 388 556
     Set piMinSize to 384 556
     Set Location to 2 2
-//    Set Label to "DUF FileList Repair"
-    Set pbAutoActivate to True
     Set Maximize_Icon to True
+    Set Border_Style to Border_Thick
+    Set pbAutoActivate to True
 
     Property String psConnId
     Property Integer piChannel -1
 
     Object oFilelist_fm is a cRDCForm
-        Set Size to 12 318
+        Set Size to 12 323
         Set Location to 14 11
         Set Label_Col_Offset to 0
         Set Label_Row_Offset to 1
@@ -99,7 +99,7 @@ Object oFilelistFixerView is a dbView
     End_Object
 
     Object oConnidInfo_edt is a cRichEdit
-        Set Size to 70 318
+        Set Size to 75 318
         Set Location to 28 12
         Set peAnchors to anTopLeftRight
         Set Skip_State to True
@@ -140,7 +140,7 @@ Object oFilelistFixerView is a dbView
                 Set Value of oDatabase_fm to sDatabase
             End   
             Else Begin
-                Send AppendTextLn "No DFConnid.ini file found, or no active connections."
+                Send AppendTextLn "No DFConnid.ini file found, or no active connection."
             End
         End_Procedure
 
@@ -1549,12 +1549,18 @@ Object oFilelistFixerView is a dbView
         Send CloseLogFile            
     End_Procedure
 
+    // To automatically maximize the view size.
+    // Way more complicated than it should be!
     Procedure Page Integer iPageObject
         Forward Send Page iPageObject
-        Set Border_Style to Border_Thick
-        Set View_Mode to Viewmode_Zoom
+        Set View_Mode to Viewmode_Zoom 
+        Set Maximize_Icon to False     
+        Set Minimize_Icon to False     
+        Set Sysmenu_Icon to False
+        // This is the crucial bit:
+        Set Border_Style of (Client_Id(ghoCommandBars)) to Border_None
     End_Procedure
-    
+
     // Note: Tell the MSSQLDRV_ID driver to *not* create cache-files (.cch):
     Procedure Activating 
         Integer iDriver
@@ -1562,7 +1568,8 @@ Object oFilelistFixerView is a dbView
         If (iDriver <> 0) Begin
             Set_Attribute DF_DRIVER_USE_CACHE of iDriver to False 
         End
-    End_Procedure
+    End_Procedure 
+    
 
     On_Key kClear Send KeyAction of oRefresh_btn
 End_Object    
