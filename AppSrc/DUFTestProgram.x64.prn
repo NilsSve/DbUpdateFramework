@@ -1,5 +1,8 @@
 Compiling Program: C:\Projects\DF20\DbUpdateFramework\AppSrc\DUFTestProgram.src
-Memory Available: 64215752704
+Memory Available: 61905256448
+1>// *** Note: If you get a compile error: "Can't include the resource COMPILEHEADER.H",
+1>//     you will need to compile the "WriteDateTimeHeaderFile" program first. ***
+1>//
 1>    CompilerLevelWarning All On
 1>Use DFAllEnt.pkg
 Using pre-compiled package DFALLENT.PKG
@@ -37132,7 +37135,7 @@ Including file: Working.pkg    (C:\Projects\DF20\DbUpdateFramework\AppSrc\Workin
 99275>
 Including Resources...
 Summary
-Memory Available: 64157667328
+Memory Available: 61901021184
 Total Warnings : 0
 Total Errors   : 0
 Total Symbols  : 52832

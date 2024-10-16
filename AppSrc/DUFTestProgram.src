@@ -1,4 +1,7 @@
-#If (!@ > 190)
+// *** Note: If you get a compile error: "Can't include the resource COMPILEHEADER.H",
+//     you will need to compile the "WriteDateTimeHeaderFile" program first. ***
+//
+#IF (!@ > 190)
     CompilerLevelWarning All On
 #ENDIF
 Use DFAllEnt.pkg
