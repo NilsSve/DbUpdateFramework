@@ -2,9 +2,6 @@
 Use cCJStandardCommandBarSystem.pkg
 Use cDbUpdateHandler.pkg
 
-// *** Note: If you get a compile error: "Can't include the resource COMPILEHEADER.H",
-//     you will need to compile the "WriteDateTimeHeaderFile" program first. ***
-//
 Object oHtmlHelp is a cHtmlHelp
 End_Object
 
@@ -537,4 +534,6 @@ Object oMain is a Panel
 
 End_Object
 
+// *** Note: If you get a compile error: "Can't include the resource COMPILEHEADER.H",
+//     you will need to compile the "WriteDateTimeHeaderFile" program first. ***
 Start_UI

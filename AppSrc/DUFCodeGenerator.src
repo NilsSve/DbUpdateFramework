@@ -1,7 +1,4 @@
-﻿// *** Note: If you get a compile error: "Can't include the resource COMPILEHEADER.H",
-//     you will need to compile the "WriteDateTimeHeaderFile" program first. ***
-//
-#IF (!@ > 190)
+﻿#IF (!@ > 190)
     CompilerLevelWarning All On
 #ENDIF
 
@@ -877,4 +874,7 @@ Object oMain is a Panel
 End_Object
 
 Send Execute of (oCodeGenerator_MenuItem(ghoCommandBars))
+
+// *** Note: If you get a compile error: "Can't include the resource COMPILEHEADER.H",
+//     you will need to compile the "WriteDateTimeHeaderFile" program first. ***
 Start_UI
