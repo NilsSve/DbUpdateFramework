@@ -33,12 +33,12 @@
 1=msg_notify_application_activation
 2=set_focus
 3=msg_onwmpaint
-[DUFFileListRepair.src]
+[DUFCodeGenerator.src]
 0=msg_paint
 1=msg_notify_application_activation
 2=set_focus
 3=msg_onwmpaint
-[DUFCodeGenerator.src]
+[DUFFileListRepair.src]
 0=msg_paint
 1=msg_notify_application_activation
 2=set_focus
