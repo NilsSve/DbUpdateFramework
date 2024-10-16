@@ -1576,12 +1576,10 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary
             Set piAdvanceBy                of ghoStatusPanel to 1
             Set Progress_Bar_Overall_Visible_State of ghoStatusPanel to True
         End
-//        Else Begin
-//            Set Progress_Bar_Visible_State of ghoStatusPanel to False
-//        End
-//
+
         Send EnableCancelButton     of ghoStatusPanel (pbEnableCancelButton(Self))
-        Send Initialize_StatusPanel of ghoStatusPanel ("   " + CS_DUF_WorkingUpdateText) sMessage sMessage2
+        Send Initialize_StatusPanel of ghoStatusPanel ("   " + CS_DUF_WorkingUpdateText) sMessage sMessage2 
+        Send Update_StatusPanel of ghoStatusPanel ""
         Send Start_StatusPanel of ghoStatusPanel
     End_Procedure
     
