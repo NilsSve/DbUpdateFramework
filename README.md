@@ -8,8 +8,9 @@ It is suggested to read the following help sections; “Welcome to the Database 
 
 You can copy the Developer5.chm help file to the DataFlex Help folder(s) under “Programs Files (x86)”. This will integrate the Database Update Framework help with the DataFlex Studio's help system.
 
-You only need to add the “DUFSQLConnections.exe” program to the Studio’s Tools menu, by running the program and pressing the “Add To Studio” buttons.
+You don't need to use the "DUFSQLConnections.exe" program if you don't plan to use DAW's "SQL Connection Manager". If needed add the "DUFSQLConnections.exe" program to the Studio’s Tools menu, by running the program and pressing the “Add To Studio” buttons.
 There is probably only two programs you need to compile and use: "DUFCodeGenerator" and "DUFFileListRepair". See also "WriteDateTimeHeaderFile" below.
+It is suggesed to add the "DUFCodeGenerator.exe" and "DUFFileListRepair.exe" programs to the Studio’s Tools menu, by running them and pressing the “Add To Studio” button.
 
 NOTE: When you compile one of the programs for the first time and you get e.g. this compile error: "Error 4295: C:\Temp\DUF\AppSrc\DUFFileListRepair.src (ln 538) Can't include resource COMPILEHEADER.H",
       You will need to first compile/create the program: "WriteDateTimeHeaderFile". It creates the "COMPILERHEEADER.H" file automatically and is used by the programs to get the compiled date & time.
