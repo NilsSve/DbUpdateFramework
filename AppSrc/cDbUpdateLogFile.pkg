@@ -98,7 +98,6 @@ Class cDbUpdateLogFile is a cObject
         // Only do once.
         If (pbHeaderWritten(Self) = False) Begin
             Send WriteHeaderData
-            Set pbHeaderWritten to True
         End
 
         Get Private.phCurrentTable to hCurrentTable  
@@ -216,6 +215,7 @@ Class cDbUpdateLogFile is a cObject
                     Writeln channel iCh ("*** Database Update Started:      " + String(dtUpdateStart))
                 End
             Close_Output channel iCh
+            Set pbHeaderWritten to True
         End
     End_Procedure
 
@@ -250,7 +250,6 @@ Class cDbUpdateLogFile is a cObject
 
         If (pbHeaderWritten(Self) = False) Begin
             Send WriteHeaderData
-            Set pbHeaderWritten to True
         End
 
         Get pbUseDataTableLog to bUseDataTable

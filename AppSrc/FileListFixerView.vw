@@ -196,6 +196,7 @@ Object oFilelistFixerView is a dbView
             Send Update_StatusPanel of ghoStatusPanel ""
             Get Active_State of ghoStatusPanel to bActive
             If (bActive = False) Begin
+                Send StopStatusPanel
                 Send Info_Box "Process interupted..."
                 Procedure_Return
             End
@@ -215,6 +216,7 @@ Object oFilelistFixerView is a dbView
             Else Begin
                 Send Info_Box "Ready! No problems found."    
             End
+            Send StopStatusPanel
         End_Procedure
 
     End_Object
@@ -752,7 +754,6 @@ Object oFilelistFixerView is a dbView
         Boolean bIsAlias bIsIntTable bIsAliasSQL bIsMasterSQL
         tFilelist[] FilelistArray
         
-        Send Cursor_Wait of Cursor_Control
         Move 0 to iCounter 
         Move 0 to hTable
 
@@ -822,11 +823,6 @@ Object oFilelistFixerView is a dbView
                 End
             End
         Until (hTable = 0)
-
-        If (iCounter <> 0) Begin
-            Send ShowFileListData        
-        End
-        Send Cursor_Ready of Cursor_Control
         Function_Return iCounter
     End_Function
 
@@ -1259,9 +1255,12 @@ Object oFilelistFixerView is a dbView
             End
         End
         
-        Send StartStatusPanel "Moving *.dat files to backup folder:" sBackupFolder 0
+        Send StartStatusPanel "Moving *.dat files to backup folder:" sBackupFolder 1
+//        Set Progress_Bar_Visible_State of ghoStatusPanel to True
+//        Set piAdvanceBy                of ghoStatusPanel to 1
 
         Get CollectDatRelatedFiles sDataPath to asFiles 
+        Set piMaximum                  of ghoStatusPanel to (SizeOfArray(asFiles))
         Get InUseDatFiles to asInUseDatFiles
         Get SanitizeDatRelatedFiles asFiles asInUseDatFiles to asFiles
         Move (SizeOfArray(asFiles)) to iSize
@@ -1273,7 +1272,8 @@ Object oFilelistFixerView is a dbView
         Decrement iSize
         For iCount from 0 to iSize
             Set Action_Text of ghoStatusPanel to (sDataPath + asFiles[iCount]) 
-            Get vMoveFile (sDataPath + asFiles[iCount]) sBackupFolder to iRetval
+            Get vMoveFile (sDataPath + asFiles[iCount]) sBackupFolder to iRetval 
+            Send DoAdvance of ghoStatusPanel
             If (iRetval = 0) Begin
                 Increment iCounter
             End

@@ -32,7 +32,7 @@ End_Struct
 Class cDbUpdateVersion is a cObject
 
     Procedure Construct_Object    
-        Boolean bOnCreateExecuted bUseCustomDbVersion
+        Boolean bOnCreateExecuted bUseCustomDbVersion bUseIntFilesBackup
         String[] aSQLQueryMessages
         
         Forward Send Construct_Object
@@ -42,8 +42,12 @@ Class cDbUpdateVersion is a cObject
         If (bOnCreateExecuted = False) Begin    
             Delegate Get pbUseCustomDbVersion to bUseCustomDbVersion
             If (bUseCustomDbVersion = False) Begin
-                Delegate Send CheckAutoCreateDbVersionTable 
+                Delegate Send AutoCreateDbVersionTable 
             End
+            Get pbUseIntFilesBackup to bUseIntFilesBackup
+            If (bUseIntFilesBackup = True) Begin
+                Delegate Send AutoCreateIntFilesTable
+            End    
             Delegate Send OnCreate
             Delegate Set Private.pbOnCreateExecuted to True
         End
@@ -687,10 +691,7 @@ Register_Function piCurrentErrorHandlerID Returns Integer
         Delegate Get piDbVersionFileNumber to iDbVersionFileNumber
         
         Delegate Get pbUseCustomDbVersion to bUseCustomDbVersion
-        If (bUseCustomDbVersion = False) Begin
-//            Delegate Send CheckAutoCreateDbVersionTable // cDbUpdateHandler object event.
-        End
-        Else Begin
+        If (bUseCustomDbVersion = True) Begin
             Get _UtilTableExists of ghoDbUpdateFunctionLibrary iDbVersionFileNumber to bTableExists
             If (bTableExists = False) Begin
                 Delegate Send OnCreateCustomDbVersionTable

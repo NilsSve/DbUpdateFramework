@@ -8,7 +8,7 @@ End_Object
 Object oApplication is a cApplication
     Set peHelpType to htHtmlHelp
     Set psProgram to "DUFFileListRepair"
-    Set psProduct to "DUF - FileList Repair"
+    Set psProduct to "DUF - FileList Repairer"
     
     Property Handle phoDbUpdateHandler 0
     Property String psFilelistFrom ""

@@ -637,8 +637,8 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary
         Boolean bIsSame
         
         Move (Lowercase(sIntFileName)) to sIntFileName
-        Get ReadIntFileData  sDataPath sIntFileName to asIntFileOrg   
-        Get SavedIntFileData sDataPath sIntFileName to asSavedIntFile
+        Get ReadIntFile sDataPath sIntFileName to asIntFileOrg   
+        Get RetrieveIntFileData sDataPath sIntFileName to asSavedIntFile
         Get RemoveBlankLines asIntFileOrg   to asIntFile
         Get RemoveBlankLines asSavedIntFile to asSavedIntFile
         
@@ -649,34 +649,6 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary
         
         Function_Return asReturnIntFile    
     End_Function                                   
-    
-    // Takes a string array as parameter and returns a new
-    // string array without any empty rows and all rows trimmed.
-    // This is e.g. used by the HasIntFileChanged message to compare
-    // two .int file arrays. 
-    Function RemoveBlankLines String[] asIntFile Returns String[]
-        Integer iSize iCount iRow
-        String sVal        
-        String[] asRetValArray
-        
-        Move (SizeOfArray(asIntFile)) to iSize
-        If (iSize = 0) Begin
-            Function_Return asRetValArray
-        End                          
-        Decrement iSize         
-        Move 0 to iRow
-        
-        For iCount from 0  to iSize
-            Move asIntFile[iCount] to sVal
-            Move (Trim(sVal)) to sVal
-            If (sVal <> "") Begin
-                Move sVal to asRetValArray[iRow]
-                Increment iRow        
-            End
-        Loop
-        
-        Function_Return asRetValArray
-    End_Function
     
     Function SaveIntFileData String sPath String sIntFileName Returns Boolean
         Handle hTable
@@ -699,7 +671,7 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary
         Move 1              to iIDIdx   // Main ID index.
         Move 2              to iIndex   // This is the IntFileName + ID index.
 
-        Get ReadIntFileData sPath sIntFileName to asIntFile
+        Get ReadIntFile sPath sIntFileName to asIntFile
         Move (SizeOfArray(asIntFile)) to iSize
         If (iSize = 0) Begin
             Function_Return False
@@ -778,7 +750,7 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary
 
     // Returns all saved piIntFilesFileNumber records for the passed 
     // sIntFileName value as a string array.
-    Function SavedIntFileData String sPath String sIntFileName Returns String[]
+    Function RetrieveIntFileData String sPath String sIntFileName Returns String[]
         Handle hTable
         Boolean bOK bErr bFound
         Integer iFileCol iTextCol iIndex
@@ -824,7 +796,7 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary
 
     // Reads the passed sIntFileName from disk and returns its value
     // as a string array.
-    Function ReadIntFileData String sPath String sIntFileName Returns String[]
+    Function ReadIntFile String sPath String sIntFileName Returns String[]
         String[] asIntFile       
         String sFileName sLine
         Integer iCh iSize iCount
@@ -921,7 +893,7 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary
         Move False to Err
         Move False to bOK
 
-        Get SavedIntFileData sDataPath sIntFileName to asIntFile
+        Get RetrieveIntFileData sDataPath sIntFileName to asIntFile
         Move (SizeOfArray(asIntFile)) to iSize
         If (iSize = 0) Begin
             Function_Return False        
@@ -1028,7 +1000,8 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary
 
         Get ApiTableCreate of ghoDbUpdateFunctionLibrary hTable sTableName sTableName sTableName True True True APIColumn to bOk
         
-        If (bOK = True and Err = False) Begin
+        If (bOK = True) Begin
+//        If (bOK = True and Err = False) Begin
             Move ("Int Files Table:" + sTableName * "was successfully created" * "at filelist slot:" * String(hTable)) to sInfoTxt
         End
         Else Begin
@@ -1071,7 +1044,7 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary
         Set Private.pbIntFilesTablesCheckDone to True
     End_Procedure
 
-    Procedure CheckAutoCreateDbVersionTable
+    Procedure AutoCreateDbVersionTable
         Boolean bDbVersionCheckDone bUseCustomDbVersion bAutoCreateDbVersionTable bTableExists
         Integer iDbVersionFileNumber
 
@@ -1137,11 +1110,10 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary
         Set psDriverID to sDriverID
         
         If (bOK = True and Err = False) Begin
-//            Move ("Column '" + APIColumn[0].sFieldName + "'" * "NUMERIC" * String(APIColumn[0].iLength) + ", was successfully added to '" + sTableName + "'" * "(at filelist slot:" * String(hTable) + ")") to sInfoTxt
             Move ("DbVersion table:" + sTableName * "was successfully created" * "at filelist slot:" * String(hTable)) to sInfoTxt
         End
         Else Begin
-            Move ("The column could NOT be added. Either column" * sColumnName * "already exists or the Table name is incorrect?") to sInfoTxt
+            Move "The DbVersion table creation failed!" to sInfoTxt
         End
 
         Send LogError of (phoLogFile(Self)) 0 0 sInfoTxt 0 False
@@ -1529,6 +1501,34 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary
         Function_Return (Private.pbDatabaseWasUpdated(Self))
     End_Function
     
+    // Takes a string array as parameter and returns a new
+    // string array without any empty rows and all rows trimmed.
+    // This is e.g. used by the HasIntFileChanged message to compare
+    // two .int file arrays. 
+    Function RemoveBlankLines String[] asIntFile Returns String[]
+        Integer iSize iCount iRow
+        String sVal        
+        String[] asRetValArray
+        
+        Move (SizeOfArray(asIntFile)) to iSize
+        If (iSize = 0) Begin
+            Function_Return asRetValArray
+        End                          
+        Decrement iSize         
+        Move 0 to iRow
+        
+        For iCount from 0  to iSize
+            Move asIntFile[iCount] to sVal
+            Move (Trim(sVal)) to sVal
+            If (sVal <> "") Begin
+                Move sVal to asRetValArray[iRow]
+                Increment iRow        
+            End
+        Loop
+        
+        Function_Return asRetValArray
+    End_Function
+    
     //
     { Visibility=Public }
     Procedure ReinitializeFramework  
@@ -1763,7 +1763,7 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary
         String sErrorText
         
         Move "" to sErrorText
-        Send CheckAutoCreateDbVersionTable
+        Send AutoCreateDbVersionTable
         Send RestoreOpenTables
 
         // The function library have two purposes; one is to use it in the
