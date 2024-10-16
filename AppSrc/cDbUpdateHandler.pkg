@@ -100,7 +100,7 @@
 //                Object oDbUpdateHandler is a cDbUpdateHandler
 //                    Set piDbVersionFileNumber  to 255
 //                    Set piDbVersionFieldNumber to 1
-//                    Set phIntFilesTable to 256
+//                    Set piIntFilesFileNumber to 256
 //                    Set pbUseIntFilesBackup to True
 //                    Set pbExitIfDebuggerActive to False
 //                
@@ -206,6 +206,19 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary
         { Visibility=Private }
         Property Integer Private.piDbVersionFieldNumber 1
 
+        { MethodType=Property Category="Check int. Files" InitialValue=False }
+        Property Handle  piIntFilesFileNumber -1
+        { Visibility=Private }
+        Property Boolean pbRestoreIntFilesNow False   
+        // In parallell with the above property, the pbSaveIntFilesNow can be set. That same property
+        // also needs to be created in the ghoApplication object.
+        { Visibility=Private }
+        Property Boolean pbSaveIntFilesNow False
+        { MethodType=Property Category="Check int. Files" InitialValue=False }
+        Property Boolean pbUseIntFilesBackup False   
+        { Visibility=Private }
+        Property Boolean Private.pbIntFilesTablesCheckDone False
+        
         // This is a message of the cDbUpdateFunctionLibrary_Mixin class
         // that creates all library properties
         Send CreateDbUpdateLibraryProperties
@@ -338,30 +351,10 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary
             Set phoSQLConnectionHandler to ho
         End             
         
-        // Do *not* set this property in this object!
-        // Instead use logic to set it in the Procedure OnCreate of the cApplication
-        // object. Aka, use phoCommandLine to retrieve an e.g. "-restore" parameter on
-        // the command line to the program. If such param has been passed, set  pbRestoreIntFilesNow = True.
-        // The user will then be informed that .int files will be restored and then the program will exit.
-        { Visibility=Private }
-        Property Boolean pbRestoreIntFilesNow False   
-        // In parallell with the above property, the pbSaveIntFilesNow can be set. That same property
-        // also needs to be created in the ghoApplication object.
-        { Visibility=Private }
-        Property Boolean pbSaveIntFilesNow False
-        { MethodType=Property Category="Check int. Files" InitialValue=False }
-        Property Boolean pbUseIntFilesBackup False   
-        { MethodType=Property Category="Check int. Files" InitialValue=False }
-        Property Handle  phIntFilesTable -1
-        { Visibility=Private }
-        Property Boolean Private.pbIntFilesTablesCheckDone False
-        
         Set Icon to "Default.ico"
     End_Procedure
 
     Procedure End_Construct_Object
-        Boolean bCheckIntFiles
-        
         Forward Send End_Construct_Object
         If (Private.pbOnCreateExecuted(Self) = False) Begin  
             Send OnCreate
@@ -371,7 +364,7 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary
     End_Procedure
     
     { MethodType=Event Visibility = Public }
-    // Programmers hook event.
+    // Programmers hook event!
     Procedure OnCreate
     End_Procedure        
                                  
@@ -386,7 +379,7 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary
     // Checks that all .int files are intact, or else writes new copies to disk. 
     // Also checks that there is a Filelist.cfg, and if missing writes a new copy to disk.
     //
-    // If not done previously the phIntFilesTable will be created and filled with data
+    // If not done previously the piIntFilesFileNumber will be created and filled with data
     // from the current set of .int files - iif (if-and-only-if) this is a development
     // machine. Which is decided by checking if the DdSrc folder exists. And a copy
     // of Filelist.cfg is made for backup purposes.
@@ -406,13 +399,13 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary
         Boolean bCheckIntFiles bExists bOK bSaved bIsSQL bFileListExist bResult bDevelop bZipExists bIntFilesTablesCheckDone bNewer bIsIntFileTable  bIsAlias
         String sPaths sDataPath sIntFileName sRootName sFileListName sFileListNameBackup sDDSrcPath sCurrentFolder
         String sFileListZipFile sParam sProgram sFile 
-        Integer iDataPaths iCount
+        Integer iDataPaths iCount iSize
         Handle hTable hIntFilesTable                    
         UChar[] asFileListArray 
         String[] asSavedIntFile
         tDUFIntFile[] DUFIntFiles
 
-        // This will automatically create the phIntFilesTable if not exists.
+        // This will automatically create the piIntFilesFileNumber if not exists.
         // It is used to save data from the current set of .int files.
         // We do this on both developer & client machines.
         Get IsIntFileTable to bIsIntFileTable
@@ -420,11 +413,14 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary
             Send AutoCreateIntFilesTable
             Get Private.pbIntFilesTablesCheckDone to bOK
             If (bOK = False) Begin
-//                Move CS_DUF_DbUpdatedErrorText to sErrorText
                 Function_Return False
             End
         End                                                       
         
+        Get _CountFilelistSystemTables to iSize
+        Send StartStatusPanel "" "" iSize
+        Set Progress_Bar_Overall_Visible_State of ghoStatusPanel to False
+
         // Check Filelist.cfg & backup file
         Get psFileList of (phoWorkspace(ghoApplication)) to sFileListName
         Get psDataPath of (phoWorkspace(ghoApplication)) to sDataPath 
@@ -447,13 +443,12 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary
                 Get vDeleteFile sFileListNameBackup to bOK
                 Get vCopyFile sFileListName sFileListNameBackup to bOK
                 Move "A new backup copy of the Filelist.cfg file was made. In order to include a backup copy of the file into the program, as a resource, you will need to re-compile/restart the program.\n\nThe program will now exit." to sErrorText
-                Function_Return True
             End
         End
         
-        Move True to bResult        
-        Send StartStatusPanel
-        Get phIntFilesTable to hIntFilesTable
+        Move True to bResult 
+
+        Get piIntFilesFileNumber to hIntFilesTable
         Get psDataPath of (phoWorkspace(ghoApplication)) to sPaths
         Get CountOfPaths of (phoWorkspace(ghoApplication)) sPaths to iDataPaths
 
@@ -468,6 +463,7 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary
                     If (hTable <> 0 and hTable <> 50) Begin
                         Get_Attribute DF_FILE_ROOT_NAME of hTable to sIntFileName 
                         Set Message_Text of ghoStatusPanel to ("Saving/updating IntFilesTable:" * String(sIntFileName))
+                        Send DoAdvance of ghoProgressBar
                         Get _UtilTableIsSqlByRootName sIntFileName to bIsSQL
                         Get UtilTableIsAlias hTable to bIsAlias 
                         If (bIsSQL = True and bIsAlias = False) Begin
@@ -502,7 +498,7 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary
             End
         Loop       
         
-        Send Stop_StatusPanel of ghoStatusPanel
+        Send StopStatusPanel
         // If an error occured we need to exit the application as we cannot start with an uncomplete set of .int files.
         If (bResult = False) Begin  
             Function_Return False
@@ -512,17 +508,17 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary
     End_Function
 
     // It checks that *.int files on disk corresponds with the content in the
-    // .int file backup table phIntFilesTable.
+    // .int file backup table piIntFilesFileNumber.
     Procedure RestoreIntFiles
         Boolean bCheckIntFiles bIsIntFileTable bExists bIsSQL bRestored bOK
         String sPaths sDataPath sIntFileName 
         String[] asSavedIntFile
-        Integer iDataPaths iCount iRetval
+        Integer iDataPaths iCount iRetval iSize
         Handle hTable hIntFilesTable
 
         Get IsIntFileTable to bIsIntFileTable
         If (bIsIntFileTable = False) Begin
-            Send Info_Box "The 'IntFilesTable' has not been created. Thus no backup info for .int files exists. The property pbUseIntFilesBackup must have been set to True in the cDbUpdateHandler object for automatic creation of the table and save of all .int files."
+            Send Info_Box "The 'IntFilesTable' was not created. Thus no backup info for .int files exists. The property pbUseIntFilesBackup must have been set to True in the cDbUpdateHandler object for automatic creation of the table and save of all .int files."
             Procedure_Return
         End
         
@@ -530,10 +526,13 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary
         If (iRetval <> MBR_Yes) Begin
             Procedure_Return
         End
+        
+        Get _CountFilelistSystemTables to iSize
+        Send StartStatusPanel "" "" iSize
+        Set Progress_Bar_Overall_Visible_State of ghoStatusPanel to False
 
-        Send StartStatusPanel
         Move False to bRestored
-        Get phIntFilesTable to hIntFilesTable
+        Get piIntFilesFileNumber to hIntFilesTable
         Get psDataPath of (phoWorkspace(ghoApplication)) to sPaths
         Get CountOfPaths of (phoWorkspace(ghoApplication)) sPaths to iDataPaths
 
@@ -548,6 +547,7 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary
                     If (hTable <> 0) Begin
                         Get_Attribute DF_FILE_ROOT_NAME of hTable to sIntFileName 
                         Set Message_Text of ghoStatusPanel to ("Checking info for." * String(sIntFileName))
+                        Send DoAdvance of ghoProgressBar
                         Get _UtilTableIsSqlByRootName sIntFileName to bIsSQL
                         If (bIsSQL = True) Begin     
                             Get _TableNameOnly sIntFileName to sIntFileName
@@ -569,7 +569,7 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary
             End
         Loop       
         
-        Send Stop_StatusPanel of ghoStatusPanel
+        Send StopStatusPanel
         If (bRestored = True) Begin
             Send Info_Box "Ready! All .int files checked and updated if different. The program will now exit."
             Send Exit_Application
@@ -581,7 +581,7 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary
         Handle hTable
         String sLogicalName
         Move False to bExists
-        Get phIntFilesTable to hTable
+        Get piIntFilesFileNumber to hTable
         If (hTable > 0) Begin
             Get_Attribute DF_FILE_LOGICAL_NAME of hTable to sLogicalName
             Move (sLogicalName = CS_IntFilesTableLogicalName) to bExists
@@ -613,7 +613,7 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary
         
         Move (Lowercase(sIntFileName)) to sIntFileName
         Move False to bOK  
-        Get phIntFilesTable to hTable
+        Get piIntFilesFileNumber to hTable
         Move 2              to iColumn // This is the "InfFileName" field no.
         Move 2              to iIndex  // This is the IntFileName + ID index.
 
@@ -692,7 +692,7 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary
         Move Err to bErr
         Move False to Err
         Move False to bOK
-        Get phIntFilesTable to hTable  
+        Get piIntFilesFileNumber to hTable  
         Move 1              to iIDCol
         Move 2              to iFileCol
         Move 3              to iTextCol // This is the "InfFileName" field no.
@@ -736,7 +736,7 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary
     End_Function
     
     // Deletes all records for the passed sIntFileName value,
-    // from the phIntFilesTable.
+    // from the piIntFilesFileNumber.
     // Returns True if no errors occured.
     Function DeleteIntFileData String sPath String sIntFileName Returns Boolean
         Handle hTable
@@ -751,7 +751,7 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary
         Move False to bOK
         Move 2              to iFileCol
         Move 2              to iIndex  // This is the IntFileName + ID index.
-        Get phIntFilesTable to hTable  
+        Get piIntFilesFileNumber to hTable  
         Open hTable  
                   
         // Find the first record
@@ -776,7 +776,7 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary
         Function_Return bOK
     End_Function
 
-    // Returns all saved phIntFilesTable records for the passed 
+    // Returns all saved piIntFilesFileNumber records for the passed 
     // sIntFileName value as a string array.
     Function SavedIntFileData String sPath String sIntFileName Returns String[]
         Handle hTable
@@ -792,7 +792,7 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary
         Move 2              to iFileCol
         Move 3              to iTextCol // This is the "InfFileName" field no.
         Move 2              to iIndex  // This is the IntFileName + ID index.
-        Get phIntFilesTable to hTable  
+        Get piIntFilesFileNumber to hTable  
         Open hTable  
         
         // Find the first record
@@ -908,7 +908,7 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary
         Function_Return bOK
     End_Function
 
-    // Writes an .int for the passed sIntFileName file to disk by reading data from the phIntFilesTable data table.
+    // Writes an .int for the passed sIntFileName file to disk by reading data from the piIntFilesFileNumber data table.
     // It first deletes the .cch file (if any).
     Function CreateIntFileFromSavedData String sIntFileName String sDataPath Returns Boolean
         Boolean bOK bFound bExists bErr
@@ -967,7 +967,7 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary
         Boolean bIntFilesTablesCheckDone bTableExists bOK
         String sInfoTxt 
         
-        Get phIntFilesTable to hTable  
+        Get piIntFilesFileNumber to hTable  
         Get Private.pbIntFilesTablesCheckDone to bIntFilesTablesCheckDone
         If (bIntFilesTablesCheckDone = True) Begin
             Procedure_Return
@@ -976,8 +976,8 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary
         If (hTable < 1) Begin
             Set Private.pbIntFilesTablesCheckDone to False
             Move (piCurrentErrorHandlerID(Self)) to Error_Object_Id
-            Error DFERR_PROGRAM "The phIntFilesTable has been set to 0 (!). The default value is 2048 and if changed MUST be set to a free Filelist.cfg slot in the cDbUpdateHandler object.\nProgram will now exit!"
-            Procedure_Return
+            Error DFERR_PROGRAM "The piIntFilesFileNumber has been set! The property MUST be set to a free Filelist.cfg slot in the cDbUpdateHandler object.\nProgram will now exit!"
+            Send Exit_Application
         End
         
         Get IsIntFileTable hTable to bTableExists
@@ -1548,10 +1548,45 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary
         Send Cleanup
     End_Procedure
     
-    Procedure StartStatusPanel
+    Procedure StartStatusPanel String sMsg String sMsg2 Integer iSze
+        Integer iSize
+        String sMessage sMessage2
+        
+        // Make it optional to pass an argument
+        If (num_arguments > 0) Begin
+            Move sMsg to sMessage
+        End
+
+        // Make it optional to pass a second argument
+        If (num_arguments > 1) Begin
+            Move sMsg2 to sMessage2
+        End
+
+        Move 0 to iSize
+        // Make it optional to pass a third argument
+        If (num_arguments > 2) Begin
+            Move iSze to iSize
+        End                   
+        If (iSize = -1) Begin
+            Set Progress_Bar_Overall_Visible_State of ghoStatusPanel to False
+        End
+        If (iSize <> 0) Begin
+            Set Progress_Bar_Visible_State of ghoStatusPanel to True
+            Set piMaximum                  of ghoStatusPanel to iSize 
+            Set piAdvanceBy                of ghoStatusPanel to 1
+            Set Progress_Bar_Overall_Visible_State of ghoStatusPanel to True
+        End
+//        Else Begin
+//            Set Progress_Bar_Visible_State of ghoStatusPanel to False
+//        End
+//
         Send EnableCancelButton     of ghoStatusPanel (pbEnableCancelButton(Self))
-        Send Initialize_StatusPanel of ghoStatusPanel ("   " + CS_DUF_WorkingUpdateText) CS_DUF_WorkingHeaderText ""
-        Send Start_StatusPanel      of ghoStatusPanel
+        Send Initialize_StatusPanel of ghoStatusPanel ("   " + CS_DUF_WorkingUpdateText) sMessage sMessage2
+        Send Start_StatusPanel of ghoStatusPanel
+    End_Procedure
+    
+    Procedure StopStatusPanel
+        Send Stop_StatusPanel of ghoStatusPanel
     End_Procedure
     
     { Visibility=Private }
@@ -1580,7 +1615,7 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary
             End
         End
         
-        Send StartStatusPanel
+        Send StartStatusPanel "" "" 1
         // This will save the status of all open tables including Master/Alias settings,
         // so we can restore them later;
         Send SaveOpenTables
@@ -1655,7 +1690,7 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary
         Get SQLUtilCheckIfDatabaseExists of hDbUpdateVersionObject SQLConnection.sDatabase to bExists
         If (SQLConnection.sDatabase <> "" and bExists = False) Begin
             Move (piCurrentErrorHandlerID(Self)) to Error_Object_Id
-            Send Stop_StatusPanel of ghoStatusPanel
+            Send StopStatusPanel
             // ToDo: NS 2019-09-23 I think we should always show an error message to the user if this occur (!)
             Send Stop_Box (CS_DUF_DatabaseConnStringSpec + SQLConnection.sDatabase + CS_DUF_DatabaseDoesntExist )
 //            Error DFERR_PROGRAM ("The database specified in the connection string: '" + SQLConnection.sDatabase + "' doesn't exist!\n\nYou need to create it with a database management software or by using the 'SqlDatabaseCreate' function, which can be used in the 'OnPreUpdate' event of the cDbUpdateHandler object.\n\nThe program will now exit.")
@@ -1769,8 +1804,7 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary
             // This is a programmer's hook message:
             Send OnPostUpdate
 
-            Send Stop_StatusPanel of ghoStatusPanel
-
+            Send StopStatusPanel
             If (pbSilentMode(Self) = False) Begin
                 If (bError = True) Begin
                     If (pbShowErrorLogPostRun(Self) = True) Begin

@@ -189,7 +189,7 @@ Object oFilelistFixerView is a dbView
             Set Value of oNoOfOpenErrorTables_fm to 0
             Move oIntTableErrors_edt to ho     
             Send Delete_Data of ho
-            Send InitializeStatusPanel "Changing to Connection ID's in .int files" "" 0
+            Send StartStatusPanel "Changing to Connection ID's in .int files" "" -1
 
             Get SqlUtilChangeIntFilesToConnectionIDs of ghoDUF sDataPath sConnectionID True to asFileChanges
 
@@ -202,7 +202,7 @@ Object oFilelistFixerView is a dbView
 
             Move (SizeOfArray(asFileChanges)) to iSize
             Set Value of oNoOfOpenErrorTables_fm to (iSize max 0)
-            Send CloseStatusPanel
+            Send StopStatusPanel
             If (SizeOfArray(asFileChanges) <> 0) Begin
                 Decrement iSize
                 For iCount from 0 to iSize
@@ -626,7 +626,7 @@ Object oFilelistFixerView is a dbView
         tFilelist[] FileListArray
         
         Get _UtilNumberOfFileListTables of ghoDUF to iCount
-        Send InitializeStatusPanel "Filling Filelist Struct Array" "" iCount
+        Send StartStatusPanel "Filling Filelist Struct Array" "" iCount
 
         // Note: Removes all cached files, else we don't open what we think we are.
         Get psDataPath of (phoWorkspace(ghoApplication)) to sDataPath
@@ -649,7 +649,7 @@ Object oFilelistFixerView is a dbView
         Set Value of oNoOfOpenErrorTables_fm to iCount
         Send ShowAliasErrorTables
         
-        Send CloseStatusPanel
+        Send StopStatusPanel
     End_Procedure
 
     // Fills list of "RootName *.dat Files" with tables that are not Alias and does
@@ -1036,7 +1036,7 @@ Object oFilelistFixerView is a dbView
         End
     
         Move (SizeOfArray(ErrorFilesArray)) to iSize
-        Send InitializeStatusPanel "Fixing Int File Errors" "" iSize
+        Send StartStatusPanel "Fixing Int File Errors" "" iSize
     
         String sDataPath
         Get psDataPath of (phoWorkspace(ghoApplication)) to sDataPath
@@ -1045,7 +1045,6 @@ Object oFilelistFixerView is a dbView
         Send OpenLogFile
     
         For iCount from 0 to (iSize - 1)
-            Send UpdateStatusPanel iCount iSize
     
             Move ErrorFilesArray[iCount].sDriver to sDriver
             If (sDriver = "") Begin
@@ -1054,7 +1053,8 @@ Object oFilelistFixerView is a dbView
                     Get psDriverID of ghoDUF to sDriver
                 End
             End
-    
+
+            Send Update_StatusPanel of ghoStatusPanel ("Fixing .int file problems for table:" * String(sRootName))
             Move (ErrorFilesArray[iCount].sNoDriverRootname + ".int") to sIntFileName
             File_Exist (sDataPath + "\" + sIntFileName) bExists
             If (bExists and sDriver <> DATAFLEX_ID) Begin
@@ -1070,7 +1070,7 @@ Object oFilelistFixerView is a dbView
         Loop
     
         Send CloseLogFile
-        Send CloseStatusPanel
+        Send StopStatusPanel
     
         If (iCounter <> 0) Begin
             Send ShowFileListData
@@ -1122,25 +1122,13 @@ Object oFilelistFixerView is a dbView
     End_Function
     
     // Helper procedures for status panel/progress bar
-    Procedure InitializeStatusPanel String sMessage String sMessage2 Integer iSize
-        If (iSize <> 0) Begin
-            Set Progress_Bar_Visible_State of ghoStatusPanel to True
-            Set piMaximum                  of ghoStatusPanel to iSize 
-            Set piAdvanceBy                of ghoStatusPanel to 1
-        End
-        Else Begin
-            Set Progress_Bar_Visible_State of ghoStatusPanel to False
-        End
+    Procedure StartStatusPanel String sMessage String sMessage2 Integer iSize
+        Send StartStatusPanel of ghoDUF sMessage sMessage2 iSize
+        Set Caption_text of ghoStatusPanel to "The Database Update Framework"
         Set Progress_Bar_Overall_Visible_State of ghoStatusPanel to False
-        Send Initialize_StatusPanel of ghoStatusPanel "The Database Update Framework" sMessage sMessage2
-        Send Start_StatusPanel of ghoStatusPanel
     End_Procedure
     
-    Procedure UpdateStatusPanel Integer iCurrent Integer iTotal
-        Send Update_StatusPanel of ghoStatusPanel ("Processing " + String(iCurrent + 1) + " of " + String(iTotal))
-    End_Procedure
-    
-    Procedure CloseStatusPanel
+    Procedure StopStatusPanel
         Send Stop_StatusPanel of ghoStatusPanel
     End_Procedure
 
@@ -1372,14 +1360,14 @@ Object oFilelistFixerView is a dbView
             End
         End
         
-        Send InitializeStatusPanel "Moving *.dat files to backup folder:" sBackupFolder 0
+        Send StartStatusPanel "Moving *.dat files to backup folder:" sBackupFolder 0
 
         Get CollectDatRelatedFiles sDataPath to asFiles 
         Get InUseDatFiles to asInUseDatFiles
         Get SanitizeDatRelatedFiles asFiles asInUseDatFiles to asFiles
         Move (SizeOfArray(asFiles)) to iSize
         If (iSize = 0) Begin
-            Send CloseStatusPanel
+            Send StopStatusPanel
             Function_Return 0
         End
         Move 0 to iCounter
@@ -1392,7 +1380,7 @@ Object oFilelistFixerView is a dbView
             End
         Loop
         
-        Send CloseStatusPanel
+        Send StopStatusPanel
         Function_Return iCounter
     End_Function
     
