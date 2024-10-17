@@ -154,6 +154,8 @@ Object oFilelistFixerView is a dbView
         Set Label_Justification_Mode to JMode_Top
         Set peAnchors to anNone
         Set Label_Row_Offset to 1
+        Set Label_FontWeight to fw_Bold
+        Set FontWeight to fw_Bold
     End_Object
 
     Object oIntTableErrors_edt is a cRichEdit
