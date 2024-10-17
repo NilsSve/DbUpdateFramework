@@ -926,37 +926,80 @@ Class SysinfoDisplay is a cTextEdit
         Function_Return (String (iVer) - "." - String (iRev) - "." - String (iBld))
     End_Function
 
-    { Visibility=Private }
-    Procedure Show_Versions
-        Integer iVersion iRevision iBuild
-
-        Version_information iVersion iRevision iBuild
-
-        Send AppendTextLn (SFormat (C_$RuntimeVersion, VersionStr(self,iVersion,iRevision,iBuild) ))
-        Send AppendTextLn (SFormat (C_$PackageVersion, VersionStr(self,PKG_VERSION, PKG_REVISION, PKG_BUILD) ))
-        Send AppendTextLn (SFormat (C_$FMACVersion, VersionStr(self,FMAC_VERSION, FMAC_REVISION, FMAC_BUILD) ))
-#IFDEF IS$WIN64
-        Send AppendTextLn "This is a 64-bit exe file"
-#ELSE
-        Send AppendTextLn "This is a 32-bit exe file"
-#ENDIF
-    End_Procedure
-
     Function IsDAWSQLDriver String sDriverID Returns Boolean
         Boolean bOK
         Move (sDriverID = MSSQLDRV_ID or sDriverID = DB2_DRV_ID or sDriverID = ODBC_DRV_ID) to bOK
         Function_Return bOK
     End_Function
 
-    //***
-    //*** BW
-    //*** Procedure: Show_Drivers
-    //*** Purpose  : Show loaded database drivers
-    //***
-
-//#IF (Required_FMAC_Build > 106)
-//    #Warning -3
-//#ENDIF
+    { Visibility=Private }
+    Procedure Show_ConnectionIdInformation
+        If (ghoConnection > 0) Begin
+            Send AppendTextLn ""
+            Send EnumerateConnections of ghoConnection Self (RefProc(AppendTextLn))
+        End
+    End_Procedure
+    
+    { Visibility=Private }
+    Function VersionStr Integer iVer Integer iRev Integer iBld Returns String
+        Function_Return (String (iVer) - "." - String (iRev) - "." - String (iBld))
+    End_Function
+    
+    { Visibility=Private }
+    Procedure Show_Versions
+        Integer iVersion iRevision iBuild
+        
+        Version_Information iVersion iRevision iBuild
+        
+        Send AppendTextLn (SFormat (C_$RuntimeVersion, VersionStr(Self,iVersion,iRevision,iBuild) ))
+        Send AppendTextLn (SFormat (C_$PackageVersion, VersionStr(Self,PKG_VERSION, PKG_REVISION, PKG_BUILD) ))
+        Send AppendTextLn (SFormat (C_$FMACVersion, VersionStr(Self,FMAC_VERSION, FMAC_REVISION, FMAC_BUILD) ))
+    End_Procedure
+    
+    { Visibility=Private }
+    Procedure Show_Platform
+        #IFDEF IS$WIN64
+        Send AppendTextLn (SFormat (C_$Platform,"64-bit"))
+        #ELSE
+        Send AppendTextLn (SFormat (C_$Platform,"32-bit"))
+        #ENDIF
+    End_Procedure
+    
+    { Visibility=Private }
+    Function CKRevisionNumber String sDriverID Returns String
+        Handle hoCLIHandler
+        Handle hoDFBtrDrvHandler
+        String sCKRevision
+        
+        
+        If (sDriverID = "MSSQLDRV" or sDriverID = "ODBC_DRV" or sDriverID = "DB2_DRV") Begin
+            Get Create (RefClass(cCLIHandler)) to hoCLIHandler
+            Set psDriverID of hoCLIHandler to sDriverID
+            Move (CKRevision(hoCLIHandler)) to sCKRevision
+            Send Destroy of hoCLIHandler
+        End
+        Else Begin
+            If (sDriverID = "DFBTRDRV") Begin
+                Get Create (RefClass(cDFBtrDrvHandler)) to hoDFBtrDrvHandler
+                Set psDriverID of hoDFBtrDrvHandler to sDriverID
+                Move (CKRevision(hoDFBtrDrvHandler)) to sCKRevision
+                Send Destroy of hoDFBtrDrvHandler
+            End
+        End
+        
+        Function_Return sCKRevision
+    End_Function    
+    
+    { Visibility=Private }
+    Function IsDataAccessCK String sDriverID Returns Boolean
+        
+        If (sDriverID = "DATAFLEX") Begin
+            Function_Return False
+        End
+        
+        Function_Return (sDriverID = "MSSQLDRV" or sDriverID = "ODBC_DRV" or sDriverID = "DB2_DRV" or sDriverID = "DFBTRDRV")
+    End_Function
+    
     { Visibility=Private }
     Procedure Show_Drivers
         String sDriverID sVersion sClient sValue
@@ -1107,6 +1150,7 @@ Class SysinfoDisplay is a cTextEdit
         Send Show_Drivers
         Send Show_ServicePack
         Send Show_Versions
+        Send Show_Platform
         Send AppendTextLn ""
 
         If (ghoApplication <> 0) Begin
@@ -1485,7 +1529,7 @@ Class AboutDialog is a ModalPanel
                 Send Add_LineLn sCertInfo
             End
             Else Begin
-                Send Add_LineLn "The program has NOT been digitally signed, or there is a problem with the digical certificate."
+//                Send Add_LineLn "The program has NOT been digitally signed, or there is a problem with the digical certificate."
             End
         End
     End_Procedure

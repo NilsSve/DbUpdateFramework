@@ -1723,54 +1723,6 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
         Function_Return hDatabase
     End_Function
 
-//    Function UtilIsFilelistEntryDriverBased Integer hTable String sDriverID Returns Boolean
-//        String sRootName
-//        Boolean bOK
-//
-//        Get_Attribute DF_FILE_ROOT_NAME of hTable to sRootName
-//        Move (sRootName contains sDriverID) to bOK
-//
-//        Function_Return bOK
-//    End_Function
-
-//    Function UtilFilelistAddDriverInfo Integer hTable Returns Boolean
-//        String sDriverID sRootName sDisplayName sSchema sVal
-//        Integer iDbType
-//        Boolean bOK
-//
-//        Get UtilIsFilelistEntryDriverBased to bOK
-//        If (bOK = True) Begin
-//            Function_Return False
-//        End
-//
-//        Get psDriverID to sDriverID
-//        Get_Attribute DF_FILE_ROOT_NAME    of hTable to sRootName
-//        Move (sDriverID + ":" + sRootName)           to sRootName
-//        Get_Attribute DF_FILE_DISPLAY_NAME of hTable to sDisplayName
-//
-//        Get psDriverID to sDriverID
-//        Get piDbType   to iDbType
-//        Get psSchema   to sSchema
-//        If (sSchema = "") Begin
-//            Get _SqlFindKeyWord CI_SQLDBO to sSchema
-//        End
-//
-//        Move (Uppercase(sDisplayName)) to sVal
-//        If (not(sVal contains (sSchema + "."))) Begin
-//            If (iDbType = EN_dbTypeDB2) Begin
-//                Move (Lowercase(sSchema) + "." + sDisplayName) to sDisplayName
-//            End
-//            Else Begin
-//                Move (sSchema + "." + sDisplayName) to sDisplayName
-//            End
-//        End
-//
-//        Set_Attribute DF_FILE_ROOT_NAME    of hTable to sRootName
-//        Set_Attribute DF_FILE_DISPLAY_NAME of hTable to sDisplayName
-//
-//        Function_Return True
-//    End_Function
-
     // Removes all driver identifications (e.g. "MSSQLDRV:MyTable")
     // from the passed filelist.
     // Returns the number of tables affected.

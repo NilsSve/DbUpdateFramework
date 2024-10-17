@@ -153,7 +153,7 @@ Object oApplication is a cApplication
 
         // Note: We delete all cache files (*.cch) before attempting to open any
         // tables as a precausion, in case a table has been changed at the SQL back-end,
-        // because then the .cch file is out-of-sync with the SQL table.
+        // and then the .cch file will be out-of-sync with the SQL table.
         Get DriverIndex of ghoDbUpdateFunctionLibrary sDriverID to iDriverID
         Move Err to bErr 
         Send Ignore_Error of Error_Object_Id DFERR_OPERATION_NOT_ALLOWED
@@ -228,6 +228,11 @@ End_Object
 
 Object oToolTipController is a cToolTipController
     Move Self to ghoToolTipController
+    Set pbBalloonStyle to False
+    Set piIcon to TTI_INFO
+    Set psTitle to "Information"
+    Set piMaxWidth to 400
+    Set piDurationPopup to 14000    // 14 seconds, needed for long tooltips.
 End_Object
 
 Use oEditContextMenu.pkg

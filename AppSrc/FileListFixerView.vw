@@ -343,7 +343,8 @@ Object oFilelistFixerView is a dbView
                 Set Label to "Refresh!"
                 Set Default_State to True
                 Set Form_FontWeight to fw_Bold
-            
+                Set psToolTip to "Refreshes all data by reading the Filelist.cfg and SQL database tables"
+                
                 Procedure OnClick
                     Send Refresh
                 End_Procedure
@@ -368,7 +369,7 @@ Object oFilelistFixerView is a dbView
         Object oFixAliasProblems_btn is a Button
             Set Size to 32 61
             Set Location to 8 137
-            Set Label to "1. Fix Alias Table Errors"
+            Set Label to "1. Fix Filelist Alias Errors"
             Set peAnchors to anTopRight
             Set MultiLineState to True
             Set psToolTip to "The fix will spin through Filelist.cfg and \n1. either add or remove driver prefixes for ALIAS rootnames, depending on the Master RootName\n2. Change all ALIAS table Descriptions to the ROOTNAME + 'ALIAS'"
@@ -396,7 +397,7 @@ Object oFilelistFixerView is a dbView
         Object oFixFileListSQLMissingTables_btn is a Button
             Set Size to 32 61
             Set Location to 8 202
-            Set Label to "2. Make Driver RootNames equal to SQL Database"
+            Set Label to "2. Make Filelist RootNames equal to SQL Database"
             Set peAnchors to anTopRight
             Set MultiLineState to True
             Set psToolTip to "The fix will spin through Filelist.cfg and \n1. Remove all driver prefixes for Master tables that does NOT exist in the SQL Database\n2. OR Add driver prefix for Master filelist entries that are missing a driver prefix."
@@ -423,7 +424,7 @@ Object oFilelistFixerView is a dbView
         Object oFixFileListErrors_btn is a Button
             Set Size to 32 61
             Set Location to 8 267
-            Set Label to "3. Fix .dat Filelist Errors"
+            Set Label to "3. Fix Filelist .dat Errors"
             Set peAnchors to anTopRight
             Set MultiLineState to True
             Set psToolTip to "The fix will spin through the Filelist and \n1. Removes non Alias entries that does not have a corresponding .Dat file.\nNote:This only applies to non Alias tables."
@@ -449,7 +450,7 @@ Object oFilelistFixerView is a dbView
         Object oFixOpenTableErrors_btn is a Button
             Set Size to 32 61
             Set Location to 8 332
-            Set Label to "4. Fix Open Table Errors in Filelist"
+            Set Label to "4. Fix Filelist Open Errors"
             Set peAnchors to anTopRight
             Set MultiLineState to True
             Set psToolTip to "The fix will spin through the Filelist and \n1. Try to fix or removes Non SQL entries for tables that cannot be opened."
@@ -483,10 +484,11 @@ Object oFilelistFixerView is a dbView
         Object oFixIntFileError_btn is a Button
             Set Size to 32 61
             Set Location to 8 397
-            Set Label to "5. Fix *.int files with open errors"
+            Set Label to "5. Refresh *.int files with open errors"
             Set peAnchors to anTopRight
             Set MultiLineState to True
-        
+            Set psToolTip to "This will try to refresh or recreate the .int files listed in the 'Open Table Errors' list."
+            
             Property Boolean pbErrorProcessingState
             Property Integer piError
             Property String psErrorText
@@ -494,7 +496,7 @@ Object oFilelistFixerView is a dbView
             Procedure OnClick
                 Integer iRetval iCounter
                 
-                Get YesNo_Box "This will try to recreate the .int files listed in the 'Open Table Errors' list. \n\nPlease take a copy of the Filelist.cfg file first!\n\nContinue?" to iRetval
+                Get YesNo_Box "This will try to refresh, or if needed recreate, the .int files listed in the 'Open Table Errors' list.\n\n\nContinue?" to iRetval
                 If (iRetval <> MBR_Yes) Begin
                     Procedure_Return    
                 End
@@ -524,10 +526,11 @@ Object oFilelistFixerView is a dbView
         Object oMoveUnusedDatFiles_btn is a Button
             Set Size to 32 61
             Set Location to 8 463
-            Set Label to "6. Move unused .dat files"
+            Set Label to "6. Move unused .dat files to Backup folder"
             Set peAnchors to anTopRight
             Set MultiLineState to True
-        
+            Set psToolTip to "This will move all *.dat related files, that does not exist in the Filelist, to the workspace's '.\Data\Backup' folder."
+            
             Procedure OnClick
                 Integer iRetval iCounter 
                 String sBackupFolder
