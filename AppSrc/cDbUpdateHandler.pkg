@@ -1476,6 +1476,31 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary
         End
 
     End_Procedure 
+
+    // Returns the current DbVersion value (system table)
+    // Note: If the DbVersion table doesn't exist yet,
+    //       it will return -1.
+    Function CurrentDbVersion Returns Number
+        Boolean bInUse bActive
+        Integer iStatus iColumn
+        Number nVersion
+        Handle hTable
+        
+        Move -1 to nVersion
+        Get piDbVersionFileNumber  to hTable
+        Get piDbVersionFieldNumber to iColumn
+        Get _UtilTableNumberIsInUse hTable to bInUse
+        If (bInUse = True) Begin
+            Open hTable
+            Get_Attribute DF_FILE_STATUS of hTable to iStatus
+            If (iStatus = DF_FILE_INACTIVE) Begin
+                Vfind hTable 0 GT
+            End
+            Get_Field_Value hTable iColumn to nVersion
+        End
+        Function_Return nVersion
+    End_Function
+         
     
     { MethodType=Property Category="DbVersion Table" InitialValue=-1 }
     Procedure Set piDbVersionFileNumber Integer iFileNumber
