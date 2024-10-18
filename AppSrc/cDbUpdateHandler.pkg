@@ -110,7 +110,7 @@
 //                        
 //                        Get pbRestoreIntFilesNow of ghoApplication to bRestoreIntFilesNow
 //                        If (bRestoreIntFilesNow = True) Begin
-//                            Send RestoreIntFiles
+//                            Get RestoreIntFiles (&sErrorText) to bOK
 //                        End
 //                        Get pbSaveIntFilesNow of ghoApplication to bSaveIntFilesNow
 //                        If (bSaveIntFilesNow = True) Begin
@@ -417,7 +417,7 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary
             End
         End                                                       
         
-        Get _CountFilelistSystemTables to iSize
+        Get _UtilNumberOfFileListTables to iSize
         Send StartStatusPanel "" "" iSize
         Set Progress_Bar_Overall_Visible_State of ghoStatusPanel to False
 
@@ -477,7 +477,8 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary
                                 If (bSaved = False) Begin
                                     Get SaveIntFileData sDataPath sIntFileName to bOK
                                     If (bOK = False) Begin
-                                        Error DFERR_PROGRAM ("The 'SaveIntFileData' function for the internal database table:" * String(sIntFileName) * "failed.")
+                                        Move ("The 'SaveIntFileData' function for the internal database table:" * String(sIntFileName) * "failed.") to sErrorText
+                                        Error DFERR_PROGRAM sErrorText
                                         Move False to bResult    
                                     End
                                 End         
@@ -487,7 +488,8 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary
                                         Get UpdateIntFileData sDataPath sIntFileName asSavedIntFile to bOK
                                         If (bOK = False) Begin
                                             Move False to bResult
-                                            Error DFERR_PROGRAM ("Could not update .int file data to the internal database table:" * String(sIntFileName))
+                                            Move ("Could not update .int file data to the internal database table:" * String(sIntFileName)) to sErrorText
+                                            Error DFERR_PROGRAM sErrorText
                                         End
                                     End
                                 End
@@ -509,7 +511,7 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary
 
     // It checks that *.int files on disk corresponds with the content in the
     // .int file backup table piIntFilesFileNumber.
-    Procedure RestoreIntFiles
+    Function RestoreIntFiles String ByRef sErrorText Returns Boolean
         Boolean bCheckIntFiles bIsIntFileTable bExists bIsSQL bRestored bOK
         String sPaths sDataPath sIntFileName 
         String[] asSavedIntFile
@@ -518,16 +520,16 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary
 
         Get IsIntFileTable to bIsIntFileTable
         If (bIsIntFileTable = False) Begin
-            Send Info_Box "The 'IntFilesTable' was not created. Thus no backup info for .int files exists. The property pbUseIntFilesBackup must have been set to True in the cDbUpdateHandler object for automatic creation of the table and save of all .int files."
-            Procedure_Return
+            Send Info_Box "The 'IntFilesTable' has not been created. Thus no backup info for .int files exists. The property pbUseIntFilesBackup must have been set to True in the cDbUpdateHandler object for automatic creation of the table and save of all .int files."
+            Function_Return False
         End
         
-        Get YesNo_Box "This will restore the content of .int files. Current .int files will be compared to the content in the backup table. If different, files on disk will be updated. Cash files (.cch) will be removed.\n\n Continue?" to iRetval
+        Get YesNo_Box "This will restore the content of all .int files. Current .int files will be compared to the content in the backup table. If different, files on disk will be updated. Cash files (.cch) will be removed and a backup Filelist.cfg will be installed.\n\n Continue?" to iRetval
         If (iRetval <> MBR_Yes) Begin
-            Procedure_Return
+            Function_Return False
         End
         
-        Get _CountFilelistSystemTables to iSize
+        Get _UtilNumberOfFileListTables to iSize
         Send StartStatusPanel "" "" iSize
         Set Progress_Bar_Overall_Visible_State of ghoStatusPanel to False
 
@@ -559,8 +561,9 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary
                                 If (bRestored = False and bOK = True) Begin
                                     Move True to bRestored
                                 End
-                                If (bOK = False) Begin
-                                    Error DFERR_PROGRAM ("Could not create the .int file" * String(sIntFileName) * "from the internal database table:" * String(CS_IntFilesTableLogicalName))
+                                If (bOK = False) Begin 
+                                    Move ("Could not create the .int file" * String(sIntFileName) * "from the internal database table:" * String(CS_IntFilesTableLogicalName)) to sErrorText
+                                    Error DFERR_PROGRAM sErrorText
                                 End
                             End
                         End
@@ -570,11 +573,8 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary
         Loop       
         
         Send StopStatusPanel
-        If (bRestored = True) Begin
-            Send Info_Box "Ready! All .int files checked and updated if different. The program will now exit."
-            Send Exit_Application
-        End
-    End_Procedure
+        Function_Return bRestored
+    End_Function
 
     Function IsIntFileTable Returns Boolean
         Boolean bExists
