@@ -921,11 +921,6 @@ Class SysinfoDisplay is a cTextEdit
     End_Procedure
 #ENDIF
 
-    { Visibility=Private }
-    Function VersionStr Integer iVer Integer iRev Integer iBld Returns String
-        Function_Return (String (iVer) - "." - String (iRev) - "." - String (iBld))
-    End_Function
-
     Function IsDAWSQLDriver String sDriverID Returns Boolean
         Boolean bOK
         Move (sDriverID = MSSQLDRV_ID or sDriverID = DB2_DRV_ID or sDriverID = ODBC_DRV_ID) to bOK
