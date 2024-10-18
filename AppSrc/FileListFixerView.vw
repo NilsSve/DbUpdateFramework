@@ -608,6 +608,7 @@ Object oFilelistFixerView is a dbView
         
         Move (oAliasErrors_edt(Self)) to ho
         Send Delete_Data of ho
+        Set Value of oNoOfAliasErrorTables_fm to 0
         Get _CountFileListAliasErrors of ghoDUF to FileListArray
         Move (SizeOfArray(FileListArray)) to iSize
         If (iSize = 0) Begin
@@ -649,7 +650,7 @@ Object oFilelistFixerView is a dbView
         Get _CountFileListMasterTables of ghoDUF to iCount
         Set Value of oNumberOfMasterFileListSQLTables_fm to iCount
         Get _CountFileListAliasTables of ghoDUF to iCount
-        Set Value of oNoOfAliasSQLTables_fm to iCount 
+        Set Value of oNoOfAliasSQLTables_fm to iCount
         Get _CountFilelistSystemTables of ghoDUF to iCount
         Set Value of oNoOfSystemTables_fm to iCount
         Get _CountFileListOpenErrors of ghoDUF to iCount

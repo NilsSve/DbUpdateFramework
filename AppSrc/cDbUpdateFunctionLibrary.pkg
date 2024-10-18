@@ -2599,9 +2599,9 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
         Move (If(bToAnsi = True, CS_ANSI_Txt, CS_OEM_Txt)) to sANSI_OEM
 
         Get IsDAWSQLDriver sDriverID to bDAWDriver
-        If (bUseConnectionID = True) Begin
-            Move False to bUseConnectionID
-        End
+//        If (bUseConnectionID = True) Begin
+//            Move False to bUseConnectionID
+//        End
 
         Get pSQLConnection of ghoSQLConnectionHandler to SQLConnection
         Move SQLConnection.sSchema           to sSchema
