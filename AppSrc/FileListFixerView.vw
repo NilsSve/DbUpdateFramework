@@ -368,7 +368,7 @@ Object oFilelistFixerView is a dbView
 
         Object oFixAliasProblems_btn is a Button
             Set Size to 32 61
-            Set Location to 8 137
+            Set Location to 8 62
             Set Label to "1. Fix Filelist Alias Errors"
             Set peAnchors to anTopRight
             Set MultiLineState to True
@@ -396,7 +396,7 @@ Object oFilelistFixerView is a dbView
 
         Object oFixFileListSQLMissingTables_btn is a Button
             Set Size to 32 61
-            Set Location to 8 202
+            Set Location to 8 127
             Set Label to "2. Make Filelist RootNames equal to SQL Database"
             Set peAnchors to anTopRight
             Set MultiLineState to True
@@ -423,7 +423,7 @@ Object oFilelistFixerView is a dbView
         //   - Does not have a corresponding .Dat file, 
         Object oFixFileListErrors_btn is a Button
             Set Size to 32 61
-            Set Location to 8 267
+            Set Location to 8 192
             Set Label to "3. Fix Filelist .dat Errors"
             Set peAnchors to anTopRight
             Set MultiLineState to True
@@ -449,7 +449,7 @@ Object oFilelistFixerView is a dbView
 
         Object oFixOpenTableErrors_btn is a Button
             Set Size to 32 61
-            Set Location to 8 332
+            Set Location to 8 257
             Set Label to "4. Fix Filelist Open Errors"
             Set peAnchors to anTopRight
             Set MultiLineState to True
@@ -481,13 +481,13 @@ Object oFilelistFixerView is a dbView
                           
         End_Object
 
-        Object oFixIntFileError_btn is a Button
+        Object oRefreshAllIntFiles_btn is a Button
             Set Size to 32 61
-            Set Location to 8 397
-            Set Label to "5. Refresh *.int files with open errors"
+            Set Location to 8 322
+            Set Label to "5. Refresh all *.int files"
             Set peAnchors to anTopRight
             Set MultiLineState to True
-            Set psToolTip to "This will try to refresh or recreate the .int files listed in the 'Open Table Errors' list."
+            Set psToolTip to "This will refresh all .int files."
             
             Property Boolean pbErrorProcessingState
             Property Integer piError
@@ -496,7 +496,49 @@ Object oFilelistFixerView is a dbView
             Procedure OnClick
                 Integer iRetval iCounter
                 
-                Get YesNo_Box "This will try to refresh, or if needed recreate, the .int files listed in the 'Open Table Errors' list.\n\n\nContinue?" to iRetval
+                Get YesNo_Box "This will refresh all .int files.\n\nContinue?" to iRetval
+                If (iRetval <> MBR_Yes) Begin
+                    Procedure_Return    
+                End
+                
+                Get RefreshAllIntFiles Self to iCounter
+                If (iCounter <> 0) Begin
+                    Send Info_Box ("Ready! Refresh of:" * String(iCounter) * ".int files done.")
+                End
+                Else Begin
+                    Send Info_Box "Ready! No .int files to refresh."
+                End
+            End_Procedure
+            
+            Procedure Error_Report Integer iErrNum Integer iErrLine String sErrText 
+                If (pbErrorProcessingState(Self)) ; 
+                    Procedure_Return 
+            
+                Set pbErrorProcessingState to True 
+                Set piError to iErrNum
+                Set psErrorText to sErrText
+            
+                Set pbErrorProcessingState to False 
+            End_Procedure
+
+        End_Object
+
+        Object oFixIntFileError_btn is a Button
+            Set Size to 32 61
+            Set Location to 8 388
+            Set Label to "6. Recreate *.int files with open errors"
+            Set peAnchors to anTopRight
+            Set MultiLineState to True
+            Set psToolTip to "This will try recreate the .int files listed in the 'Open Table Errors' list."
+            
+            Property Boolean pbErrorProcessingState
+            Property Integer piError
+            Property String psErrorText
+
+            Procedure OnClick
+                Integer iRetval iCounter
+                
+                Get YesNo_Box "This will recreate the .int files listed in the 'Open Table Errors' list.\n\n\nContinue?" to iRetval
                 If (iRetval <> MBR_Yes) Begin
                     Procedure_Return    
                 End
@@ -765,7 +807,7 @@ Object oFilelistFixerView is a dbView
 
         Get pFileListArray of ghoDUF to FilelistArray
         If (SizeOfArray(FilelistArray) = 0) Begin
-            Send UtilFillFileListStruct of ghoDUF
+            Send ShowFileListData
             Get pFileListArray of ghoDUF to FilelistArray
         End
                 
@@ -833,7 +875,7 @@ Object oFilelistFixerView is a dbView
     End_Function
 
     Function FixFileListSQLMissingTables Returns Integer
-        Integer iRetval hTable iSize iCount iIndex iCh iCounter iAliases iPos
+        Integer iRetval hTable iSize iCount iItem iCh iCounter iAliases iPos
         String[] asSQLTables
         tFilelist[] FileListArray
         String sNoDriverRootname sDriver sRootName sRootNameNew sDatabase sLogicalName sDisplayName
@@ -849,7 +891,7 @@ Object oFilelistFixerView is a dbView
         End
         Get pFileListArray of ghoDUF to FileListArray
         If (SizeOfArray(FileListArray) = 0) Begin
-            Send UtilFillFileListStruct of ghoDUF
+            Send ShowFileListData
             Get pFileListArray of ghoDUF to FileListArray
         End    
         
@@ -868,10 +910,10 @@ Object oFilelistFixerView is a dbView
             Get _IsIntEntry of ghoDUF hTable to bIsIntTable
             // 50 is FlexErrs.
             If (hTable <> 50) Begin
-                Move (SearchArray(sNoDriverRootname, asSQLTables, Desktop , (RefFunc(DFSTRICMP)))) to iIndex
+                Move (SearchArray(sNoDriverRootname, asSQLTables, Desktop , (RefFunc(DFSTRICMP)))) to iItem
                 // If the Table name in Filelist.cfg points to an SQL table, but that table doesn't
                 // exist in the SQL database, remove the driver prefix from Filelist.cfg.
-                If (iIndex = -1) Begin
+                If (iItem = -1) Begin
                     Move sNoDriverRootname to sRootNameNew
                 End
                 Else Begin
@@ -907,7 +949,7 @@ Object oFilelistFixerView is a dbView
     End_Function
 
     Function FixFileListErrors Returns Integer
-        Integer iRetval hTable iSize iCount iIndex iCh iCounter iAliases
+        Integer iRetval hTable iSize iCount iItem iCh iCounter iAliases
         tFilelist[] FileListArray
         String sNoDriverRootname sDriver sRootName sRootNameNew sDatabase sLogicalName sDisplayName sDataPath
         Boolean bIsAlias bIsDatEntry bExists
@@ -917,7 +959,7 @@ Object oFilelistFixerView is a dbView
 
         Get pFileListArray of ghoDUF to FileListArray
         If (SizeOfArray(FileListArray) = 0) Begin
-            Send UtilFillFileListStruct of ghoDUF
+            Send ShowFileListData
             Get pFileListArray of ghoDUF to FileListArray
         End    
         Send Cursor_Wait of Cursor_Control
@@ -958,7 +1000,7 @@ Object oFilelistFixerView is a dbView
     End_Function
 
     Function FixOpenErrorTables Returns Integer        
-        Integer iRetval hTable iSize iCount iIndex iCh iCounter iAliases iOpenErrors
+        Integer iRetval hTable iSize iCount iItem iCh iCounter iAliases iOpenErrors
         tFilelist[] FileListArray
         String sNoDriverRootname sDriver sRootName sRootNameNew sDatabase sLogicalName sDisplayName sDataPath
         Boolean bIsAlias bExists bChange bFirst bIsSQLTable bIsIntTable
@@ -968,7 +1010,7 @@ Object oFilelistFixerView is a dbView
         Move 0 to hTable
         Get pFileListArray of ghoDUF to FileListArray
         If (SizeOfArray(FileListArray) = 0) Begin
-            Send UtilFillFileListStruct of ghoDUF
+            Send ShowFileListData
             Get pFileListArray of ghoDUF to FileListArray
         End    
         
@@ -1022,6 +1064,74 @@ Object oFilelistFixerView is a dbView
         Function_Return iCounter
     End_Function
 
+    Function RefreshAllIntFiles Handle hoFrom Returns Integer
+        Integer iRetval iSize iCount iCounter
+        tFilelist[] FileListArray
+        String sDriver sRootName sIntFileName sConnectionID sErrorText sText sDataPath
+        Boolean bExists bOK bIsSystem bAnsi bIsAlias
+        Handle hTable hoCurrentErrorObject
+    
+        Move Error_Object_Id to hoCurrentErrorObject
+        Move hoFrom to Error_Object_Id
+    
+        Get pFileListArray of ghoDUF to FileListArray
+        If (SizeOfArray(FileListArray) = 0) Begin
+            Send ShowFileListData
+            Get pFileListArray of ghoDUF to FilelistArray
+        End
+    
+        Move (SizeOfArray(FileListArray)) to iSize     
+        // Each Start_Restructure/End_Restructure calls the "Callback" message 3 times,
+        // and it does a "Send DoAdvance" to the ghoProgressBar...
+        Send StartStatusPanel "Refreshing Int Files" "" (iSize * 3)
+        Decrement iSize
+        
+        Get psDataPath of (phoWorkspace(ghoApplication)) to sDataPath
+        Get psConnId to sConnectionID 
+        Get pbToANSI of ghoDUF to bAnsi 
+    
+        Send OpenLogFile
+    
+        For iCount from 0 to iSize
+            Move FileListArray[iCount].sDriver to sDriver
+            Move FileListArray[iCount].hTable to hTable
+            Set Message_Text of ghoStatusPanel to ("Table number:" * String(hTable))
+            Get _RemoveDriverFromRootName of ghoDUF FileListArray[iCount].sRootName (&sDriver) to sRootName
+            If (sDriver = "") Begin
+                Get psDriverID of ghoDUF to sDriver
+            End
+            Move FileListArray[iCount].bIsAlias to bIsAlias
+            If (bIsAlias = False) Begin
+                Move (FileListArray[iCount].sNoDriverRootname + ".int") to sIntFileName
+                File_Exist (sDataPath + "\" + sIntFileName) bExists
+                If (bExists and sDriver <> DATAFLEX_ID) Begin
+                    Get _IsSystemFile of ghoDUF hTable to bIsSystem
+                    Send Update_StatusPanel of ghoStatusPanel ("Refreshing .int file:" * String(sRootName))
+                    
+                    // Refresh!
+                    Get _SqlUtilRefreshIntFile of ghoDUF hTable sDriver sConnectionID bansi bIsSystem to bOK
+    
+                    If (bOK) Begin
+                        Increment iCounter
+                        Set_Attribute DF_FILE_ROOT_NAME of hTable to (sDriver + ":" + FileListArray[iCount].sNoDriverRootname)
+                    End
+                End
+            End
+        Loop
+    
+        Send CloseLogFile
+        Send StopStatusPanel
+    
+        If (iCounter <> 0) Begin
+            Send ShowFileListData
+        End
+        Else Begin
+            Move hoCurrentErrorObject to Error_Object_Id
+        End
+    
+        Function_Return iCounter
+    End_Function
+    
     Function FixAllIntFileErrors Handle hoFrom Returns Integer
         Integer iRetval iSize iCount iCounter
         tFilelist[] ErrorFilesArray
@@ -1111,7 +1221,7 @@ Object oFilelistFixerView is a dbView
         End
     
         // If it didn't work to refresh, try re-create the .int file:
-        Get FindIntFileRelations sIntFileName asRelations to asRelations
+        Get CollectIntFileRelationsAndIndexes sIntFileName to asRelations
         Get _SqlUtilCreateIntFile of ghoDUF hTable sDriver sConnectionID True bIsSystem to bOK
         If (bOK) Begin
             Get AddIntFileRelations sIntFileName asRelations to bOK
@@ -1136,7 +1246,7 @@ Object oFilelistFixerView is a dbView
 
     Function AddIntFileRelations String sIntFile String[] asRelations Returns Boolean
         Boolean bOK
-        Integer iCh iIndex iSize iCount
+        Integer iCh iItem iSize iCount
         String[] asFileData
         String sLine sDummy
         
@@ -1153,12 +1263,12 @@ Object oFilelistFixerView is a dbView
         While (not(SeqEof))
             Readln channel iCh sLine
             If (sLine <> "") Begin
-                Move (SearchArray(sLine, asRelations, Desktop, (RefFunc(DFSTRICMP)))) to iIndex
-                If (iIndex <> -1) Begin
+                Move (SearchArray(sLine, asRelations, Desktop, (RefFunc(DFSTRICMP)))) to iItem
+                If (iItem <> -1) Begin
                     Repeat
-                        Move asRelations[iIndex] to asFileData[-1]
-                        Increment iIndex
-                    Until (Trim(asRelations[iIndex]) = "")  
+                        Move asRelations[iItem] to asFileData[-1]
+                        Increment iItem
+                    Until (Trim(asRelations[iItem]) = "")  
                     Move "" to asFileData[-1]
                     Readln channel iCh sDummy
                     Readln channel iCh sDummy
@@ -1189,9 +1299,10 @@ Object oFilelistFixerView is a dbView
         Function_Return bOK
     End_Function
     
-    Function FindIntFileRelations String sIntFile String[] asRelations Returns String[]
+    Function CollectIntFileRelationsAndIndexes String sIntFile Returns String[]
         Integer iCh
         String sLine sFileRelTxt sFieldNoTxt sIndexNoTxt
+        String[] asRelations
         
         Get Seq_New_Channel to iCh
         If (iCh < 0) Begin
@@ -1292,7 +1403,7 @@ Object oFilelistFixerView is a dbView
     // Returns a string array with all *.dat related files from the passed sPath parameter,
     // as a string array.
     Function CollectDatRelatedFiles String sPath Returns String[]
-        Integer iCounter iCh iIndex
+        Integer iCounter iCh iItem
         String sLine sExt sFilter
         String[] asFiles asExt
         
@@ -1307,8 +1418,8 @@ Object oFilelistFixerView is a dbView
         Repeat
             Readln sLine
             Get ParseFileExtension sLine to sExt
-            Move (SearchArray(sExt, asExt, Desktop, (RefFunc(DFSTRICMP)))) to iIndex
-            If (iIndex <> -1) Begin
+            Move (SearchArray(sExt, asExt, Desktop, (RefFunc(DFSTRICMP)))) to iItem
+            If (iItem <> -1) Begin
                 Move sLine to asFiles[-1]
             End
         Until (SeqEof)
@@ -1318,7 +1429,7 @@ Object oFilelistFixerView is a dbView
     End_Function
     
     Function SanitizeDatRelatedFiles String[] asFiles String[] asDatFilesInUse Returns String[]
-        Integer iSize iCount iIndex
+        Integer iSize iCount iItem
         String sFileName sFileNameNoExt sExt sFileNameShort
         Boolean bOK
         
@@ -1330,8 +1441,8 @@ Object oFilelistFixerView is a dbView
         Move (SizeOfArray(asDatFilesInUse)) to iSize
         Decrement iSize
         For iCount from 0 to iSize
-            Move (SearchArray(asDatFilesInUse[iCount], asFiles, Desktop, (RefFunc(DFSTRICMP)))) to iIndex
-            If (iIndex <> -1) Begin
+            Move (SearchArray(asDatFilesInUse[iCount], asFiles, Desktop, (RefFunc(DFSTRICMP)))) to iItem
+            If (iItem <> -1) Begin
                 Get RemoveArrayDatRelatedFiles asFiles asDatFilesInUse[iCount] to asFiles
             End
         Loop
@@ -1343,7 +1454,7 @@ Object oFilelistFixerView is a dbView
     // from the passed asFiles string array.
     Function RemoveArrayDatRelatedFiles String[] asFiles String sFileName Returns String[]
         String sExt sFileNameShortOrg sFileNameShortNew
-        Integer iSize iCount iIndex
+        Integer iSize iCount iItem
         
         Move (SizeOfArray(asFiles)) to iSize
         If (iSize = 0) Begin
@@ -1352,17 +1463,17 @@ Object oFilelistFixerView is a dbView
 
         Get ParseFileExtension sFileName to sExt
         Move (Replace("." + sExt, sFileName, "")) to sFileNameShortOrg
-        Move (SearchArray(sFileName, asFiles, Desktop, (RefFunc(DFSTRICMP)))) to iIndex
-        If (iIndex = -1) Begin
+        Move (SearchArray(sFileName, asFiles, Desktop, (RefFunc(DFSTRICMP)))) to iItem
+        If (iItem = -1) Begin
             Function_Return asFiles
         End
         Repeat
-            Move (RemoveFromArray(asFiles, iIndex)) to asFiles
-            If (iIndex < SizeOfArray(asFiles)) Begin
-                Get ParseFileExtension asFiles[iIndex] to sExt
-                Move (Replace("." + sExt, asFiles[iIndex], "")) to sFileNameShortNew 
+            Move (RemoveFromArray(asFiles, iItem)) to asFiles
+            If (iItem < SizeOfArray(asFiles)) Begin
+                Get ParseFileExtension asFiles[iItem] to sExt
+                Move (Replace("." + sExt, asFiles[iItem], "")) to sFileNameShortNew 
             End
-        Until (Lowercase(sFileNameShortOrg) <> Lowercase(sFileNameShortNew) or iIndex >= SizeOfArray(asFiles))
+        Until (Lowercase(sFileNameShortOrg) <> Lowercase(sFileNameShortNew) or iItem >= SizeOfArray(asFiles))
         
         Function_Return asFiles    
     End_Function
