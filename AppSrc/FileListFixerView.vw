@@ -1219,18 +1219,14 @@ Object oFilelistFixerView is a dbView
                     Send Update_StatusPanel of ghoStatusPanel ("Recreating .int file:" * String(FileListArray[iCount].sRootName))
                     
                     // 1. Collect relation and index info:
-                    Get CollectIntFileRelationsAndIndexes sIntFileName to asIntFileData
+                    Get CollectIntFileRelationsAndIndexes hTable sIntFileName sDriver to asIntFileData
                     // 2. Recreate .int file!
-                    Get _SqlUtilCreateIntFile of ghoDUF hTable sDriver sConnectionID bAnsi bIsSystem to bOK
+                    Get _SqlUtilCreateIntFile of ghoDUF hTable sDriver sConnectionID bAnsi bIsSystem False to bOK
                     If (bOK and (SizeOfArray(asIntFileData) <> 0)) Begin
                         // 3. Add collected relation and index info:
                         Get AddIntFileRelationsAndIndexes sIntFileName asIntFileData to bOK
                     End
-    
-                    If (bOK) Begin
-                        Increment iCounter
-                        Set_Attribute DF_FILE_ROOT_NAME of hTable to (sDriver + ":" + FileListArray[iCount].sNoDriverRootname)
-                    End
+                    Increment iCounter
                 End
             End
         Loop
@@ -1337,7 +1333,7 @@ Object oFilelistFixerView is a dbView
         End
     
         // If it didn't work to refresh, try re-create the .int file:
-        Get CollectIntFileRelationsAndIndexes sIntFileName to asIntFileData
+        Get CollectIntFileRelationAndIndexFields sIntFileName to asIntFileData
         Get _SqlUtilCreateIntFile of ghoDUF hTable sDriver sConnectionID True bIsSystem to bOK
         If (bOK) Begin
             Get AddIntFileRelationsAndIndexes sIntFileName asIntFileData to bOK
@@ -1384,7 +1380,7 @@ Object oFilelistFixerView is a dbView
                     Repeat
                         Move asIntFileData[iItem] to asFileData[-1]
                         Increment iItem
-                    Until (Trim(asIntFileData[iItem]) = "")  
+                    Until (iItem >= SizeOfArray(asIntFileData) or asIntFileData[iItem] = "")
                     Move "" to asFileData[-1] 
                     Repeat
                         Readln channel iCh sDummy
@@ -1416,17 +1412,21 @@ Object oFilelistFixerView is a dbView
         Function_Return bOK
     End_Function
     
-    Function CollectIntFileRelationsAndIndexes String sIntFile Returns String[]
-        Integer iCh
-        String sLine sFileRelTxt sFieldNoTxt sIndexNoTxt sPath sFileName
+    // ToDo: Improve to also insert new lines with "FIELD_TYPE DATETIME"
+    //       The logic will currently not set the FIELD_TYPE, unless the FIELD_NUMBER xx already exists in the .int file.
+    Function CollectIntFileRelationAndIndexFields Handle hTable String sIntFile String sDriver Returns String[]
+        Integer iCh iColumn iPos iType iDbType iDFType
+        String sLine sFileRelTxt sFieldNoTxt sDataType sIndexNoTxt sPath sFileName sDummy
         String[] asIntFileData
-        Boolean bFound
+        Boolean bFound bOpen
         
         Get Seq_New_Channel to iCh
         If (iCh < 0) Begin
             Function_Return asIntFileData
         End
         
+        Open hTable
+        Get_Attribute DF_FILE_OPENED of hTable to bOpen
         Move False to bFound
         Get ParseFolderName sIntFile to sPath
         If (sPath <> "") Begin
@@ -1438,33 +1438,59 @@ Object oFilelistFixerView is a dbView
         Get vFolderFormat sPath to sPath
         Get ParseFileName sIntFile to sFileName
         Move (sPath + sFileName) to sIntFile
+        Get piDbType of ghoDUF to iDbType
         
         Direct_Input channel iCh sIntFile
         While (not(SeqEof))
             Readln channel iCh sLine
             If (Uppercase(sLine) contains "FIELD_NUMBER ") Begin
                 Move sLine to sFieldNoTxt
-            End
-            If (Uppercase(sLine) contains "FIELD_INDEX ") Begin
-                Move sLine to sIndexNoTxt
-            End
-            If (Uppercase(sLine) contains "FIELD_RELATED_FILE ") Begin
-                Move sLine to sFileRelTxt
-            End
-            If (Uppercase(sLine) contains "FIELD_RELATED_FIELD ") Begin
+                Get FieldNumberToDataTimeText hTable sFieldNoTxt sDriver iDbType to sDataType
+                Move ""          to asIntFileData[-1]    
                 Move sFieldNoTxt to asIntFileData[-1]    
-                Move sIndexNoTxt to asIntFileData[-1]    
-                Move sFileRelTxt to asIntFileData[-1]    
-                Move sLine       to asIntFileData[-1]    
-                Move ""          to asIntFileData[-1] 
-                Move ""          to sFieldNoTxt
-                Move ""          to sIndexNoTxt
+                If (sDataType <> "") Begin
+                    Move sDataType  to asIntFileData[-1]
+                    Readln channel iCh sDummy    
+                End
+                Repeat
+                    Readln channel iCh sLine
+                    If (Trim(sLine) <> "" and not(Uppercase(sLine) contains "FIELD_NUMBER ")) Begin
+                        Move sLine to asIntFileData[-1]
+                    End
+                Until (Trim(sLine) = "" or Uppercase(sLine) contains "FIELD_NUMBER ")
             End
         Loop
         
+        Close hTable
         Close_Input channel iCh
         Send Seq_Release_Channel iCh
         Function_Return asIntFileData
+    End_Function   
+    
+    // To get the DataFlex type from a SQL column DateTime(x) data type, as a text string
+    // For usage in .int files.
+    // Note: The hTable needs to be open before calling this function.
+    Function FieldNumberToDataTimeText Handle hTable String sFieldNoTxt String sDriver Integer iDbType Returns String
+        String sDataType
+        Integer iPos iColumn iType iDFType
+        
+        Move (Pos(" ", sFieldNoTxt)) to iPos
+        Move (Mid(sFieldNoTxt, Length(sFieldNoTxt), iPos)) to iColumn
+        If (iColumn <= 0) Begin
+            Function_Return "" 
+        End
+
+        Get_Attribute DF_FIELD_TYPE of hTable iColumn to iType
+        Get UtilDataFlexDataTypeToString of ghoDUF iType to sDataType
+        If (not(Uppercase(sDataType) contains "TIME")) Begin
+            Move "" to sDataType
+        End
+        Else Begin
+            Move (Replace("DF_", sDataType, "")) to sDataType
+            Move ("FIELD_TYPE " + sDataType)     to sDataType
+        End
+        
+        Function_Return sDataType
     End_Function
             
     // To remove any "Alias" word from the DisplayName
@@ -1501,7 +1527,7 @@ Object oFilelistFixerView is a dbView
 
         Move "int" to sFilter
         Get CollectFilteredFiles sDataPath sFilter to asFiles
-        Get FileDateExtension to sFileDateExt
+        Get FileDatePrefix to sFileDateExt
         Get vFolderFormat sBackupFolder to sBackupFolder 
         Set piMaximum of ghoStatusPanel to (SizeOfArray(asFiles))
         Move (SizeOfArray(asFiles)) to iSize
@@ -1512,7 +1538,7 @@ Object oFilelistFixerView is a dbView
         Decrement iSize
         For iCount from 0 to iSize
             Send Update_StatusPanel of ghoStatusPanel (sDataPath + asFiles[iCount]) 
-            Get vCopyFile (sDataPath + asFiles[iCount]) (sBackupFolder + String(asFiles[iCount]) + String(sFileDateExt)) to iRetval
+            Get vCopyFile (sDataPath + asFiles[iCount]) (sBackupFolder + String(sFileDateExt) + String(asFiles[iCount])) to iRetval
             If (iRetval = 0) Begin
                 Increment iCounter
             End
@@ -1522,7 +1548,7 @@ Object oFilelistFixerView is a dbView
         Function_Return iCounter
     End_Function
     
-    Function FileDateExtension Returns String
+    Function FileDatePrefix Returns String
         String sFileDateExt sDateTime
         DateTime dDateTime
         Integer iPos
@@ -1536,7 +1562,7 @@ Object oFilelistFixerView is a dbView
         If (iPos <> 0) Begin
             Move (Left(sDateTime, (iPos -1))) to sDateTime
         End
-        Move ("." + sDateTime) to sDateTime
+        Move (sDateTime + ".") to sDateTime
         Function_Return sDateTime 
     End_Function
     
