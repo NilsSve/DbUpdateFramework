@@ -1219,7 +1219,7 @@ Object oFilelistFixerView is a dbView
                     Send Update_StatusPanel of ghoStatusPanel ("Recreating .int file:" * String(FileListArray[iCount].sRootName))
                     
                     // 1. Collect relation and index info:
-                    Get CollectIntFileRelationsAndIndexes hTable sIntFileName sDriver to asIntFileData
+                    Get CollectIntFileRelationAndIndexFields hTable sIntFileName sDriver to asIntFileData
                     // 2. Recreate .int file!
                     Get _SqlUtilCreateIntFile of ghoDUF hTable sDriver sConnectionID bAnsi bIsSystem False to bOK
                     If (bOK and (SizeOfArray(asIntFileData) <> 0)) Begin
@@ -1413,7 +1413,7 @@ Object oFilelistFixerView is a dbView
     End_Function
     
     // ToDo: Improve to also insert new lines with "FIELD_TYPE DATETIME"
-    //       The logic will currently not set the FIELD_TYPE, unless the FIELD_NUMBER xx already exists in the .int file.
+    //       The logic currently will not set the FIELD_TYPE, unless the FIELD_NUMBER xx already exists in the .int file.
     Function CollectIntFileRelationAndIndexFields Handle hTable String sIntFile String sDriver Returns String[]
         Integer iCh iColumn iPos iType iDbType iDFType
         String sLine sFileRelTxt sFieldNoTxt sDataType sIndexNoTxt sPath sFileName sDummy
