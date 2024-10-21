@@ -442,7 +442,7 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary
             If (bNewer = True) Begin
                 Get vDeleteFile sFileListNameBackup to bOK
                 Get vCopyFile sFileListName sFileListNameBackup to bOK
-                Move "A new backup copy of the Filelist.cfg file was made. In order to include a backup copy of the file into the program, as a resource, you will need to re-compile/restart the program.\n\nThe program will now exit." to sErrorText
+                Move "A new backup copy of the Filelist.cfg file was made. In order to include a backup copy of the file into the program, as a resource, you will need to re-compile/restart the program." to sErrorText
             End
         End
         
@@ -1065,13 +1065,14 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary
             Send Exit_Application
         End
 
-        Get _UtilTableExists of ghoDbUpdateFunctionLibrary iDbVersionFileNumber to bTableExists
-        If (bTableExists = True) Begin
-            Set Private.pbDbVersionCheckDone to True
-            Procedure_Return
+        If (bAutoCreateDbVersionTable = True) Begin
+            Get _UtilTableExists of ghoDbUpdateFunctionLibrary iDbVersionFileNumber to bTableExists
+            If (bTableExists = True) Begin
+                Set Private.pbDbVersionCheckDone to True
+                Procedure_Return
+            End
+            Send CreateDbVersionTable iDbVersionFileNumber
         End
-
-        Send CreateDbVersionTable iDbVersionFileNumber
 
         // We only need to these DbVersion checks once, but because this message is called
         // from each child cDbUpdateVersion object (and it needs to be called from there),
