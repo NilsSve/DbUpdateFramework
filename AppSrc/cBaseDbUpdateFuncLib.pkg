@@ -2024,7 +2024,7 @@ Class cBaseDbUpdateFuncLib is a cObject
             End
             Else Begin
                 Get pbToANSI to bANSI
-                Get _SqlUtilCreateIntFile hTable APITableNameInfoFrom.sDriverID sConnectionID bANSI False to bOK
+                Get _SqlUtilCreateIntFile hTable APITableNameInfoFrom.sDriverID sConnectionID bANSI False True to bOK
             End
         End
 
@@ -2034,7 +2034,7 @@ Class cBaseDbUpdateFuncLib is a cObject
     // The table must already exist in the filelist for this function to work.
     // It creates an .int file in the first Data folder of the psDataPath property. 
     // It is important that the hTable can be opened.
-    Function _SqlUtilCreateIntFile Handle hTable String sDriverID String sConnectionID Boolean bAnsi Boolean bSysFile Returns Boolean
+    Function _SqlUtilCreateIntFile Handle hTable String sDriverID String sConnectionID Boolean bAnsi Boolean bSysFile Boolean bBackup Returns Boolean
         Boolean bOK bExists bUseConnectionID 
         String sDataPath sRootName sLogicalName sPhysicalFileName sConnectionString sTableName sSchemaName sANSI_OEM 
         String[] asIndexArray
@@ -2066,11 +2066,13 @@ Class cBaseDbUpdateFuncLib is a cObject
         If (sSchemaName = "") Begin
             Get _SqlFindKeyWord CI_SQLDBO to sSchemaName
         End
-
-        // If the .int file already exists; we rename it to "FileName" + ".bak"
-        Get vFilePathExists (sDataPath + sPhysicalFileName) to bExists
-        If (bExists = True) Begin
-            Get vRenameFile (sDataPath + sPhysicalFileName) (sDataPath + sPhysicalFileName + ".bak") to bOK
+        
+        If (bBackup = True) Begin
+            // If the .int file already exists; we rename it to "FileName" + ".bak"
+            Get vFilePathExists (sDataPath + sPhysicalFileName) to bExists
+            If (bExists = True) Begin
+                Get vRenameFile (sDataPath + sPhysicalFileName) (sDataPath + sPhysicalFileName + ".bak") to bOK
+            End
         End
 
         Get _UtilDeleteCacheFile sTableName to bOK
