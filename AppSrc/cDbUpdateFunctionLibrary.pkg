@@ -172,6 +172,9 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
             End
         End
 
+        If (Err = False) Begin
+            Send ResetFillSQLTables
+        End
         Function_Return (Err = False)
     End_Function
 
@@ -470,6 +473,9 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
         Move False to Err
         Send SqlUtilExecuteQuery sSQLString sDriverID
 
+        If (Err = False) Begin
+            Send ResetFillSQLTables
+        End
         Function_Return (Err = False)
     End_Function
 
@@ -500,6 +506,9 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
         Move False to Err
         Send SqlUtilExecuteQuery sSQLString sDriverID
 
+        If (Err = False) Begin
+            Send ResetFillSQLTables
+        End
         Function_Return (Err = False)
     End_Function
     
@@ -541,6 +550,9 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
         // We also need to remove the cache-file since the table has been changed
         Get _UtilDeleteCacheFile sTableName to bOK
 
+        If (Err = False) Begin
+            Send ResetFillSQLTables
+        End
         Function_Return (Err = False)
     End_Function
 
@@ -2317,6 +2329,9 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
             Get _SqlUtilUpdateIntFile hTable to bOK
         End
 
+        If (bOK = True) Begin
+            Send ResetFillSQLTables
+        End
         Function_Return (bOK = True)
     End_Function
 
@@ -2525,7 +2540,8 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
         String sPhysicalName sRootName sLogicalName sDisplayName sConnectionID sConnectionString
         String sANSI_OEM sSchema sBaseTableSpace sLongTableSpace sIndexTableSpace sDatabase sGUIDName sWarning
         tSQLConnection SQLConnection
-        // ToDo: Redo logic. Instead create the new table!
+        
+        // ToDo: Remake logic. Instead create the new table!?
         Get _UtilTableExists hTable to bExists
         If (bExists = False) Begin
             Set Private.phCurrentTable to hTable
@@ -2725,6 +2741,9 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
 
         Close hTable
         Move (not(Err)) to bOK
+        If (bOK = True) Begin
+            Send ResetFillSQLTables
+        End
         Function_Return bOK
     End_Function
 
@@ -3015,6 +3034,9 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
             End
         End
 
+        If (bOk = True and sDriverID <> DATAFLEX_ID) Begin
+            Send ResetFillSQLTables
+        End
         Set TableName_Text of ghoStatusPanel to ""
         Close hTable
         Function_Return bOK
@@ -3190,6 +3212,9 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
             Set_Attribute DF_FILE_LOGICAL_NAME  of hTable to ""
         End
 
+        If (hTable <> 0 and sDriverID <> DATAFLEX_ID) Begin
+            Send ResetFillSQLTables
+        End
         Close hTable
         Function_Return (hTable <> 0)
     End_Function
@@ -3308,7 +3333,7 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
         String sTableName
         String sDriverIDFrom sDriverIDTo sLogicalNameTo
         Integer iDbType
-        Boolean bOk bOpened bApiTableUpdateAuto bLogicalNameOK
+        Boolean bOk bOpened bApiTableUpdateAuto bLogicalNameOK bSysfile
         Boolean bUseConnectionID bToANSI bRecnum bCopyData bCompareDate_DateTime bCompareIndexAscending bCompareIndexUppercase bTableExists
         Boolean bIsSame bFilelistError bIsAliasFrom bIsSQLTableFrom bIsSQLTableTo
         tSQLConnection SQLConnection
@@ -3476,6 +3501,14 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
             Get _UtilTableCheckChangeFilelistNames APITableNameInfoFrom to bOk
         End
         
+        // Refresh .int file: 
+        If (bIsSQLTableTo = True) Begin
+            Open hTable
+            Structure_Start hTable
+            Structure_End hTable DF_STRUCTEND_OPT_FORCE "." ghoDbUpdateHandler
+            Send ResetFillSQLTables
+        End
+
         Close hTable
         Set TableName_Text of ghoStatusPanel to ""
 
@@ -4911,7 +4944,8 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
         Move (iSegmentsTo > 0) to bExists
         If (bExists = True) Begin
             If (bIsSQLTable = True and iSegmentsTo > 0) Begin
-                Get_Attribute DF_INDEX_NAME of hTable APIIndex.iIndexNumber                 to sSQLIndexName
+//                Get_Attribute DF_INDEX_NAME of hTable APIIndex.iIndexNumber                 to sSQLIndexName
+                Move APIIndex.sSQLIndexName                                                 to sSQLIndexName
                 #IF (!@ > 170)
                     #IF (!@ > 182)
                         Get_Attribute DF_INDEX_SQL_TYPE of hTable APIIndex.iIndexNumber         to iSQLIndexType
@@ -7151,7 +7185,7 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
         Get UtilIndexSegmentsCompare APIIndexCompare.IndexSegmentArrayFrom APIIndexCompare.IndexSegmentArrayTo bCompareIndexUppercase bCompareIndexAscending to iSegment
         Move (iSegment = -1) to bIsSame
 
-        Function_Return (bIsSame = True)
+        Function_Return bIsSame
     End_Function
 
     // Compares each segment for the passed index.
@@ -7163,7 +7197,10 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
         Send Ignore_Error of Error_Object_Id DFERR_ARRAY_INDEX_OUT_OF_BOUNDS
         Set Error_Report_Mode to DUF_ERROR_NO_REPORT
         Move (SizeOfArray(aIndexSegmentFrom))      to iNumSegmentsFrom
-        Move (SizeOfArray(aIndexSegmentTo))        to iNumSegmentsTo
+        Move (SizeOfArray(aIndexSegmentTo))        to iNumSegmentsTo 
+        If (iNumSegmentsFrom <> iNumSegmentsTo) Begin
+            Function_Return -1
+        End
         Move (iNumSegmentsFrom max iNumSegmentsTo) to iNumSegments
 
         Decrement iNumSegments
@@ -7219,7 +7256,7 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
         Get _UtilTableIsSql hTable to bIsSQLTableTo
         Get UtilIndexCombineFromAndToArrays aIndexesFrom aIndexesTo to aAPIIndexCompare
 
-        for iCount from 0 to (iSize - 1)
+        For iCount from 0 to (iSize - 1)
             Get UtilIndexCompare bIsSQLTableFrom bIsSQLTableTo aAPIIndexCompare[iCount] bCompareIndexUppercase bCompareIndexAscending to bIsSame
             If (bIsSame = False) Begin
                 Get APIIndexCreateByFieldNames hTable aIndexesFrom[iCount] aIndexesTo aIndexesFrom[iCount].IndexSegmentArray to bOK
@@ -7227,7 +7264,7 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
         Loop
 
         // We probably should delete other indexes if they exists.
-        for iCount from (iSize +1) to iSizeTo
+        For iCount from (iSize +1) to iSizeTo
             Get ApiIndexRemove hTable iCount to bOK
         Loop
 
@@ -7261,7 +7298,7 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
 
         Move 0 to iCount
         Get_Attribute DF_FILE_LAST_INDEX_NUMBER of hTable to iIndexes
-        for iIndex from 1 to iIndexes
+        For iIndex from 1 to iIndexes
             // This is a test that the index exists as there might be "holes" aka the index
             // numbers doesn't not need to be consequitive:
             Get_Attribute DF_INDEX_NUMBER_SEGMENTS of hTable iIndex to iNumSegments
