@@ -2297,7 +2297,7 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
         // then we do a pseudo .int file change with the "_SqlUtilUpdateIntFile" function. After that we have
         // a proper and updated .int file.
         Get_Attribute DF_FILE_IS_SYSTEM_FILE of hTable to bSystemFile
-        Get _SqlUtilCreateIntFile hTable sDriverID sConnectionID True bSystemFile to bOK
+        Get _SqlUtilCreateIntFile hTable sDriverID sConnectionID True bSystemFile True to bOK
 
         If (bIsAlias = False) Begin
             Structure_Start hToTable sDriverID
@@ -2557,7 +2557,7 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
             If (sDriverID <> DATAFLEX_ID and not(sRootName contains ":")) Begin
                 Set_Attribute DF_FILE_ROOT_NAME of hTable to (sDriverID + ":" + sRootName)
                 Get psConnectionID to sConnectionID
-                Get _SqlUtilCreateIntFile hTable sDriverID sConnectionID True False to bOK
+                Get _SqlUtilCreateIntFile hTable sDriverID sConnectionID True False False to bOK
             End
             Function_Return True
         End
@@ -2933,7 +2933,7 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
                     Set_Attribute DF_FILE_LOGICAL_NAME  of hTable to sLogicalName
                     Set_Attribute DF_FILE_DISPLAY_NAME  of hTable to sDisplayName
                     Move False to bSysFile
-                    Get _SqlUtilCreateIntFile hTable sDriverID SQLConnection.sConnectionID bANSI bSysFile to bOK
+                    Get _SqlUtilCreateIntFile hTable sDriverID SQLConnection.sConnectionID bANSI bSysFile False to bOK
                 End
                 Function_Return False
             End
@@ -7925,7 +7925,7 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
         End
         Function_Return iRetval
     End_Function
-
+             
     Function UtilDataFlexDataTypeToString Integer iDataType Returns String
         String sRetval
 
