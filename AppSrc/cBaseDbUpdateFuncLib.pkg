@@ -1932,7 +1932,7 @@ Class cBaseDbUpdateFuncLib is a cObject
     End_Function
 
     Function _SqlUtilUpdateIntFile Integer hTable Returns Boolean
-        String sOrgFormat sNewFormat sRootName hTableName sPhysicalFileName sDriverID sDataPath
+        String sOrgFormat sNewFormat sRootName sTableName sPhysicalFileName sDriverID sDataPath
         Boolean bOpened bOK
 
         // ToDo: This needs further investigation but for now we just skip CodeMast & CodeType .int files update...
@@ -1940,19 +1940,19 @@ Class cBaseDbUpdateFuncLib is a cObject
         // which makes the program unable to run because they can't be opened.
         // Also note that there is another helper function "UtilTableCreateCodeMastCodeTypeIntFiles" to create
         // proper .int files for the two tables.
-//        If (Uppercase(hTableName) = "CODETYPE" or Uppercase(hTableName) = "CODEMAST") Begin
+//        If (Uppercase(sTableName) = "CODETYPE" or Uppercase(sTableName) = "CODEMAST") Begin
 //            Function_Return True
 //        End
 
         Get_Attribute DF_FILE_ROOT_NAME of hTable to sRootName
-        Get _TableNameOnly sRootName to hTableName
+        Get _TableNameOnly sRootName to sTableName
         Move CS_OEM_Txt  to sOrgFormat
         Move CS_ANSI_Txt to sNewFormat
         Get AutoConnectionIDLogin to bOK
 
         // It seems this can be called to quickly; causing a 13001 error "Cannot open cache file for write"
 //        Sleep 1  
-        Get _UtilDeleteCacheFile hTableName to bOK
+        Get _UtilDeleteCacheFile sTableName to bOK
         Get_Attribute DF_FILE_OPENED of hTable to bOpened
         If (bOpened = False) Begin
             Open hTable
@@ -2036,7 +2036,7 @@ Class cBaseDbUpdateFuncLib is a cObject
     // It is important that the hTable can be opened.
     Function _SqlUtilCreateIntFile Handle hTable String sDriverID String sConnectionID Boolean bAnsi Boolean bSysFile Returns Boolean
         Boolean bOK bExists bUseConnectionID 
-        String sDataPath sRootName sLogicalName sPhysicalFileName sConnectionString hTableName sSchemaName sANSI_OEM sNoDriverRootName
+        String sDataPath sRootName sLogicalName sPhysicalFileName sConnectionString sTableName sSchemaName sANSI_OEM 
         String[] asIndexArray
         Integer iCount iCh iSize iPos
 
@@ -2056,16 +2056,9 @@ Class cBaseDbUpdateFuncLib is a cObject
         End
         Get vFolderFormat sDataPath to sDataPath
 
-        Get_Attribute DF_FILE_ROOT_NAME    of hTable to sRootName 
-        Move (Pos(":", sRootName)) to iPos
-        If (iPos <> 0) Begin
-            Move (Mid(sRootName, Length(sRootName), iPos +1)) to sNoDriverRootName
-        End
-        Else Begin
-            Move sRootName to sNoDriverRootName
-        End
+        Get_Attribute DF_FILE_ROOT_NAME of hTable to sRootName
+        Get _TableNameOnly sRootName to sTableName
         Get_Attribute DF_FILE_LOGICAL_NAME of hTable to sLogicalName
-        Get _TableNameOnly sRootName to hTableName
         Move sLogicalName  to sPhysicalFileName
         Move (sPhysicalFileName + ".int") to sPhysicalFileName
 
@@ -2080,8 +2073,8 @@ Class cBaseDbUpdateFuncLib is a cObject
             Get vRenameFile (sDataPath + sPhysicalFileName) (sDataPath + sPhysicalFileName + ".bak") to bOK
         End
 
-        Get _UtilDeleteCacheFile sNoDriverRootName to bOK
-        Get _SqlUtilEnumerateIndexes sNoDriverRootName sDriverID to asIndexArray
+        Get _UtilDeleteCacheFile sTableName to bOK
+        Get _SqlUtilEnumerateIndexes sTableName sDriverID to asIndexArray
 
         Get Seq_Open_Output_Channel (sDataPath + sPhysicalFileName) to iCh
             Writeln channel iCh CS_DRIVER_NAME     " " sDriverID
@@ -2091,7 +2084,7 @@ Class cBaseDbUpdateFuncLib is a cObject
             Else Begin
                 Writeln channel iCh CS_SERVER_NAME " " CS_SERVER "=" sConnectionString
             End
-            Writeln channel iCh CS_DATABASE_NAME          " " hTableName
+            Writeln channel iCh CS_DATABASE_NAME          " " sTableName
             Writeln channel iCh CS_SCHEMA_NAME            " " (Lowercase(sSchemaName))
             // There seems to be a new order how these are set from DF19.
             If (bSysFile = True) Begin
