@@ -14,6 +14,7 @@ Global_Variable Handle ghoDUF
 Move ghoDbUpdateFunctionLibrary to ghoDUF
 
 Define CS_ReportFileName for "FileListFixes.txt"
+Define CS_BackupFolder   for "Backup"
 
 Class cNumForm is a Form
     Procedure Construct_Object
@@ -368,7 +369,7 @@ Object oFilelistFixerView is a dbView
 
         Object oFixAliasProblems_btn is a Button
             Set Size to 32 61
-            Set Location to 8 62
+            Set Location to 10 5
             Set Label to "1. Fix Filelist Alias Errors"
             Set peAnchors to anTopRight
             Set MultiLineState to True
@@ -396,7 +397,7 @@ Object oFilelistFixerView is a dbView
 
         Object oFixFileListSQLMissingTables_btn is a Button
             Set Size to 32 61
-            Set Location to 8 127
+            Set Location to 10 70
             Set Label to "2. Make Filelist RootNames equal to SQL Database"
             Set peAnchors to anTopRight
             Set MultiLineState to True
@@ -423,7 +424,7 @@ Object oFilelistFixerView is a dbView
         //   - Does not have a corresponding .Dat file, 
         Object oFixFileListErrors_btn is a Button
             Set Size to 32 61
-            Set Location to 8 192
+            Set Location to 10 135
             Set Label to "3. Fix Filelist .dat Errors"
             Set peAnchors to anTopRight
             Set MultiLineState to True
@@ -449,7 +450,7 @@ Object oFilelistFixerView is a dbView
 
         Object oFixOpenTableErrors_btn is a Button
             Set Size to 32 61
-            Set Location to 8 257
+            Set Location to 10 200
             Set Label to "4. Fix Filelist Open Errors"
             Set peAnchors to anTopRight
             Set MultiLineState to True
@@ -483,7 +484,7 @@ Object oFilelistFixerView is a dbView
 
         Object oRefreshAllIntFiles_btn is a Button
             Set Size to 32 61
-            Set Location to 8 322
+            Set Location to 10 265
             Set Label to "5. Refresh all *.int files"
             Set peAnchors to anTopRight
             Set MultiLineState to True
@@ -523,9 +524,51 @@ Object oFilelistFixerView is a dbView
 
         End_Object
 
+        Object oRecreateAllIntFiles_btn is a Button
+            Set Size to 32 61
+            Set Location to 10 396
+            Set Label to "7. Force a restruct of all *.int files"
+            Set peAnchors to anTopRight
+            Set MultiLineState to True
+            Set psToolTip to "This will recreate all .int files."
+            
+            Property Boolean pbErrorProcessingState
+            Property Integer piError
+            Property String psErrorText
+
+            Procedure OnClick
+                Integer iRetval iCounter
+                
+                Get YesNo_Box ("This will recreate all .int files. Relations and column index segment info will be preserved. A backup of all .int files will be created in the" * String(CS_BackupFolder) * "folder.\n\nContinue?") to iRetval
+                If (iRetval <> MBR_Yes) Begin
+                    Procedure_Return    
+                End
+                
+                Get RecreateAllIntFiles Self to iCounter
+                If (iCounter <> 0) Begin
+                    Send Info_Box ("Ready!" * String(iCounter) * ".int files recreated.")
+                End
+                Else Begin
+                    Send Info_Box "Ready! No .int files found to recreate."
+                End
+            End_Procedure
+            
+            Procedure Error_Report Integer iErrNum Integer iErrLine String sErrText 
+                If (pbErrorProcessingState(Self)) ; 
+                    Procedure_Return 
+            
+                Set pbErrorProcessingState to True 
+                Set piError to iErrNum
+                Set psErrorText to sErrText
+            
+                Set pbErrorProcessingState to False 
+            End_Procedure
+
+        End_Object
+
         Object oFixIntFileError_btn is a Button
             Set Size to 32 61
-            Set Location to 8 388
+            Set Location to 10 331
             Set Label to "6. Recreate *.int files with open errors"
             Set peAnchors to anTopRight
             Set MultiLineState to True
@@ -568,25 +611,23 @@ Object oFilelistFixerView is a dbView
         Object oMoveUnusedDatFiles_btn is a Button
             Set Size to 32 61
             Set Location to 8 463
-            Set Label to "6. Move unused .dat files to Backup folder"
+            Set Label to "8. Move unused .dat files to Backup folder"
             Set peAnchors to anTopRight
             Set MultiLineState to True
             Set psToolTip to "This will move all *.dat related files, that does not exist in the Filelist, to the workspace's '.\Data\Backup' folder."
             
             Procedure OnClick
                 Integer iRetval iCounter 
-                String sBackupFolder
                 
                 Get YesNo_Box "Move all *.dat related files that is not in the 'Rootname *.dat' list, to the workspace's '.\Data\Backup' folder.\n\nContinue?" to iRetval
                 If (iRetval <> MBR_Yes) Begin
                     Procedure_Return    
                 End
                 
-                Move "Backup" to sBackupFolder
-                Get MoveUnusedDatFileToBackupFolder sBackupFolder to iCounter
+                Get MoveUnusedDatFileToBackupFolder CS_BackupFolder to iCounter
                 
                 If (iCounter = -1) Begin
-                    Send Info_Box ("The backup folder:\n" + sBackupFolder + "\nCould not be created! No *.dat related files were moved.")
+                    Send Info_Box ("The backup folder:\n" + CS_BackupFolder + "\nCould not be created! No *.dat related files were moved.")
                 End
                 Else If (iCounter > 0) Begin
                     Send Info_Box ("Ready! Moved:" * String(iCounter) * ".dat related files to backup folder: '.\Data\Backkup'.")
@@ -1071,6 +1112,7 @@ Object oFilelistFixerView is a dbView
         Boolean bExists bOK bIsSystem bAnsi bIsAlias
         Handle hTable hoCurrentErrorObject
     
+        Move 0 to iCounter
         Move Error_Object_Id to hoCurrentErrorObject
         Move hoFrom to Error_Object_Id
     
@@ -1110,6 +1152,80 @@ Object oFilelistFixerView is a dbView
                     
                     // Refresh!
                     Get _SqlUtilRefreshIntFile of ghoDUF hTable sDriver sConnectionID bansi bIsSystem to bOK
+    
+                    If (bOK) Begin
+                        Increment iCounter
+                        Set_Attribute DF_FILE_ROOT_NAME of hTable to (sDriver + ":" + FileListArray[iCount].sNoDriverRootname)
+                    End
+                End
+            End
+        Loop
+    
+        Send CloseLogFile
+        Send StopStatusPanel
+    
+        If (iCounter <> 0) Begin
+            Send ShowFileListData
+        End
+        Else Begin
+            Move hoCurrentErrorObject to Error_Object_Id
+        End
+    
+        Function_Return iCounter
+    End_Function
+    
+    Function RecreateAllIntFiles Handle hoFrom Returns Integer
+        Integer iRetval iSize iCount iCounter
+        tFilelist[] FileListArray
+        String[] asIntFileData
+        String sDriver sIntFileName sConnectionID sErrorText sText sDataPath
+        Boolean bExists bOK bIsSystem bAnsi bIsAlias bIsSQL
+        Handle hTable hoCurrentErrorObject
+    
+        Move 0 to iCounter
+        Move Error_Object_Id to hoCurrentErrorObject
+        Move hoFrom to Error_Object_Id
+    
+        Get pFileListArray of ghoDUF to FileListArray
+        If (SizeOfArray(FileListArray) = 0) Begin
+            Send ShowFileListData
+            Get pFileListArray of ghoDUF to FilelistArray
+        End
+    
+        Move (SizeOfArray(FileListArray)) to iSize     
+        // Each Start_Restructure/End_Restructure calls the "Callback" message 3 times,
+        // which does a "Send DoAdvance" to the ghoProgressBar...
+        Send StartStatusPanel "Recreating Int Files" "" (iSize * 3)
+        Decrement iSize 
+        Get BackupAllIntFiles CS_BackupFolder to iCount 
+        
+        Get psDataPath of (phoWorkspace(ghoApplication)) to sDataPath
+        Get psConnId to sConnectionID 
+        Get pbToANSI of ghoDUF to bAnsi 
+    
+        Send OpenLogFile
+    
+        For iCount from 0 to iSize
+            Move FileListArray[iCount].sDriver  to sDriver
+            Move FileListArray[iCount].hTable   to hTable
+            Get _IsSQLEntry of ghoDUF hTable    to bIsSQL
+            Move FileListArray[iCount].bIsAlias to bIsAlias
+            Set Message_Text of ghoStatusPanel to ("Table number:" * String(hTable))
+            If (bIsSQL = True and bIsAlias = False) Begin
+                Move (FileListArray[iCount].sNoDriverRootname + ".int") to sIntFileName
+                File_Exist (sDataPath + "\" + sIntFileName) bExists
+                If (bExists and sDriver <> DATAFLEX_ID) Begin
+                    Get _IsSystemFile of ghoDUF hTable to bIsSystem
+                    Send Update_StatusPanel of ghoStatusPanel ("Recreating .int file:" * String(FileListArray[iCount].sRootName))
+                    
+                    // 1. Collect relation and index info:
+                    Get CollectIntFileRelationsAndIndexes sIntFileName to asIntFileData
+                    // 2. Recreate .int file!
+                    Get _SqlUtilCreateIntFile of ghoDUF hTable sDriver sConnectionID bAnsi bIsSystem to bOK
+                    If (bOK and (SizeOfArray(asIntFileData) <> 0)) Begin
+                        // 3. Add collected relation and index info:
+                        Get AddIntFileRelationsAndIndexes sIntFileName asIntFileData to bOK
+                    End
     
                     If (bOK) Begin
                         Increment iCounter
@@ -1199,7 +1315,7 @@ Object oFilelistFixerView is a dbView
         Boolean bOK
         String sErrorText sText
         Integer iRetval
-        String[] asRelations
+        String[] asIntFileData
     
         // First try to refresh the .int file:
         Get _SqlUtilRefreshIntFile of ghoDUF hTable sDriver sConnectionID True bIsSystem to bOK
@@ -1221,10 +1337,10 @@ Object oFilelistFixerView is a dbView
         End
     
         // If it didn't work to refresh, try re-create the .int file:
-        Get CollectIntFileRelationsAndIndexes sIntFileName to asRelations
+        Get CollectIntFileRelationsAndIndexes sIntFileName to asIntFileData
         Get _SqlUtilCreateIntFile of ghoDUF hTable sDriver sConnectionID True bIsSystem to bOK
         If (bOK) Begin
-            Get AddIntFileRelations sIntFileName asRelations to bOK
+            Get AddIntFileRelationsAndIndexes sIntFileName asIntFileData to bOK
             Function_Return True
         End
         Else Begin
@@ -1244,7 +1360,7 @@ Object oFilelistFixerView is a dbView
         Send Stop_StatusPanel of ghoStatusPanel
     End_Procedure
 
-    Function AddIntFileRelations String sIntFile String[] asRelations Returns Boolean
+    Function AddIntFileRelationsAndIndexes String sIntFile String[] asIntFileData Returns Boolean
         Boolean bOK
         Integer iCh iItem iSize iCount
         String[] asFileData
@@ -1255,23 +1371,24 @@ Object oFilelistFixerView is a dbView
             Function_Return False
         End
         
-        If (SizeOfArray(asRelations) = 0) Begin
+        If (SizeOfArray(asIntFileData) = 0) Begin
             Function_Return False
         End
 
         Direct_Input channel iCh sIntFile
         While (not(SeqEof))
             Readln channel iCh sLine
-            If (sLine <> "") Begin
-                Move (SearchArray(sLine, asRelations, Desktop, (RefFunc(DFSTRICMP)))) to iItem
+            If (Uppercase(sLine) contains "FIELD_NUMBER ") Begin
+                Move (SearchArray(sLine, asIntFileData, Desktop, (RefFunc(DFSTRICMP)))) to iItem
                 If (iItem <> -1) Begin
                     Repeat
-                        Move asRelations[iItem] to asFileData[-1]
+                        Move asIntFileData[iItem] to asFileData[-1]
                         Increment iItem
-                    Until (Trim(asRelations[iItem]) = "")  
-                    Move "" to asFileData[-1]
-                    Readln channel iCh sDummy
-                    Readln channel iCh sDummy
+                    Until (Trim(asIntFileData[iItem]) = "")  
+                    Move "" to asFileData[-1] 
+                    Repeat
+                        Readln channel iCh sDummy
+                    Until (Trim(sDummy) = "")
                 End
                 Else Begin
                     Move sLine to asFileData[-1]
@@ -1301,13 +1418,26 @@ Object oFilelistFixerView is a dbView
     
     Function CollectIntFileRelationsAndIndexes String sIntFile Returns String[]
         Integer iCh
-        String sLine sFileRelTxt sFieldNoTxt sIndexNoTxt
-        String[] asRelations
+        String sLine sFileRelTxt sFieldNoTxt sIndexNoTxt sPath sFileName
+        String[] asIntFileData
+        Boolean bFound
         
         Get Seq_New_Channel to iCh
         If (iCh < 0) Begin
-            Function_Return asRelations
+            Function_Return asIntFileData
         End
+        
+        Move False to bFound
+        Get ParseFolderName sIntFile to sPath
+        If (sPath <> "") Begin
+            Get vFolderExists sPath to bFound
+        End
+        If (bFound = False) Begin
+            Get psDataPath of (phoWorkspace(ghoApplication)) to sPath
+        End
+        Get vFolderFormat sPath to sPath
+        Get ParseFileName sIntFile to sFileName
+        Move (sPath + sFileName) to sIntFile
         
         Direct_Input channel iCh sIntFile
         While (not(SeqEof))
@@ -1322,11 +1452,11 @@ Object oFilelistFixerView is a dbView
                 Move sLine to sFileRelTxt
             End
             If (Uppercase(sLine) contains "FIELD_RELATED_FIELD ") Begin
-                Move sFieldNoTxt to asRelations[-1]    
-                Move sIndexNoTxt to asRelations[-1]    
-                Move sFileRelTxt to asRelations[-1]    
-                Move sLine       to asRelations[-1]    
-                Move ""          to asRelations[-1] 
+                Move sFieldNoTxt to asIntFileData[-1]    
+                Move sIndexNoTxt to asIntFileData[-1]    
+                Move sFileRelTxt to asIntFileData[-1]    
+                Move sLine       to asIntFileData[-1]    
+                Move ""          to asIntFileData[-1] 
                 Move ""          to sFieldNoTxt
                 Move ""          to sIndexNoTxt
             End
@@ -1334,7 +1464,7 @@ Object oFilelistFixerView is a dbView
         
         Close_Input channel iCh
         Send Seq_Release_Channel iCh
-        Function_Return asRelations
+        Function_Return asIntFileData
     End_Function
             
     // To remove any "Alias" word from the DisplayName
@@ -1350,6 +1480,65 @@ Object oFilelistFixerView is a dbView
         End
         Function_Return sDisplayNameNew
     End_Function
+
+    Function BackupAllIntFiles String sBackupFolder Returns Integer
+        Integer iSize iCount iRetval iCounter
+        String sDataPath sFilter sFileDateExt
+        String[] asFiles asInUseDatFiles 
+        Boolean bExists
+        
+        Get psDataPath of (phoWorkspace(ghoApplication)) to sDataPath
+        Get vFolderFormat sDataPath to sDataPath
+        Move (sDataPath + sBackupFolder) to sBackupFolder
+        Get vFolderExists sBackupFolder to bExists
+        If (bExists = False) Begin
+            Get vCreateDirectory sBackupFolder to iRetval
+            If (iRetval <> 0) Begin
+                Function_Return -1
+            End
+        End
+        Send StartStatusPanel "Backing up *.int files to backup folder:" sBackupFolder 1
+
+        Move "int" to sFilter
+        Get CollectFilteredFiles sDataPath sFilter to asFiles
+        Get FileDateExtension to sFileDateExt
+        Get vFolderFormat sBackupFolder to sBackupFolder 
+        Set piMaximum of ghoStatusPanel to (SizeOfArray(asFiles))
+        Move (SizeOfArray(asFiles)) to iSize
+        If (iSize = 0) Begin
+            Function_Return 0
+        End
+        Move 0 to iCounter
+        Decrement iSize
+        For iCount from 0 to iSize
+            Send Update_StatusPanel of ghoStatusPanel (sDataPath + asFiles[iCount]) 
+            Get vCopyFile (sDataPath + asFiles[iCount]) (sBackupFolder + String(asFiles[iCount]) + String(sFileDateExt)) to iRetval
+            If (iRetval = 0) Begin
+                Increment iCounter
+            End
+            Send DoAdvance of ghoStatusPanel
+        Loop
+        
+        Function_Return iCounter
+    End_Function
+    
+    Function FileDateExtension Returns String
+        String sFileDateExt sDateTime
+        DateTime dDateTime
+        Integer iPos
+        
+        Move (CurrentDateTime()) to dDateTime
+        Move dDateTime to sDateTime
+        Move (Replaces("/", sDateTime, "-"))  to sDateTime
+        Move (Replaces(" ", sDateTime, "__")) to sDateTime
+        Move (Replaces(":", sDateTime, "_"))  to sDateTime
+        Move (Pos(",", sDateTime)) to iPos
+        If (iPos <> 0) Begin
+            Move (Left(sDateTime, (iPos -1))) to sDateTime
+        End
+        Move ("." + sDateTime) to sDateTime
+        Function_Return sDateTime 
+    End_Function
     
     // To move all *.dat related files to a Data subfolder (sBackupFolder)
     // Returns -1 if it failed
@@ -1357,7 +1546,7 @@ Object oFilelistFixerView is a dbView
     // Note: The sBackupFolder should *not* contain a path, just a folder name.
     Function MoveUnusedDatFileToBackupFolder String sBackupFolder Returns Integer
         Integer iSize iCount iRetval iCounter
-        String sDataPath
+        String sDataPath sFilter
         String[] asFiles asInUseDatFiles
         Boolean bExists
         
@@ -1371,13 +1560,11 @@ Object oFilelistFixerView is a dbView
                 Function_Return -1
             End
         End
-        
         Send StartStatusPanel "Moving *.dat files to backup folder:" sBackupFolder 1
-//        Set Progress_Bar_Visible_State of ghoStatusPanel to True
-//        Set piAdvanceBy                of ghoStatusPanel to 1
 
-        Get CollectDatRelatedFiles sDataPath to asFiles 
-        Set piMaximum                  of ghoStatusPanel to (SizeOfArray(asFiles))
+        Move "dat,hdr,vld,k1,k2,k3,k4,k5,k6,k7,k8,k9,k10,k11,k12,k13,k14,k15,k16,k17,k18,k19,k20" to sFilter
+        Get CollectFilteredFiles sDataPath sFilter to asFiles 
+        Set piMaximum of ghoStatusPanel to (SizeOfArray(asFiles))
         Get InUseDatFiles to asInUseDatFiles
         Get SanitizeDatRelatedFiles asFiles asInUseDatFiles to asFiles
         Move (SizeOfArray(asFiles)) to iSize
@@ -1402,9 +1589,9 @@ Object oFilelistFixerView is a dbView
     
     // Returns a string array with all *.dat related files from the passed sPath parameter,
     // as a string array.
-    Function CollectDatRelatedFiles String sPath Returns String[]
+    Function CollectFilteredFiles String sPath String sFilter Returns String[]
         Integer iCounter iCh iItem
-        String sLine sExt sFilter
+        String sLine sExt 
         String[] asFiles asExt
         
         Get Seq_New_Channel to iCh
@@ -1412,7 +1599,6 @@ Object oFilelistFixerView is a dbView
             Function_Return asFiles
         End
         
-        Move "dat,hdr,vld,k1,k2,k3,k4,k5,k6,k7,k8,k9,k10,k11,k12,k13,k14,k15,k16,k17,k18,k19,k20" to sFilter
         Move (StrSplitToArray(sFilter, ",")) to asExt
         Direct_Input channel iCh ("dir:" * String(sPath))
         Repeat
