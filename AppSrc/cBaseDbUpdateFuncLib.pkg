@@ -1553,6 +1553,7 @@ Class cBaseDbUpdateFuncLib is a cObject
 
         // We also need to remove the cache-file since the table has been changed
         Get _UtilDeleteCacheFile sDataView to bOK
+        Send ResetFillSQLTables
 
         Function_Return (Err = False)
     End_Function
@@ -1816,7 +1817,7 @@ Class cBaseDbUpdateFuncLib is a cObject
     End_Function
 
     Function _SqlTableArrayDAW Returns String[]
-        String[] sReturnArray
+        String[] asSQLTables
         String sTable sTableType sSchema sDefSchema sComment sTableKeyWord sSysKeyWord sConnectionString
         Handle hoSQLHandler
         Integer iCount iSize iItem iPos
@@ -1825,7 +1826,7 @@ Class cBaseDbUpdateFuncLib is a cObject
 
         Get pSQLConnection of ghoSQLConnectionHandler to SQLConnection
         If (SQLConnection.sConnectionString = "") Begin
-            Function_Return sReturnArray
+            Function_Return asSQLTables
         End
 
         Move SQLConnection.sSchema      to sDefSchema
@@ -1850,6 +1851,11 @@ Class cBaseDbUpdateFuncLib is a cObject
 //            End
 //        End
 
+        Get pasSQLDataTables to asSQLTables
+        If (SizeOfArray(asSQLTables) <> 0) Begin
+            Function_Return asSQLTables
+        End
+
         Get EnumerateTables of hoSQLHandler sConnectionString to iSize
         Move False to Err
         Move 0 to iItem
@@ -1871,14 +1877,15 @@ Class cBaseDbUpdateFuncLib is a cObject
                 Move (sTable <> "" and Uppercase(sTableType) = sTableKeyWord and Uppercase(sSchema) <> sSysKeyWord and Uppercase(sSchema) <> "SYSTOOLS") to bOK
             End
             If (bOK = True) Begin
-                Move sTable to sReturnArray[iItem]
+                Move sTable to asSQLTables[iItem]
                 Increment iItem
             End
         Loop
 
         Send Trap_Error of Error_Object_Id CLIERR_LOGIN_UNSUCCESSFUL
 
-        Function_Return sReturnArray
+        Set pasSQLDataTables to asSQLTables
+        Function_Return asSQLTables
     End_Function
 
     Function _SqlProcedureArrayDAW String sStmt String sArgument Returns String[]
@@ -2162,7 +2169,12 @@ Class cBaseDbUpdateFuncLib is a cObject
         Get psDatabase to sDataBase
         Get _SqlUtilEnumerateTables MSSQLDRV_ID sDataBase "" to asSQLTables
         Set pasSQLDataTables to asSQLTables
-    End_Procedure 
+    End_Procedure  
+    
+    Procedure ResetFillSQLTables
+        String[] asSQLTables
+        Set pasSQLDataTables to asSQLTables
+    End_Procedure
     
     // This collects *all* filelist entries and sets the pFileListArray struct property.
     Procedure UtilFillFileListStruct
