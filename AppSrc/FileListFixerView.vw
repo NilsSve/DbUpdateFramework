@@ -1192,16 +1192,15 @@ Object oFilelistFixerView is a dbView
             Get pFileListArray of ghoDUF to FilelistArray
         End
     
-        Move (SizeOfArray(FileListArray)) to iSize     
-        // Each Start_Restructure/End_Restructure calls the "Callback" message 3 times,
-        // which does a "Send DoAdvance" to the ghoProgressBar...
-        Send StartStatusPanel "Recreating Int Files" "" (iSize * 3)
-        Decrement iSize 
-        Get BackupAllIntFiles CS_BackupFolder to iCount 
-        
         Get psDataPath of (phoWorkspace(ghoApplication)) to sDataPath
         Get psConnId to sConnectionID 
         Get pbToANSI of ghoDUF to bAnsi 
+        Move (SizeOfArray(FileListArray)) to iSize     
+        Decrement iSize 
+        Get BackupAllIntFiles CS_BackupFolder to iCount 
+        // Each Start_Restructure/End_Restructure calls the "Callback" message 3 times,
+        // which does a "Send DoAdvance" to the ghoProgressBar...
+        Send StartStatusPanel "Recreating Int Files" "" (iSize * 3)
     
         Send OpenLogFile
     
@@ -1229,6 +1228,7 @@ Object oFilelistFixerView is a dbView
                     Increment iCounter
                 End
             End
+            Send DoAdvance of ghoStatusPanel
         Loop
     
         Send CloseLogFile
@@ -1461,11 +1461,35 @@ Object oFilelistFixerView is a dbView
             End
         Loop
         
+        If (SizeOfArray(asIntFileData) <> 0) Begin
+            Get SanitizeIntFilesData asIntFileData to asIntFileData
+        End
         Close hTable
         Close_Input channel iCh
         Send Seq_Release_Channel iCh
         Function_Return asIntFileData
-    End_Function   
+    End_Function 
+    
+    // It seems like "FIELD_LENGTH" leads to more headache than gain. It can happen
+    // quite often that the table can't be open because of misinterpretation of such
+    // settings. This function simply removes *all* "FIELD_LENGTH" settings from
+    // the passed string array. 
+    // This is also what the Studio's "SQL Connect/Repair Wizard" does.
+    Function SanitizeIntFilesData String[] asIntFileData Returns String[]
+        Integer iSize iCount
+        String sVal
+        String[] asOutData
+        
+        Move (SizeOfArray(asIntFileData)) to iSize
+        Decrement iSize
+        For iCount from 0 to iSize
+            Move asIntFileData[iCount] to sVal
+            If (not(Uppercase(sVal) contains "FIELD_LENGTH")) Begin
+                Move asIntFileData[iCount] to asOutData[-1]    
+            End
+        Loop
+        Function_Return asOutData
+    End_Function
     
     // To get the DataFlex type from a SQL column DateTime(x) data type, as a text string
     // For usage in .int files.
