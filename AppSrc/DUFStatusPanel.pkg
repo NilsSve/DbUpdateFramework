@@ -278,6 +278,10 @@ Object Status_Panel is a cProcessStatusPanel
     Procedure DoAdvance
         Send DoAdvance of ghoProgressBar
     End_Procedure
+
+    Procedure Set piPosition Integer iPos
+        Set piPosition of ghoProgressBar to iPos
+    End_Procedure
     
     // gets called when status panel is activated passing whether a button
     // should appear
