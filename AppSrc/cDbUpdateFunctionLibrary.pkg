@@ -3509,7 +3509,6 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
             Send ResetFillSQLTables
         End
 
-        Close hTable
         Set TableName_Text of ghoStatusPanel to ""
 
         Function_Return bOK
