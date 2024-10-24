@@ -1,0 +1,226 @@
+Use Windows.pkg
+Use cRDCButtonDPI.pkg
+Use cRichEdit.pkg
+Use seq_chnl.pkg
+Use vWin32fh.pkg
+
+#IFNDEF clGreenGrey
+    Define clGreenGrey      for (RGB(64, 84, 93))
+    Define clGreenGreyLight for (RGB(7, 117, 104))
+#ENDIF
+
+Object oDbDriverIntSettings_dg is a ModalPanel
+    Set Size to 214 395
+    Set Label to "Database Driver .int File Settings"
+    Set piMinSize to 89 211
+    Set Location to 2 2
+    Set Border_Style To Border_Thick
+    Set Locate_Mode to Center_On_Parent
+
+    Property String psDriverIntFile ""
+    Property Integer piIndent  
+    Property Boolean pbLoaded False
+
+    Object oDbDriverIntSettings_edt is a cRichEdit
+        Set Size to 169 373
+        Set Location to 16 11
+        Set peAnchors to anAll
+        Set Label_Row_Offset to 3
+//        Set TextColor to clBlack
+//        Set Color to clGreenGreyLight
+        Set piFontSize to 200
+        Set psTypeFace to 'Consolas'
+
+        Delegate Set piIndent to (piParagraphIndent(Self))
+
+        Procedure LoadData
+            String sDriverIntFile
+            String[] asData
+            Integer iTwips iIndent iSize iCount iItem
+            Boolean bUseCacheOff
+            
+            If (pbLoaded(Self) = True) Begin
+                Procedure_Return
+            End
+            Get psDriverIntFile to sDriverIntFile
+            Set Label to sDriverIntFile
+            Move 1440 to iTwips
+            Get piIndent to iIndent
+            Set piParagraphIndent to (iIndent + (iTwips * 0.2))
+
+            Set pbLoaded to True
+            Get ReadFileToArray sDriverIntFile to asData 
+            Get SanitizeIntFileData asData to asData
+            
+            Move (SizeOfArray(asData)) to iSize
+            If (iSize = 0) Begin
+                Send AppendText "No active settings found in driver .int file."
+                Procedure_Return
+            End
+            
+            Move (SearchArray("Use_Cache 0", asData, Desktop , (RefFunc(DFSTRICMP)))) to iItem
+            Move (iItem <> -1) to bUseCacheOff
+            
+            Decrement iSize
+            For iCount from 0 to iSize
+                Send AppendTextLn asData[iCount]
+            Loop 
+            If (bUseCacheOff = True) Begin
+                Send AppendTextLn ""
+                Send AppendTextLn "Note: Instead of setting 'Use_Cache 0' in the driver .int file, it is strongly suggested to: 'Set pbUseDriverCacheFiles to False' in the cDbUpdateHandler object!"
+            End
+        End_Procedure
+
+        Procedure Page Integer iPageObject
+            Forward Send Page iPageObject
+            Send LoadData
+        End_Procedure
+
+        On_Key kCancel Send Cancel
+    End_Object  
+    
+    Function SanitizeIntFileData String[] asData Returns String[]
+        String[] asReturnData
+        Integer iSize iCount
+        
+        Move (SizeOfArray(asData)) to iSize
+        Decrement iSize
+        For iCount from 0 to iSize
+            If (Trim(asData[iCount]) <> "" and (Left(asData[iCount], 1) <> ";")) Begin
+                Move asData[iCount] to asReturnData[-1]
+            End
+        Loop
+        
+        Function_Return asReturnData
+    End_Function
+
+    Object oCancel_Btn is a cRDCButtonDPI
+        Set Label    to "&Close"
+        Set Location to 193 334
+        Set peAnchors to anBottomRight
+
+        Procedure OnClick
+            Send Close_Panel
+        End_Procedure
+
+    End_Object
+
+    Object oFirstRun_btn is a cRDCButtonDPI
+        Set Location to 193 220
+        Set Label to "View &Top"
+        Set peAnchors to anBottomRight
+
+        Procedure OnClick
+            Send Beginning_of_Data to oDbDriverIntSettings_edt
+        End_Procedure
+
+    End_Object
+
+    Object oLatestRun_btn is a cRDCButtonDPI
+        Set Location to 193 277
+        Set Label to "View &Bottom"
+        Set peAnchors to anBottomRight
+
+        Procedure OnClick
+            Send End_of_Data to oDbDriverIntSettings_edt
+        End_Procedure
+
+    End_Object
+
+    Object oEditFile_btn is a Button
+        Set Location to 193 11
+        Set Label to "Edit File"
+        Set peAnchors to anBottomLeft
+    
+        Procedure OnClick
+            String sFileName
+            Get psDriverIntFile to sFileName
+            Runprogram Background "Notepad.exe" sFileName    
+        End_Procedure
+    
+    End_Object
+
+    Procedure Page Integer iPageObject
+        Forward Send Page iPageObject
+        Set Icon to "SelectTables.ico"
+        Send Activate of oDbDriverIntSettings_edt
+    End_Procedure
+
+    // Note: If the sFileName param does not contain a path,
+    //       it is assumed the file resides in the Data folder.
+    //       Reads a file and returns it as a string array.
+    Function ReadFileToArray String sFileName Returns String[]
+        String[] asData
+        Integer iCh
+        String sPath sLine
+        Boolean bFound
+        
+        Get Seq_New_Channel to iCh
+        If (iCh < 0) Begin
+            Function_Return asData
+        End
+        
+        Get ParseFolderName sFileName to sPath
+        If (sPath <> "") Begin
+            Get vFolderExists sPath to bFound
+        End
+        If (bFound = False) Begin
+            Get psDataPath of (phoWorkspace(ghoApplication)) to sPath
+        End
+        Get vFolderFormat sPath to sPath
+        Get ParseFileName sFileName to sFileName
+        Move (sPath + sFileName) to sFileName
+
+        Direct_Input channel iCh sFileName
+        While (not(SeqEof))
+            Readln channel iCh asData[-1]
+        Loop
+        Close_Input channel iCh
+        Send Seq_Release_Channel iCh
+        
+        Function_Return asData
+    End_Function
+    
+    // Put a status bar at the bottom of the panel to add a gripper in the lower right corner.
+    Procedure End_Construct_Object
+        Integer iStyle iSize iOffset
+
+        Forward Send End_Construct_Object
+
+        Get Border_Style to iStyle
+        Move 8 to iOffset
+        If (iStyle = Border_Thick) Begin
+            Object oDialogCommandbar is a cCJCommandBarSystem
+                Object oStatusBar is a cCJStatusBar
+                    Object oStatusIdle is a cCJStatusBarPane
+                        Set piId to sbpIDIdlePane
+                        Set pbStyleStretch to True
+                    End_Object
+                End_Object
+            End_Object
+
+            Get Size to iSize
+            Set Size to (Hi(iSize) + iOffset) (Low(iSize))
+        End
+    End_Procedure
+
+    On_Key Key_Alt+Key_T  Send KeyAction of oFirstRun_btn
+    On_Key Key_Ctrl+Key_T Send KeyAction of oFirstRun_btn
+    On_Key Key_Alt+Key_B  Send KeyAction of oLatestRun_btn
+    On_Key Key_Ctrl+Key_B Send KeyAction of oLatestRun_btn
+    On_Key Key_Alt+Key_C  Send KeyAction of oCancel_Btn
+End_Object
+
+Procedure ActivateDriverIntSettingsDialog String sDriverIntFile
+    Handle ho
+    Boolean bExists
+
+    Get vFilePathExists sDriverIntFile to bExists
+    If (bExists = False) Begin
+        Send Info_Box "The file doesn't exist."
+        Procedure_Return
+    End
+    Move (oDbDriverIntSettings_dg(Self)) to ho
+    Set psDriverIntFile of ho to sDriverIntFile
+    Send Popup of ho
+End_Procedure
