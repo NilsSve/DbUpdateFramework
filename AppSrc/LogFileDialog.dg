@@ -4,6 +4,11 @@ Use cRichEdit.pkg
 Use seq_chnl.pkg
 Use vWin32fh.pkg
 
+#IFNDEF clGreenGrey
+    Define clGreenGrey                for (RGB(64, 84, 93))
+    Define clGreenGreyLight           for (RGB(7, 117, 104))
+#ENDIF
+
 Object oLogFileDialog_dg is a ModalPanel
     Set Size to 230 435
     Set Label to "Log File Dialog"
