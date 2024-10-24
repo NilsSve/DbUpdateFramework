@@ -8,6 +8,7 @@ Use File_dlg.pkg
 Use cRichEdit.pkg
 Use cRDCForm.pkg
 Use vWin32fh.pkg
+Use DriverIntFileSettings.dg
 
 // Just to get a shorter handle name
 Global_Variable Handle ghoDUF 
@@ -28,7 +29,7 @@ End_Class
 
 Activate_View Acivate_oFileListFixerView for oFileListFixerView
 Object oFilelistFixerView is a dbView 
-    Set Size to 388 556
+    Set Size to 414 556
     Set piMinSize to 384 556
     Set Location to 2 2
     Set Maximize_Icon to True
@@ -147,10 +148,63 @@ Object oFilelistFixerView is a dbView
 
     End_Object
 
+    Object oDriver_fm is a cRDCForm
+        Set Size to 12 318
+        Set Location to 116 11
+        Set Label_Col_Offset to 0
+        Set Label_Row_Offset to 1
+        Set Label_Justification_Mode to JMode_Top
+        Set peAnchors to anTopLeftRight
+        
+        Procedure Page Integer iPageObject
+            String sFileName sPath sDriver sExt
+            Boolean bExists
+            Integer iPos
+            
+            Forward Send Page iPageObject
+            Get psDataPath of (phoWorkspace(ghoApplication)) to sPath
+            Get vFolderFormat sPath to sPath
+            Get psDriverID of ghoDUF to sDriver
+            If (sDriver = DATAFLEX_ID) Begin
+                Set Enabled_State to False
+                Set Enabled_State of oViewDriverProperties_btn to False
+                Procedure_Return    
+            End 
+            
+            Move (Pos(".", sDriver)) to iPos
+            Move (Left(sDriver, iPos -1)) to sFileName
+            Move (sFileName + ".int") to sFileName
+            Set Label to sFileName
+            
+            File_Exist (sPath + sFileName) bExists
+            If (bExists = False) Begin
+                Get_File_Path sFileName to sFileName   
+            End
+            Else Begin
+                Move (sPath + sFileName) to sFileName
+            End
+            Set Value to sFileName
+        End_Procedure
+        
+    End_Object    
+
+    Object oViewDriverProperties_btn is a Button
+        Set Size to 12 50
+        Set Location to 116 333
+        Set Label to "View"
+    
+        Procedure OnClick
+            String sFileName
+            Get Value of oDriver_fm to sFileName
+            Send ActivateDriverIntSettingsDialog sFileName     
+        End_Procedure
+    
+    End_Object
+
     Object oDatabase_fm is a Form
         Set Label to "SQL Database Name:"
         Set Size to 12 151
-        Set Location to 119 12
+        Set Location to 143 12
         Set Label_Col_Offset to 0
         Set Label_Justification_Mode to JMode_Top
         Set peAnchors to anNone
@@ -234,13 +288,13 @@ Object oFilelistFixerView is a dbView
     Object oNumberOfSQLTables_fm is a cNumForm
         Set Label to "Number of Tables in SQL Database:"
         Set Size to 12 34
-        Set Location to 119 438
+        Set Location to 143 438
         Set peAnchors to anTopRight
     End_Object
 
     Object oCount_gp is a Group
         Set Size to 166 537
-        Set Location to 133 12
+        Set Location to 159 12
         Set Label to "Counters:"
         Set peAnchors to anTopLeftRight
 
@@ -610,7 +664,7 @@ Object oFilelistFixerView is a dbView
 
         Object oMoveUnusedDatFiles_btn is a Button
             Set Size to 32 61
-            Set Location to 8 463
+            Set Location to 10 463
             Set Label to "8. Move unused .dat files to Backup folder"
             Set peAnchors to anTopRight
             Set MultiLineState to True
@@ -643,7 +697,7 @@ Object oFilelistFixerView is a dbView
 
     Object oLogFile_grp is a Group
         Set Size to 30 537
-        Set Location to 351 12
+        Set Location to 377 12
         Set Label to "Log File"
         Set peAnchors to anTopLeftRight
 
@@ -1174,76 +1228,6 @@ Object oFilelistFixerView is a dbView
         Function_Return iCounter
     End_Function
     
-    Function RecreateAllIntFiles Handle hoFrom Returns Integer
-        Integer iRetval iSize iCount iCounter
-        tFilelist[] FileListArray
-        String[] asIntFileData
-        String sDriver sIntFileName sConnectionID sErrorText sText sDataPath
-        Boolean bExists bOK bIsSystem bAnsi bIsAlias bIsSQL
-        Handle hTable hoCurrentErrorObject
-    
-        Move 0 to iCounter
-        Move Error_Object_Id to hoCurrentErrorObject
-        Move hoFrom to Error_Object_Id
-    
-        Get pFileListArray of ghoDUF to FileListArray
-        If (SizeOfArray(FileListArray) = 0) Begin
-            Send ShowFileListData
-            Get pFileListArray of ghoDUF to FilelistArray
-        End
-    
-        Get psDataPath of (phoWorkspace(ghoApplication)) to sDataPath
-        Get psConnId to sConnectionID 
-        Get pbToANSI of ghoDUF to bAnsi 
-        Move (SizeOfArray(FileListArray)) to iSize     
-        Decrement iSize 
-        Get BackupAllIntFiles CS_BackupFolder to iCount 
-        // Each Start_Restructure/End_Restructure calls the "Callback" message 3 times,
-        // which does a "Send DoAdvance" to the ghoProgressBar...
-        Send StartStatusPanel "Recreating Int Files" "" (iSize * 3)
-    
-        Send OpenLogFile
-    
-        For iCount from 0 to iSize
-            Move FileListArray[iCount].sDriver  to sDriver
-            Move FileListArray[iCount].hTable   to hTable
-            Get _IsSQLEntry of ghoDUF hTable    to bIsSQL
-            Move FileListArray[iCount].bIsAlias to bIsAlias
-            Set Message_Text of ghoStatusPanel to ("Table number:" * String(hTable))
-            If (bIsSQL = True and bIsAlias = False) Begin
-                Move (FileListArray[iCount].sNoDriverRootname + ".int") to sIntFileName
-                File_Exist (sDataPath + "\" + sIntFileName) bExists
-                If (bExists and sDriver <> DATAFLEX_ID) Begin
-                    Get _IsSystemFile of ghoDUF hTable to bIsSystem
-                    Send Update_StatusPanel of ghoStatusPanel ("Recreating .int file:" * String(FileListArray[iCount].sRootName))
-                    
-                    // 1. Collect relation and index info:
-                    Get CollectIntFileRelationAndIndexFields hTable sIntFileName sDriver to asIntFileData
-                    // 2. Recreate .int file!
-                    Get _SqlUtilCreateIntFile of ghoDUF hTable sDriver sConnectionID bAnsi bIsSystem False to bOK
-                    If (bOK and (SizeOfArray(asIntFileData) <> 0)) Begin
-                        // 3. Add collected relation and index info:
-                        Get AddIntFileRelationsAndIndexes sIntFileName asIntFileData to bOK
-                    End
-                    Increment iCounter
-                End
-            End
-            Send DoAdvance of ghoStatusPanel
-        Loop
-    
-        Send CloseLogFile
-        Send StopStatusPanel
-    
-        If (iCounter <> 0) Begin
-            Send ShowFileListData
-        End
-        Else Begin
-            Move hoCurrentErrorObject to Error_Object_Id
-        End
-    
-        Function_Return iCounter
-    End_Function
-    
     Function FixAllIntFileErrors Handle hoFrom Returns Integer
         Integer iRetval iSize iCount iCounter
         tFilelist[] ErrorFilesArray
@@ -1333,10 +1317,10 @@ Object oFilelistFixerView is a dbView
         End
     
         // If it didn't work to refresh, try re-create the .int file:
-        Get CollectIntFileRelationAndIndexFields sIntFileName to asIntFileData
+        Get CollectIntFileFieldData sIntFileName to asIntFileData
         Get _SqlUtilCreateIntFile of ghoDUF hTable sDriver sConnectionID True bIsSystem to bOK
         If (bOK) Begin
-            Get AddIntFileRelationsAndIndexes sIntFileName asIntFileData to bOK
+            Get AddIntFileFieldData sIntFileName asIntFileData to bOK
             Function_Return True
         End
         Else Begin
@@ -1345,79 +1329,83 @@ Object oFilelistFixerView is a dbView
         End
     End_Function
     
-    // Helper procedures for status panel/progress bar
-    Procedure StartStatusPanel String sMessage String sMessage2 Integer iSize
-        Send StartStatusPanel of ghoDUF sMessage sMessage2 iSize
-        Set Caption_text of ghoStatusPanel to "The Database Update Framework"
-        Set Progress_Bar_Overall_Visible_State of ghoStatusPanel to False
-    End_Procedure
+    Function RecreateAllIntFiles Handle hoFrom Returns Integer
+        Integer iRetval iSize iCount iCounter
+        tFilelist[] FileListArray
+        String[] asIntFileData
+        String sDriver sIntFileName sConnectionID sErrorText sText sDataPath
+        Boolean bExists bOK bIsSystem bAnsi bIsAlias bIsSQL
+        Handle hTable hoCurrentErrorObject
     
-    Procedure StopStatusPanel
-        Send Stop_StatusPanel of ghoStatusPanel
-    End_Procedure
-
-    Function AddIntFileRelationsAndIndexes String sIntFile String[] asIntFileData Returns Boolean
-        Boolean bOK
-        Integer iCh iItem iSize iCount
-        String[] asFileData
-        String sLine sDummy
-        
-        Get Seq_New_Channel to iCh
-        If (iCh < 0) Begin
-            Function_Return False
+        Move 0 to iCounter
+        Move Error_Object_Id to hoCurrentErrorObject
+        Move hoFrom to Error_Object_Id
+    
+        Get pFileListArray of ghoDUF to FileListArray
+        If (SizeOfArray(FileListArray) = 0) Begin
+            Send ShowFileListData
+            Get pFileListArray of ghoDUF to FilelistArray
         End
-        
-        If (SizeOfArray(asIntFileData) = 0) Begin
-            Function_Return False
-        End
-
-        Direct_Input channel iCh sIntFile
-        While (not(SeqEof))
-            Readln channel iCh sLine
-            If (Uppercase(sLine) contains "FIELD_NUMBER ") Begin
-                Move (SearchArray(sLine, asIntFileData, Desktop, (RefFunc(DFSTRICMP)))) to iItem
-                If (iItem <> -1) Begin
-                    Repeat
-                        Move asIntFileData[iItem] to asFileData[-1]
-                        Increment iItem
-                    Until (iItem >= SizeOfArray(asIntFileData) or asIntFileData[iItem] = "")
-                    Move "" to asFileData[-1] 
-                    Repeat
-                        Readln channel iCh sDummy
-                    Until (Trim(sDummy) = "")
-                End
-                Else Begin
-                    Move sLine to asFileData[-1]
+    
+        Get psDataPath of (phoWorkspace(ghoApplication)) to sDataPath
+        Get psConnId to sConnectionID 
+        Get pbToANSI of ghoDUF to bAnsi 
+        Move (SizeOfArray(FileListArray)) to iSize     
+        Decrement iSize 
+        Get BackupAllIntFiles CS_BackupFolder to iCount 
+        // Each Start_Restructure/End_Restructure calls the "Callback" message 3 times,
+        // which does a "Send DoAdvance" to the ghoProgressBar...
+        Send StartStatusPanel "Recreating Int Files" "" (iSize * 3)
+    
+        Send OpenLogFile
+    
+        For iCount from 0 to iSize
+            Move FileListArray[iCount].sDriver  to sDriver
+            Move FileListArray[iCount].hTable   to hTable
+            Get _IsSQLEntry of ghoDUF hTable    to bIsSQL
+            Move FileListArray[iCount].bIsAlias to bIsAlias
+            Set Message_Text of ghoStatusPanel to ("Table number:" * String(hTable))
+            If (bIsSQL = True and bIsAlias = False) Begin
+                Move (FileListArray[iCount].sNoDriverRootname + ".int") to sIntFileName
+                File_Exist (sDataPath + "\" + sIntFileName) bExists
+                If (bExists and sDriver <> DATAFLEX_ID) Begin
+                    Get _IsSystemFile of ghoDUF hTable to bIsSystem
+                    Send Update_StatusPanel of ghoStatusPanel ("Recreating .int file:" * String(FileListArray[iCount].sRootName))
+                    
+                    // 1. Collect relation and index info:
+                    Get CollectIntFileFieldData hTable sIntFileName sDriver to asIntFileData
+                    // 2. Recreate .int file!
+                    Get _SqlUtilCreateIntFile of ghoDUF hTable sDriver sConnectionID bAnsi bIsSystem False to bOK
+                    If (bOK and (SizeOfArray(asIntFileData) <> 0)) Begin
+                        // 3. Add collected relation and index info:
+                        Get AddIntFileFieldData sIntFileName asIntFileData to bOK
+                    End
+                    Increment iCounter
                 End
             End
-            Else Begin
-                Move sLine to asFileData[-1]
-            End
+            Send DoAdvance of ghoStatusPanel
         Loop
-        Close_Input channel iCh
-        
-        Move (SizeOfArray(asFileData)) to iSize
-        If (iSize = 0) Begin
-            Function_Return False
+    
+        Send CloseLogFile
+        Send StopStatusPanel
+    
+        If (iCounter <> 0) Begin
+            Send ShowFileListData
         End
-        Decrement iSize
-        
-        Direct_Output channel iCh sIntFile
-            For iCount from 0 to iSize
-                Writeln channel iCh asFileData[iCount]
-            Loop
-        Close_Output channel iCh
-        
-        Send Seq_Release_Channel iCh
-        Function_Return bOK
+        Else Begin
+            Move hoCurrentErrorObject to Error_Object_Id
+        End
+    
+        Function_Return iCounter
     End_Function
     
     // ToDo: Improve to also insert new lines with "FIELD_TYPE DATETIME"
     //       The logic currently will not set the FIELD_TYPE, unless the FIELD_NUMBER xx already exists in the .int file.
-    Function CollectIntFileRelationAndIndexFields Handle hTable String sIntFile String sDriver Returns String[]
-        Integer iCh iColumn iPos iType iDbType iDFType
+    Function CollectIntFileFieldData Handle hTable String sIntFile String sDriver Returns String[]
+        Integer iCh iColumn iPos iType iDbType iDFType iSize iCount
         String sLine sFileRelTxt sFieldNoTxt sDataType sIndexNoTxt sPath sFileName sDummy
-        String[] asIntFileData
+        String[] asIntFile asIntFileData asColumnsArray
+
         Boolean bFound bOpen
         
         Get Seq_New_Channel to iCh
@@ -1439,10 +1427,13 @@ Object oFilelistFixerView is a dbView
         Get ParseFileName sIntFile to sFileName
         Move (sPath + sFileName) to sIntFile
         Get piDbType of ghoDUF to iDbType
+
+        Get ReadFileToArray sIntFile to asIntFile
+        Move (SizeOfArray(asIntFile)) to iSize
+        Decrement iSize
         
-        Direct_Input channel iCh sIntFile
-        While (not(SeqEof))
-            Readln channel iCh sLine
+        For iCount from 0 to iSize
+            Move asIntFile[iCount] to sLine
             If (Uppercase(sLine) contains "FIELD_NUMBER ") Begin
                 Move sLine to sFieldNoTxt
                 Get FieldNumberToDataTimeText hTable sFieldNoTxt sDriver iDbType to sDataType
@@ -1453,7 +1444,8 @@ Object oFilelistFixerView is a dbView
                     Readln channel iCh sDummy    
                 End
                 Repeat
-                    Readln channel iCh sLine
+                    Increment iCount
+                    Move asIntFile[iCount] to sLine
                     If (Trim(sLine) <> "" and not(Uppercase(sLine) contains "FIELD_NUMBER ")) Begin
                         Move sLine to asIntFileData[-1]
                     End
@@ -1462,7 +1454,14 @@ Object oFilelistFixerView is a dbView
         Loop
         
         If (SizeOfArray(asIntFileData) <> 0) Begin
-            Get SanitizeIntFilesData asIntFileData to asIntFileData
+            Get _SqlUtilEnumerateColumnsByHandle of ghoDUF sDriver hTable to asColumnsArray
+            Get SanitizeIntFilesData asIntFileData asColumnsArray "FIELD_LENGTH" to asIntFileData
+            // Note: It looks like that the driver inserts necessary "FIELD_INDEX" data,
+            //       so we remove them as well.
+            Get SanitizeIntFilesData asIntFileData asColumnsArray "FIELD_INDEX" to asIntFileData
+            // Finally, remove any single lines with "FIELD_NUMBER xx" with no subsequent attribute
+            // on the next line (item)
+            Get RemoveEmptyFieldNumbers asIntFileData to asIntFileData
         End
         Close hTable
         Close_Input channel iCh
@@ -1470,25 +1469,211 @@ Object oFilelistFixerView is a dbView
         Function_Return asIntFileData
     End_Function 
     
+    Function FindLessThanIntFileFieldNumber String[] asIntFileData Integer iCurrenColumn Returns Integer
+        String sFieldTxt
+        Integer iColumn iSize iCount
+        
+        Move (SizeOfArray(asIntFileData)) to iSize
+        Decrement iSize
+        For iCount from 0 to iSize
+            Move asIntFileData[iCount] to sFieldTxt
+            Get FieldTextToColumnNumber sFieldTxt to iColumn
+            If (iColumn <> 0 and iColumn < iCurrenColumn) Begin
+                Function_Return iCount
+            End
+        Loop
+        
+        Function_Return -1
+    End_Function
+    
+    // Adds previously gathered data (asIntFileData) from a current/old .int file, to be added/inserted into
+    // a newly created .int file (sIntFile).
+    // The gather of data should be made with CollectIntFileFieldData
+    Function AddIntFileFieldData String sIntFile String[] asIntFileData Returns Boolean
+        Boolean bOK
+        Integer iCh iItem iSize iCount iColumn iColumnData
+        String[] asIntfile asResultData
+        String sLine sDummy
+        
+        // This is data from the "old" .int file:
+        If (SizeOfArray(asIntFileData) = 0) Begin
+            Function_Return False
+        End
+
+        Get Seq_New_Channel to iCh
+        If (iCh < 0) Begin
+            Function_Return False
+        End
+        
+        // This is the newly created .int file:
+        Get ReadFileToArray sIntFile to asIntfile
+        Move (SizeOfArray(asIntfile)) to iSize
+        Decrement iSize
+        For iCount from 0 to iSize
+            Move asIntfile[iCount] to sLine
+            If (Uppercase(sLine) contains "FIELD_NUMBER ") Begin 
+                Get FieldTextToColumnNumber sLine to iColumn
+                // Look for a FIELD_NUMBER match in the old .int file:
+                Move (SearchArray(sLine, asIntFileData, Desktop, (RefFunc(DFSTRICMP)))) to iItem
+                // If no "FIELD_NUMBER xx" match found, try finding one with a column less than iColumn:
+                If (iItem = -1) Begin
+                    Get FindLessThanIntFileFieldNumber asIntFileData iColumn to iItem
+                    If (iItem <> -1) Begin
+                        Repeat    
+                            Move asIntFileData[iItem] to asResultData[-1]
+                            If (iItem <= SizeOfArray(asIntFileData)) Begin
+                                Move (RemoveFromArray(asIntFileData, iItem)) to asIntFileData
+                            End
+                        Until (Trim(asIntFileData[iItem]) = "" or iItem >= SizeOfArray(asIntFileData))
+//                            Move (RemoveFromArray(asIntFileData, iItem)) to asIntFileData
+//                            Decrement iItem
+//                        Until (asIntFileData[iItem] = "")
+                    End
+                    Else Begin
+                        Move sLine to asResultData[-1]
+                    End
+                End
+                Else Begin
+                    Repeat
+                        Move asIntFileData[iItem] to asResultData[-1]
+                        If (iItem <= SizeOfArray(asIntFileData)) Begin
+                            Move (RemoveFromArray(asIntFileData, iItem)) to asIntFileData
+                        End
+                    Until (Trim(asIntFileData[iItem]) = "" or iItem >= SizeOfArray(asIntFileData))
+                    Move "" to asResultData[-1] 
+                    Repeat
+                        Increment iCount
+                        Move asIntfile[iCount] to sDummy
+                    Until (Trim(sDummy) = "")
+                End
+            End
+            Else Begin
+                Move sLine to asResultData[-1]
+            End
+        Loop
+
+        // Write the updated .int file:
+        Direct_Output channel iCh sIntFile
+            For iCount from 0 to iSize
+                Writeln channel iCh asResultData[iCount]
+            Loop
+        Close_Output channel iCh
+        
+        Send Seq_Release_Channel iCh
+        Function_Return bOK
+    End_Function
+    
     // It seems like "FIELD_LENGTH" leads to more headache than gain. It can happen
     // quite often that the table can't be open because of misinterpretation of such
     // settings. This function simply removes *all* "FIELD_LENGTH" settings from
     // the passed string array. 
     // This is also what the Studio's "SQL Connect/Repair Wizard" does.
-    Function SanitizeIntFilesData String[] asIntFileData Returns String[]
-        Integer iSize iCount
-        String sVal
+    Function SanitizeIntFilesData String[] asIntFileData String[] asColumnsArray String sKeyWordToRemove Returns String[]
+        Integer iSize iCount iColumns iColumn iPos
+        String sFieldTxt
         String[] asOutData
         
+        // We don't deal with "RECNUM" columns in the .int file, thus we remove any here,
+        // as it messes with the column count.
+        If (Uppercase(asColumnsArray[0]) = "RECNUM") Begin
+            Move (RemoveFromArray(asColumnsArray, 0)) to asColumnsArray
+        End
+        Move (SizeOfArray(asColumnsArray)) to iColumns
+        Move iColumns to iColumn // Init to highest value, until we found a "FIELD_NUMBER"
         Move (SizeOfArray(asIntFileData)) to iSize
         Decrement iSize
+        
         For iCount from 0 to iSize
-            Move asIntFileData[iCount] to sVal
-            If (not(Uppercase(sVal) contains "FIELD_LENGTH")) Begin
+            Move asIntFileData[iCount] to sFieldTxt
+            If (Uppercase(sFieldTxt) contains "FIELD_NUMBER ") Begin
+                Get FieldTextToColumnNumber sFieldTxt to iColumn
+            End
+            If (not(Uppercase(sFieldTxt) contains (Uppercase(sKeyWordToRemove))) and iColumn <= iColumns) Begin
                 Move asIntFileData[iCount] to asOutData[-1]    
             End
         Loop
         Function_Return asOutData
+    End_Function 
+
+    Function FieldTextToColumnNumber String sFieldTxt Returns Integer
+        Integer iColumn iPos
+        Move (Pos(" ", sFieldTxt)) to iPos
+        Move (Mid(sFieldTxt, Length(sFieldTxt), iPos)) to iColumn            
+        Function_Return iColumn
+    End_Function
+    // Removes lines with single "FIELD_NUMBER xx", aka that doesn't have
+    // some sort of property as the next array item.
+    Function RemoveEmptyFieldNumbers String[] asIntFileData Returns String[]
+        Integer iSize iCount    
+        Boolean bFound
+        String[] asEmpty
+        
+        Move (SizeOfArray(asIntFileData)) to iSize
+        Decrement iSize
+        For iCount from 0 to iSize
+            If (Uppercase(asIntFileData[iCount] contains "FIELD_NUMBER ") and iCount < iSize) Begin
+                If (Trim(asIntFileData[iCount +1]) = "") Begin
+                    Move (RemoveFromArray(asIntFileData, iCount)) to asIntFileData
+                    Move (RemoveFromArray(asIntFileData, iCount)) to asIntFileData
+                    Decrement iCount
+                    Move (iSize  -2) to iSize
+                End
+            End
+            Else If (Uppercase(asIntFileData[iCount] contains "FIELD_NUMBER ") and iCount = iSize) Begin
+                Move (RemoveFromArray(asIntFileData, iCount)) to asIntFileData
+            End
+        Loop
+        
+        // Finally, see if there actually is any data left in the array:
+        Move (SizeOfArray(asIntFileData)) to iSize
+        Decrement iSize
+        Move False to bFound
+        For iCount from 0 to iSize
+            If (bFound = False and Trim(asIntFileData[iCount]) <> "") Begin
+                Move True to bFound
+                Move iSize to iCount
+            End
+        Loop
+        If (bFound = False) Begin
+            Move asEmpty to asIntFileData    
+        End
+        
+        Function_Return asIntFileData
+    End_Function
+    
+    // Note: If the sFileName param does not contain a path,
+    //       it is assumed the file resides in the Data folder.
+    //       Reads a file and returns it as a string array.
+    Function ReadFileToArray String sFileName Returns String[]
+        String[] asData
+        Integer iCh
+        String sPath sLine
+        Boolean bFound
+        
+        Get Seq_New_Channel to iCh
+        If (iCh < 0) Begin
+            Function_Return asData
+        End
+        
+        Get ParseFolderName sFileName to sPath
+        If (sPath <> "") Begin
+            Get vFolderExists sPath to bFound
+        End
+        If (bFound = False) Begin
+            Get psDataPath of (phoWorkspace(ghoApplication)) to sPath
+        End
+        Get vFolderFormat sPath to sPath
+        Get ParseFileName sFileName to sFileName
+        Move (sPath + sFileName) to sFileName
+
+        Direct_Input channel iCh sFileName
+        While (not(SeqEof))
+            Readln channel iCh asData[-1]
+        Loop
+        Close_Input channel iCh
+        Send Seq_Release_Channel iCh
+        
+        Function_Return asData
     End_Function
     
     // To get the DataFlex type from a SQL column DateTime(x) data type, as a text string
@@ -1714,6 +1899,17 @@ Object oFilelistFixerView is a dbView
         Function_Return asFiles    
     End_Function
             
+    // Helper procedures for status panel/progress bar
+    Procedure StartStatusPanel String sMessage String sMessage2 Integer iSize
+        Send StartStatusPanel of ghoDUF sMessage sMessage2 iSize
+        Set Caption_text of ghoStatusPanel to "The Database Update Framework"
+        Set Progress_Bar_Overall_Visible_State of ghoStatusPanel to False
+    End_Procedure
+    
+    Procedure StopStatusPanel
+        Send Stop_StatusPanel of ghoStatusPanel
+    End_Procedure
+
     Procedure OpenLogFile
         String sLogFile sTimeStamp sFilelist
         Integer iCh
@@ -1800,16 +1996,6 @@ Object oFilelistFixerView is a dbView
         // This is the crucial bit:
         Set Border_Style of (Client_Id(ghoCommandBars)) to Border_None
     End_Procedure
-
-    // Note: Tell the MSSQLDRV_ID driver to *not* create cache-files (.cch):
-    Procedure Activating 
-        Integer iDriver
-        Get DriverIndex of ghoDUF MSSQLDRV_ID to iDriver
-        If (iDriver <> 0) Begin
-            Set_Attribute DF_DRIVER_USE_CACHE of iDriver to False 
-        End
-    End_Procedure 
-    
 
     On_Key kClear Send KeyAction of oRefresh_btn
 End_Object    

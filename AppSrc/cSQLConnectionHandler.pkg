@@ -93,6 +93,8 @@ Class cSQLConnectionHandler is a cObject
         Property Boolean pbDriverDefaultNullableNumeric  False
         Property Boolean pbDriverDefaultNullableText     False
 
+        Property Boolean pbUseCacheFiles                 True
+
         // *** This is the central point of connection data for the Database Update Framework ***
         //     It is private because the get/set version also updates the DAW
         //     driver interfaces.
