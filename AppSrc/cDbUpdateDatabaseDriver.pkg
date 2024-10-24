@@ -232,7 +232,7 @@ Class cDbUpdateDatabaseDriver is a cObject
     Procedure Construct_Object
         Forward Send Construct_Object
         Property String psDriverID DATAFLEX_ID
-        Property Handle phoDriverSpecificObject
+        Property Handle phoDriverSpecificObject 
     End_Procedure
 
     Function CreateDriver Returns Handle
