@@ -216,7 +216,9 @@ Object oDbUpdateHandler is a cDbUpdateHandler
     Set pbExitIfDebuggerActive to False
     Set piDbType to EN_DbTypeMSSQL
     Set phoDbUpdateHandler of ghoApplication to Self
-
+    // Note: Tell the SQL driver to *not* create cache-files (.cch):
+    Set pbUseDriverCacheFiles to False
+    
     Procedure OnPreUpdate
     End_Procedure  
 
