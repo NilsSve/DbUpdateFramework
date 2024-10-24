@@ -992,6 +992,17 @@ Class cBaseDbUpdateFuncLib is a cObject
     End_Function
 
     // Returns a string array with all table columns/fields for the passed table handle and driver id.
+    Function _SqlUtilEnumerateColumnsByHandle String sDriverID Handle hTable Returns String[]
+        String[] asReturnArray
+        String sRootName sTableName
+        
+        Get_Attribute DF_FILE_ROOT_NAME of hTable to sRootName
+        Get _TableNameOnly sRootName to sTableName
+        Get _SqlUtilEnumerateColumns sDriverID sTableName to asReturnArray
+        Function_Return asReturnArray
+    End_Function
+
+    // Returns a string array with all table columns/fields for the passed table handle and driver id.
     Function _SqlUtilEnumerateColumns String sDriverID String sTableName Returns String[]
         String[] sReturnArray
         String sConnectionString sSelect sSchema
