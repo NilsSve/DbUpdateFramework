@@ -58,7 +58,6 @@ Class cSQLConnectionHandler is a cObject
         Set Name of ho to "oSQLConnectionIniFile"
         Set phoSQLConnectionIniFile to ho
         
-
         // These properties are used by the cDbUpdateVersion and cDbUpdateFunctionLibrary classes,
         // but put here so they can be set/get in both class objects. Those classes has "relay"
         // methods to this class.
@@ -71,6 +70,8 @@ Class cSQLConnectionHandler is a cObject
         Property Boolean pbCompareIndexAscending False
         Property Boolean pbCompareIndexUppercase False
 
+        Property Boolean Private.pbUseDriverCacheFiles True
+        
         // Driver default value settings:
         // Note: When the object is created the corresponding values
         // from the driver .int files are read.
@@ -174,6 +175,9 @@ Class cSQLConnectionHandler is a cObject
         End                                      
         
         Get DriverIndex sDriverID to iDriverID  
+        If (iDriverID <> 0) Begin
+            Set_Attribute DF_DRIVER_USE_CACHE of iDriverID to (Private.pbUseDriverCacheFiles(Self)) 
+        End
         
         // ToDo: Testing!
 //        Get psServer of ghoDbUpdateFunctionLibrary to sServer

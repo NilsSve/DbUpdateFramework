@@ -1229,19 +1229,10 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary
     End_Function
     
     Procedure Set pbUseDriverCacheFiles Boolean bUseDriverCacheFiles
-        String sDriverID
-        Integer iDriver
         If (ghoSQLConnectionHandler = 0) Begin
             Procedure_Return
-        End
-        Get psDriverID of ghoSQLConnectionHandler to sDriverID
-        If (sDriverID = DATAFLEX_ID) Begin
-            Procedure_Return
-        End
-        Get DriverIndex of ghoSQLConnectionHandler sDriverID to iDriver
-        If (iDriver <> 0) Begin
-            Set_Attribute DF_DRIVER_USE_CACHE of iDriver to bUseDriverCacheFiles 
-        End
+        End  
+        Set Private.pbUseDriverCacheFiles of ghoSQLConnectionHandler to bUseDriverCacheFiles
     End_Procedure
 
     Function pbUseDriverCacheFiles Returns Boolean
