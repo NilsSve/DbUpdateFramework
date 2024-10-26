@@ -1210,5 +1210,11 @@
 			<groupName>Database Update Framework</groupName>
 			<libraryID>Lib1</libraryID>
 		</class>
+		<class>
+			<className>cMyApplication</className>
+			<image>ControlApplication.ico</image>
+			<package>cMyApplication.pkg</package>
+			<groupName>Database Update Framework</groupName><libraryID></libraryID>
+		</class>
 	</classes>
 </classList>

@@ -124,7 +124,7 @@ Object oFilelistFixerView is a dbView
             Get vFilePathExists sFileList to bExists
             Move (Lowercase(sFileList) contains ".cfg") to bCfgFile
             If (bExists = True and bCfgFile = True) Begin
-                // A little trick to show the filelist.cfg in the form before we start filling the grid.
+                // A little trick to show the filelist.cfg in the form before we start filling the control.
                 Send PumpMsgQueue of Desktop
                 Get ChangeFilelistPathing of ghoApplication sFileList to bOK
                 If (bOK = True) Begin
