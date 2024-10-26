@@ -9,7 +9,7 @@ Use cRichEdit.pkg
 Use cRDCForm.pkg
 Use vWin32fh.pkg
 Use DriverIntFileSettings.dg
-Use dfLine.pkg
+Use cDbUpdateFunctionLibrary.pkg
 
 // Just to get a shorter handle name
 Global_Variable Handle ghoDUF 
@@ -1393,7 +1393,7 @@ Object oFilelistFixerView is a dbView
         Get CollectIntFileFieldData hTable sIntFileName to asIntFileData
         Get _SqlUtilCreateIntFile of ghoDUF hTable sDriver sConnectionID True bIsSystem to bOK
         If (bOK) Begin
-            Get AddIntFileFieldData sIntFileName asIntFileData to bOK
+            Get MergeIntFileData sIntFileName asIntFileData to bOK
             Function_Return True
         End
         Else Begin
@@ -1452,8 +1452,8 @@ Object oFilelistFixerView is a dbView
                     // 2. Create a new .int file!
                     Get _SqlUtilCreateIntFile of ghoDUF hTable sDriver sConnectionID bAnsi bIsSystem False to bOK
                     If (bOK and (SizeOfArray(asIntFileData) <> 0)) Begin
-                        // 3. Add collected info from original .int file:
-                        Get AddIntFileFieldData sIntFileName asIntFileData to bOK
+                        // 3. Merge data from the original .int file, with the new .int file:
+                        Get MergeIntFileData sIntFileName asIntFileData to bOK
                     End
                     Increment iCounter
                 End
@@ -1686,7 +1686,7 @@ Object oFilelistFixerView is a dbView
     // Adds previously gathered data (asIntFileData) from a current/old .int file, to be added/inserted into
     // a newly created .int file (sIntFile).
     // The gather of data should be made with CollectIntFileFieldData
-    Function AddIntFileFieldData String sIntFile String[] asIntFileData Returns Boolean
+    Function MergeIntFileData String sIntFile String[] asIntFileData Returns Boolean
         Boolean bOK
         Integer iCh iItem iSize iCount iFieldNumber iColumnData
         String[] asIntfile asFieldsData asTopData asBottomData asResultData
@@ -1697,10 +1697,6 @@ Object oFilelistFixerView is a dbView
             Function_Return False
         End
 
-        Get Seq_New_Channel to iCh
-        If (iCh < 0) Begin
-            Function_Return False
-        End
         Move False to Err
         
         // This is the newly created .int file:
@@ -1714,22 +1710,20 @@ Object oFilelistFixerView is a dbView
         Move (AppendArray(asTopData, asFieldsData))    to asResultData
         Move (AppendArray(asResultData, asBottomData)) to asResultData
         
-        // Write the updated .int file:      
-        Move (SizeOfArray(asResultData)) to iSize
-        Decrement iSize
-        Direct_Output channel iCh sIntFile
-            For iCount from 0 to iSize
-                Writeln channel iCh asResultData[iCount]
-            Loop
-        Close_Output channel iCh
-        Send Seq_Release_Channel iCh
+        Get Seq_New_Channel to iCh
+        If (iCh < 0) Begin
+            Function_Return False
+        End
         
+        // Write the updated .int file:      
+        Get WriteArrayToFile sIntFile asResultData to bOK
         Move (not(Err)) to bOK
         Move False to Err
         
         Function_Return bOK
     End_Function
-    
+
+
     // It seems like "FIELD_LENGTH" leads to more headache than gain. It can happen
     // quite often that the table can't be open because of misinterpretation of such
     // settings. This function simply removes *all* "FIELD_LENGTH" settings from
@@ -1853,6 +1847,28 @@ Object oFilelistFixerView is a dbView
         Send Seq_Release_Channel iCh
         
         Function_Return asData
+    End_Function
+
+    Function WriteArrayToFile String sIntFile String[] asResultData Returns Boolean
+        Boolean bOK
+        Integer iSize iCount iCh
+        
+        Get Seq_New_Channel to iCh
+        If (iCh < 0) Begin
+            Function_Return False
+        End 
+        
+        // Write the updated .int file:      
+        Move (SizeOfArray(asResultData)) to iSize
+        Decrement iSize
+        Direct_Output channel iCh sIntFile
+            For iCount from 0 to iSize
+                Writeln channel iCh asResultData[iCount]
+            Loop
+        Close_Output channel iCh
+        Send Seq_Release_Channel iCh
+        
+        Function_Return True
     End_Function
     
     // To get the DataFlex type from a SQL column DateTime(x) data type, as a text string
@@ -2023,7 +2039,6 @@ Object oFilelistFixerView is a dbView
     Function SanitizeDatRelatedFiles String[] asFiles String[] asDatFilesInUse Returns String[]
         Integer iSize iCount iItem
         String sFileName sFileNameNoExt sExt sFileNameShort
-        Boolean bOK
         
         // We add these files to the .dat files array as we don't want them to be moved:
         Move "flexerrs.dat" to asDatFilesInUse[-1]
