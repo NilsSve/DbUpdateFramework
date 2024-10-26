@@ -178,9 +178,9 @@ Object oApplication is a cApplication
         If (bExists = False) Begin
             Get UtilIsAllFilelistEntriesDataFlexTables of ghoDbUpdateFunctionLibrary to bEmbedded
             If (bEmbedded = False) Begin     
+                Move MBR_Yes to iRetval
                 If (bDFConnId = False) Begin
                     // Get YesNo_Box ("Couldn't find the DUF SQLConnections.ini file in the workspace Programs folder. Is there a DataFlex DFConnId.ini file in the Data folder that you want to open instead?") to iRetval
-                    Move MBR_Yes to iRetval
                 End
                 If (iRetval = MBR_Yes) Begin
                     Set pbDFConnId of ghoSQLConnectionHandler to True
