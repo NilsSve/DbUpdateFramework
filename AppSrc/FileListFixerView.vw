@@ -40,11 +40,45 @@ End_Class
 Class cMyRichEdit is a cRichEdit
     Procedure Construct_Object
         Forward Send Construct_Object
+        Property String psExtension ".int"
     End_Procedure
     
     Procedure ClearData
         Send Delete_Data
     End_Procedure
+          
+    Procedure Mouse_Click Integer iWindowNumber Integer iPosition
+        Integer iLine iPos
+        String sLine sFileName sPath sExt
+        Boolean bFound
+        
+        Get psExtension to sExt
+        Get LineFromChar -1 to iLine
+        Get Line iLine to sLine
+        If (Trim(sLine) = "") Begin
+            Procedure_Return
+        End
+        Move (Pos(":", sLine)) to iPos 
+        If (iPos <> 0) Begin
+            Move (Mid(sLine, Length(sLine), iPos +1)) to sLine
+            Move (Pos(" ", sLine)) to iPos
+            Move (Left(sLine, iPos -1)) to sLine
+        End
+        If (not(sLine contains ".")) Begin
+            Move (sLine + sExt) to sFileName
+        End  
+        Else Begin
+            Move sLine to sFileName
+        End
+        Get psDataPath of (phoWorkspace(ghoApplication)) to sPath
+        Get vFolderFormat sPath to sPath
+        File_Exist (sPath + sFileName) bFound
+        If (bFound = True) Begin
+            Move ("/select, " + sFileName) to sFileName
+            Send vShellExecute "open" "explorer.exe" sFileName sPath
+        End
+    End_Procedure
+
 End_Class
 
 Activate_View Acivate_oFileListFixerView for oFileListFixerView
@@ -329,6 +363,7 @@ Object oFilelistFixerView is a dbView
             Set Size to 110 104
             Set Location to 29 6
             Set Label to "RootName *.dat"
+            Set psExtension to ".dat"
         End_Object
 
         Object oDatTables_fm is a cNumForm
@@ -347,6 +382,7 @@ Object oFilelistFixerView is a dbView
             Set Size to 110 104
             Set Location to 29 113
             Set Label to "Alias Table Errors"
+            Set psExtension to ".int"
         End_Object
 
         Object oAliasErrors_fm is a cNumForm
@@ -359,6 +395,7 @@ Object oFilelistFixerView is a dbView
             Set Size to 110 104
             Set Location to 29 220
             Set Label to "RootName *.int"
+            Set psExtension to ".int"
         End_Object
 
         Object oRootNameIntTables_fm is a cNumForm
@@ -372,29 +409,8 @@ Object oFilelistFixerView is a dbView
             Set Size to 110 125
             Set Location to 29 327
             Set Label to "Open Table Errors"
-            Set peAnchors to anTopLeftRight 
-            
-            Procedure Mouse_Click Integer iWindowNumber Integer iPosition
-                Integer iLine iPos
-                String sLine sFileName sPath  
-                Boolean bFound
-                
-                Get LineFromChar -1 to iLine
-                Get Line iLine to sLine
-                Move (Pos(":", sLine)) to iPos
-                Move (Mid(sLine, Length(sLine), iPos +1)) to sLine
-                Move (Pos(" ", sLine)) to iPos
-                Move (Left(sLine, iPos -1)) to sLine
-                Move (sLine + ".int") to sFileName
-                Get psDataPath of (phoWorkspace(ghoApplication)) to sPath
-                Get vFolderFormat sPath to sPath
-                File_Exist (sPath + sFileName) bFound
-                If (bFound = True) Begin
-                    Move ("/select, " + sFileName) to sFileName
-                    Send vShellExecute "open" "explorer.exe" sFileName sPath
-                End
-            End_Procedure
-          
+            Set peAnchors to anTopLeftRight            
+            Set psExtension to ".int"
         End_Object
 
         Object oOpenErrorTables_fm is a cNumForm
@@ -1722,7 +1738,6 @@ Object oFilelistFixerView is a dbView
         
         Function_Return bOK
     End_Function
-
 
     // It seems like "FIELD_LENGTH" leads to more headache than gain. It can happen
     // quite often that the table can't be open because of misinterpretation of such
