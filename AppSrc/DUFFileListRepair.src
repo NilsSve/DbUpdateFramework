@@ -159,9 +159,7 @@ Object oApplication is a cApplication
         Send Ignore_Error of Error_Object_Id DFERR_OPERATION_NOT_ALLOWED
         Get_Attribute DF_DRIVER_CACHE_PATH of iDriverID to sPath
         If (sPath = "") Begin 
-            If (LastErr = DFERR_OPERATION_NOT_ALLOWED and bErr = False) Begin
-                Move False to Err
-            End
+            Move False to Err
             Move sDataPath to sPath
         End
         Get vFolderFormat sPath to sPath

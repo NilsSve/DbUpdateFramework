@@ -31,6 +31,20 @@ Class cNumForm is a Form
         Set Form_Datatype to Mask_Numeric_Window  
         Set Numeric_Mask 0 to 4 0
     End_Procedure
+    
+    Procedure ClearData
+        Set Value to 0
+    End_Procedure
+End_Class
+
+Class cMyRichEdit is a cRichEdit
+    Procedure Construct_Object
+        Forward Send Construct_Object
+    End_Procedure
+    
+    Procedure ClearData
+        Send Delete_Data
+    End_Procedure
 End_Class
 
 Activate_View Acivate_oFileListFixerView for oFileListFixerView
@@ -71,10 +85,11 @@ Object oFilelistFixerView is a dbView
             String sFileList sPath
             Boolean bExists bCfgFile bOK
 
+            Send ClearAllData
             Get Value to sFileList
             Get vFilePathExists sFileList to bExists
             Move (Lowercase(sFileList) contains ".cfg") to bCfgFile
-            If (bExists = True and bCfgFile) Begin
+            If (bExists = True and bCfgFile = True) Begin
                 // A little trick to show the filelist.cfg in the form before we start filling the grid.
                 Send PumpMsgQueue of Desktop
                 Get ChangeFilelistPathing of ghoApplication sFileList to bOK
@@ -85,7 +100,7 @@ Object oFilelistFixerView is a dbView
                     Send UpdateDriverIniFile of oDriver_fm
                     Get ParseFolderName sFileList to sPath
                     Get vFolderFormat sPath to sPath
-                    Set Value of oLogFile_fm to (sPath + CS_ReportFileName)
+                    Set Value of oLogFile_fm to (sPath + CS_ReportFileName) 
                 End
             End
         End_Procedure
@@ -108,7 +123,7 @@ Object oFilelistFixerView is a dbView
         
     End_Object
 
-    Object oConnidInfo_edt is a cRichEdit
+    Object oConnidInfo_edt is a cMyRichEdit
         Set Size to 75 454
         Set Location to 28 12
         Set peAnchors to anTopLeftRight
@@ -177,12 +192,11 @@ Object oFilelistFixerView is a dbView
             Get psDataPath of (phoWorkspace(ghoApplication)) to sPath
             Get vFolderFormat sPath to sPath
             Get psDriverID of ghoDUF to sDriver
+            Set Enabled_State to (sDriver <> DATAFLEX_ID) 
+            Set Enabled_State of oViewDriverProperties_btn to (sDriver <> DATAFLEX_ID) 
             If (sDriver = DATAFLEX_ID) Begin
-                Set Enabled_State to False
-                Set Enabled_State of oViewDriverProperties_btn to False
                 Procedure_Return    
             End 
-            
             Move (Pos(".", sDriver)) to iPos
             Move (Left(sDriver, iPos -1)) to sFileName
             Move (sFileName + ".int") to sFileName
@@ -226,14 +240,14 @@ Object oFilelistFixerView is a dbView
         Set FontWeight to fw_Bold
     End_Object
 
-    Object oIntTableErrors_edt is a cRichEdit
+    Object oConnIDErrors_edt is a cMyRichEdit
         Set Size to 70 86
         Set Location to 28 522
         Set Label to "*.int File DFCONNID Changes"
         Set peAnchors to anTopRight
     End_Object
 
-    Object oChangeAllIntFiles_btn is a Button
+    Object oConnIDErrors_btn is a Button
         Set Size to 28 61
         Set Location to 70 614
         Set Label to "Check/change .int files to use DFConnid"
@@ -256,8 +270,8 @@ Object oFilelistFixerView is a dbView
             End
             
             Move 0 to iCount
-            Set Value of oOpenErrorTables_fm to 0
-            Move oIntTableErrors_edt to ho     
+            Set Value of oConnIDErrors_fm to 0
+            Move oConnIDErrors_edt to ho     
             Send Delete_Data of ho
             Send StartStatusPanel "Changing to Connection ID's in .int files" "" -1
 
@@ -272,7 +286,7 @@ Object oFilelistFixerView is a dbView
             End
 
             Move (SizeOfArray(asFileChanges)) to iSize
-            Set Value of oNoOfIntFilesFixed_fm to (iSize max 0)
+            Set Value of oConnIDErrors_fm to (iSize max 0)
             Send StopStatusPanel
             If (SizeOfArray(asFileChanges) <> 0) Begin
                 Decrement iSize
@@ -291,7 +305,7 @@ Object oFilelistFixerView is a dbView
 
     End_Object
 
-    Object oNoOfIntFilesFixed_fm is a cNumForm
+    Object oConnIDErrors_fm is a cNumForm
         Set Size to 12 34
         Set Location to 104 574
         Set Label to "Counter:"
@@ -311,7 +325,7 @@ Object oFilelistFixerView is a dbView
         Set Label to "Counters:"
         Set peAnchors to anTopLeftRight
 
-        Object oDatTables_edt is a cRichEdit
+        Object oDatTables_edt is a cMyRichEdit
             Set Size to 110 104
             Set Location to 29 6
             Set Label to "RootName *.dat"
@@ -329,7 +343,7 @@ Object oFilelistFixerView is a dbView
             End_Procedure
         End_Object
 
-        Object oAliasErrors_edt is a cRichEdit
+        Object oAliasErrors_edt is a cMyRichEdit
             Set Size to 110 104
             Set Location to 29 113
             Set Label to "Alias Table Errors"
@@ -341,7 +355,7 @@ Object oFilelistFixerView is a dbView
             Set Label to "Counter:"
         End_Object
 
-        Object oRootNameIntTables_edt is a cRichEdit
+        Object oRootNameIntTables_edt is a cMyRichEdit
             Set Size to 110 104
             Set Location to 29 220
             Set Label to "RootName *.int"
@@ -354,7 +368,7 @@ Object oFilelistFixerView is a dbView
             Set peAnchors to anBottomLeft
         End_Object
 
-        Object oOpenErrorTables_edt is a cRichEdit
+        Object oOpenErrorTables_edt is a cMyRichEdit
             Set Size to 110 125
             Set Location to 29 327
             Set Label to "Open Table Errors"
@@ -446,17 +460,6 @@ Object oFilelistFixerView is a dbView
             
             End_Object
 
-//            Object oButton1 is a Button
-//                Set Location to 21 98
-//                Set Label to "TEST"
-//                Set peAnchors to anTopRight
-//            
-//                Procedure OnClick
-//                    Send Test    
-//                End_Procedure
-//            
-//            End_Object
-            
         End_Object
         
     End_Object
@@ -549,11 +552,10 @@ Object oFilelistFixerView is a dbView
                           
         End_Object
 
-
-        Object oFixOpenTableErrors_btn is a Button
+        Object oFixFileListOpenErrors_btn is a Button
             Set Size to 32 61
             Set Location to 13 303
-            Set Label to "4. Fix Filelist Open Errors"
+            Set Label to "4. Fix Filelist Entries Open Errors"
             Set peAnchors to anTopRight
             Set MultiLineState to True
             Set psToolTip to "The fix will spin through the Filelist and \n1. Try to fix or removes Non SQL entries for tables that cannot be opened."
@@ -566,7 +568,7 @@ Object oFilelistFixerView is a dbView
                     Procedure_Return    
                 End
 
-                Get FixOpenErrorTables to iCounter
+                Get FixFileListOpenErrors to iCounter
                 Get _CountFileListOpenErrors of ghoDUF to iOpenErrors
                 
                 If (iOpenErrors <> 0 and iCounter = 0) Begin 
@@ -679,7 +681,7 @@ Object oFilelistFixerView is a dbView
         Object oRecreateAllIntFiles_btn is a Button
             Set Size to 32 61
             Set Location to 13 19
-            Set Label to "Force Restructure of All *.int files"
+            Set Label to "Recreate All *.int files"
             Set MultiLineState to True
             Set psToolTip to "This will recreate all .int files."
             
@@ -780,7 +782,13 @@ Object oFilelistFixerView is a dbView
         
             Procedure OnClick
                 String sFileName
+                Boolean bExists
                 Get Value of oLogFile_fm to sFileName
+                File_Exist sFileName bExists
+                If (bExists = False) Begin
+                    Send Info_Box ("The log file hasn't been created yet:\n" + sFileName)
+                    Procedure_Return
+                End
                 Runprogram Shell Background sFileName
             End_Procedure
         
@@ -791,6 +799,10 @@ Object oFilelistFixerView is a dbView
     // Dummy message that shows as delimiter in the Studio's Code Explorer:
     Procedure COMMON_MESSAGES
     End_Procedure
+
+    Procedure ClearAllData
+        Broadcast Recursive Send ClearData of (oFilelistFixerView(Self))
+    End_Procedure  
     
     Procedure ShowSQLTablesCount
         String[] asSQLTables
@@ -896,6 +908,7 @@ Object oFilelistFixerView is a dbView
             Send AppendTextLn of ho (FileListArray[iCount].sRootName * "(" + String(FileListArray[iCount].hTable) + ")")
         Loop
         Set Value of oAliasErrors_fm to (iSize + 1)
+        Send Beginning_of_Data of ho
     End_Procedure
 
     Procedure ListRootIntFiles
@@ -947,22 +960,22 @@ Object oFilelistFixerView is a dbView
     End_Procedure
     
     Function FixFileListAliasProblems Returns Integer
-        Integer iCounter iIntError
+        Integer iCounter iIntError iSize
         Handle hTable hMasterTable
         String sLogicalNameOrg sRootNameOrg sDisplayNameOrg 
         String sDriver sNoDriverRootname sRootNameNew sLogicalNameNew sDisplayNameNew
         Boolean bIsAlias bIsIntTable bIsAliasSQL bIsMasterSQL
         tFilelist[] FilelistArray
         
+        Get _CountFileListAliasErrors of ghoDUF to FileListArray
+        Move (SizeOfArray(FileListArray)) to iSize
+        If (iSize = 0) Begin
+            Function_Return 0
+        End
+                
         Move 0 to iCounter 
         Move 0 to hTable
 
-        Get pFileListArray of ghoDUF to FilelistArray
-        If (SizeOfArray(FilelistArray) = 0) Begin
-            Send ShowFileListData
-            Get pFileListArray of ghoDUF to FilelistArray
-        End
-                
         Repeat
             Get_Attribute DF_FILE_NEXT_USED of hTable to hTable
             // Table 50 is FlexErrs
@@ -1151,7 +1164,7 @@ Object oFilelistFixerView is a dbView
         Function_Return iCounter
     End_Function
 
-    Function FixOpenErrorTables Returns Integer        
+    Function FixFileListOpenErrors Returns Integer        
         Integer iRetval hTable iSize iCount iItem iCh iCounter iAliases iOpenErrors
         tFilelist[] FileListArray
         String sNoDriverRootname sDriver sRootName sRootNameNew sDatabase sLogicalName sDisplayName sDataPath
@@ -1212,7 +1225,10 @@ Object oFilelistFixerView is a dbView
         Loop
 
         Send CloseLogFile
-        Send Cursor_Ready of Cursor_Control  
+        Send Cursor_Ready of Cursor_Control
+        If (iCounter <> 0) Begin
+            Send ShowFileListData
+        End     
         Function_Return iCounter
     End_Function
 
