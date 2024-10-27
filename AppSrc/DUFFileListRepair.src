@@ -30,6 +30,7 @@ Object oDbUpdateHandler is a cDbUpdateHandler
     Set phoDbUpdateHandler of ghoApplication to Self
     // Note: Tell the SQL driver to *not* create cache-files (.cch):
     Set pbUseDriverCacheFiles to False
+    Set pbIgnoreDriverUcaseSupport to True
     
     Procedure OnPreUpdate
     End_Procedure  
