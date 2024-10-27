@@ -1254,6 +1254,32 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary
         Function_Return bUseDriverCacheFiles 
     End_Function
 
+    Procedure Set pbIgnoreDriverUcaseSupport Boolean bState
+        If (ghoSQLConnectionHandler = 0) Begin
+            Procedure_Return
+        End  
+        Set Private.pbIgnoreDriverUcaseSupport of ghoSQLConnectionHandler to bState
+    End_Procedure
+
+    Function pbIgnoreDriverUcaseSupport Returns Boolean
+        String sDriverID
+        Integer iDriver
+        Boolean bIgnoreDriverUcaseSupport        
+        Move True to bIgnoreDriverUcaseSupport
+        If (ghoSQLConnectionHandler = 0) Begin
+            Function_Return False
+        End
+        Get psDriverID of ghoSQLConnectionHandler to sDriverID
+        If (sDriverID = DATAFLEX_ID) Begin
+            Function_Return False
+        End
+        Get DriverIndex of ghoSQLConnectionHandler sDriverID to iDriver
+        If (iDriver <> 0) Begin
+            Get_Attribute DF_DRIVER_IGNORE_UCASE_SUPPORT of iDriver to bIgnoreDriverUcaseSupport 
+        End
+        Function_Return bIgnoreDriverUcaseSupport 
+    End_Function
+
     Procedure CreateSQLConnection String sDriverID String sConnectionID String sServer String sDatabase Boolean bTrusted String sUserID String sPassword Boolean bSilent
         If (ghoSQLConnectionHandler = 0) Begin
             Error DFERR_PROGRAM "ghoSQLConnectionHandler = 0! This indicates that no ConnectionID has been setup by the programmer."
