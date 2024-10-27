@@ -194,7 +194,7 @@ Object oFilelistFixerView is a dbView
 
     Object oViewDriverProperties_btn is a Button
         Set Size to 12 50
-        Set Location to 116 469
+        Set Location to 116 470
         Set Label to "View"
         Set peAnchors to anTopRight
     
@@ -227,7 +227,7 @@ Object oFilelistFixerView is a dbView
 
     Object oConnIDErrors_btn is a Button
         Set Size to 28 61
-        Set Location to 70 614
+        Set Location to 70 615
         Set Label to "Check/change .int files to use DFConnid"
         Set psToolTip to "Changes or updates all .int files in the Data folder - except for DAW driver .int files (MSSQL_DRV.int, DB2_DRV.int & ODBC_DRV.int) - to use 'SERVER_NAME DFCONNID=xxx'"
         Set peAnchors to anTopRight
@@ -425,16 +425,16 @@ Object oFilelistFixerView is a dbView
     End_Object
 
     Object oFixProblemsPreUpdate_grp is a Group
-        Set Size to 52 506
+        Set Size to 52 448
         Set Location to 328 12
         Set Label to "Necessary Pre-Update Database Actions:"
-        Set peAnchors to anTopLeftRight
+        Set peAnchors to anNone
 
         // Will remove non Alias Filelist entries that:
         //   - Does not have a corresponding .Dat file, 
         Object oFixFileListErrors_btn is a Button
             Set Size to 32 61
-            Set Location to 13 105
+            Set Location to 13 48
             Set Label to "1. Fix Filelist .dat Errors"
             Set peAnchors to anTopRight
             Set MultiLineState to True
@@ -460,7 +460,7 @@ Object oFilelistFixerView is a dbView
 
         Object oFixAliasProblems_btn is a Button
             Set Size to 32 61
-            Set Location to 13 171
+            Set Location to 13 114
             Set Label to "2. Fix Filelist Alias Errors"
             Set peAnchors to anTopRight
             Set MultiLineState to True
@@ -489,7 +489,7 @@ Object oFilelistFixerView is a dbView
 
         Object oFixFileListSQLMissingTables_btn is a Button
             Set Size to 32 61
-            Set Location to 13 236
+            Set Location to 13 179
             Set Label to "3. Make Filelist RootNames equal to SQL Database"
             Set peAnchors to anTopRight
             Set MultiLineState to True
@@ -514,7 +514,7 @@ Object oFilelistFixerView is a dbView
 
         Object oFixFileListOpenErrors_btn is a Button
             Set Size to 32 61
-            Set Location to 13 303
+            Set Location to 13 246
             Set Label to "4. Fix Filelist Entries Open Errors"
             Set peAnchors to anTopRight
             Set MultiLineState to True
@@ -548,7 +548,7 @@ Object oFilelistFixerView is a dbView
 
         Object oRefreshAllIntFiles_btn is a Button
             Set Size to 32 61
-            Set Location to 13 368
+            Set Location to 13 311
             Set Label to "5. Refresh all *.int files"
             Set peAnchors to anTopRight
             Set MultiLineState to True
@@ -590,7 +590,7 @@ Object oFilelistFixerView is a dbView
 
         Object oFixIntFileError_btn is a Button
             Set Size to 32 61
-            Set Location to 13 434
+            Set Location to 13 377
             Set Label to "6. Recreate *.int files with open errors"
             Set peAnchors to anTopRight
             Set MultiLineState to True
@@ -633,14 +633,14 @@ Object oFilelistFixerView is a dbView
     End_Object
 
     Object oFixExtraProblems_grp is a Group
-        Set Size to 52 159
-        Set Location to 328 527
+        Set Size to 52 207
+        Set Location to 328 472
         Set Label to "Extra Pre-Update Database Actions:"
         Set peAnchors to anTopRight
 
         Object oRecreateAllIntFiles_btn is a Button
             Set Size to 32 61
-            Set Location to 13 19
+            Set Location to 13 72
             Set Label to "Recreate All *.int files"
             Set MultiLineState to True
             Set psToolTip to "This will recreate all .int files."
@@ -681,7 +681,7 @@ Object oFilelistFixerView is a dbView
 
         Object oMoveUnusedDatFiles_btn is a Button
             Set Size to 32 61
-            Set Location to 13 86
+            Set Location to 13 139
             Set Label to "Move Unused .dat files to Backup folder"
             Set MultiLineState to True
             Set psToolTip to "This will move all *.dat related files, that does not exist in the Filelist, to the workspace's '.\Data\Backup' folder."
@@ -718,7 +718,7 @@ Object oFilelistFixerView is a dbView
         Set peAnchors to anTopLeftRight
 
         Object oLogFile_fm is a Form
-            Set Size to 12 591
+            Set Size to 12 437
             Set Location to 10 12
             Set Enabled_State to False
             Set Label to "Log File:"
@@ -735,9 +735,9 @@ Object oFilelistFixerView is a dbView
         End_Object
 
         Object oOpenLogFile_btn is a Button
-            Set Size to 14 49
-            Set Location to 10 609
-            Set Label to "View Log File"
+            Set Size to 12 50
+            Set Location to 10 456
+            Set Label to "View"
             Set peAnchors to anTopRight
         
             Procedure OnClick
