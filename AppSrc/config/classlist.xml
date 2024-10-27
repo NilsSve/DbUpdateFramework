@@ -5,7 +5,7 @@
 	<libraries>
 		<library>
 			<libraryPath>Libraries\DFAbout\DFAbout24.0.sws</libraryPath>
-			<libraryTimeStamp>2024-09-24T10:11:21</libraryTimeStamp>
+			<libraryTimeStamp>2024-09-24T09:11:21</libraryTimeStamp>
 			<libraryID>Lib1</libraryID>
 		</library>
 		<library>
@@ -1190,6 +1190,12 @@
 			<libraryID>Lib1</libraryID>
 		</class>
 		<class>
+			<className>cMyApplication</className>
+			<image>ControlApplication.ico</image>
+			<package>cMyApplication.pkg</package>
+			<groupName>Database Update Framework</groupName><libraryID></libraryID>
+		</class>
+		<class>
 			<className>cSkinComboBoxCJMenuItem</className>
 			<image>ControlCJSkinFramework.ico</image>
 			<package>cSkinComboBoxCJMenuItem.pkg</package>
@@ -1209,12 +1215,6 @@
 			<package>cDbUpdateVersion.pkg</package>
 			<groupName>Database Update Framework</groupName>
 			<libraryID>Lib1</libraryID>
-		</class>
-		<class>
-			<className>cMyApplication</className>
-			<image>ControlApplication.ico</image>
-			<package>cMyApplication.pkg</package>
-			<groupName>Database Update Framework</groupName><libraryID></libraryID>
 		</class>
 	</classes>
 </classList>

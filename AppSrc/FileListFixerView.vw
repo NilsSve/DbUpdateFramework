@@ -10,6 +10,8 @@ Use cRDCForm.pkg
 Use vWin32fh.pkg
 Use DriverIntFileSettings.dg
 Use cDbUpdateFunctionLibrary.pkg
+Use cNumForm.pkg
+Use cMyRichEdit.pkg
 
 // Just to get a shorter handle name
 Global_Variable Handle ghoDUF 
@@ -22,64 +24,6 @@ Struct tBlock
     Integer iFieldNumber
     String[] asLines    
 End_Struct
-
-Class cNumForm is a Form
-    Procedure Construct_Object
-        Forward Send Construct_Object
-        Set Label_Col_Offset to 2
-        Set Label_Justification_Mode to JMode_Right
-        Set Form_Datatype to Mask_Numeric_Window  
-        Set Numeric_Mask 0 to 4 0
-    End_Procedure
-    
-    Procedure ClearData
-        Set Value to 0
-    End_Procedure
-End_Class
-
-Class cMyRichEdit is a cRichEdit
-    Procedure Construct_Object
-        Forward Send Construct_Object
-        Property String psExtension ".int"
-    End_Procedure
-    
-    Procedure ClearData
-        Send Delete_Data
-    End_Procedure
-          
-    Procedure Mouse_Click Integer iWindowNumber Integer iPosition
-        Integer iLine iPos
-        String sLine sFileName sPath sExt
-        Boolean bFound
-        
-        Get psExtension to sExt
-        Get LineFromChar -1 to iLine
-        Get Line iLine to sLine
-        If (Trim(sLine) = "") Begin
-            Procedure_Return
-        End
-        Move (Pos(":", sLine)) to iPos 
-        If (iPos <> 0) Begin
-            Move (Mid(sLine, Length(sLine), iPos +1)) to sLine
-            Move (Pos(" ", sLine)) to iPos
-            Move (Left(sLine, iPos -1)) to sLine
-        End
-        If (not(sLine contains ".")) Begin
-            Move (sLine + sExt) to sFileName
-        End  
-        Else Begin
-            Move sLine to sFileName
-        End
-        Get psDataPath of (phoWorkspace(ghoApplication)) to sPath
-        Get vFolderFormat sPath to sPath
-        File_Exist (sPath + sFileName) bFound
-        If (bFound = True) Begin
-            Move ("/select, " + sFileName) to sFileName
-            Send vShellExecute "open" "explorer.exe" sFileName sPath
-        End
-    End_Procedure
-
-End_Class
 
 Activate_View Acivate_oFileListFixerView for oFileListFixerView
 Object oFilelistFixerView is a dbView 
