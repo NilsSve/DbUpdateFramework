@@ -176,6 +176,8 @@ Class cSQLConnectionHandler is a cObject
         End                                      
         
         Get DriverIndex sDriverID to iDriverID  
+        // Note: These properties should be set in the cDbUpdateHandler object:
+        //       pbUseDriverCacheFiles and pbIgnoreDriverUcaseSupport
         If (iDriverID <> 0) Begin
             Set_Attribute DF_DRIVER_USE_CACHE of iDriverID to (Private.pbUseDriverCacheFiles(Self)) 
             Set_Attribute DF_DRIVER_IGNORE_UCASE_SUPPORT of iDriverID to (Private.pbIgnoreDriverUcaseSupport(Self))

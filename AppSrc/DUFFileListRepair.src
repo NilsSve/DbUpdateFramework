@@ -52,7 +52,8 @@ Use oDEOEditContextMenu17.pkg
 Object oMain is a Panel
     Set Label to (psProduct(ghoApplication))
     Set Location to 4 3
-    Set Size to 442 572
+    Set Size to 442 625
+    Set piMinSize to 442 625
 
     Object oCommandBarSystem is a cCJCommandBarSystem
         Set pbTimerUpdate to True

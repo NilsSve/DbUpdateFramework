@@ -27,9 +27,9 @@ End_Struct
 
 Activate_View Acivate_oFileListFixerView for oFileListFixerView
 Object oFilelistFixerView is a dbView 
+    Set Location to 2 2
     Set Size to 425 691
     Set piMinSize to 425 691
-    Set Location to 2 2
     Set Maximize_Icon to True
     Set Border_Style to Border_Thick
     Set pbAutoActivate to True
