@@ -74,7 +74,7 @@ Object oTableDUFCodeGenerator is a dbView
         Set Size to 50 473
         Set Location to 8 15
         Set pbAcceptDropFiles to True
-        Set psImage to "FolderLeft1.ico"
+        Set psImage to "FolderLeft.ico"
         Set Label to "Select FROM Filelist.cfg"
         Set psNote to "The development/latest version of the database"   
         Set psToolTip to "Select the Filelist.cfg for your development database. This is a suggestion form. So if used before - start typing what you're looking for."
@@ -174,7 +174,7 @@ Object oTableDUFCodeGenerator is a dbView
         Set Size to 92 473
         Set Location to 69 15
         Set peAnchors to anAll
-        Set psImage to "SelectTables1.ico"
+        Set psImage to "SelectTables.ico"
         Set psLabel to "Select Tables"
         Set psNote to "Right click grid for options"  
         Set psToolTip to "Select one or more tables to generate 'DUF' database update code for. (Ctrl+A = 'Select All Tables'. Right-click grid for selection options. The columns: 'Filelist No' and 'Logical Name' are suggestion lists! Just start typing in any of those columns, what to search for."
@@ -517,7 +517,7 @@ Object oTableDUFCodeGenerator is a dbView
         Set Location to 172 15
         Set peAnchors to anBottomLeftRight
         Set psLabel to "Configure Code Generation"
-        Set psImage to "Settings1.ico"   
+        Set psImage to "Settings.ico"   
         Set psToolTip to "Select how code is generated. If you are not sure what the flags does, leave the default settings."
         
         Object oUseConnectionID_cb is a cSQLCheckBox
@@ -599,7 +599,7 @@ Object oTableDUFCodeGenerator is a dbView
         Set Size to 39 473
         Set Location to 232 15
         Set peAnchors to anBottomLeftRight
-        Set psImage to "ActionSaveCode1.ico"
+        Set psImage to "ActionSaveCode.ico"
         Set psLabel to "Generated Package File Name"  
         Set psToolTip to "A suggestion for the package file to be generated is shown. It can be changed if needed, but you are not encouraged to do so."
 
@@ -669,7 +669,7 @@ Object oTableDUFCodeGenerator is a dbView
         Set Label to "Generate Code!"
         Set psNote to "Create DUF update package for the selected tables."
         Set psToolTip to "Start generating DUF code for all selected tables."
-        Set psImage to "SqlScript1.ico"    
+        Set psImage to "SqlScript.ico"    
         Set Default_State to True
         Set MultiLineState to True
         Set piImageSize to 32 
@@ -722,7 +722,7 @@ Object oTableDUFCodeGenerator is a dbView
         Set psNote to "Create local helper program"
         Set peAnchors to anBottomRight
         Set psToolTip to "Generates a small basic program that Use's the generated package. To be be send to a fellow developer working on the same project, to make his/hers local database identical to the selected 'FROM' database."
-        Set psImage to "SqlScript1.ico"    
+        Set psImage to "SqlScript.ico"    
         Set piImageSize to 16 // 24
         Set pbAutoEnable to True
         
@@ -782,7 +782,7 @@ Object oTableDUFCodeGenerator is a dbView
         Set peAnchors to anBottomRight
         Set psToolTip to "Open the source file in the editor"
         Set MultiLineState to True
-        Set psImage to "ViewSourceCode1.ico" 
+        Set psImage to "ViewSourceCode.ico" 
         Set piImageSize to 16 
         Set pbAutoEnable to True
 
@@ -812,7 +812,7 @@ Object oTableDUFCodeGenerator is a dbView
         Set peAnchors to anBottomRight
         Set psToolTip to "Open the source location in Windows Explorer"
         Set MultiLineState to True
-        Set psImage to "ActionOpenFolder1.ico" 
+        Set psImage to "ActionOpenFolder.ico" 
         Set piImageSize to 16 // 24
         Set pbAutoEnable to True
 

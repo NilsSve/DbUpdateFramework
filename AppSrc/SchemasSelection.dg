@@ -8,7 +8,7 @@ Object oSchemasSelection_sl is a cRDCModalPanel
     Set Label to "SQL Schemas Selection"
     Set piMinSize to 89 177
     Set Location to 2 2
-    Set Icon to "DatabaseLookup1.ico"
+    Set Icon to "DatabaseLookup.ico"
 
     Property String[] psTheData
 

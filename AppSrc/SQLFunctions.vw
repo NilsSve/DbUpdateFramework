@@ -13,7 +13,7 @@ Object oSQLFunctions_vw is a dbView
     Set Location to -4 2
     Set Label to "Functions"
     Set pbAutoActivate to True
-    Set Icon to "Sql1.ico"
+    Set Icon to "Sql.ico"
 
     Procedure OnSetFocus
         String sValue
@@ -85,7 +85,7 @@ Object oSQLFunctions_vw is a dbView
                     Set Size to 12 109
                     Set Location to 50 220
                     Set Label to "Backup MS-SQL Database"
-                    Set psImage to "DbBackup1.ico"
+                    Set psImage to "DbBackup.ico"
 
                     Procedure OnClick
                         Boolean bOK
@@ -262,7 +262,7 @@ Object oSQLFunctions_vw is a dbView
                     Set Location to 134 297
                     Set Label to "Drop Column"
                     Set psToolTip to "Test of SQLColumnRemove function"
-                    Set psImage to "DeleteColumn1.ico"
+                    Set psImage to "DeleteColumn.ico"
 
                     Procedure OnClick
                         Boolean bOk
@@ -381,7 +381,7 @@ Object oSQLFunctions_vw is a dbView
                     Set Location to 177 220
                     Set Label to "Add Column"
                     Set psToolTip to "Test of SQLColumnAdd function"
-                    Set psImage to "AddColumn1.ico"
+                    Set psImage to "AddColumn.ico"
 
                     Procedure OnClick
                         Boolean bOk bInitialize

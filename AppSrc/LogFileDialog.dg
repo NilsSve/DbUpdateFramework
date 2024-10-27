@@ -114,7 +114,7 @@ Object oLogFileDialog_dg is a ModalPanel
 
     Procedure Page Integer iPageObject
         Forward Send Page iPageObject
-        Set Icon to "ViewReportBlack1.ico"
+        Set Icon to "ViewReportBlack.ico"
     End_Procedure      
     
     // Put a status bar at the bottom of the panel to add a gripper in the lower right corner.

@@ -11,7 +11,7 @@ Object oServerSelection_sl is a cRDCModalPanel
     Set Label to "Database Server/DSN Selection"
     Set piMinSize to 89 211
     Set Location to 2 2
-    Set Icon to "ServerLookup1.ico"
+    Set Icon to "ServerLookup.ico"
 
     Property String[] psTheData
 

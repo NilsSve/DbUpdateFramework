@@ -48,7 +48,7 @@ Object oSQLMaintainConnections_dg is a ModalPanel
     Object oSettings_grp is a cRDCHeaderGroup
         Set Size to 202 303
         Set Location to 77 11 //71 11
-        Set psImage to "Settings1.ico"
+        Set psImage to "Settings.ico"
         Set psLabel to "SQL Connection Settings"
         Set peAnchors to anTopLeftRight
         Set psToolTip to "Setup the SQL connection."
@@ -439,7 +439,7 @@ Object oSQLMaintainConnections_dg is a ModalPanel
             Set Size to 13 15
             Set Location to 107 283
             Set psToolTip to "View/hide password"
-            Set psImage to "ViewPassword1.ico"
+            Set psImage to "ViewPassword.ico"
             Set piImageMarginLeft to 2
             Set peAnchors to anTopRight
 
@@ -461,7 +461,7 @@ Object oSQLMaintainConnections_dg is a ModalPanel
             Set Size to 13 78
             Set Location to 123 210
             Set Label to "Check &Login"
-            Set psImage to "ActionLogin1.ico"
+            Set psImage to "ActionLogin.ico"
             Set psToolTip to "You should always use this button when adding a new SQL Connection to ensure that the entered credentials are correct. (Ctrl+L)"
             Set piImageMarginLeft to 3
             Set peAnchors to anTopRight
@@ -759,7 +759,7 @@ Object oSQLMaintainConnections_dg is a ModalPanel
             Set Size to 13 78
             Set Location to 178 210
             Set Label to "Create Database..."
-            Set psImage to "ActionCreateDatabase1.ico"
+            Set psImage to "ActionCreateDatabase.ico"
             Set pbAutoEnable to True
             Set peAnchors to anTopRight
         
@@ -905,7 +905,7 @@ Object oSQLMaintainConnections_dg is a ModalPanel
         Set Label to C_$Help
         Set Location to 287 11 //281 11
         Set peAnchors to anBottomLeft
-        Set psImage to "ActionHelp1.ico"
+        Set psImage to "ActionHelp.ico"
 
         Procedure OnClick
             Send DoDisplayKeyword of ghoHtmlHelp "SQLConnections Tool"
@@ -915,7 +915,7 @@ Object oSQLMaintainConnections_dg is a ModalPanel
     Object oConnectionType_grp is a cRDCHeaderGroup
         Set Size to 60 303
         Set Location to 8 11 //2 11
-        Set psImage to "SQLSettings1.ico"
+        Set psImage to "SQLSettings.ico"
         Set psLabel to "Database Type Settings"
 
         Object oDbType_cf is a cSQLComboForm
@@ -969,7 +969,7 @@ Object oSQLMaintainConnections_dg is a ModalPanel
 //            Set Location to 22 210
 //            Set Label to "SQL Manager"
 //            Set pbAutoEnable to True  
-//            Set psImage to "SSMS1.ico" 
+//            Set psImage to "SSMS.ico" 
 //            Set psToolTip to "Start Microsoft SQL Server Management Studio"
 //            Set peAnchors to anTopRight
 //        
@@ -1044,7 +1044,7 @@ Object oSQLMaintainConnections_dg is a ModalPanel
             Set Location to 37 210
             Set Label to "Driver Settings"
             Set Status_Help to "Shows settings for the selected driver."
-            Set psImage to "DriverSettings1.ico"
+            Set psImage to "DriverSettings.ico"
             Set peAnchors to anTopRight
 
             Procedure OnClick
@@ -1320,7 +1320,7 @@ Object oSQLMaintainConnections_dg is a ModalPanel
 
         Send Cursor_Ready of Cursor_Control
         Forward Send Page iPageObject
-        Set Icon to "SQLConnections1.ico"
+        Set Icon to "SQLConnections.ico"
 
         Get pbNew to bNew
         If (bNew = True) Begin   

@@ -114,7 +114,7 @@ Object oCreateDbVersionTable_pnl is a BasicPanel
     Set Size to 204 398
     Set Locate_Mode to Center_On_Screen
     Set Label to (psProduct(ghoApplication))
-    Set Icon to "ActionCreateDatabase1.ico"
+    Set Icon to "ActionCreateDatabase.ico"
     Set pbAcceptDropFiles to True
     Set piMinSize to (Hi(Size(Self))) (Low(Size(Self)))
     Set Maximize_Icon to False

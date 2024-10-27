@@ -140,7 +140,7 @@ Object oMain is a Panel
     Set Label to (psProduct(ghoApplication))
     Set Location to 30 17
     Set Size to 190 450
-    Set Icon to "SQLConnections1.ico"
+    Set Icon to "SQLConnections.ico"
     Set piMinSize to (Hi(Size(Self))) (Low(Size(Self)))
 
     Object oCommandBarSystem is a cCJCommandBarSystem
@@ -209,7 +209,7 @@ Object oMain is a Panel
             Object oOpen_MenuItem is a cCJMenuItem
                 Set psTooltip to "&Open"
                 Set psDescription to "Open connection ini-file (Ctrl+O)"
-                Set psImage to "ActionOpen1.ico"
+                Set psImage to "ActionOpen.ico"
                 Set pbActiveUpdate to True
                 Procedure OnExecute Variant vCommandBarControl
                     Forward Send OnExecute vCommandBarControl
@@ -220,7 +220,7 @@ Object oMain is a Panel
             Object oRefreshMenuItem is a cCJMenuItem
                 Set psTooltip to "&Refresh"
                 Set psDescription to "Refresh grid - re-read values from ini-file (Alt+R)"
-                Set psImage to "ActionRefresh1.ico"
+                Set psImage to "ActionRefresh.ico"
                 Set pbActiveUpdate to True
                
                 Procedure OnExecute Variant vCommandBarControl
@@ -243,7 +243,7 @@ Object oMain is a Panel
             Object oAddMenuItem is a cCJMenuItem
                 Set psTooltip to "&Add"
                 Set psDescription to "Add new connection (Alt+A)"
-                Set psImage to "ActionAdd1.ico"
+                Set psImage to "ActionAdd.ico"
                 Set pbActiveUpdate to True
                 Procedure OnExecute Variant vCommandBarControl
                     Forward Send OnExecute vCommandBarControl
@@ -254,7 +254,7 @@ Object oMain is a Panel
             Object oEditMenuItem is a cCJMenuItem
                 Set psTooltip to "&Edit"
                 Set psDescription to "Edit selected connection (Alt+E)"
-                Set psImage to "ActionEdit1.ico"
+                Set psImage to "ActionEdit.ico"
                 Set pbActiveUpdate to True
 
                 Procedure OnExecute Variant vCommandBarControl
@@ -276,7 +276,7 @@ Object oMain is a Panel
             Object oSaveMenuItem is a cCJMenuItem
                 Set psTooltip to "Save"
                 Set psDescription to "Save changes (Ctrl+S)"
-                Set psImage to "ActionSave1.ico"
+                Set psImage to "ActionSave.ico"
                 Set pbActiveUpdate to True
                 Set peControlType to xtpControlSplitButtonPopup
 
@@ -294,7 +294,7 @@ Object oMain is a Panel
                 Object oSaveAsMenuItem is a cCJMenuItem
                     Set psTooltip to "Save As"
                     Set psDescription to "Save configuration file as..."  
-                    Set psImage to "ActionSaveAs1.ico"
+                    Set psImage to "ActionSaveAs.ico"
                     
                     Procedure OnExecute Variant vCommandBarControl  
                         String sPath sIniFileName sFileName
@@ -320,7 +320,7 @@ Object oMain is a Panel
             Object oClearMenuItem is a cCJMenuItem 
                 Set psTooltip to "Clear All"
                 Set psDescription to "Clear ini-file (Ctrl+F5)"
-                Set psImage to "ActionClear1.ico"
+                Set psImage to "ActionClear.ico"
                 Set pbActiveUpdate to True
                 
                 Procedure OnExecute Variant vCommandBarControl
@@ -342,7 +342,7 @@ Object oMain is a Panel
             Object oDeleteMenuItem is a cCJMenuItem
                 Set psTooltip to "Delete"
                 Set psDescription to "Delete selected connection (Alt+D)"
-                Set psImage to "ActionDelete1.ico"
+                Set psImage to "ActionDelete.ico"
                 Set pbActiveUpdate to True
 
                 Procedure OnExecute Variant vCommandBarControl
@@ -369,7 +369,7 @@ Object oMain is a Panel
             Object oAddToStudioMenuItem is a cCJMenuItem
                 Set psTooltip to "Add to Studio"
                 Set psDescription to "Add program to the Studio's toolbar menu"
-                Set psImage to "ActionAddStudio1.ico"
+                Set psImage to "ActionAddStudio.ico"
                 
                 Procedure OnExecute Variant vCommandBarControl
                     Forward Send OnExecute vCommandBarControl
@@ -381,7 +381,7 @@ Object oMain is a Panel
             Object oAbout_MenuItem is a cCJMenuItem
                 Set psTooltip to C_$About
                 Set psDescription to "Info about the program..."
-                Set psImage to "ActionAbout1.ico"
+                Set psImage to "ActionAbout.ico"
         
                 Procedure OnExecute Variant vCommandBarControl
                     Send ChangeStatusRowText of (phoMainView(ghoApplication)) ""
@@ -394,7 +394,7 @@ Object oMain is a Panel
                 Set peControlType to xtpControlSplitButtonPopup
                 Set psToolTip to C_$Help
                 Set psDescription to "Local HTML Help"
-                Set psImage to "ActionHelp1.ico"
+                Set psImage to "ActionHelp.ico"
 
                 Procedure OnExecute Variant vCommandBarControl
                     Send ShowProgramHelp
@@ -404,7 +404,7 @@ Object oMain is a Panel
                     Set psToolTip to C_$Help
                     Set psCaption to "Local HTML Help"
                     Set psDescription to "Local HTML Help"
-                    Set psImage to "ActionHelp1.ico"
+                    Set psImage to "ActionHelp.ico"
                     Procedure OnExecute Variant vCommandBarControl
                         Send ShowProgramHelp
                     End_Procedure
@@ -414,7 +414,7 @@ Object oMain is a Panel
                     Set psToolTip to C_$Help
                     Set psCaption to "Online HTML Help"
                     Set psDescription to "Online HTML Help"
-                    Set psImage to "ActionHelpInternet1.ico"
+                    Set psImage to "ActionHelpInternet.ico"
                     Procedure OnExecute Variant vCommandBarControl
                         Runprogram Shell Background "https://www.rdctools.com/HTMLHelpDUF/DUFSQLConnectionsTool.html"
                     End_Procedure
@@ -424,7 +424,7 @@ Object oMain is a Panel
                     Set psToolTip to "Updates"
                     Set psCaption to "Check for Updates..."
                     Set psDescription to "Check for Updates..."
-                    Set psImage to "InternetUpdate1.ico"
+                    Set psImage to "InternetUpdate.ico"
                     Set pbControlBeginGroup to True
                     
                     Procedure OnExecute Variant vCommandBarControl
@@ -443,7 +443,7 @@ Object oMain is a Panel
             Object oExit_MenuItem is a cCJExitMenuItem
                 Set psToolTip to "Exit"
                 Set psDescription to "Exit application (Alt+F4)"   
-                Set psImage to "ActionExit1.ico"
+                Set psImage to "ActionExit.ico"
             End_Object
 
         End_Object

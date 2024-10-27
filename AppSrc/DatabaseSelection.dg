@@ -12,7 +12,7 @@ Object oDatabaseSelection_sl is a cRDCModalPanel
     Set piMinSize to 89 170
     Set Location to 2 2
     Set Border_Style to Border_Thick
-    Set Icon to "DatabaseLookup1.ico"
+    Set Icon to "DatabaseLookup.ico"
 
     Property String[] psTheData
 

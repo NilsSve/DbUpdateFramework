@@ -75,7 +75,7 @@ Object oMain is a Panel
     Set Location to 4 3
     Set Size to 350 602
     Set piMinSize to 400 515
-    Set Icon to "DUFUpdateCodeGenerator1.ico"
+    Set Icon to "DUFUpdateCodeGenerator.ico"
 
     Object oCommandBarSystem is a cCJCommandBarSystem
         Set pbTimerUpdate to True
@@ -169,7 +169,7 @@ Object oMain is a Panel
 
             Object oCodeGenerator_MenuItem is a cCJMenuItem
                 Set psCaption to "Code &Generator"
-                Set psImage to "SqlScript1.ico"
+                Set psImage to "SqlScript.ico"
                 Set peControlStyle to xtpButtonIconAndCaption
                 Procedure OnExecute Variant vCommandBarControl
                     Forward Send OnExecute vCommandBarControl
@@ -181,7 +181,7 @@ Object oMain is a Panel
 
             Object oCompareDatabases_MenuItem is a cCJMenuItem
                 Set psCaption to "Compare &Databases"
-                Set psImage to "DbCompare1.ico"
+                Set psImage to "DbCompare.ico"
                 Set peControlStyle to xtpButtonIconAndCaption
                 Set pbChecked to True
 
@@ -205,25 +205,25 @@ Object oMain is a Panel
             Set pbShowExpandButton to False
 
             Object oCutToolbarItem is a cCJCutMenuItem
-                Set psImage to "ActionCut1.ico"
+                Set psImage to "ActionCut.ico"
             End_Object
 
             Object oCopyToolbarItem is a cCJCopyMenuItem
-                Set psImage to "ActionCopy1.ico"
+                Set psImage to "ActionCopy.ico"
 
             End_Object
 
             Object oPasteToolbarItem is a cCJPasteMenuItem
-                Set psImage to "ActionPaste1.ico"
+                Set psImage to "ActionPaste.ico"
             End_Object
 
 //            Object oDeleteEditToolbarItem is a cCJDeleteEditMenuItem
-//                Set psImage to "ActionDelete1.ico"
+//                Set psImage to "ActionDelete.ico"
 //                Set pbControlBeginGroup to True
 //            End_Object
 
             Object oPromptToolItem is a cCJPromptMenuItem
-                Set psImage to "ActionPrompt1.ico"
+                Set psImage to "ActionPrompt.ico"
                 Set pbControlBeginGroup to True
             End_Object
 
@@ -231,7 +231,7 @@ Object oMain is a Panel
                 Set peControlStyle to xtpButtonIconAndCaption
                 Set psCaption      to "Clear/Add"
                 Set pbControlBeginGroup to True
-                Set psImage to "ActionClear1.ico"  
+                Set psImage to "ActionClear.ico"  
                 
                 Function IsEnabled Returns Boolean
                     Function_Return True
@@ -240,7 +240,7 @@ Object oMain is a Panel
             End_Object
 
             Object oOpenContainingFolder_MenuItem is a cCJMenuItem
-                Set psImage to "ActionOpenContainingFolder1.ico"
+                Set psImage to "ActionOpenContainingFolder.ico"
                 Set psCaption to "Containing Folder"
                 Set psToolTip to "Open containing folder"
                 Set psDescription to "Open Containing Folder"
@@ -276,7 +276,7 @@ Object oMain is a Panel
 //                Set peControlStyle to xtpButtonIconAndCaption
 //                Set psCaption to "&Connection" 
                 Set psToolTip to "Show SQL Settings dialog"
-                Set psImage to "SQLSettings1.ico"
+                Set psImage to "SQLSettings.ico"
                 Set piShortCutKey to xtpKey_Alt VK_S
                 Set pbControlBeginGroup to True
                 Set pbActiveUpdate to True
@@ -322,7 +322,7 @@ Object oMain is a Panel
                 Set psCaption to "Add to Studio"
                 Set psDescription to "Add to Studio"
                 Set psToolTip to "Add this tool to the DataFlex Studio's 'Tools' menu"
-                Set psImage to "ActionAddStudio1.ico"
+                Set psImage to "ActionAddStudio.ico"
                 Set pbControlBeginGroup to True   
                 
                 Procedure OnExecute Variant vCommandBarControl
@@ -342,7 +342,7 @@ Object oMain is a Panel
 //                Set psCaption to "Take shapshot"
 //                Set psToolTip to "Take shapshot"
 //                Set psDescription to "Take a snapshot image of the current view/panel. (F10)"
-//                Set psImage to "Camera1.ico"
+//                Set psImage to "Camera.ico"
 //                
 //                Procedure OnExecute Variant vCommandBarControl
 //                    Send TakeSnapshot False
@@ -512,7 +512,7 @@ Object oMain is a Panel
 //            End_Object
 //
 //            Object oColorSelection_Item is a cCJMenuItem
-//                Set psImage to "ColorSelectorBlack1.ico"
+//                Set psImage to "ColorSelectorBlack.ico"
 //
 //                Object oColorDialog is a ColorDialog
 //                    Function SelectColor Returns Integer
@@ -544,7 +544,7 @@ Object oMain is a Panel
                 Set psCaption to "About"
                 Set psToolTip to "About Info"
                 Set psDescription to "About the program"
-                Set psImage to "ActionAbout1.ico"
+                Set psImage to "ActionAbout.ico"
                 Set pbControlBeginGroup to True
                 Procedure OnExecute Variant vCommandBarControl
                     Forward Send OnExecute vCommandBarControl
@@ -554,7 +554,7 @@ Object oMain is a Panel
 
             Object oHelpMenuItem is a cCJHelpMenuItem
                 Set peControlType to xtpControlSplitButtonPopup
-                Set psImage to "ActionHelp1.ico"
+                Set psImage to "ActionHelp.ico"
 
                 Procedure OnExecute Variant vCommandBarControl
                     Send ShowProgramHelp
@@ -562,7 +562,7 @@ Object oMain is a Panel
 
                 Object oHelpMenuItemLocal is a cCJMenuItem
                     Set psCaption to "Local HTML Help"
-                    Set psImage to "ActionHelp1.ico"
+                    Set psImage to "ActionHelp.ico"
                     Procedure OnExecute Variant vCommandBarControl
                         Send ShowProgramHelp
                     End_Procedure
@@ -570,7 +570,7 @@ Object oMain is a Panel
 
                 Object oHelpMenuItemInternetBrowser is a cCJMenuItem
                     Set psCaption to "Online HTML Help"
-                    Set psImage to "ActionHelpInternet1.ico"
+                    Set psImage to "ActionHelpInternet.ico"
                     Procedure OnExecute Variant vCommandBarControl
                         Runprogram Shell Background "http://www.rdctools.com/HTMLHelpDUF/Developer5.htm"
                     End_Procedure
@@ -580,7 +580,7 @@ Object oMain is a Panel
 //                Object oCheckforUpdatesMenuItem is a cCJMenuItem
 //                    Set psCaption to "Check for Updates"
 //                    Set psDescription to "Check for Updates..."
-//                    Set psImage to "InternetUpdate1.ico"
+//                    Set psImage to "InternetUpdate.ico"
 //                    Set pbControlBeginGroup to True
 //                    
 //                    Procedure OnExecute Variant vCommandBarControl
@@ -599,7 +599,7 @@ Object oMain is a Panel
             Object oExitMenuItem is a cCJExitMenuItem
                 Set psToolTip to "Exit application"
                 Set psDescription to "Exit the program (Alt+F4)"
-                Set psImage to "ActionExit1.ico"
+                Set psImage to "ActionExit.ico"
                 Set pbControlBeginGroup to True
             End_Object
 

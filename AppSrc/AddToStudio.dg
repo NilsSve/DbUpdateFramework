@@ -209,7 +209,7 @@ Object oAddToStudio_dg is a ModalPanel
 
     Procedure Page Integer iPageObject
         Forward Send Page iPageObject
-        Set Icon to "ActionAddStudio1.ico"
+        Set Icon to "ActionAddStudio.ico"
     End_Procedure
 
     On_Key Key_Alt+Key_O Send KeyAction of oOK_Btn

@@ -14,7 +14,7 @@ Class cSQLConnectionButton is a cRDCButtonDPI
             Get Label to sLabel
             Move (Replace("&", sLabel, "")) to sLabel
             Move (Replace("...", sLabel, "")) to sLabel
-            Set psImage to ("Action" + sLabel + "1.ico")
+            Set psImage to ("Action" + sLabel + ".ico")
         End
     End_Procedure
 

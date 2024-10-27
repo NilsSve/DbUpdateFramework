@@ -184,7 +184,7 @@ Object oSQLMaintainConnection is a dbView
             Object oAddMenuItem is a cCJMenuItem
                 Set psCaption to "Add"
                 Set psTooltip to "Add new connection"
-                Set psImage to "ActionAdd1.ico"
+                Set psImage to "ActionAdd.ico"
                 Set psShortcut to "Ctrl+A"
                 Procedure OnExecute Variant vCommandBarControl
                     Forward Send OnExecute vCommandBarControl
@@ -195,7 +195,7 @@ Object oSQLMaintainConnection is a dbView
             Object oEditMenuItem is a cCJMenuItem
                 Set psCaption to "Edit"
                 Set psTooltip to "Edit existing connection"
-                Set psImage to "ActionEdit1.ico"
+                Set psImage to "ActionEdit.ico"
                 Set psShortcut to "Ctrl+E"
                 Procedure OnExecute Variant vCommandBarControl
                     Forward Send OnExecute vCommandBarControl
@@ -206,7 +206,7 @@ Object oSQLMaintainConnection is a dbView
             Object oDeleteMenuItem is a cCJMenuItem
                 Set psCaption to "Delete"
                 Set psTooltip to "Delete current connection"
-                Set psImage to "ActionDelete1.ico"
+                Set psImage to "ActionDelete.ico"
                 Set psShortcut to "Del"
                 Procedure OnExecute Variant vCommandBarControl
                     Forward Send OnExecute vCommandBarControl
@@ -218,7 +218,7 @@ Object oSQLMaintainConnection is a dbView
                 Set pbControlBeginGroup to True
                 Set psCaption to "Save"
                 Set psTooltip to "Save changes"
-                Set psImage to "ActionSave1.ico" 
+                Set psImage to "ActionSave.ico" 
                 Set psShortcut to "Ctrl+S"
                 
                 Procedure OnExecute Variant vCommandBarControl
@@ -236,7 +236,7 @@ Object oSQLMaintainConnection is a dbView
             Object oSaveAsMenuItem is a cCJMenuItem
                 Set psCaption to "Save As"
                 Set psTooltip to "Save SQL Configuration File As"  
-                Set psImage to "ActionSaveAs1.ico"
+                Set psImage to "ActionSaveAs.ico"
                 
                 Procedure OnExecute Variant vCommandBarControl  
                     String sPath sIniFileName sFileName
@@ -261,7 +261,7 @@ Object oSQLMaintainConnection is a dbView
                 Set pbControlBeginGroup to True
                 Set psCaption to "Open"
                 Set psTooltip to "Open SQL Connection ini-file"
-                Set psImage to "ActionOpen1.ico"
+                Set psImage to "ActionOpen.ico"
                 Set psShortcut to "Ctrl+O"
                 Procedure OnExecute Variant vCommandBarControl
                     Forward Send OnExecute vCommandBarControl
@@ -272,7 +272,7 @@ Object oSQLMaintainConnection is a dbView
             Object oRefreshMenuItem is a cCJMenuItem
                 Set psCaption to "Refresh"
                 Set psTooltip to "Refresh grid (re-read values from ini-file)"
-                Set psImage to "ActionRefresh1.ico"
+                Set psImage to "ActionRefresh.ico"
                 Set psShortcut to "Ctrl+R"
 
                 Procedure OnExecute Variant vCommandBarControl

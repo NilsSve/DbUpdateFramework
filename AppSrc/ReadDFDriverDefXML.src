@@ -50,7 +50,7 @@ Object oMainPanel is a BasicPanel
         Set Location to 11 17
         Set peAnchors to anTopLeftRight
         Set psLabel to "Read Driver Def XML file" 
-        Set psImage to "ActionOpen1.ico"
+        Set psImage to "ActionOpen.ico"
 
         Object oFileNameDialog is a OpenDialog
             Set Dialog_Caption to "Select a Driver XML-file"
@@ -223,7 +223,7 @@ Object oMainPanel is a BasicPanel
         Set Location to 87 17
         Set peAnchors to anTopLeftRight
         Set psLabel to "Write Driver Data Types to Package Name:"
-        Set psImage to "ActionPrint1.ico"
+        Set psImage to "ActionPrint.ico"
         
         Object oOutputFilename_fm is a Form
             Set Size to 13 298

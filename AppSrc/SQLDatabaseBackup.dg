@@ -174,7 +174,7 @@ Object oSQLDatabaseBackup_dg is a ModalPanel
     End_Object
 
     Procedure Page Integer iPageObject
-        Set Icon to "DbBackup1.ico"
+        Set Icon to "DbBackup.ico"
         Forward Send Page iPageObject
     End_Procedure
 

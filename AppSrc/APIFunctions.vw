@@ -16,7 +16,7 @@ Object oAPIFunctions_vw is a dbView
     Set Location to 17 2
     Set Label to "API Functions"
     Set pbAutoActivate to True
-    Set Icon to "APIFunctions1.ico"
+    Set Icon to "APIFunctions.ico"
 
     Property String psTableName ""
 
@@ -125,7 +125,7 @@ Object oAPIFunctions_vw is a dbView
                     Set Size to 12 69
                     Set Location to 114 271
                     Set Label to "Add Table"
-                    Set psImage to "ActionAddTable1.ico"
+                    Set psImage to "ActionAddTable.ico"
 
                     Procedure OnClick
                         Boolean bOk
@@ -256,7 +256,7 @@ Object oAPIFunctions_vw is a dbView
                     Set Location to 141 271
                     Set Label to "Add Column"
                     Set psToolTip to "ApiColumnAdd function"
-                    Set psImage to "ActionAddColumn1.ico"
+                    Set psImage to "ActionAddColumn.ico"
 
                     Procedure OnClick
                         Boolean bOk
@@ -300,7 +300,7 @@ Object oAPIFunctions_vw is a dbView
                     Set Location to 184 14
                     Set Label to "Create 'New' Table with Three Columns"
                     Set MultiLineState to True
-                    Set psImage to "ActionAddTable1.ico"
+                    Set psImage to "ActionAddTable.ico"
 
                     Procedure OnClick
                         Boolean bOk
@@ -344,7 +344,7 @@ Object oAPIFunctions_vw is a dbView
                     Set Size to 26 77
                     Set Location to 184 96
                     Set Label to "Remove 'New' Table"
-                    Set psImage to "ActionDeleteTable1.ico"
+                    Set psImage to "ActionDeleteTable.ico"
                     Set MultiLineState to True
 
                     Procedure OnClick

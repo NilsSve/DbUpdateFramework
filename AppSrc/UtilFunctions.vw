@@ -24,7 +24,7 @@ Object oUtilFunctions_vw is a dbView
     Set Location to 2 1
     Set Label to "Utility Functions"
     Set pbAutoActivate to True
-    Set Icon to "TestTools1.ico"
+    Set Icon to "TestTools.ico"
     Set pbAcceptDropFiles to True
 
     Object oScrollingContainer1 is a cDbScrollingContainer
@@ -41,7 +41,7 @@ Object oUtilFunctions_vw is a dbView
                     Set Location to 13 13
                     Set Label to "Create New SQL Database [OrderEntry] Complete with Data"
                     Set psToolTip to "Creates the full Order Entry Sample database from the DataFlex samples complete with data with the name: [OrderEntry]"
-                    Set psImage to "ActionCreateDatabase1.ico"
+                    Set psImage to "ActionCreateDatabase.ico"
 
                     Procedure OnClick
                         String sInfoText sDriverID
@@ -87,7 +87,7 @@ Object oUtilFunctions_vw is a dbView
                     Set Location to 33 13
                     Set Label to "Create New SQL Database [NorthWind] Complete with Data"
                     Set psToolTip to "Creates the full NorthWind Sample database from the DataFlex samples complete with data with the name: [NorthWind]"
-                    Set psImage to "ActionCreateDatabase1.ico"
+                    Set psImage to "ActionCreateDatabase.ico"
 
                     Procedure OnClick
                         String sInfoText sDriverID
@@ -134,7 +134,7 @@ Object oUtilFunctions_vw is a dbView
                     Set Location to 53 13
                     Set Label to "Create New SQL Database [Chinook] Complete with Data"
                     Set psToolTip to "Creates the Chinook demo database complete with data in Microsoft SQL Server. Note: If it exists it will first be dropped then recreated. Note: These scripts were part of Data Access Europe's '' training class."
-                    Set psImage to "ActionCreateDatabase1.ico"
+                    Set psImage to "ActionCreateDatabase.ico"
 
                     Procedure OnClick
                         String sInfoText sDriverID
@@ -288,7 +288,7 @@ Object oUtilFunctions_vw is a dbView
                     Set Label to "Select Folder"
                     Set psToolTip to "Please select an .int file from the data folder"
                     Set peAnchors to anTopRight
-                    Set psImage to "ActionOpen1.ico"
+                    Set psImage to "ActionOpen.ico"
 
                     Procedure OnClick
                         Send Prompt to oSelectDataPath_fm
@@ -524,7 +524,7 @@ Object oUtilFunctions_vw is a dbView
                     Set Location to 26 315
                     Set Label to "Print to Filelist.txt"
                     Set psToolTip to "Writes the content of Filelist.cfg to a textfile and shows the textfile in the editor program asociated with *.txt files."
-                    Set psImage to "ActionDocument1.ico"
+                    Set psImage to "ActionDocument.ico"
 
                     Property Integer piSortOrder 0 // Property gets set by the radio group object.
 

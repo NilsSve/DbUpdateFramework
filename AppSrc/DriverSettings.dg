@@ -18,7 +18,7 @@ Object oDriverSettings_dg is a cRDCModalPanel
     Set Location to 2 2
     Set Maximize_Icon to False
     Set Locate_Mode to CENTER_ON_PARENT
-    Set Icon to "DriverSettings1.ico"
+    Set Icon to "DriverSettings.ico"
     
     Property String psDriverID MSSQLDRV_ID
     Property Boolean pbDriverLoadingError False
@@ -129,7 +129,7 @@ Object oDriverSettings_dg is a cRDCModalPanel
         Set Label to "Edit File"
         Set Location to 39 287
         Set Status_Help to "Opens the driver configuration file that contains configuration settings that are used when tables are restructured, in Notepad."
-        Set psImage to "ActionEdit1.ico"
+        Set psImage to "ActionEdit.ico"
         Set peAnchors to anTopRight
         Set pbAutoEnable to True
 
@@ -158,7 +158,7 @@ Object oDriverSettings_dg is a cRDCModalPanel
         Set Location to 54 233
         Set peAnchors to anTopRight
         Set psToolTip to "Dumps the current status of the Connectivity Kit driver to an ASCII disk file."
-        Set psImage to "ActionExport1.ico"
+        Set psImage to "ActionExport.ico"
         Set pbAutoEnable to True
         
         Procedure OnClick
@@ -201,7 +201,7 @@ Object oDriverSettings_dg is a cRDCModalPanel
         Set Label to "Refresh"
         Set Status_Help to "If you edit the driver configuration file, the display of attributes above needs to be refreshed. Click here to refresh."
         Set Location to 54 287
-        Set psImage to "ActionRefresh1.ico"
+        Set psImage to "ActionRefresh.ico"
         Set peAnchors to anTopRight
         Set pbAutoEnable to True
 
@@ -227,7 +227,7 @@ Object oDriverSettings_dg is a cRDCModalPanel
     Object oDriverSetings_grp is a cRDCHeaderGroup
         Set Size to 125 328
         Set Location to 74 9
-        Set psImage to "DriverSettings1.ico"
+        Set psImage to "DriverSettings.ico"
         Set Label to "Driver Configuration File Settings"   
         Set psNote to "Hover the mouse over an attribute field to read information about it."
         Set peAnchors to anAll

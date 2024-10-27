@@ -51,7 +51,7 @@ Object oCompareDatabases_vw is a dbView
     Object oFromFilelist_grp is a cRDCHeaderGroup
         Set Size to 50 462
         Set Location to 8 15
-        Set psImage to "FolderLeft1.ico"
+        Set psImage to "FolderLeft.ico"
         Set Label to "Select FROM Filelist.cfg"
         Set psNote to "The development/latest version of the database"  
         Set psToolTip to "Select the Filelist.cfg file for the development database"
@@ -105,7 +105,7 @@ Object oCompareDatabases_vw is a dbView
     Object oToFilelist_grp is a cRDCHeaderGroup
         Set Size to 50 462
         Set Location to 69 15
-        Set psImage to "FolderRight1.ico"
+        Set psImage to "FolderRight.ico"
         Set Label to "Select TO Filelist.cfg"
         Set psNote to "The customer/current version of the database"   
         Set psToolTip to "Select the Filelist.cfg file for the database that needs to be updated"
@@ -168,7 +168,7 @@ Object oCompareDatabases_vw is a dbView
         Set Location to 130 15
         Set Label to "Configure Database Compare"
         Set psNote to "Select checkboxes to configure the comparison"
-        Set psImage to "Settings1.ico" 
+        Set psImage to "Settings.ico" 
         Set psToolTip to "Configure what will be compared"
         
         Object oCompareDate_DataTime_cb is a cSQLCheckBox
@@ -208,7 +208,7 @@ Object oCompareDatabases_vw is a dbView
     Object oReportFilename_grp is a cRDCHeaderGroup
         Set Size to 51 462
         Set Location to 200 15
-        Set psImage to "ActionPrintSave1.ico"
+        Set psImage to "ActionPrintSave.ico"
         Set Label to "Report File Name"
         Set psNote to "Output file name"    
         Set psToolTip to "The name of the report file that contains the compare result"
@@ -1334,7 +1334,7 @@ Object oCompareDatabases_vw is a dbView
         Set Location to 276 139
         Set Label to "Co&mpare Databases!"
         Set psNote to "Compare the two selected databases."
-        Set psImage to "DbCompare1.ico"
+        Set psImage to "DbCompare.ico"
         Set Default_State to True
         Set psToolTip to "Start the compare process"
         Set piImageSize to 32 // 48
@@ -1384,7 +1384,7 @@ Object oCompareDatabases_vw is a dbView
         Set Label to "&Report"
         Set psNote to "View report"
         Set peAnchors to anBottomRight
-        Set psImage to "ViewReport1.ico"
+        Set psImage to "ViewReport.ico"
         Set psToolTip to "Open the folder where the report was generated. (Ctrl+R)"
         Set piImageSize to 16 //24
 
@@ -1419,7 +1419,7 @@ Object oCompareDatabases_vw is a dbView
         Set MultiLineState to True
         Set Border_Style to Border_Normal
         Set peImageAlign to Button_ImageList_Align_Center
-        Set psImage to "SelectInvert1.ico"
+        Set psImage to "SelectInvert.ico"
         Set psToolTip to "Tag Tables for the 'FROM' Filelist.cfg with differences - for code generation on the 'Code Generator' view page."
         Set pbAutoEnable to True
         Set piImageSize to 16 // 24

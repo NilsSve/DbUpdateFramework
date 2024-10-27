@@ -112,7 +112,7 @@ Object oSQLConnections is a ModalPanel
     End_Object
 
     Procedure Page Integer iPageObject
-        Set Icon to "SQLConnections1.ico"
+        Set Icon to "SQLConnections.ico"
         Forward Send Page iPageObject
     End_Procedure
 

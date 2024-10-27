@@ -12,7 +12,7 @@ Object oCreateDatabase_dg is a cRDCModalPanel
     Set Label to "Create New Database"
     Set piMinSize to 53 211
     Set Location to 2 2
-    Set Icon to "ActionCreateDatabase1.ico"
+    Set Icon to "ActionCreateDatabase.ico"
     
     Property String psDriverID                   
     Property String psCollation 
@@ -69,7 +69,7 @@ Object oCreateDatabase_dg is a cRDCModalPanel
     Object oMain_RDCHeaderGroup is a cRDCHeaderGroup
         Set Size to 108 293
         Set Location to 8 10
-        Set psImage to "ActionCreateDatabase1.ico"
+        Set psImage to "ActionCreateDatabase.ico"
         Set Label to "Create Database"
         Set psNote to "Enter collation and database name"
         Set peAnchors to anTopBottom
@@ -243,7 +243,7 @@ Object oCreateDatabase_dg is a cRDCModalPanel
     Object oHelp_btn is a Button
         Set Location to 130 75
         Set Label to "Help"
-        Set psImage to "ActionHelpInternet1.ico"
+        Set psImage to "ActionHelpInternet.ico"
         Set psToolTip to "Show a Full List of Collations Supported in SQL Server 2017"
         Set peAnchors to anBottomLeft
     

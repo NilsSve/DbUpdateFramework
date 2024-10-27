@@ -14,7 +14,7 @@ Object oSQLConnections_vw is a dbView
     Set Location to 2 2
     Set Label to "SQL Connections"
     Set pbAutoActivate to True
-    Set Icon to "SQLConnections1.ico"
+    Set Icon to "SQLConnections.ico"
 
     Object oScrollingContainer1 is a cDbScrollingContainer
         Object oScrollingClientArea1 is a cDbScrollingClientArea
@@ -264,7 +264,7 @@ Object oSQLConnections_vw is a dbView
                     Set Size to 12 19
                     Set Location to 57 317
                     Set psToolTip to "Toggle password"
-                    Set psImage to "ViewPassword1.ico"
+                    Set psImage to "ViewPassword.ico"
                     Set piImageMarginLeft to 0
 
                     Procedure OnClick
@@ -284,7 +284,7 @@ Object oSQLConnections_vw is a dbView
                     Set peAnchors to anNone
                     Set psToolTip to "Changes the connection string with any changes made and tries to login to the server with the connection string."
                     Set FontWeight to fw_Bold
-                    Set psImage to "ActionLogin1.ico"
+                    Set psImage to "ActionLogin.ico"
                     Set piImageMarginLeft to 0
 
                     Procedure OnClick
@@ -366,7 +366,7 @@ Object oSQLConnections_vw is a dbView
                     Set Location to 106 315
                     Set Label to "SQL Connections"
                     Set peAnchors to anNone
-                    Set psImage to "SQLConnections1.ico"
+                    Set psImage to "SQLConnections.ico"
 
                     Procedure OnClick 
                         Runprogram Background "DUFSQLConnections.exe"
