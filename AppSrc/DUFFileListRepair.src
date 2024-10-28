@@ -222,9 +222,10 @@ Object oMain is a Panel
     // to that object.
     Procedure ShowProgramHelp
         Set psHelpFile of ghoApplication to "Developer5.chm"
-        Send DoDisplayKeyword of oHtmlHelp "" //"DUF Code Generator"
+        Send DoDisplayKeyword of oHtmlHelp "DUF Filelist Repairer"
     End_Procedure
 
+    On_Key Key_F1 Send ShowProgramHelp
 End_Object
 
 // *** Note: If you get a compile error: "Can't include the resource COMPILEHEADER.H",
