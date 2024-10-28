@@ -352,7 +352,6 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
         Move (              sAlterDatabaseKeyWord  * String(sDatabase) * String(sSet) * String(sSingle_User) * String(sWith) * String(sRollback) * String(sImmediate)) to sSQL
         Move (sSQL * String(sAlterDatabaseKeyWord) * String(sDatabase) * String(sCollateKeyWord) * String(sSQLCollation)) to sSQL
         Move (sSQL * String(sAlterDatabaseKeyWord) * String(sDatabase) * String(sSet) * String(sMulti_User)) to sSQL
-//        Move (sAlterDatabaseKeyWord * String(sDatabase) * String(sCollateKeyWord) * String(sSQLCollation)) to sSQL
 
         Send Ignore_Error of Error_Object_Id CLIERR_GENERAL_ERROR
         Send SqlUtilExecuteQuery sSQL sDriverID False
@@ -898,7 +897,6 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
         If (iDataType = DF_BCD and Left(sValue, 1 <> "[")) Begin
             Move ("[" + String(sValue) + "]") to sValue
         End
-
         Set_Attribute DF_FIELD_DEFAULT_VALUE of hTable iColumn to sValue
         Move (not(Err)) to bOK
         Move bErr to Err
@@ -3799,7 +3797,7 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
                     Set_Attribute DF_FIELD_NATIVE_TYPE   of hTable iColumn to iType
                     Set_Attribute DF_FIELD_NULL_ALLOWED  of hTable iColumn to aColumns[iCount].bAllowNULL
 
-                    Move aColumns[iCount].sDefaultValue                    to sDefaultValue
+                    Move aColumns[iCount].sDefaultValue  to sDefaultValue
                     If (iDataFlexType = DF_BCD and Left(String(sDefaultValue), 1) <> "[") Begin
                         Move ("[" + String(sDefaultValue) + "]") to sDefaultValue
                     End

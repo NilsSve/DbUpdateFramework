@@ -1224,7 +1224,7 @@ Class cBaseDbUpdateFuncLib is a cObject
         String[] asCollations
         
         If (sDriverID = "") Begin
-            Error DFERR_PROGRAM "The database driver ID was not passed as a parameter to the 'SqlDatabaseCollationChange' function"
+            Error DFERR_PROGRAM "The database driver ID was not passed as a parameter to the '_SqlEnumerateDatabaseCollations' function"
             Function_Return asCollations
         End
 
