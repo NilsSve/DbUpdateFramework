@@ -74,3 +74,4 @@ Programs/DUFTestProgram64.dbg
 *.mtd
 *.dsk
 *.dep
+**/HelpText**/*.*
