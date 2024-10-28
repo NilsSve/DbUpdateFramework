@@ -427,7 +427,7 @@ Object oFilelistFixerView is a dbView
     Object oFixProblemsPreUpdate_grp is a Group
         Set Size to 52 448
         Set Location to 328 12
-        Set Label to "Necessary Pre-Update Database Actions:"
+        Set Label to "Pre-Update Database Actions:"
         Set peAnchors to anNone
 
         // Will remove non Alias Filelist entries that:
@@ -971,7 +971,6 @@ Object oFilelistFixerView is a dbView
                         End
                     End
                     
-                    // ToDo: If the table is Alias but the Master couldn't be found, should we remove the Alias from Filelist.cfg?
                     Else If (hMasterTable = 0) Begin
                         Set_Attribute DF_FILE_ROOT_NAME    of hTable to ""
                         Set_Attribute DF_FILE_LOGICAL_NAME of hTable to ""
