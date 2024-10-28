@@ -1388,12 +1388,12 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
     // Pass a True for the bShowResult parameter to show work in progress (showln's).
     Function SqlUtilChangeIntFilesToConnectionIDs String sDataPath String sConnectionID Boolean bShowResult Returns String[] 
         String sFileName sDriverID sDriverFile sConnectionString sPath
-        String[] sFilesData asFileChanges
+        String[] asFilesData asFileChanges
         Boolean bOK bCancel bChange
         Integer iSize iCount
 
-        Get SqlUtilEnumerateIntFiles sDataPath to sFilesData
-        Move (SizeOfArray(sFilesData))    to iSize
+        Get SqlUtilEnumerateIntFiles sDataPath to asFilesData
+        Move (SizeOfArray(asFilesData))    to iSize
         If (iSize = 0) Begin
             If (ghoStatusPanel <> 0) Begin
                 If (Active_State(ghoStatusPanel)) Begin
@@ -1408,19 +1408,19 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
         Get vFolderFormat sDataPath to sDataPath
         Decrement iSize
         For iCount from 0 to iSize
-            Move sFilesData[iCount] to sFileName
+            Move asFilesData[iCount] to sFileName
             If (Lowercase(sFileName) <> "mssqldrv.int" and Lowercase(sFileName) <> "db2_drv.int" and Lowercase(sFileName) <> "odbc_drv.int") Begin
-            // This makes sure that we also can change an existing connection id to something new:
-            Get _UtilChangeSourceCodeLine (sDataPath + sFileName) (CS_SERVER_NAME * CS_SERVER) (CS_SERVER_NAME * CS_DFCONNID + "=" + sConnectionID) bShowResult to bChange
-            If (bChange = True) Begin
-                Move sFileName to asFileChanges[SizeOfArray(asFileChanges)]
-            End
-            If (ghoStatusPanel <> 0) Begin
-                If (Active_State(ghoStatusPanel)) Begin
-                    Get Check_StatusPanel of ghoStatusPanel to bCancel
-                    If (bCancel = True) Begin
-                        Send Deactivate of ghoStatusPanel
-                        Function_Return asFileChanges
+                // This makes sure that we also can change an existing connection id to something new:
+                Get _UtilChangeSourceCodeLine (sDataPath + sFileName) (CS_SERVER_NAME * CS_SERVER) (CS_SERVER_NAME * CS_DFCONNID + "=" + sConnectionID) bShowResult to bChange
+                If (bChange = True) Begin
+                    Move sFileName to asFileChanges[SizeOfArray(asFileChanges)]
+                End
+                If (ghoStatusPanel <> 0) Begin
+                    If (Active_State(ghoStatusPanel)) Begin
+                        Get Check_StatusPanel of ghoStatusPanel to bCancel
+                        If (bCancel = True) Begin
+                            Send Deactivate of ghoStatusPanel
+                            Function_Return asFileChanges
                         End
                     End
                 End
