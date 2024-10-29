@@ -86,19 +86,14 @@ Object oFilelistFixerView is a dbView
         End_Procedure
 
         Procedure Page Integer iPageObject
-            String sFileName sDataPath sVal
+            String sFileName
             
             Forward Send Page iPageObject
             Get psFilelistFrom of ghoApplication to sFileName
-            If (sFileName <> "") Begin
-                Move sFileName to sVal
+            If (sFileName = "") Begin
+                Get psFileList of (phoWorkspace(ghoApplication)) to sFileName
             End
-            Else Begin
-                Get psDataPath of (phoWorkspace(ghoApplication)) to sDataPath
-                Move "Filelist.cfg" to sFileName
-                Move (sDataPath + "\" + sFileName) to sVal
-            End
-            Set Value to sVal
+            Set Value to sFileName
         End_Procedure
         
     End_Object
@@ -1012,7 +1007,7 @@ Object oFilelistFixerView is a dbView
                         Set_Attribute DF_FILE_ROOT_NAME    of hTable to ""
                         Set_Attribute DF_FILE_LOGICAL_NAME of hTable to ""
                         Set_Attribute DF_FILE_DISPLAY_NAME of hTable to ""
-                        Send WriteToLogFile True hTable sLogicalNameOrg sRootNameOrg "" sNoDriverRootname sDisplayNameOrg "Alias Filelist entry SHOULD BE REMOVED!"
+                        Send WriteToLogFile True hTable sLogicalNameOrg sRootNameOrg "" sDisplayNameOrg "Alias Filelist entry SHOULD BE REMOVED!"
                         Increment iCounter
                     End
                     Get_Attribute DF_FILE_DISPLAY_NAME of hTable to sDisplayNameNew
@@ -1020,14 +1015,14 @@ Object oFilelistFixerView is a dbView
                     If (not(Lowercase(sDisplayNameNew) contains "alias")) Begin
                         Move (sLogicalNameNew * "(" + sNoDriverRootname * "ALIAS)") to sDisplayNameNew
                         Set_Attribute DF_FILE_DISPLAY_NAME of hTable to sDisplayNameNew
-                        Send WriteToLogFile True hTable sLogicalNameOrg sRootNameOrg sRootNameNew sNoDriverRootname sDisplayNameOrg sDisplayNameNew
+                        Send WriteToLogFile True hTable sLogicalNameOrg sRootNameOrg sRootNameNew sDisplayNameOrg sDisplayNameNew
                         Increment iCounter
                     End
                 End
                 // Adjust DisplayName?
                 If (bIsAlias = False and Lowercase(sDisplayNameOrg) contains "alias") Begin
                     Get RemoveDisplayNameAlias hTable sDisplayNameOrg to sDisplayNameNew
-                    Send WriteToLogFile False hTable sLogicalNameOrg sRootNameOrg sRootNameNew sNoDriverRootname sDisplayNameOrg sDisplayNameNew
+                    Send WriteToLogFile False hTable sLogicalNameOrg sRootNameOrg sRootNameNew sDisplayNameOrg sDisplayNameNew
                     Increment iCounter
                 End
             End
@@ -2122,7 +2117,7 @@ Object oFilelistFixerView is a dbView
     End_Procedure
 
     Procedure CloseLogFile
-        String sLogFile sTimeStamp sFilelist
+        String sLogFile sTimeStamp
         Integer iCh
 
         Get Value of oLogFile_fm to sLogFile
@@ -2158,7 +2153,7 @@ Object oFilelistFixerView is a dbView
         Send CloseLogFile            
     End_Procedure
     
-    Procedure WriteToLogFile Boolean bIsAlias Handle hTable String sLogicalNameOrg String sRootNameOrg String sRootNameNew String sNoDriverRootname String sDisplayNameOrg String sDisplayNameNew
+    Procedure WriteToLogFile Boolean bIsAlias Handle hTable String sLogicalNameOrg String sRootNameOrg String sRootNameNew String sDisplayNameOrg String sDisplayNameNew
         Integer iCh
 
         Get piChannel to iCh
