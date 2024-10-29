@@ -7,11 +7,12 @@ Use seq_chnl.pkg
 Use File_dlg.pkg
 Use cRichEdit.pkg
 Use cRDCForm.pkg
-Use vWin32fh.pkg
-Use DriverIntFileSettings.dg
+Use cRDCButton.pkg
 Use cDbUpdateFunctionLibrary.pkg
 Use cNumForm.pkg
 Use cMyRichEdit.pkg
+Use vWin32fh.pkg
+Use DriverIntFileSettings.dg
 
 // Just to get a shorter handle name
 Global_Variable Handle ghoDUF 
@@ -35,10 +36,11 @@ Object oFilelistFixerView is a dbView
     Set pbAutoActivate to True
 
     Property String psConnId
+    Property String psConnIdFile
     Property Integer piChannel -1
 
     Object oFilelist_fm is a cRDCForm
-        Set Size to 12 459
+        Set Size to 12 454
         Set Location to 14 11
         Set Label_Col_Offset to 0
         Set Label_Row_Offset to 1
@@ -101,6 +103,18 @@ Object oFilelistFixerView is a dbView
         
     End_Object
 
+    Object oSelectFilelist_btn is a cRDCButton
+        Set Size to 12 50
+        Set Location to 14 470
+        Set Label to "Select"
+        Set peAnchors to anTopRight
+    
+        Procedure OnClick
+            Send Prompt of oFilelist_fm
+        End_Procedure
+    
+    End_Object
+
     Object oConnidInfo_edt is a cMyRichEdit
         Set Size to 75 454
         Set Location to 28 12
@@ -131,6 +145,7 @@ Object oFilelistFixerView is a dbView
             Get ConnectionIDs of ghoConnection to Connections
             If (SizeOfArray(Connections) <> 0) Begin
                 Set psConnId to Connections[0].sId
+                Set psConnIdFile to sDFConnidFile
                 Send AppendTextLn ("DFConnId File=" + String(sDFConnidFile))
                 Send AppendTextLn ""
                 Send AppendTextLn ("id=" + String(Connections[0].sId))
@@ -146,6 +161,28 @@ Object oFilelistFixerView is a dbView
                 Send AppendTextLn "No DFConnid.ini file found, or no active connection."
             End
         End_Procedure
+
+    End_Object
+
+    Object oEditDFConnIt_btn is a cRDCButton
+        Set Size to 12 50
+        Set Location to 28 470
+        Set Label to "Edit"
+        Set peAnchors to anTopRight
+    
+        Procedure OnClick
+            String sFileName
+            Get psConnIdFile to sFileName
+            Runprogram Shell Background sFileName
+        End_Procedure
+    
+        Function IsEnabled Returns Boolean
+            Boolean bExists
+            String sFileName
+            Get psConnIdFile to sFileName
+            File_Exist sFileName bExists
+            Function_Return bExists
+        End_Function
 
     End_Object
 
@@ -219,8 +256,8 @@ Object oFilelistFixerView is a dbView
     End_Object
 
     Object oConnIDErrors_edt is a cMyRichEdit
-        Set Size to 70 86
-        Set Location to 28 522
+        Set Size to 70 84
+        Set Location to 28 524
         Set Label to "*.int File DFCONNID Changes"
         Set peAnchors to anTopRight
     End_Object
