@@ -448,7 +448,9 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary
         
         Move True to bResult 
 
-        Get piIntFilesFileNumber to hIntFilesTable
+        Get piIntFilesFileNumber   to hIntFilesTable
+        Get Private.phCurrentTable to hIntFilesTable  
+        Get Private.piCurrentField to 1  
         Get psDataPath of (phoWorkspace(ghoApplication)) to sPaths
         Get CountOfPaths of (phoWorkspace(ghoApplication)) sPaths to iDataPaths
 

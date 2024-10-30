@@ -6684,7 +6684,7 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
         Set piMaximum of ghoProgressBar  to iColumns
         Decrement iColumns
 
-        for iCount from 0 to iColumns
+        For iCount from 0 to iColumns
             Set piPosition of ghoProgressBar to iCount
             Get UtilColumnCompare sDriverIDFrom sDriverIDTo bIsSQLFrom bIsSQLTo aAPIColumnCompare[iCount] bCompareDate_DataTime to bIsSame
             If (bIsSame = False) Begin
