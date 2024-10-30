@@ -240,7 +240,7 @@ Object oFilelistFixerView is a dbView
 
     Object oDatabase_fm is a Form
         Set Label to "SQL Database Name:"
-        Set Size to 12 151
+        Set Size to 12 111
         Set Location to 143 12
         Set Label_Col_Offset to 0
         Set Label_Justification_Mode to JMode_Top
@@ -466,7 +466,7 @@ Object oFilelistFixerView is a dbView
         //   - Does not have a corresponding .Dat file, 
         Object oFixFileListErrors_btn is a Button
             Set Size to 32 61
-            Set Location to 13 48
+            Set Location to 13 113
             Set Label to "1. Fix Filelist .dat Errors"
             Set peAnchors to anTopRight
             Set MultiLineState to True
@@ -492,7 +492,7 @@ Object oFilelistFixerView is a dbView
 
         Object oFixAliasProblems_btn is a Button
             Set Size to 32 61
-            Set Location to 13 114
+            Set Location to 13 179
             Set Label to "2. Fix Filelist Alias Errors"
             Set peAnchors to anTopRight
             Set MultiLineState to True
@@ -521,7 +521,7 @@ Object oFilelistFixerView is a dbView
 
         Object oFixFileListSQLMissingTables_btn is a Button
             Set Size to 32 61
-            Set Location to 13 179
+            Set Location to 13 244
             Set Label to "3. Make Filelist RootNames equal to SQL Database"
             Set peAnchors to anTopRight
             Set MultiLineState to True
@@ -546,7 +546,7 @@ Object oFilelistFixerView is a dbView
 
         Object oFixFileListOpenErrors_btn is a Button
             Set Size to 32 61
-            Set Location to 13 246
+            Set Location to 13 311
             Set Label to "4. Fix Filelist Entries Open Errors"
             Set peAnchors to anTopRight
             Set MultiLineState to True
@@ -578,52 +578,10 @@ Object oFilelistFixerView is a dbView
                           
         End_Object
 
-        Object oRefreshAllIntFiles_btn is a Button
-            Set Size to 32 61
-            Set Location to 13 311
-            Set Label to "5. Refresh all *.int files"
-            Set peAnchors to anTopRight
-            Set MultiLineState to True
-            Set psToolTip to "This will refresh all .int files."
-            
-            Property Boolean pbErrorProcessingState
-            Property Integer piError
-            Property String psErrorText
-
-            Procedure OnClick
-                Integer iRetval iCounter
-                
-                Get YesNo_Box "This will refresh all .int files.\n\nContinue?" to iRetval
-                If (iRetval <> MBR_Yes) Begin
-                    Procedure_Return    
-                End
-                
-                Get RefreshAllIntFiles Self to iCounter
-                If (iCounter <> 0) Begin
-                    Send Info_Box ("Ready! Refresh of:" * String(iCounter) * ".int files done.")
-                End
-                Else Begin
-                    Send Info_Box "Ready! No .int files to refresh."
-                End
-            End_Procedure
-            
-            Procedure Error_Report Integer iErrNum Integer iErrLine String sErrText 
-                If (pbErrorProcessingState(Self)) ; 
-                    Procedure_Return 
-            
-                Set pbErrorProcessingState to True 
-                Set piError to iErrNum
-                Set psErrorText to sErrText
-            
-                Set pbErrorProcessingState to False 
-            End_Procedure
-
-        End_Object
-
         Object oFixIntFileError_btn is a Button
             Set Size to 32 61
             Set Location to 13 377
-            Set Label to "6. Recreate *.int files with open errors"
+            Set Label to "5. Recreate *.int files with open errors"
             Set peAnchors to anTopRight
             Set MultiLineState to True
             Set psToolTip to "This will try recreate the .int files listed in the 'Open Table Errors' list."
@@ -665,10 +623,52 @@ Object oFilelistFixerView is a dbView
     End_Object
 
     Object oFixExtraProblems_grp is a Group
-        Set Size to 52 207
+        Set Size to 52 214
         Set Location to 328 472
         Set Label to "Extra Pre-Update Database Actions:"
         Set peAnchors to anTopRight
+
+        Object oRefreshAllIntFiles_btn is a Button
+            Set Size to 32 61
+            Set Location to 13 6
+            Set Label to "Refresh all *.int files"
+            Set peAnchors to anTopRight
+            Set MultiLineState to True
+            Set psToolTip to "This will refresh all .int files."
+            
+            Property Boolean pbErrorProcessingState
+            Property Integer piError
+            Property String psErrorText
+
+            Procedure OnClick
+                Integer iRetval iCounter
+                
+                Get YesNo_Box "This will refresh all .int files.\n\nContinue?" to iRetval
+                If (iRetval <> MBR_Yes) Begin
+                    Procedure_Return    
+                End
+                
+                Get RefreshAllIntFiles Self to iCounter
+                If (iCounter <> 0) Begin
+                    Send Info_Box ("Ready! Refresh of:" * String(iCounter) * ".int files done.")
+                End
+                Else Begin
+                    Send Info_Box "Ready! No .int files to refresh."
+                End
+            End_Procedure
+            
+            Procedure Error_Report Integer iErrNum Integer iErrLine String sErrText 
+                If (pbErrorProcessingState(Self)) ; 
+                    Procedure_Return 
+            
+                Set pbErrorProcessingState to True 
+                Set piError to iErrNum
+                Set psErrorText to sErrText
+            
+                Set pbErrorProcessingState to False 
+            End_Procedure
+
+        End_Object
 
         Object oRecreateAllIntFiles_btn is a Button
             Set Size to 32 61
