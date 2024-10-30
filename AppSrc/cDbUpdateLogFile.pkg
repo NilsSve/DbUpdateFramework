@@ -85,7 +85,7 @@ Class cDbUpdateLogFile is a cObject
 
     Procedure LogError Number nVersion Integer iError String sErrorText Integer iErrorLine Boolean bError Boolean bShortFormatIn
         tDbUpdateError[] DbUpdateErrorArray DbUpdateErrorArrayEmpty
-        Boolean bShortFormat
+        Boolean bShortFormat bDisabled
         Integer iSize
         Handle hCurrentTable
         Integer iCurrentField           
@@ -102,7 +102,8 @@ Class cDbUpdateLogFile is a cObject
 
         Get Private.phCurrentTable to hCurrentTable  
         Get Private.piCurrentField to iCurrentField  
-        If (iError > 0) Begin
+        Get_Attribute DF_API_DISABLED to bDisabled
+        If (iError > 0 and bDisabled = False) Begin
             Get_Attribute DF_FILE_ROOT_NAME of hCurrentTable to sTableRootName
             Get FetchErrorDescription iError to sOrgErrorText 
         End

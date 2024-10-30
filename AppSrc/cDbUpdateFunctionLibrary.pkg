@@ -351,9 +351,12 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
         // ALTER DATABASE [database] SET MULTI_USER;
         Move (              sAlterDatabaseKeyWord  * String(sDatabase) * String(sSet) * String(sSingle_User) * String(sWith) * String(sRollback) * String(sImmediate)) to sSQL
         Move (sSQL * String(sAlterDatabaseKeyWord) * String(sDatabase) * String(sCollateKeyWord) * String(sSQLCollation)) to sSQL
-        Move (sSQL * String(sAlterDatabaseKeyWord) * String(sDatabase) * String(sSet) * String(sMulti_User)) to sSQL
 
         Send Ignore_Error of Error_Object_Id CLIERR_GENERAL_ERROR
+        // Set new collating sequence:
+        Send SqlUtilExecuteQuery sSQL sDriverID False
+        Move (String(sAlterDatabaseKeyWord) * String(sDatabase) * String(sSet) * String(sMulti_User)) to sSQL
+        // Reset to Mult_User
         Send SqlUtilExecuteQuery sSQL sDriverID False
         Send Trap_Error of Error_Object_Id CLIERR_GENERAL_ERROR
         If (LastErr = CLIERR_GENERAL_ERROR) Begin
@@ -4934,19 +4937,19 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
         Move False to bIsSQLPrimaryKey
         Move False to bIsSQLClustered
 
-        #IF (!@ > 182)
-            Get UtilIndexTempRenameSQLName hTable APIIndex.sSQLIndexName sDriverID          to bOK
-        #ENDIF
+        // I'm not sure we should rename the index at all. It is deleted and re-created below(!)
+//        #IF (!@ > 182)
+//            Get UtilIndexTempRenameSQLName hTable APIIndex.sSQLIndexName sDriverID          to bOK
+//        #ENDIF
         Get_Attribute DF_INDEX_NUMBER_SEGMENTS of hTable APIIndex.iIndexNumber              to iSegmentsTo
         Move (iSegmentsTo > 0) to bExists
         If (bExists = True) Begin
             If (bIsSQLTable = True and iSegmentsTo > 0) Begin
-//                Get_Attribute DF_INDEX_NAME of hTable APIIndex.iIndexNumber                 to sSQLIndexName
                 Move APIIndex.sSQLIndexName                                                 to sSQLIndexName
                 #IF (!@ > 170)
                     #IF (!@ > 182)
-                        Get_Attribute DF_INDEX_SQL_TYPE of hTable APIIndex.iIndexNumber         to iSQLIndexType
-                        Move (iSQLIndexType = DF_INDEX_TEMPORARY)                               to bIsSQLTemporaryIndex
+                        Get_Attribute DF_INDEX_SQL_TYPE of hTable APIIndex.iIndexNumber     to iSQLIndexType
+                        Move (iSQLIndexType = DF_INDEX_TEMPORARY)                           to bIsSQLTemporaryIndex
                     #ENDIF
                     Get_Attribute DF_INDEX_SQL_PRIMARY_KEY of hTable APIIndex.iIndexNumber  to bIsSQLPrimaryKey
                     Get_Attribute DF_INDEX_CLUSTERED       of hTable APIIndex.iIndexNumber  to bIsSQLClustered
@@ -4976,7 +4979,7 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
 
 		    Set_Attribute DF_INDEX_NUMBER_SEGMENTS of hTable APIIndex.iIndexNumber to iSegmentsFrom
 
-            for iCount from 0 to (iSegmentsFrom -1)
+            For iCount from 0 to (iSegmentsFrom -1)
                 Move aIndexSegments[iCount].iFieldNumber to iFieldFrom
                 If (iFieldFrom <> -1 ) Begin
             		Set_Attribute DF_INDEX_SEGMENT_FIELD     of hTable APIIndex.iIndexNumber (iCount +1) to iFieldFrom
