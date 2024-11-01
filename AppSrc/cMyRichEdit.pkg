@@ -10,7 +10,12 @@ Class cMyRichEdit is a cRichEdit
     Procedure ClearData
         Send Delete_Data
     End_Procedure
-          
+
+    // Hide/Show vertical scrollbar
+    Procedure Set HideVerticalScrollbar Boolean bState
+        Set Window_Style to WS_VSCROLL (Not(bState))
+    End_Procedure
+    
     Procedure Mouse_Click Integer iWindowNumber Integer iPosition
         Integer iLine iPos
         String sLine sFileName sPath sExt
