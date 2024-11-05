@@ -72,6 +72,10 @@ Class cRDCForm is a Form
             Procedure_Return
         End
         Set Enabled_State to (IsEnabled(Self))
+    End_Procedure 
+    
+    Procedure ClearData
+        Set Value to ""
     End_Procedure
 
     { MethodType=Event }
