@@ -8946,6 +8946,7 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
     End_Function
 
     // Scans to see if all tables can be opened exclusivly. I.e. that nobody else is running the application.
+    // It does not check Flexerrs, CodeType & CodeMast
     // Returns: False if nobody else is running
     //          True if at least one table is open by another process (e.g. another user is running the application)
     // N.B! Only works for Embedded DataFlex Tables! It will _not_ work for Sql tables because; these
@@ -8970,6 +8971,7 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
         Move False to bErr
         Send Ignore_Error of Error_Object_Id DFERR_FILE_ACCESS_VIOLATION
 
+        Move True to bOK
         Get psDriverID to sDriverID
         Get psDatabase to sDatabase
         Get psSchema   to sSchema
@@ -9000,14 +9002,14 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
                         Close hTable
                         Get OpenTableExclusive hTable to bOpen
                         If (bOpen = False) Begin
-                            Move True to bErr
+                            Move False to bOK
                         End
                     End
                 End
             End
             Close hTable
             Get_Attribute DF_FILE_NEXT_USED of hTable to hTable
-            If (bErr = True ) ;
+            If (bOK = False) ;
                 Break
         Until (not(hTable))
 
@@ -9017,7 +9019,7 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
         Send Trap_Error of Error_Object_Id DFERR_FILE_ACCESS_VIOLATION
         Move False to Err
 
-        Function_Return bErr
+        Function_Return bOK
     End_Function
 
 End_Class

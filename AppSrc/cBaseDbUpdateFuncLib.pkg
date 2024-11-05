@@ -2046,7 +2046,7 @@ Class cBaseDbUpdateFuncLib is a cObject
     // It creates an .int file in the first Data folder of the psDataPath property. 
     // It is important that the hTable can be opened.
     Function _SqlUtilCreateIntFile Handle hTable String sDriverID String sConnectionID Boolean bAnsi Boolean bSysFile Boolean bBackup Returns Boolean
-        Boolean bOK bExists bUseConnectionID 
+        Boolean bOK bExists bUseConnectionID bOpen 
         String sDataPath sRootName sLogicalName sPhysicalFileName sConnectionString sTableName sSchemaName sANSI_OEM 
         String[] asIndexArray
         Integer iCount iCh iSize iPos
@@ -2090,42 +2090,57 @@ Class cBaseDbUpdateFuncLib is a cObject
         Get _SqlUtilEnumerateIndexes sTableName sDriverID to asIndexArray
 
         Get Seq_Open_Output_Channel (sDataPath + sPhysicalFileName) to iCh
-            Writeln channel iCh CS_DRIVER_NAME     " " sDriverID
-            If (bUseConnectionID = True) Begin
-                Writeln channel iCh CS_SERVER_NAME " " CS_DFCONNID "=" sConnectionID
-            End
-            Else Begin
-                Writeln channel iCh CS_SERVER_NAME " " CS_SERVER "=" sConnectionString
-            End
-            Writeln channel iCh CS_DATABASE_NAME          " " (Uppercase(sTableName))
-            Writeln channel iCh CS_SCHEMA_NAME            " " (Lowercase(sSchemaName))
-            // There seems to be a new order how these are set from DF19.
-            If (bSysFile = True) Begin
-                Writeln channel iCh CS_RECNUM_TABLE       " " "NO"
-                Writeln channel iCh CS_SYSTEM_FILE        " " "YES"
-            End
-            Writeln channel iCh CS_TABLE_CHARACTER_FORMAT " " sANSI_OEM
-            Writeln channel iCh CS_USE_DUMMY_ZERO_DATE    " " "YES" // ToDo: We maybe need to paramerize this setting?
+        If (iCh < 0) Begin
+            Function_Return False
+        End
+        
+        Writeln channel iCh CS_DRIVER_NAME     " " sDriverID
+        If (bUseConnectionID = True) Begin
+            Writeln channel iCh CS_SERVER_NAME " " CS_DFCONNID "=" sConnectionID
+        End
+        Else Begin
+            Writeln channel iCh CS_SERVER_NAME " " CS_SERVER "=" sConnectionString
+        End
+        Writeln channel iCh CS_DATABASE_NAME          " " (Uppercase(sTableName))
+        Writeln channel iCh CS_SCHEMA_NAME            " " (Lowercase(sSchemaName)) 
+        Writeln channel iCh ""
+        // There seems to be a new order how these are set from DF19.
+        If (bSysFile = True) Begin
+            Writeln channel iCh CS_SYSTEM_FILE        " " "YES"
+            Writeln channel iCh CS_RECNUM_TABLE       " " "NO"
+        End
+        Writeln channel iCh CS_TABLE_CHARACTER_FORMAT " " sANSI_OEM
+        Writeln channel iCh CS_USE_DUMMY_ZERO_DATE    " " "YES" // ToDo: We maybe need to paramerize this setting?
 
-            If (bSysFile = False) Begin
-                Move (SizeOfArray(asIndexArray)) to iSize
-                Move (SortArray(asIndexArray)) to asIndexArray
-                If (iSize > 0) Begin
-                    Writeln channel iCh (CS_PRIMARY_INDEX * String("0"))
-                    Writeln channel iCh // Just an empty line
-                End
-                Decrement iSize
-                for iCount from 0 to iSize
-                    Writeln channel iCh (CS_INDEX_NUMBER * String(iCount))
-                    Writeln channel iCh (CS_INDEX_NAME   * String(asIndexArray[iCount]))
-                    Writeln channel iCh
-                Loop
+        If (bSysFile = False) Begin
+            Move (SizeOfArray(asIndexArray)) to iSize
+            Move (SortArray(asIndexArray)) to asIndexArray
+            If (iSize > 0) Begin
+                Writeln channel iCh (CS_PRIMARY_INDEX * String("0"))
+                Writeln channel iCh // Just an empty line
             End
+            Decrement iSize
+            for iCount from 0 to iSize
+                Writeln channel iCh (CS_INDEX_NUMBER * String(iCount))
+                Writeln channel iCh (CS_INDEX_NAME   * String(asIndexArray[iCount]))
+                Writeln channel iCh
+            Loop
+        End
+
+        Flush_Output channel iCh
+        Close_Output channel iCh
         Send Seq_Close_Channel iCh 
         
-        Open hTable
-        Structure_Start hTable sDriverID
-        Structure_End hTable DF_STRUCTEND_OPT_FORCE
+        // There might be a bug in the MSSQLDRV driver, because if we create an .int file for a sysfile
+        // a Structure_Start/End *always* removes the line "RECNUM_TABLE NO", even if it shouldn't.
+        If (bSysFile = False) Begin
+            Open hTable                               
+            Get_Attribute DF_FILE_OPENED of hTable to bOpen
+            If (bOpen = True) Begin
+                Structure_Start hTable sDriverID
+                Structure_End hTable DF_STRUCTEND_OPT_FORCE "." ghoDbUpdateHandler
+            End
+        End
 
         // Wait a sec for Windows to finish writing the file:
 //        Sleep 1
@@ -2133,19 +2148,37 @@ Class cBaseDbUpdateFuncLib is a cObject
         Function_Return (bOK = True)
     End_Function 
     
-    // Simplier version of the _SqlUtilCreateIntFile. It can be used if there is something wrong with the .int file and it needs
+    // Simplier version of the _SqlUtilCreateIntFile. It can be used if there might be something wrong with the .int file and it needs
     // to be refreshed by the driver. 
     Function _SqlUtilRefreshIntFile Handle hTable String sDriverID String sConnectionID Boolean bAnsi Boolean bSysFile Returns Boolean        
         String sOrgFormat sNewFormat
+        Boolean bErr
+        Integer iLastErr iErrLine
         
+        Move Err to bErr
+        Move LastErr to iLastErr
+        Move ErrLine to iErrLine
         Move False to Err
         Open hTable
-        If (Err = True) Begin
+        If (Err = True) Begin 
+            Error DFERR_PROGRAM ("The table:" * String(hTable) * "could not be opened")
+            Move bErr to Err
+            Move iLastErr to LastErr
+            Move iErrLine to ErrLine
             Function_Return False
         End
         
         Structure_Start hTable
-        Structure_End hTable DF_STRUCTEND_OPT_FORCE "." ghoDbUpdateHandler
+        Structure_End hTable DF_STRUCTEND_OPT_FORCE "." ghoDbUpdateHandler  
+
+        If (Err = True) Begin  
+            Error DFERR_PROGRAM ("The table:" * String(hTable) * "could not restructered properly. Error:" * String(LastErr))
+            Move bErr to Err
+            Move iLastErr to LastErr
+            Move iErrLine to ErrLine
+            Function_Return False
+        End
+        Function_Return True
     End_Function
 
     Function _UtilDeleteCacheFile String sTableName Returns Boolean
@@ -2173,6 +2206,9 @@ Class cBaseDbUpdateFuncLib is a cObject
         Integer iSize iCount
 
         Get psDatabase to sDataBase
+        If (sDataBase = "") Begin
+            Procedure_Return
+        End
         Get _SqlUtilEnumerateTables MSSQLDRV_ID sDataBase "" to asSQLTables
         Set pasSQLDataTables to asSQLTables
     End_Procedure  
@@ -2193,7 +2229,7 @@ Class cBaseDbUpdateFuncLib is a cObject
         Move 0 to iItem
         Move 0 to hTable 
         Move Err to bErr
-        Move LastErr to iLastErr 
+        Move LastErr to iLastErr
         Move ErrLine to iErrLine
         Repeat
             Get_Attribute DF_FILE_NEXT_USED of hTable to hTable

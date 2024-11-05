@@ -14,6 +14,8 @@ Object oApplication is a cMyApplication
     Set psProgram to "DUFFileListRepair"
     Set psProduct to "DUF - FileList Repairer"
 
+    Property Handle phoFilelistFixerView
+    
     #IF (!@ > 182)
     Object oConnection is a cConnection
         Use LoginEncryption.pkg
@@ -89,6 +91,14 @@ Object oMain is a Panel
             Object oPromptToolItem is a cCJPromptMenuItem
                 Set psImage to "ActionPrompt.ico"
                 Set pbControlBeginGroup to True
+            End_Object
+
+            Object oRefreshToolItem is a cCJMenuItem
+                Set psImage to "ActionRefresh.ico"  
+                Set psToolTip to "Refresh data (F5)"
+                Procedure OnExecute Variant vCommandBarControl
+                    Send RefreshData of (phoFilelistFixerView(ghoApplication))
+                End_Procedure
             End_Object
 
             Object oOpenContainingFolder_MenuItem is a cCJMenuItem

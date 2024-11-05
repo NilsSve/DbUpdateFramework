@@ -88,7 +88,7 @@ Use Statpnl.pkg
     Global_Variable Handle ghoProgressBarOverall // will contain the ID of the embedded progress bar with overall results
 #ENDIF
 
-Object Status_Panel is a cProcessStatusPanel
+Object oDUFStatus_Panel is a cProcessStatusPanel
     Set Size to 152 222
     Set Border_Style to Border_Dialog
     Set Icon to "Default.ico"

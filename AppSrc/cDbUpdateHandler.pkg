@@ -1663,7 +1663,7 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary
         Send Start_StatusPanel of ghoStatusPanel
     End_Procedure
     
-    Procedure StopStatusPanel
+    Procedure StopStatusPanel 
         Send Stop_StatusPanel of ghoStatusPanel
     End_Procedure
     
@@ -1672,7 +1672,7 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary
     // a database change is to be started, and is considered private.
     // It is only executed once for the first cDbUpateVersion object!
     Procedure InitDatabaseUpdate Handle hDbUpdateVersionObject
-        Boolean bDatabaseUpdateStarted bInUse bExists bCheckDataFlexUserCount
+        Boolean bDatabaseUpdateStarted bOK bExists bCheckDataFlexUserCount
         Integer iRetval iDataFlexUsers iUserCount
         Handle hoUserCountSystem
         tUserCount UserCount
@@ -1700,7 +1700,7 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary
 
         Move 0 to iDataFlexUsers
         // Make various tests to check that the database is not in use.
-        Get IsDatabaseInUse of hDbUpdateVersionObject to bInUse
+        Get IsDatabaseInUse of hDbUpdateVersionObject to bOK
         // We also use our own user counting mechanism to guard against the
         // database isn't opened already as we need exclusive access to the tables.:
         Get phoUserCountSystem to hoUserCountSystem
@@ -1720,7 +1720,7 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary
         Else Begin
             Move 1 to iDataFlexUsers 
             Move 1 to iUserCount
-            Move False to bInUse
+            Move True to bOK
         End
 
         If (pbSilentMode(Self) = False and iDataFlexUsers > 1) Begin
@@ -1730,7 +1730,7 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary
             End
         End
 
-        If (bInUse = True or (UserCount.iError <> 0) or (iUserCount > 1)) Begin
+        If (bOK = False or (UserCount.iError <> 0) or (iUserCount > 1)) Begin
             Send Stop_Box CS_DUF_DatabaseInUseText
             Send Exit_Application
         End
