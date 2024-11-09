@@ -1,4 +1,4 @@
-//****************************************************************************
+﻿//****************************************************************************
 // $Module type: Class
 // $Module name: cDbUpdateHandler
 // $Author     : Nils Svedmyr, RDC Tools International, <mailto:support@rdctools.com>
@@ -579,14 +579,28 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary
     End_Function
 
     Function IsIntFileTable Returns Boolean
-        Boolean bExists
+        Boolean bExists bIsSQL
         Handle hTable
-        String sLogicalName
+        String sLogicalName sRootName sFileName sDataPath
         Move False to bExists
         Get piIntFilesFileNumber to hTable
         If (hTable > 0) Begin
+            Get_Attribute DF_FILE_ROOT_NAME    of hTable to sRootName
             Get_Attribute DF_FILE_LOGICAL_NAME of hTable to sLogicalName
             Move (sLogicalName = CS_IntFilesTableLogicalName) to bExists
+            If (bExists = True) Begin
+                Move (Pos(":", sRootName)) to bIsSQL
+                If (bIsSQL = True) Begin
+                    Move (sLogicalName + ".int") to sFileName
+                End
+                Else Begin
+                    Move (sLogicalName + ".dat") to sFileName
+                End
+                Get psDataPath of (phoWorkspace(ghoApplication)) to sDataPath
+                Get PathAtIndex of (phoWorkspace(ghoApplication))  sDataPath 1 to sDataPath
+                Get vFolderFormat sDataPath to sDataPath
+                File_Exist (sDataPath + sFileName) bExists
+            End
         End
         Function_Return bExists    
     End_Function
@@ -968,7 +982,7 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary
         Boolean bTableExists bOK bUseConnectionID bExists
         tAPIColumn[] APIColumn
 
-        Get _UtilTableNumberIsInUse of ghoDbUpdateFunctionLibrary hTable to bTableExists
+        Get IsIntFileTable hTable to bTableExists
         If (bTableExists = True) Begin
             Procedure_Return
         End
