@@ -50,6 +50,7 @@ End_Object
 
 Use oEditContextMenu.pkg
 Use oDEOEditContextMenu17.pkg
+Register_Procedure RefreshData
 
 Object oMain is a Panel
     Set Label to (psProduct(ghoApplication))
@@ -76,29 +77,47 @@ Object oMain is a Panel
             Set pbShowExpandButton to False
 
             Object oCutToolbarItem is a cCJCutMenuItem
-                Set psImage to "ActionCut.ico"
             End_Object
 
             Object oCopyToolbarItem is a cCJCopyMenuItem
-                Set psImage to "ActionCopy.ico"
-
             End_Object
 
             Object oPasteToolbarItem is a cCJPasteMenuItem
-                Set psImage to "ActionPaste.ico"
             End_Object
 
             Object oPromptToolItem is a cCJPromptMenuItem
-                Set psImage to "ActionPrompt.ico"
                 Set pbControlBeginGroup to True
+            End_Object
+
+            Object oClearToolItem is a cCJClearMenuItem
+                Set psCaption to "Clear"
+                Set psToolTip to "Clear Data"
+                
+                Procedure OnExecute Variant vCommandBarControl
+                    Send ClearData of (phoFilelistFixerView(ghoApplication))
+                End_Procedure
+    
+                Function IsEnabled Returns Boolean
+                    Function_Return True
+                End_Function
+
             End_Object
 
             Object oRefreshToolItem is a cCJMenuItem
                 Set psImage to "ActionRefresh.ico"  
                 Set psToolTip to "Refresh data (F5)"
+                Set pbActiveUpdate to True
+
                 Procedure OnExecute Variant vCommandBarControl
                     Send RefreshData of (phoFilelistFixerView(ghoApplication))
                 End_Procedure
+
+                Function IsEnabled Returns Boolean
+                    String sFileList
+                    Get psFileList of (phoFilelistFixerView(ghoApplication)) to sFileList
+                    Function_Return (sFileList <> "") 
+                End_Function
+
             End_Object
 
             Object oOpenContainingFolder_MenuItem is a cCJMenuItem
