@@ -2050,6 +2050,7 @@ Class cBaseDbUpdateFuncLib is a cObject
         String sDataPath sRootName sLogicalName sPhysicalFileName sConnectionString sTableName sSchemaName sANSI_OEM 
         String[] asIndexArray
         Integer iCount iCh iSize iPos
+        Handle hTableOrg
 
         Move (Trim(sConnectionID) <> "") to bUseConnectionID
         Get psConnectionString to sConnectionString
@@ -2134,11 +2135,13 @@ Class cBaseDbUpdateFuncLib is a cObject
         // There might be a bug in the MSSQLDRV driver, because if we create an .int file for a sysfile
         // a Structure_Start/End *always* removes the line "RECNUM_TABLE NO", even if it shouldn't.
         If (bSysFile = False) Begin
-            Open hTable                               
+            Open hTable
+            Move hTable to hTableOrg
             Get_Attribute DF_FILE_OPENED of hTable to bOpen
             If (bOpen = True) Begin
                 Structure_Start hTable sDriverID
                 Structure_End hTable DF_STRUCTEND_OPT_FORCE "." ghoDbUpdateHandler
+                Set Message_Text of ghoStatusPanel to ("Table number:" * String(hTableOrg))
             End
         End
 
