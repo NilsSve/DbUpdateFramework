@@ -744,14 +744,17 @@ Object oFilelistFixerView is a dbView
             Set psToolTip to "This will try recreate the .int files listed in the 'Open Table Errors' list."
             
             Procedure OnClick
-                Integer iRetval iCounter
+                Integer iRetval iCounter 
+                Boolean bExtractRelations
                 
                 Get YesNo_Box "This will recreate the .int files listed in the 'Open Table Errors' list.\n\nContinue?" to iRetval
                 If (iRetval <> MBR_Yes) Begin
                     Procedure_Return    
                 End
+                Get YesNo_Box "Would you like to extract relation ships from the current .int file, and add that info to the new .int file?" to iRetval
+                Move (iRetval = MBR_Yes) to bExtractRelations
                 
-                Get FixAllIntFileErrors to iCounter
+                Get FixAllIntFileErrors bExtractRelations to iCounter
                 If (iCounter > 0) Begin
                     Send Info_Box ("Ready! Update to:" * String(iCounter) * ".int files done.")
                 End
@@ -809,7 +812,7 @@ Object oFilelistFixerView is a dbView
             
             Procedure OnClick
                 Integer iRetval iCounter
-                Boolean bUseUcase
+                Boolean bExtractRelations 
                 String sDataPath sBackup
                 
                 Get psDataPath of (phoWorkspace(ghoApplication)) to sDataPath
@@ -819,9 +822,10 @@ Object oFilelistFixerView is a dbView
                 If (iRetval <> MBR_Yes) Begin
                     Procedure_Return    
                 End
-                Move True to bUseUcase
+                Get YesNo_Box "Would you like to extract relation ships from the current .int file, and add that info to the new .int file?" to iRetval
+                Move (iRetval = MBR_Yes) to bExtractRelations
                 
-                Get RecreateAllIntFiles bUseUcase to iCounter
+                Get RecreateAllIntFiles bExtractRelations to iCounter
                 If (iCounter > 0) Begin
                     Send Info_Box ("Ready!" * String(iCounter) * ".int files recreated.")
                 End
@@ -926,7 +930,7 @@ Object oFilelistFixerView is a dbView
 
         Procedure Error_Report Integer iErrNum Integer iErrLine String sTxt
             String sErrText
-            If (pbErrorProcessingState(Self)) ; 
+            If (pbErrorProcessingState(Self) = True) ; 
                 Procedure_Return 
             Set pbErrorProcessingState to True 
             If (num_arguments = 2 or sTxt = "") Begin
@@ -1387,7 +1391,7 @@ Object oFilelistFixerView is a dbView
         Function_Return iCounter
     End_Function
 
-    Function FixAllIntFileErrors Returns Integer
+    Function FixAllIntFileErrors Boolean bExtractRelations Returns Integer
         Integer iRetval iSize iCount iCounter iDriver
         tFilelist[] ErrorFilesArray FileListArray
         String sDriver sRootName sIntFileName sConnectionID sErrorText sText sDataPath
@@ -1435,7 +1439,7 @@ Object oFilelistFixerView is a dbView
                 Move ErrorFilesArray[iCount].hTable to hTable
                 Get _IsSystemFile of ghoDUF hTable to bIsSystem
     
-                Get RecreateSingleIntFile hTable sDataPath sDriver sConnectionID bIsSystem sIntFileName to bOK
+                Get RecreateSingleIntFile hTable sDataPath sDriver sConnectionID bIsSystem sIntFileName bExtractRelations to bOK
                 If (bOK) Begin
                     Increment iCounter
                     Set_Attribute DF_FILE_ROOT_NAME of hTable to (sDriver + ":" + ErrorFilesArray[iCount].sNoDriverRootname)
@@ -1522,7 +1526,7 @@ Object oFilelistFixerView is a dbView
     Procedure GENERATE_ALL_INT_FILES_CODE_STARTS_HERE
     End_Procedure
 
-    Function RecreateAllIntFiles Boolean bUseUcase Returns Integer
+    Function RecreateAllIntFiles Boolean bExtractRelations Returns Integer
         Integer iRetval iSize iCount iCounter iDriver iLastErr iErrLine
         tFilelist[] FileListArray
         String[] asIntFileData
@@ -1551,7 +1555,7 @@ Object oFilelistFixerView is a dbView
         //       behave the same as earlier driver versions.
         //       This means that "U_" columns will be kept during a restructure.
         Get_Attribute DF_DRIVER_IGNORE_UCASE_SUPPORT of iDriver to bCurrentUcaseMode
-        Set_Attribute DF_DRIVER_IGNORE_UCASE_SUPPORT of iDriver to bUseUcase
+        Set_Attribute DF_DRIVER_IGNORE_UCASE_SUPPORT of iDriver to True
         Get psDataPath of (phoWorkspace(ghoApplication)) to sDataPath
         Get psConnId to sConnectionID 
         Get pbToANSI of ghoDUF to bAnsi 
@@ -1575,7 +1579,7 @@ Object oFilelistFixerView is a dbView
                     Get _IsSystemFile of ghoDUF hTable to bIsSystem
                     Send UpdateStatusPanel ("Recreating file:" * String(FileListArray[iCount].sNoDriverRootname) + ".int")
                     
-                    Get RecreateSingleIntFile hTable sDataPath sDriver sConnectionID bIsSystem sIntFileName to bOK
+                    Get RecreateSingleIntFile hTable sDataPath sDriver sConnectionID bIsSystem sIntFileName bExtractRelations to bOK
                     
                     Close hTable
                     If (bOK) Begin
@@ -1604,7 +1608,7 @@ Object oFilelistFixerView is a dbView
     End_Function
 
     // Helper function to recreate a single .int file
-    Function RecreateSingleIntFile Handle hTable String sDataPath String sDriver String sConnectionID Boolean bIsSystem String sIntFileName Returns Boolean
+    Function RecreateSingleIntFile Handle hTable String sDataPath String sDriver String sConnectionID Boolean bIsSystem String sIntFileName Boolean bExtractRelations Returns Boolean
         Boolean bOK bAnsi
         String sErrorText sText
         Integer iRetval iDbType
@@ -1614,7 +1618,9 @@ Object oFilelistFixerView is a dbView
         // 1. Backup the .int file
         Get BackupIntFile sDataPath sIntFileName CS_BackupFolder to bOK
         // 2. Collect relation and index info from old .ini file:
-        Get CollectIntFileRelations sIntFileName to asIntFileData
+        If (bExtractRelations = True) Begin
+            Get CollectIntFileRelations sIntFileName to asIntFileData
+        End
         // 3. Add more data from the current data table
         Get CollectMoreFieldAttributes hTable sDriver asIntFileData to asIntFileData
         // 4. Tell driver to create a new .int file.
