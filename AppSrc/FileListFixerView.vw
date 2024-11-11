@@ -1669,82 +1669,6 @@ Object oFilelistFixerView is a dbView
         Function_Return asData
     End_Function
     
-    // Collects "FIELD_NUMBER xx" data from an .int file. This should be called
-    // at the beginning of combining a "before" and "after" .int file.
-    // Note that in message CombineArrays the "blocks" in the asIntFileData array will get sorted
-    // on the FIELD_NUMBER, so it doesn't matter in what order FIELD_NUMBER's are entered to the array.
-//    Function CollectIntFileFieldData Handle hTable String sIntFile String sDriver Returns String[]
-//        Integer iCh iFieldNumber iPos iType iDbType iDFType iSize iCount iFieldCounter
-//        String sLine sFileRelTxt sFieldNoTxt sDataType sIndexNoTxt sDummy sHidden sVal
-//        String[] asIntFile asIntFileData asColumnsNames
-//        Boolean bFound bOpen bUseLowerField
-//        
-//        Open hTable
-//        Get_Attribute DF_FILE_OPENED of hTable to bOpen
-//        Move False to bFound
-//        Get FullDataPathFileName sIntFile to sIntFile
-//        Get piDbType of ghoDUF to iDbType
-//        
-//        Move 1 to iFieldCounter
-//        Get ReadFileToArray sIntFile to asIntFile
-//        Move (SizeOfArray(asIntFile)) to iSize
-//        Decrement iSize
-//        
-//        For iCount from 0 to iSize
-//            Move False to bUseLowerField
-//            Move asIntFile[iCount] to sLine  
-//            If (Uppercase(sLine) contains "FIELD_NUMBER ") Begin
-//                Move sLine to sFieldNoTxt
-//                Move ""          to asIntFileData[-1]    
-//                Move sFieldNoTxt to asIntFileData[-1]    
-//                Get FieldNumberToDataTimeText hTable sFieldNoTxt sDriver iDbType to sDataType
-//                If (sDataType <> "") Begin
-//                    Move sDataType  to asIntFileData[-1]
-//                End
-//                Else Begin
-//                    Move "" to sVal
-//                    If (iCount < iSize) Begin
-//                        Move asIntFile[iCount +1] to sVal
-//                        If (not(Uppercase(sVal) contains "NEXT_COLUMN_HIDDEN")) Begin
-//                            Get NextFieldNumberHidden hTable sFieldNoTxt to sHidden
-//                            If (sHidden <> "") Begin
-//                                Move sHidden to asIntFileData[-1]
-//                            End
-//                        End
-//                    End
-//                End
-//                Repeat
-//                    Increment iCount
-//                    If (iCount <= iSize) Begin
-//                        Move asIntFile[iCount] to sLine
-//                        If (Trim(sLine) <> "" and not(Uppercase(sLine) contains "FIELD_NUMBER ") and Trim(sLine) <> sDataType) Begin
-//                            Move sLine to asIntFileData[-1]
-//                        End
-//                    End
-//                    Else Begin
-//                        Move "" to sLine
-//                    End
-//                Until (Trim(sLine) = "" or Uppercase(sLine) contains "FIELD_NUMBER ")
-//            End
-//        Loop
-//        
-//        If (SizeOfArray(asIntFileData) <> 0) Begin
-//            Get _SqlUtilEnumerateColumnsByHandle of ghoDUF sDriver hTable to asColumnsNames
-//            Get SanitizeIntFilesData asIntFileData asColumnsNames "FIELD_LENGTH"       to asIntFileData
-//            Get SanitizeIntFilesData asIntFileData asColumnsNames "FIELD_PRECISION"    to asIntFileData 
-//            // Note: It looks like that the driver inserts necessary "FIELD_INDEX" data,
-//            //       so we remove them as well.
-//            Get SanitizeIntFilesData asIntFileData asColumnsNames "FIELD_INDEX"        to asIntFileData 
-//            // Remove any single lines with "FIELD_NUMBER xx" that has no subsequent attribute
-//            // on the next line (item)   
-//            Get RemoveEmptyFieldNumbers asIntFileData to asIntFileData
-//        End
-//        Get CollectMoreFieldAttributes hTable sDriver iDbType asIntFileData asColumnsNames to asIntFileData
-//
-//        Close hTable
-//        Function_Return asIntFileData
-//    End_Function   
-    
     Function SanitizeColumnNames String[] asColumns Returns String[]
         Integer iSize iCount
         String sColName
@@ -1764,27 +1688,6 @@ Object oFilelistFixerView is a dbView
         Function_Return asColumns    
     End_Function
 
-//    Function FindU_Columns String[] asColumnsNames Returns String[]
-//        String[] asU_Columns
-//        String sLine
-//        Integer iSize iCount
-//    
-//        Move (SizeOfArray(asColumnsNames)) to iSize
-//        Decrement iSize
-//        For iCount from 0 to iSize
-//            Move (Trim(Uppercase(asColumnsNames[iCount]))) to sLine
-//            If (sLine <> "RECNUM") Begin
-//                If (Left(sLine, 2) = "U_") Begin
-//                    Move "U_" to asU_Columns[-1]
-//                End
-//                Else Begin
-//                    Move "XX" to asU_Columns[-1]
-//                End
-//            End
-//        Loop
-//        Function_Return asU_Columns
-//    End_Function
-    
     Function IsDuplicateAttributeInIntFile String[] asIntFileData String sFieldNoText String sAttribute Returns Boolean
         Integer iSize iIndex
         String sLine
@@ -1956,29 +1859,59 @@ Object oFilelistFixerView is a dbView
             Loop
         Loop 
         
-        Move asCombined to asCleanUp
-        Move (SizeOfArray(asCleanUp)) to iSize
-        Decrement iSize
-        For iCount from 0 to iSize
-            Get FieldTextToColumnNumber asCleanUp[iCount] to iFieldNumber
-            If (iFieldNumber <> -1) Begin
-                Move ("FIELD_NUMBER" * String(iFieldNumber)) to sFieldNoTxt 
-                Repeat
-                    Increment iCount
-                    If (iCount < iSize) Begin
-                        Move asCleanUp[iCount] to sLine
-                        Get IsDuplicateAttributeInIntFile asCleanUp sFieldNoTxt sLine to bFound
-                        If (bFound = True) Begin
-                            Move (RemoveFromArray(asCleanUp, iCount)) to asCleanUp
-                            Decrement iSize    
-                        End
-                    End
-                Until (iCount >= iSize or asCleanUp[iCount] = "")
-            End
-        Loop
+        Get RemoveDuplicates asCombined to asCombined
         
         Move "" to asCombined[-1]
         Function_Return asCombined
+    End_Function
+
+    Function RemoveDuplicates String[] asIntFileData Returns String[]
+        Integer iCount j iBlockStart iBlockEnd
+        Integer iSize
+        String sLine
+        String[] asUniqueAttr asSeenAttrib asResult asEmpty
+    
+        Move "" to asResult[-1]
+        Move (SizeOfArray(asIntFileData)) to iSize
+        Decrement iSize
+        // Loop through the array to find the start and end of each block
+        For iCount from 0 to iSize
+            Move asIntFileData[iCount] to sLine
+    
+            // Detect the start of a new block by finding "FIELD_NUMBER" at the start of the line
+            If (Left(sLine, 12) = "FIELD_NUMBER") Begin
+                // Clear the unique attributes array and reset block markers
+                Move iCount to iBlockStart
+                Move iCount to iBlockEnd
+                Move asEmpty to asUniqueAttr
+                Move asEmpty to asSeenAttrib
+    
+                // Process each line in the current block
+                While (iBlockEnd < iSize)
+                    Increment iBlockEnd
+                    Move asIntFileData[iBlockEnd] to sLine
+    
+                    // Break when we hit a blank line, marking the end of the block
+                    If (Trim(sLine) = "") Break
+    
+                    // Check if this line is a duplicate attribute within the block 
+                    If (not(SearchArray(Trim(sLine), asSeenAttrib) <> -1)) Begin
+                        // If it's unique, add it to both seen and unique attributes arrays
+                        Move sLine to asSeenAttrib[-1]
+                        Move sLine to asUniqueAttr[-1]
+                    End
+                Loop
+    
+                // Append the FIELD_NUMBER line, unique attributes, and blank line to result
+                Move asIntFileData[iBlockStart] to asResult[-1]
+                For j from 0 to (SizeOfArray(asUniqueAttr) - 1)
+                    Move asUniqueAttr[j] to asResult[-1]
+                Loop
+                Move "" to asResult[-1]
+            End
+        Loop
+        Move (RemoveFromArray(asResult, -1)) to asResult
+        Function_Return asResult
     End_Function
 
     // Extracts the top part of the string array that preceeds all
@@ -2059,38 +1992,6 @@ Object oFilelistFixerView is a dbView
         Function_Return bOK
     End_Function
 
-    // It seems like "FIELD_LENGTH" leads to more headache than gain. It can happen
-    // quite often that the table can't be open because of misinterpretation of such
-    // settings. This function simply removes all "sKeyWordToRemove" e.g."FIELD_LENGTH" 
-    // settings from the passed string array. 
-    // This is also what the Studio's "SQL Connect/Repair Wizard" does.
-    Function SanitizeIntFilesData String[] asIntFileData String[] asColumnsNames String sKeyWordToRemove Returns String[]
-        Integer iSize iCount iColumns iFieldNumber iPos
-        String sFieldTxt
-        String[] asOutData
-        
-        // We don't deal with "RECNUM" columns in the .int file, thus we remove any here,
-        // as it messes with the column count.
-        If (Uppercase(asColumnsNames[0]) = "RECNUM") Begin
-            Move (RemoveFromArray(asColumnsNames, 0)) to asColumnsNames
-        End
-        Move (SizeOfArray(asColumnsNames)) to iColumns
-        Move iColumns to iFieldNumber // Init to highest value, until we found a "FIELD_NUMBER"
-        Move (SizeOfArray(asIntFileData)) to iSize
-        Decrement iSize
-        
-        For iCount from 0 to iSize
-            Move asIntFileData[iCount] to sFieldTxt
-            If (Uppercase(sFieldTxt) contains "FIELD_NUMBER ") Begin
-                Get FieldTextToColumnNumber sFieldTxt to iFieldNumber
-            End
-            If (not(Uppercase(sFieldTxt) contains (Uppercase(sKeyWordToRemove))) and iFieldNumber <= iColumns) Begin
-                Move asIntFileData[iCount] to asOutData[-1]    
-            End
-        Loop
-        Function_Return asOutData
-    End_Function 
-
     // Returns the field number from an .int file's line.
     // sLine = "FIELD_NUMBER 2" returns a 2.
     // If no "FIELD_NUMBER" keyword found, or no integer was found
@@ -2107,46 +2008,6 @@ Object oFilelistFixerView is a dbView
         End
         Function_Return iFieldNumber
     End_Function
-
-    // Removes lines with single "FIELD_NUMBER xx", aka that doesn't have
-    // some sort of property attached to it (consequetive items).
-//    Function RemoveEmptyFieldNumbers String[] asIntFileData Returns String[]
-//        Integer iSize iCount iEmpty iItem
-//        Boolean bFound
-//        String[] asEmpty
-//        
-//        Move (SizeOfArray(asIntFileData)) to iSize
-//        Decrement iSize
-//        For iCount from 0 to iSize
-//            If (Uppercase(asIntFileData[iCount] contains "FIELD_NUMBER ") and iCount < iSize) Begin
-//                If (Trim(asIntFileData[iCount +1]) = "") Begin
-//                    Move (RemoveFromArray(asIntFileData, iCount)) to asIntFileData
-//                    Move (RemoveFromArray(asIntFileData, iCount)) to asIntFileData
-//                    Decrement iCount
-//                    Move (iSize  -2) to iSize
-//                End
-//            End
-//            Else If (Uppercase(asIntFileData[iCount] contains "FIELD_NUMBER ") and iCount = iSize) Begin
-//                Move (RemoveFromArray(asIntFileData, iCount)) to asIntFileData
-//            End
-//        Loop
-//        
-//        // Finally, see if there actually is any data left in the array:
-//        Move (SizeOfArray(asIntFileData)) to iSize
-//        Decrement iSize
-//        Move False to bFound
-//        For iCount from 0 to iSize
-//            If (bFound = False and Trim(asIntFileData[iCount]) <> "") Begin
-//                Move True to bFound
-//                Move iSize to iCount
-//            End
-//        Loop
-//        If (bFound = False) Begin
-//            Move asEmpty to asIntFileData    
-//        End
-//        
-//        Function_Return asIntFileData
-//    End_Function
 
     // Reads a file from disk and returns it as a string array.
     // Note: If the sFileName param does not contain a path,
@@ -2201,13 +2062,15 @@ Object oFilelistFixerView is a dbView
                 End
                 Move 0 to iEmpty 
             End
-            Move (Uppercase(asResultData[iCount]) contains "FIELD_NUMBER ") to bFound
+            Move (Uppercase(asResultData[iCount]) contains "FIELD_NUMBER " or Uppercase(asResultData[iCount]) contains "INDEX_NUMBER ") to bFound
             If (bFound = True) Begin
                 Move 0 to iEmpty
             End
-        Loop        
-        Get FullDataPathFileName sFileName to sFileName
+        Loop
+        // Remove the very last empty line
+        Move (RemoveFromArray(asResultData, -1)) to asResultData
 
+        Get FullDataPathFileName sFileName to sFileName
         // Write the updated .int file:
         Move (SizeOfArray(asResultData)) to iSize
         Decrement iSize
@@ -2309,6 +2172,7 @@ Object oFilelistFixerView is a dbView
         Function_Return sHidden
     End_Function        
 
+    // Not used anymore. Instead files are backed up file-by-file when processed.
 //    Function BackupAllIntFiles String sBackupFolder Returns Integer
 //        Integer iSize iCount iRetval iCounter
 //        String sDataPath sFilter sFileDateExt
@@ -2350,8 +2214,11 @@ Object oFilelistFixerView is a dbView
 //        Function_Return iCounter
 //    End_Function 
     
-    // The sFileName should not contain any path. Creates a backup of the passed sFileName
-    // in the sBackup folder with the sFileDateExt prefix.
+    // The sFileName should not contain any path. Creates a backup copy of the passed sFileName
+    // in the sBackup folder with a "sFileDateExt" file name suffix (prior to the file name extension).
+    // Example: A passed sFileName of "register.int" will become: "register.2024-11-06__21_34_42.int"
+    //          So "register.YYYY-MM-DD__HH_MM_SS.int 
+    //          Note that the "YYYY-MM-DD" format depends on your Windows local date settings.
     Function BackupIntFile String sDataPath String sFileName String sBackupFolder Returns Boolean
         String sFileDateExt sExt
         Integer iRetval
