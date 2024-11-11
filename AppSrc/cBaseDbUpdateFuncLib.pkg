@@ -2118,13 +2118,13 @@ Class cBaseDbUpdateFuncLib is a cObject
             Move (SortArray(asIndexArray)) to asIndexArray
             If (iSize > 0) Begin
                 Writeln channel iCh (CS_PRIMARY_INDEX * String("0"))
-                Writeln channel iCh // Just an empty line
+                Writeln channel iCh "" // Just an empty line
             End
             Decrement iSize
-            for iCount from 0 to iSize
+            For iCount from 0 to iSize
                 Writeln channel iCh (CS_INDEX_NUMBER * String(iCount))
                 Writeln channel iCh (CS_INDEX_NAME   * String(asIndexArray[iCount]))
-                Writeln channel iCh
+                Writeln channel iCh ""
             Loop
         End
 
