@@ -2085,6 +2085,9 @@ Class cBaseDbUpdateFuncLib is a cObject
             If (bExists = True) Begin
                 Get vRenameFile (sDataPath + sPhysicalFileName) (sDataPath + sPhysicalFileName + ".bak") to bOK
             End
+        End 
+        Else Begin
+            Get vDeleteFile (sDataPath + sPhysicalFileName) to bOK
         End
 
         Get _UtilDeleteCacheFile sTableName to bOK
@@ -2121,7 +2124,7 @@ Class cBaseDbUpdateFuncLib is a cObject
                 Writeln channel iCh "" // Just an empty line
             End
             Decrement iSize
-            For iCount from 0 to iSize
+            for iCount from 0 to iSize
                 Writeln channel iCh (CS_INDEX_NUMBER * String(iCount))
                 Writeln channel iCh (CS_INDEX_NAME   * String(asIndexArray[iCount]))
                 Writeln channel iCh ""
