@@ -4962,10 +4962,7 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
         Move 0 to LastErr
 
         Structure_Start hTable sDriverID
-            If (bExists = True) Begin
-                Delete_Index iTableNo APIIndex.iIndexNumber
-            End
-
+            Delete_Index hTable APIIndex.iIndexNumber
             Create_Index hTable At APIIndex.iIndexNumber
 
             #IF (!@ > 182)
@@ -4983,8 +4980,12 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
                 Move aIndexSegments[iCount].iFieldNumber to iFieldFrom
                 If (iFieldFrom <> -1 ) Begin
             		Set_Attribute DF_INDEX_SEGMENT_FIELD     of hTable APIIndex.iIndexNumber (iCount +1) to iFieldFrom
-            		Set_Attribute DF_INDEX_SEGMENT_DIRECTION of hTable APIIndex.iIndexNumber (iCount +1) to aIndexSegments[iCount].bAscending
-            		Set_Attribute DF_INDEX_SEGMENT_CASE      of hTable APIIndex.iIndexNumber (iCount +1) to aIndexSegments[iCount].bUppercase
+            		If (pbCompareIndexAscending(Self) = True) Begin
+            		    Set_Attribute DF_INDEX_SEGMENT_DIRECTION of hTable APIIndex.iIndexNumber (iCount +1) to aIndexSegments[iCount].bAscending
+                    End
+            		If (pbCompareIndexUppercase(Self) = True) Begin
+            		    Set_Attribute DF_INDEX_SEGMENT_CASE      of hTable APIIndex.iIndexNumber (iCount +1) to aIndexSegments[iCount].bUppercase
+                    End
                 End
             Loop
 
