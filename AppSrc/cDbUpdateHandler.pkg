@@ -582,9 +582,10 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary
         Boolean bExists bIsSQL
         Handle hTable
         String sLogicalName sRootName sFileName sDataPath
-        Move False to bExists
+
+        Get _UtilTableExists hTable to bExists
         Get piIntFilesFileNumber to hTable
-        If (hTable > 0) Begin
+        If (bExists = false and hTable > 0) Begin
             Get_Attribute DF_FILE_ROOT_NAME    of hTable to sRootName
             Get_Attribute DF_FILE_LOGICAL_NAME of hTable to sLogicalName
             Move (sLogicalName = CS_IntFilesTableLogicalName) to bExists
