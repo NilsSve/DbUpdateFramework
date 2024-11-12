@@ -1716,7 +1716,7 @@ Object oFilelistFixerView is a dbView
                 Function_Return True
             End
             Increment iIndex
-        Until (asIntFileData[iIndex] = "" or iIndex >= iSize)
+        Until (sLine = "" or iIndex >= iSize)
         
         Function_Return False
     End_Function              
@@ -2565,7 +2565,9 @@ Object oFilelistFixerView is a dbView
             Procedure_Return
         End
         Send ShowSQLTablesCount 
-        Send OnCreate of ghoDUF
+        // This is to make sure the uppercase support for the driver is set properly.
+        // The SetupIgnoreUcaseSupport message is in the .src file's cDbUpdateHandler object.
+        Send SetupIgnoreUcaseSupport of ghoDUF
         Send ShowFileListData
     End_Procedure  
     
