@@ -34,6 +34,10 @@ Object oDbUpdateHandler is a cDbUpdateHandler
     Set pbIgnoreDriverUcaseSupport to True
 
     Procedure OnCreate
+        Send SetupIgnoreUcaseSupport
+    End_Procedure
+
+    Procedure SetupIgnoreUcaseSupport
         String sDriver
         Integer iDriver
         Get psDriverID to sDriver
