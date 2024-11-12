@@ -943,7 +943,10 @@ Object oFilelistFixerView is a dbView
             Move Self to ghoErrorSource 
             Set piErrNum  to iErrNum
             Set piErrLine to iErrLine
-            Set psErrText to sErrText
+            Set psErrText to sErrText  
+            Move False to Err
+            Move 0 to LastErr
+            Move 0 to ErrLine
             Send WriteError of (Parent(Self)) ("Error:" * String(iErrNum) * "at line:" * String(iErrLine) * "Text:" * String(sErrText))
             Set pbErrorProcessingState to False 
         End_Procedure
@@ -1395,7 +1398,7 @@ Object oFilelistFixerView is a dbView
         Integer iRetval iSize iCount iCounter iDriver
         tFilelist[] ErrorFilesArray FileListArray
         String sDriver sRootName sIntFileName sConnectionID sErrorText sText sDataPath
-        Boolean bOK bIsSystem bUseUcase bCurrentUcaseMode
+        Boolean bOK bIsSystem bCurrentUcaseMode
         Handle hTable hoCurrentErrorObject
 
         Get pFileListArray of ghoDUF to FileListArray
@@ -1416,7 +1419,7 @@ Object oFilelistFixerView is a dbView
         //       behave the same as earlier driver versions.
         //       This means that "U_" columns will be kept during a restructure.
         Get_Attribute DF_DRIVER_IGNORE_UCASE_SUPPORT of iDriver to bCurrentUcaseMode
-        Set_Attribute DF_DRIVER_IGNORE_UCASE_SUPPORT of iDriver to bUseUcase
+        Set_Attribute DF_DRIVER_IGNORE_UCASE_SUPPORT of iDriver to True
         Move (SizeOfArray(ErrorFilesArray)) to iSize
         Send StartStatusPanel "Fixing Int File Errors" "" iSize
     
@@ -2561,9 +2564,9 @@ Object oFilelistFixerView is a dbView
         If (sFileList = "") Begin
             Procedure_Return
         End
-        Send ShowSQLTablesCount
+        Send ShowSQLTablesCount 
+        Send OnCreate of ghoDUF
         Send ShowFileListData
-        Send CloseLogFile
     End_Procedure  
     
     Procedure ClearData
