@@ -2094,7 +2094,8 @@ Class cBaseDbUpdateFuncLib is a cObject
         Get _SqlUtilEnumerateIndexes sTableName sDriverID to asIndexArray
 
         Get Seq_Open_Output_Channel (sDataPath + sPhysicalFileName) to iCh
-        If (iCh < 0) Begin
+        If (iCh < 0) Begin 
+            Error DFERR_PROGRAM "No free channel for creating output file. (Routine: _SqlUtilCreateIntFile)"
             Function_Return False
         End
         
@@ -2213,6 +2214,7 @@ Class cBaseDbUpdateFuncLib is a cObject
 
         Get psDatabase to sDataBase
         If (sDataBase = "") Begin
+            Set pasSQLDataTables to asSQLTables
             Procedure_Return
         End
         Get _SqlUtilEnumerateTables MSSQLDRV_ID sDataBase "" to asSQLTables
@@ -2244,8 +2246,9 @@ Class cBaseDbUpdateFuncLib is a cObject
                 Move False to Err
                 Move False to bIsSystem
                 Get_Attribute DF_FILE_ROOT_NAME    of hTable to sRootName
+                Get_Attribute DF_FILE_LOGICAL_NAME of hTable to sLogicalName
                 Get _DriverIDFromRootName sRootName to sDriver
-                Set Message_Text of ghoStatusPanel to ("Reading table" * String(hTable) * "RootName =" * sRootName)
+                Set Message_Text of ghoStatusPanel to ("Reading table" * String(hTable) * "LogicalName =" * sLogicalName)
                 Send DoAdvance of ghoProgressBar
                 Send Ignore_All of Error_Object_Id
                 Move False to bIsSystem
@@ -2256,7 +2259,6 @@ Class cBaseDbUpdateFuncLib is a cObject
                 End
                 Send Trap_All of Error_Object_Id
                 Close hTable
-                Get_Attribute DF_FILE_LOGICAL_NAME of hTable to sLogicalName
                 Get_Attribute DF_FILE_DISPLAY_NAME of hTable to sDisplayName
                 Get _TableNameOnly sRootName to sNoDriverRootname
                 Move hTable              to Tables[iItem].hTable

@@ -167,14 +167,14 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary
         Forward Send Construct_Object
         Move Self to ghoDbUpdateHandler  
         
-        { MethodType=Property Category="Convert to SQL" InitialValue="Latin1_General_CS_AS" }
+        { MethodType=Property Category="Convert to SQL" InitialValue="Latin1_General_CI_AS" }
         // Latin1_General_CI_AS = General Insensitive collation
         // Latin1_General_CS_AS = General Case Sensitive collation, AS= Accent Sensitive.   
         // For MS-SQL See: https://docs.microsoft.com/en-us/sql/t-sql/statements/windows-collation-name-transact-sql?view=sql-server-2017
         // Good read about which collation to select:
         // https://social.msdn.microsoft.com/Forums/sqlserver/en-US/bfdc32d3-3d36-4d63-8d87-6ee972fd8130/on-sqllatin1generalcp1cias-sql-server-2008-default-collation?forum=transactsql
         { InitialValue="Latin1_General_CS_AS" EnumList="Latin1_General_CS_AS, Latin1_General_CI_AS, SQL_Latin1_General_Cp1_CS_AS" }
-        Property String psCollation "Latin1_General_CS_AS" //"SQL_Latin1_General_Cp1_CS_AS"
+        Property String psCollation "Latin1_General_CI_AS" //"SQL_Latin1_General_Cp1_CS_AS"
 
         // Struct array that will contain pnVersionNumbers & object id's of
         // all child cDbVersion objects.
