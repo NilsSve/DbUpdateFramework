@@ -1,4 +1,4 @@
-Use Windows.pkg
+﻿Use Windows.pkg
 Use Dfclient.pkg
 Use MSSqldrv.pkg 
 Use db2_drv.pkg
@@ -1442,14 +1442,15 @@ Object oFilelistFixerView is a dbView
                 End
             End
 
-            Send UpdateStatusPanel ("Fixing .int file problems for table:" * String(sRootName))
-            Move (ErrorFilesArray[iCount].sNoDriverRootname + ".int") to sIntFileName
-            
             If (sDriver <> DATAFLEX_ID) Begin
+                Move (ErrorFilesArray[iCount].sNoDriverRootname + ".int") to sIntFileName
                 Move ErrorFilesArray[iCount].hTable to hTable
                 Get _IsSystemFile of ghoDUF hTable to bIsSystem
+                Send UpdateStatusPanel ("Fixing .int file problems for table:" * String(ErrorFilesArray[iCount].sNoDriverRootname))
     
-                Get CreateSingleIntFile hTable sDriver sConnectionID bIsSystem sIntFileName bExtractRelations to bOK
+                Get CreateSingleIntFile hTable sDriver sConnectionID bIsSystem sIntFileName bExtractRelations True to bOK
+                
+                Close hTable
                 If (bOK) Begin
                     Increment iCounter
                     Set_Attribute DF_FILE_ROOT_NAME of hTable to (sDriver + ":" + ErrorFilesArray[iCount].sNoDriverRootname)
@@ -1586,14 +1587,14 @@ Object oFilelistFixerView is a dbView
             Set Message_Text of ghoStatusPanel to ("Table number:" * String(hTable))
             If (bIsSQL = True and bIsAlias = False) Begin
                 Move (FileListArray[iCount].sNoDriverRootname + ".int") to sIntFileName
-                File_Exist (sDataPath + "\" + sIntFileName) bExists
-                If (bExists and sDriver <> DATAFLEX_ID) Begin
+                If (sDriver <> DATAFLEX_ID) Begin
                     Open hTable
                     Get _IsSystemFile of ghoDUF hTable to bIsSystem
                     Send UpdateStatusPanel ("Recreating file:" * String(FileListArray[iCount].sNoDriverRootname) + ".int")
                     
                     Get CreateSingleIntFile hTable sDriver sConnectionID bIsSystem sIntFileName bExtractRelations bRemoveUCol to bOK
                     
+                    Close hTable
                     If (bOK) Begin 
                         Increment iCounter
                         Set_Attribute DF_FILE_ROOT_NAME of hTable to (sDriver + ":" + FileListArray[iCount].sNoDriverRootname)
@@ -1622,32 +1623,60 @@ Object oFilelistFixerView is a dbView
 
     // Helper function to recreate a single .int file
     Function CreateSingleIntFile Handle hTable String sDriver String sConnectionID Boolean bIsSystem String sIntFileName Boolean bExtractRelations Boolean bRemoveUCol Returns Boolean
-        Boolean bOK bAnsi
+        Boolean bOK bAnsi bIsHidden
         String sErrorText sText
         Integer iRetval iDbType
-        String[] asIntFileData
+        String[] asIntFieldsData asIntFileHiddenFields asFullIntFileData
     
         Get pbToANSI of ghoDUF to bAnsi 
+        
         // 1. Backup the .int file
         Get BackupIntFile sIntFileName to bOK
         // 2. Collect relation and index info from old .ini file:
         If (bExtractRelations = True) Begin
-            Get CollectIntFileRelations sIntFileName to asIntFileData
+            Get CollectTableRelations sIntFileName to asIntFieldsData
         End
-        // 3. Add more data from the current data table
-        Get CollectMoreFieldAttributes hTable sDriver asIntFileData to asIntFileData
-        // 4. Tell driver to create a new .int file.
+        // 3. Tell driver to create a new .int file.
         Get CreateNewIntFile hTable sDriver sConnectionID bAnsi bIsSystem False to bOK
         If (bOK = False) Begin
+            // The error will have been written to the log file.
             Function_Return False
         End
-        // 5. Merge data from the old .int file, with the new .int file and "MoreFieldAttributes" data:
-        Get MergeIntFileData hTable sIntFileName asIntFileData to bOK
-        // 6. Restructure to remove U_ columns
-        If (bOK = True and bRemoveUCol = True) Begin
-            Structure_Start hTable sDriver
-            Structure_End hTable DF_STRUCTEND_OPT_FORCE "." ghoDbUpdateHandler
+        // 4. Add DATETIME attributes from the data table.
+        Get CollectDateTimeAttributes hTable sDriver asIntFieldsData to asIntFieldsData
+        // 5. Add "NEXT_COLUMN_HIDDEN UPPERCASED" attributes from the SQL back-end.
+        Get CollectHiddenAttributes   hTable sDriver asIntFieldsData (&bIsHidden) to asIntFieldsData
+        // 6. Merge the new .int file with collected data and write to disk:
+        Get MergeIntFileData hTable sIntFileName asIntFieldsData to asFullIntFileData
+        // 7. Write the updated .int file:      
+        Get WriteArrayToFile sIntFileName asFullIntFileData to bOK 
+        
+        // 8. Restructure to remove U_ columns
+        If (bRemoveUCol = True and bOK = True and bIsHidden = True) Begin
+            Get RemoveU_Columns hTable sDriver asIntFieldsData to bOK
         End
+        Function_Return bOK
+    End_Function 
+    
+    Function RemoveU_Columns Handle hTable String sDriver String[] asIntFileData Returns Boolean
+        Boolean bErr bOK
+        String sOrgFormat sNewFormat
+        Move Err to bErr
+        Move False to Err
+        // We need to close the table permanently, then re-open it, for the
+        // Structure_Start/End to work properly.
+        Close hTable DF_PERMANENT
+        Open hTable 
+        Get_Attribute DF_FILE_TABLE_CHARACTER_FORMAT of hTable to sOrgFormat
+        Move (If(sOrgFormat = CS_OEM_Txt, CS_ANSI_Txt, CS_OEM_Txt)) to sNewFormat
+        
+        Structure_Start hTable sDriver   
+            Set_Attribute DF_FILE_TABLE_CHARACTER_FORMAT of hTable to sNewFormat
+            Set_Attribute DF_FILE_TABLE_CHARACTER_FORMAT of hTable to sOrgFormat
+        Structure_End hTable DF_STRUCTEND_OPT_FORCE "." ghoDbUpdateHandler
+
+        Move (not(Err)) to bOK
+        Move bErr to Err
         Function_Return bOK
     End_Function
     
@@ -1657,7 +1686,7 @@ Object oFilelistFixerView is a dbView
         Function_Return bOK
     End_Function
 
-    Function CollectIntFileRelations String sIntFile Returns String[]
+    Function CollectTableRelations String sIntFile Returns String[]
         Integer iSize iCount
         String[] asIntFile asData
         String sLine sFieldTxt
@@ -1737,17 +1766,22 @@ Object oFilelistFixerView is a dbView
         Function_Return False
     End_Function              
     
-    // Note: The hTable needs to be open when this is called.
-    //       It adds other FIELD_NUMBER settings that does not exist in the old passed .int file string array.
-    Function CollectMoreFieldAttributes Handle hTable String sDriver String[] asIntFileData Returns String[]
+    // To add FIELD_NUMBER DATETIME attributes.
+    Function CollectDateTimeAttributes Handle hTable String sDriver String[] asIntFileData Returns String[]
         Integer iSize iCount iItem iField iDbType iFieldNumber
         String sFieldNoTxt sLine sHidden sFieldDateTxt sFieldHiddenTxt sFieldName
         Boolean bFound bOpen
-        String[] asColumnsNamesOrg asColumnsNames asFieldTimeDates asFieldHidden
+        String[] asColumnsNames asFieldTimeDates asFieldHidden
 
+        Open hTable
+        Get_Attribute DF_FILE_OPENED of hTable to bOpen
+        If (bOpen = False) Begin
+            Function_Return asIntFileData
+        End
+        
         Get piDbType of ghoDUF to iDbType
-        Get _SqlUtilEnumerateColumnsByHandle of ghoDUF sDriver hTable to asColumnsNamesOrg
-        Get SanitizeColumnNames asColumnsNamesOrg to asColumnsNames
+        Get _SqlUtilEnumerateColumnsByHandle of ghoDUF sDriver hTable to asColumnsNames
+        Get SanitizeColumnNames asColumnsNames to asColumnsNames
 
         // 1. Find "DATETIME" fields:
         Move (SizeOfArray(asColumnsNames)) to iSize
@@ -1762,10 +1796,30 @@ Object oFilelistFixerView is a dbView
             End
         Loop
         If (SizeOfArray(asFieldTimeDates) <> 0) Begin
-            Get CombineArrays asIntFileData asFieldTimeDates to asIntFileData        
+            Get CombineArrays asIntFileData asFieldTimeDates to asIntFileData      
         End
         
-        // 2. Find "HIDDEN" fields:
+        Function_Return asIntFileData
+    End_Function
+
+    // To add HIDDEN FIELD_NUMBER settings.
+    Function CollectHiddenAttributes Handle hTable String sDriver String[] asIntFileData Boolean ByRef bIsHidden Returns String[]
+        Integer iSize iCount iItem iField iDbType iFieldNumber
+        String sFieldNoTxt sLine sHidden sFieldDateTxt sFieldHiddenTxt sFieldName
+        Boolean bFound bOpen
+        String[] asColumnsNamesOrg asColumnsNames asFieldTimeDates asFieldHidden
+        
+        Move False to bIsHidden
+        Open hTable
+        Get_Attribute DF_FILE_OPENED of hTable to bOpen
+        If (bOpen = False) Begin
+            Function_Return asIntFileData
+        End
+        
+        Get piDbType of ghoDUF to iDbType
+        Get _SqlUtilEnumerateColumnsByHandle of ghoDUF sDriver hTable to asColumnsNamesOrg
+        Get SanitizeColumnNames asColumnsNamesOrg to asColumnsNames
+
         Move (SizeOfArray(asColumnsNamesOrg)) to iSize
         Decrement iSize
         For iCount from 0 to iSize
@@ -1787,171 +1841,247 @@ Object oFilelistFixerView is a dbView
             End
         Loop
         If (SizeOfArray(asFieldHidden) <> 0) Begin
-            Get CombineArrays asIntFileData asFieldHidden to asIntFileData        
+            Move True to bIsHidden
+            Get CombineArrays asIntFileData asFieldHidden to asIntFileData      
         End
 
         Function_Return asIntFileData
     End_Function
 
-    // Parses data from an .int file as a string array, and
-    // returns all "FIELD_NUMBER xx" data as a struct arrray.
-    Function ParseBlocks String[] asData Returns tBlock[]
-        tBlock[] Blocks 
-        tBlock Block
-        Integer iSize iCount iFieldNumber iBlock
+    Function ParseBlocks String[] sSourceArray Returns tBlock[]
+        Integer iCount iSize iFieldNumber
+        tBlock[] aBlocks
+        tBlock CurrentBlock
         String sLine
+        Boolean bInBlock
         
-        Move 0 to iBlock
-        Move (SizeOfArray(asData)) to iSize
+        Move False to bInBlock
+        Move (ResizeArray(aBlocks, 0)) to aBlocks
+        Move (SizeOfArray(sSourceArray)) to iSize
         Decrement iSize
+        
+        // Loop through each line in the string array
         For iCount from 0 to iSize
-            Move asData[iCount] to sLine
-            Move (Trim(sLine)) to sLine
+            Move sSourceArray[iCount] to sLine
+    
+            // Check if the line starts with "FIELD_NUMBER"
             If (Left(sLine, 12) = "FIELD_NUMBER") Begin
-                If (Block.iFieldNumber > 0) Begin
-                    Move Block to Blocks[iBlock]
-                    Increment iBlock            
+                // If we're already in a block, finish the current block
+                If (bInBlock = True) Begin
+                    Move CurrentBlock to aBlocks[-1]
                 End
-                Get FieldTextToColumnNumber sLine to Block.iFieldNumber
-                Move (ResizeArray(Block.asLines, 0)) to Block.asLines
-                Move sLine to Block.asLines[0]
+                Get ExtractFieldNumber sLine to iFieldNumber
+    
+                // Start a new block
+                Move (ResizeArray(CurrentBlock.asLines, 0)) to CurrentBlock.asLines
+                Move iFieldNumber to CurrentBlock.iFieldNumber
+                Move (ResizeArray(CurrentBlock.asLines, 0)) to CurrentBlock.asLines
+                Move True to bInBlock
             End
+            // End of current block (empty line)
             Else If (sLine = "") Begin
-                If (Block.iFieldNumber > 0) Begin
-                    Move Block to Blocks[iBlock]
-                    Increment iBlock
+                If (bInBlock = True) Begin
+                    Move CurrentBlock to aBlocks[-1]
+                    Move False to bInBlock
                 End
-                Move 0 to Block.iFieldNumber
-                Move (ResizeArray(Block.asLines, 0)) to Block.asLines
             End
             Else Begin
-                Move sLine to Block.asLines[-1]
+                // Add the line to the current block
+                If (bInBlock) Begin
+                    Move sLine to CurrentBlock.asLines[-1]
+                End
             End
-        Loop 
-        
-        If (Block.iFieldNumber > 0) Begin
-            Move Block to Blocks[iBlock]
+        Loop
+    
+        // Add the last block (if any)
+        If (bInBlock = True) Begin
+            Move CurrentBlock to aBlocks[-1]
         End
+        Function_Return aBlocks
+    End_Function
+
+    Function CombineBlocks tBlock[] aBlocks1 tBlock[] aBlocks2 Returns tBlock[]
+        tBlock[] aCombinedBlocks
+        Integer iCount iSize jCount iCombinedSize
+        Boolean bFound
+    
+        // Combine blocks from the first array
+        Move aBlocks1 to aCombinedBlocks
+    
+        // Process blocks from the second array
+        Move (SizeOfArray(aBlocks2)) to iSize
+        Decrement iSize
+        For iCount from 0 to iSize
+            Move False to bFound
+            
+            Move (SizeOfArray(aCombinedBlocks)) to iCombinedSize
+            Decrement iCombinedSize
+            // Check if the FIELD_NUMBER already exists in aCombinedBlocks
+            For jCount from 0 to iCombinedSize
+                If (aCombinedBlocks[jCount].iFieldNumber = aBlocks2[iCount].iFieldNumber) Begin
+                    Move True to bFound
+    
+                    // Merge the asLines array
+                    Move (AppendArray(aBlocks2[iCount].asLines, aCombinedBlocks[jCount].asLines)) to aCombinedBlocks[jCount].asLines
+                    Move iCombinedSize to jCount // We're out of here.
+                End
+            Loop
+    
+            // If FIELD_NUMBER not found, add the block to the combined array
+            If (bFound = False) Begin
+                Move aBlocks2[iCount] to aCombinedBlocks[-1]
+            End
+        Loop
+    
+        Function_Return aCombinedBlocks
+    End_Function
+
+    Function BlocksToStringArray tBlock[] aBlocks Returns String[]
+        Integer iCount jCount iSize
+        String[] sResult
+        String sBlockHeader
+    
+        // Sort by FIELD_NUMBER
+        Move (SortArray(aBlocks)) to aBlocks
+        // Loop through each block
+        Move (SizeOfArray(aBlocks)) to iSize
+        Decrement iSize
+        For iCount from 0 to iSize
+            // Add the FIELD_NUMBER header
+            Move ("FIELD_NUMBER " + String(aBlocks[iCount].iFieldNumber)) to sBlockHeader
+            Move sBlockHeader to sResult[-1]
+    
+            // Add all lines in the block
+            For jCount from 0 to (SizeOfArray(aBlocks[iCount].asLines) - 1)
+                Move aBlocks[iCount].asLines[jCount] to sResult[-1]
+            Loop
+    
+            // Add an empty line to separate blocks
+            Move "" to sResult[-1]
+        Loop
+    
+        Function_Return sResult
+    End_Function
+    
+    Function CombineArrays String[] asData1 String[] asData2 Returns String[]
+        tBlock[] aBlocks1 aBlocks2 aCombinedBlocks
+        String[] asCombinedArray
+    
+        // Parse input arrays into blocks
+        Get ParseBlocks asData1 to aBlocks1
+        Get ParseBlocks asData2 to aBlocks2
+    
+        // Combine the blocks
+        Get CombineBlocks aBlocks1 aBlocks2 to aCombinedBlocks
+    
+        // Convert combined blocks back into a string array
+        Get BlocksToStringArray aCombinedBlocks to asCombinedArray
+    
+        Function_Return asCombinedArray
+    End_Function
+    
+    Function ProcessBlocks tBlock[] aSourceBlocks tBlock[] aProcessedBlocks Returns tBlock[]
+        Integer iCount iSize jCount
+        Boolean bExists
+        tBlock SourceBlock
+        tBlock[] aTargetBlocks
+    
+        // Initialize the output array
+        Move (ResizeArray(aTargetBlocks, 0)) to aTargetBlocks
+        Move (SizeOfArray(aSourceBlocks)) to iSize
+        Decrement iSize
         
-        Function_Return Blocks
-    End_Function 
+        // Loop through the source blocks
+        For iCount from 0 to iSize
+            Move aSourceBlocks[iCount] to SourceBlock
+    
+            // Check if the FIELD_NUMBER already exists in the processed blocks
+            Move False to bExists
+            For jCount from 0 to (SizeOfArray(aProcessedBlocks) - 1)
+                If (SourceBlock.iFieldNumber = aProcessedBlocks[jCount].iFieldNumber) Begin
+                    Move True to bExists
+                    Move (SizeOfArray(aProcessedBlocks)) to jCount // We're out of here
+                End
+            Loop
+    
+            // Add the block if it does not already exist
+            If (bExists = False) Begin
+                Move SourceBlock to aProcessedBlocks[-1]
+                Move SourceBlock to aTargetBlocks[-1]
+            End
+        Loop  
+    
+        Function_Return aTargetBlocks
+    End_Function
 
     // Combines two string arrays. The first parameter is the newly created .int file,
     // and the second is data from the old .int file that existed before this process began.
-    Function CombineArrays String[] asNewData String[] asOldData Returns String[]
-        tBlock[] BlocksNew BlocksOld CombinedBlocks
-        String[] asCombined asCleanUp
-        Integer iCount iSize j iSize2 iFieldNumber
-        String sLine sFieldNoTxt
-        Boolean bFound
-        
-        Get ParseBlocks asNewData to BlocksNew
-        Get ParseBlocks asOldData to BlocksOld
-        Move (SizeOfArray(BlocksOld)) to iSize
-        Decrement iSize
-        
-        Move BlocksNew to CombinedBlocks
-        For iCount from 0 to (SizeOfArray(BlocksOld) -1)
-            Move BlocksOld[iCount].iFieldNumber to iFieldNumber
-            For j from 0 to (SizeOfArray(CombinedBlocks) -1)
-                If (CombinedBlocks[j].iFieldNumber = iFieldNumber) Begin 
-                    // First, remove the "FIELD_NUMBER xx" line, as it already exists in CombinedBlocks. 
-                    Move (RemoveFromArray(BlocksOld[iCount].asLines, 0)) to BlocksOld[iCount].asLines
-                    Move (AppendArray(CombinedBlocks[j].asLines, BlocksOld[iCount].asLines)) to CombinedBlocks[j].asLines
-                    Move -1 to iFieldNumber
-                    Move (SizeOfArray(CombinedBlocks)) to j // Get out of loop.    
-                End
-            Loop
-            If (iFieldNumber <> -1) Begin
-                Move (ResizeArray(CombinedBlocks, SizeOfArray(CombinedBlocks) + 1)) to CombinedBlocks
-                Move BlocksOld[iCount] to CombinedBlocks[SizeOfArray(CombinedBlocks) - 1]
-            End
-        Loop
-        
-        Move (SortArray(CombinedBlocks)) to CombinedBlocks
-        Move (SizeOfArray(CombinedBlocks)) to iSize
-        Decrement iSize
-        For iCount from 0 to iSize
-            Move (SizeOfArray(CombinedBlocks[iCount].asLines)) to iSize2 
-            Decrement iSize2
-            For j from 0 to iSize2
-                Get FieldTextToColumnNumber CombinedBlocks[iCount].asLines[j] to iFieldNumber
-                // Insert an empty line before each "FIELD_NUMBER xx"
-                If (iFieldNumber <> -1) Begin
-                    Move "" to asCombined[-1]
-                End
-                Move CombinedBlocks[iCount].asLines[j] to asCombined[-1]
-            Loop
-        Loop 
-        
-        Get RemoveDuplicates asCombined to asCombined
-        
-        Move "" to asCombined[-1]
-        Function_Return asCombined
-    End_Function
-
-    Function RemoveDuplicates String[] asIntFileData Returns String[]
-        Integer iCount j iBlockStart iBlockEnd
-        Integer iSize
-        String sLine
-        String[] asUniqueAttr asSeenAttrib asResult asEmpty
-    
-        Move "" to asResult[-1]
-        Move (SizeOfArray(asIntFileData)) to iSize
-        Decrement iSize
-        // Loop through the array to find the start and end of each block
-        For iCount from 0 to iSize
-            Move asIntFileData[iCount] to sLine
-    
-            // Detect the start of a new block by finding "FIELD_NUMBER" at the start of the line
-            If (Left(sLine, 12) = "FIELD_NUMBER") Begin
-                // Clear the unique attributes array and reset block markers
-                Move iCount to iBlockStart
-                Move iCount to iBlockEnd
-                Move asEmpty to asUniqueAttr
-                Move asEmpty to asSeenAttrib
-    
-                // Process each line in the current block
-                While (iBlockEnd < iSize)
-                    Increment iBlockEnd
-                    Move asIntFileData[iBlockEnd] to sLine
-    
-                    // Break when we hit a blank line, marking the end of the block
-                    If (Trim(sLine) = "") Break
-    
-                    // Check if this line is a duplicate attribute within the block 
-                    If (not(SearchArray(Trim(sLine), asSeenAttrib) <> -1)) Begin
-                        // If it's unique, add it to both seen and unique attributes arrays
-                        Move sLine to asSeenAttrib[-1]
-                        Move sLine to asUniqueAttr[-1]
-                    End
-                Loop
-    
-                // Append the FIELD_NUMBER line, unique attributes, and blank line to result
-                Move asIntFileData[iBlockStart] to asResult[-1]
-                For j from 0 to (SizeOfArray(asUniqueAttr) - 1)
-                    Move asUniqueAttr[j] to asResult[-1]
-                Loop
-                Move "" to asResult[-1]
-            End
-        Loop
-        Move (RemoveFromArray(asResult, -1)) to asResult
-        Function_Return asResult
-    End_Function
+//    Function RemoveDuplicates String[] asIntFileData Returns String[]
+//        Integer iCount jCount iBlockStart iBlockEnd
+//        Integer iSize
+//        String sLine
+//        String[] asUniqueAttr asSeenAttrib asResult asEmpty
+//    
+//        Move "" to asResult[-1]
+//        Move (SizeOfArray(asIntFileData)) to iSize
+//        Decrement iSize
+//        // Loop through the array to find the start and end of each block
+//        For iCount from 0 to iSize
+//            Move asIntFileData[iCount] to sLine
+//    
+//            // Detect the start of a new block by finding "FIELD_NUMBER" at the start of the line
+//            If (Left(sLine, 12) = "FIELD_NUMBER") Begin
+//                // Clear the unique attributes array and reset block markers
+//                Move iCount to iBlockStart
+//                Move iCount to iBlockEnd
+//                Move asEmpty to asUniqueAttr
+//                Move asEmpty to asSeenAttrib
+//    
+//                // Process each line in the current block
+//                While (iBlockEnd < iSize)
+//                    Increment iBlockEnd
+//                    Move asIntFileData[iBlockEnd] to sLine
+//    
+//                    // Break when we hit a blank line, marking the end of the block
+//                    If (Trim(sLine) = "") Break
+//    
+//                    // Check if this line is a duplicate attribute within the block 
+//                    If (not(SearchArray(Trim(sLine), asSeenAttrib) <> -1)) Begin
+//                        // If it's unique, add it to both seen and unique attributes arrays
+//                        Move sLine to asSeenAttrib[-1]
+//                        Move sLine to asUniqueAttr[-1]
+//                    End
+//                Loop
+//    
+//                // Append the FIELD_NUMBER line, unique attributes, and blank line to result
+//                Move asIntFileData[iBlockStart] to asResult[-1]
+//                For jCount from 0 to (SizeOfArray(asUniqueAttr) - 1)
+//                    Move asUniqueAttr[jCount] to asResult[-1]
+//                Loop
+//                Move "" to asResult[-1]
+//            End
+//        Loop
+//        Move (RemoveFromArray(asResult, -1)) to asResult
+//        Function_Return asResult
+//    End_Function
 
     // Extracts the top part of the string array that preceeds all
-    // "FIELD_NUMBER xx" data, and stops does not include IntFileBottomData.
-    Function IntFileTopData String[] asIntFile Returns String[]
+    // "FIELD_NUMBER xx" data, and stops does not include IntFileIndexPart.
+    Function IntFileTopPart String[] ByRef asIntFile Returns String[]
         String[] asResult
         String sLine
         Integer iSize iCount iFieldNumber
+
         Move (SizeOfArray(asIntFile)) to iSize
         Decrement iSize
         For iCount from 0 to iSize
             Move asIntFile[iCount] to sLine    
-            Get FieldTextToColumnNumber sLine to iFieldNumber
+            Get ExtractFieldNumber sLine to iFieldNumber
             If (iFieldNumber = -1) Begin
                 Move asIntFile[iCount] to asResult[-1]
+                Move (RemoveFromArray(asIntFile, iCount)) to asIntFile
+                Decrement iCount
+                Decrement iSize
             End
             Else Begin
                 Move iSize to iCount
@@ -1962,22 +2092,26 @@ Object oFilelistFixerView is a dbView
 
     // Extracts the bottom part of the string array, that deals
     // with index information.
-    Function IntFileBottomData String[] asIntFile Returns String[]
+    Function IntFileIndexPart String[] ByRef asIntFile Returns String[]
         String[] asResult
         String sLine
         Integer iSize iCount iFieldNumber
         Boolean bFound
+        
         Move False to bFound
         Move (SizeOfArray(asIntFile)) to iSize
         Decrement iSize
         For iCount from 0 to iSize
             Move (Trim(Uppercase(asIntFile[iCount]))) to sLine
             // INDEX_NUMBER 1    
-            If (not(bFound)) Begin
+            If (bFound = False) Begin
                 Move (Left(sLine, 12) = "INDEX_NUMBER") to bFound
             End
             If (bFound = True) Begin
                 Move asIntFile[iCount] to asResult[-1]
+                Move (RemoveFromArray(asIntFile, iCount)) to asIntFile
+                Decrement iCount
+                Decrement iSize
             End
         Loop
         Function_Return asResult
@@ -1985,49 +2119,44 @@ Object oFilelistFixerView is a dbView
 
     // Adds previously gathered data (asIntFileData) from a current/old .int file, to be added/inserted into
     // a newly created .int file (sIntFile).
-    // The gather of data should be made with CollectIntFileRelations
-    Function MergeIntFileData Handle hTable String sIntFile String[] asIntFileData Returns Boolean
+    // The gather of data should be made with CollectTableRelations
+    Function MergeIntFileData Handle hTable String sIntFile String[] asIntFileData Returns String[]
         Boolean bOK bOpen
         Integer iCh iItem iSize iCount iFieldNumber iColumnData
         String[] asIntfile asFieldsData asTopData asBottomData asResultData
         String sLine sDummy
         
-        // This is data from the "old" .int file:
-        If (SizeOfArray(asIntFileData) = 0) Begin
-            Function_Return True
-        End
-        Move False to Err
-        
         // Read the newly created .int file:
-        Get ReadFileToArray sIntFile                   to asIntfile  
-        // Get top part of .int file:
-        Get IntFileTopData asIntfile                   to asTopData
-        // Get the bottom "INDEX_NUMBER xx" data from .int file:
-        Get IntFileBottomData asIntfile                to asBottomData
-        // Combine the "FIELD_NUMBER xx" data from the two arrays:
-        Get CombineArrays asIntfile asIntFileData      to asFieldsData
-        Move (AppendArray(asTopData, asFieldsData))    to asResultData
-        Move (AppendArray(asResultData, asBottomData)) to asResultData
+        Get ReadFileToArray sIntFile to asIntfile  
         
-        // Write the updated .int file:      
-        Get WriteArrayToFile sIntFile asResultData to bOK 
+        If (SizeOfArray(asIntfile) <> 0 and SizeOfArray(asIntFileData) <> 0) Begin
+            // Get top part of .int file:
+            Get IntFileTopPart (&asIntfile)                to asTopData
+            // Get the bottom "INDEX_NUMBER xx" data from .int file:
+            Get IntFileIndexPart (&asIntfile)             to asBottomData
+            // Combine the "FIELD_NUMBER xx" data from the two arrays:
+            Get CombineArrays asIntfile asIntFileData      to asFieldsData
+            Move (AppendArray(asTopData, asFieldsData))    to asResultData
+            Move (AppendArray(asResultData, asBottomData)) to asResultData
+        End
+        Else Begin
+            Move asIntfile to asResultData
+        End
         
-        Move (not(Err)) to bOK
-        Move False to Err
-        Function_Return bOK
+        Function_Return asResultData
     End_Function
-
+    
     // Returns the field number from an .int file's line.
     // sLine = "FIELD_NUMBER 2" returns a 2.
     // If no "FIELD_NUMBER" keyword found, or no integer was found
     // after that keyword, a -1 is returned.
-    Function FieldTextToColumnNumber String sLine Returns Integer
+    Function ExtractFieldNumber String sLine Returns Integer
         Integer iFieldNumber
         Move (Trim(Uppercase(sLine))) to sLine
         If (not(Left(sLine, 12) = "FIELD_NUMBER")) Begin
             Function_Return -1
         End
-        Move (Integer(Mid(sLine, 4, 13))) to iFieldNumber
+        Move (Integer(Mid(sLine, (Length(sLine) - 12), 13))) to iFieldNumber
         If (iFieldNumber = 0) Begin
             Move -1 to iFieldNumber 
         End
@@ -2062,41 +2191,51 @@ Object oFilelistFixerView is a dbView
     End_Function
 
     Function WriteArrayToFile String sFileName String[] asResultData Returns Boolean
-        Boolean bOK bFound
+        Boolean bStart bFound
         Integer iSize iCount iCh iEmpty 
+        String sLine
         
         Get Seq_New_Channel to iCh
-        If (iCh < 0) Begin
+        If (iCh < 0) Begin 
+            Error DFERR_PROGRAM "No Free channel for writing .int file"
             Function_Return False
         End 
 
         // Remove any more than two consequitive lines:
         Move 0 to iEmpty
+        Move False to bStart
         Move (SizeOfArray(asResultData)) to iSize
         Decrement iSize
         For iCount from 0 to iSize
-            If (Trim(asResultData[iCount]) = "") Begin
-                Increment iEmpty
+            Move (Uppercase(asResultData[iCount])) to sLine
+            If (bStart = False) Begin
+                Move (Left(sLine, 12) = "FIELD_NUMBER") to bStart
             End
-            If (iEmpty >= 2) Begin
-                Move (RemoveFromArray(asResultData, iCount)) to asResultData
-                Decrement iSize
-                If (iCount < iSize and Trim(asResultData[iCount +1]) = "") Begin
+            If (bStart = True) Begin
+                If (Trim(asResultData[iCount]) = "") Begin
+                    Increment iEmpty
+                End
+                If (iEmpty >= 2) Begin
                     Move (RemoveFromArray(asResultData, iCount)) to asResultData
                     Decrement iSize
+                    If (iCount < iSize and Trim(asResultData[iCount +1]) = "") Begin
+                        Move (RemoveFromArray(asResultData, iCount)) to asResultData
+                        Decrement iSize
+                    End
+                    Move 0 to iEmpty 
                 End
-                Move 0 to iEmpty 
-            End
-            Move (Uppercase(asResultData[iCount]) contains "FIELD_NUMBER " or Uppercase(asResultData[iCount]) contains "INDEX_NUMBER ") to bFound
-            If (bFound = True) Begin
-                Move 0 to iEmpty
+                Move (Uppercase(asResultData[iCount]) contains "FIELD_NUMBER " or Uppercase(asResultData[iCount]) contains "INDEX_NUMBER ") to bFound
+                If (bFound = True) Begin
+                    Move 0 to iEmpty
+                End
             End
         Loop
         // Remove the very last empty line
         Move (RemoveFromArray(asResultData, -1)) to asResultData
-
-        Get FullDataPathFileName sFileName to sFileName
+        
         // Write the updated .int file:
+        Move False to Err
+        Get FullDataPathFileName sFileName to sFileName
         Move (SizeOfArray(asResultData)) to iSize
         Decrement iSize
         Direct_Output channel iCh sFileName
@@ -2107,7 +2246,7 @@ Object oFilelistFixerView is a dbView
         Close_Output channel iCh
         Send Seq_Release_Channel iCh
         
-        Function_Return True
+        Function_Return (not(Err))
     End_Function
     
     Function FullDataPathFileName String sFileName Returns String
@@ -2130,27 +2269,35 @@ Object oFilelistFixerView is a dbView
     // For usage in .int files.
     // Note: The hTable needs to be open before calling this function.
     Function FieldNumberToDataTimeText Handle hTable String sFieldNoTxt String sDriver Integer iDbType Returns String
-        String sDataType
+        String sDataType sTableName sColumnName
         Integer iFieldNumber iType iDFType iColumns
         Boolean bIsSQLTable bOpen
         
-        Get FieldTextToColumnNumber sFieldNoTxt to iFieldNumber
+        Get ExtractFieldNumber sFieldNoTxt to iFieldNumber
         If (iFieldNumber = -1) Begin
             Function_Return "" 
         End
+
         Get _IsSQLEntry of ghoDUF hTable to bIsSQLTable
-        If (bIsSQLTable = False) Begin
-            Function_Return ""
+        If (bIsSQLTable = True) Begin 
+            Get_Attribute DF_FILE_ROOT_NAME of hTable to sTableName
+            Get _TableNameOnly of ghoDUF sTableName to sTableName
+            Get _SqlColumnNumberToColumnName of ghoDUF sTableName iFieldNumber to sColumnName
+            Get SqlColumnType of ghoDUF sDriver hTable sTableName sColumnName to iType
         End
-        Get_Attribute DF_FILE_OPENED of hTable to bOpen
-        If (bOpen = False) Begin
-            Function_Return ""
+                
+        Else Begin
+            Get_Attribute DF_FILE_OPENED of hTable to bOpen
+            If (bOpen = False) Begin
+                Open hTable
+                Get_Attribute DF_FILE_OPENED of hTable to bOpen
+                If (bOpen = False) Begin
+                    Function_Return ""
+                End
+            End
+            Get_Attribute DF_FIELD_TYPE of hTable iFieldNumber to iType
         End
-        Get_Attribute DF_FILE_NUMBER_FIELDS of hTable to iColumns
-        If (iFieldNumber > iColumns) Begin
-            Function_Return ""
-        End
-        Get_Attribute DF_FIELD_NATIVE_TYPE of hTable iFieldNumber to iType
+
         Get UtilColumnTypeToString of ghoDUF sDriver iDbType iType to sDataType
         If (not(Uppercase(sDataType) contains "TIME")) Begin
             Move "" to sDataType
@@ -2169,7 +2316,7 @@ Object oFilelistFixerView is a dbView
         Integer iFieldNumber iType iDFType iNumColumns
         Boolean bIsSQLTable bOpen
         
-        Get FieldTextToColumnNumber sFieldNoTxt to iFieldNumber
+        Get ExtractFieldNumber sFieldNoTxt to iFieldNumber
         If (iFieldNumber = -1) Begin
             Function_Return "" 
         End

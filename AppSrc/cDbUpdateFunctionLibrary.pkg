@@ -1,4 +1,4 @@
-//****************************************************************************
+﻿//****************************************************************************
 // $Module type: Class
 // $Module name: cDbUpdateFunctionLibrary
 // $Author     : Nils Svedmyr, RDC Tools International, <mailto:support@rdctools.com>
@@ -690,16 +690,21 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
             Function_Return False
         End
 
-        If (num_arguments > 3) Begin
-            Move iLen     to iLength
+        Move iLen         to iLength
+        If (num_arguments > 4) Begin
             Move iDec     to iDecimals
             Move bInitVal to bInitializeValue
             Move sColVal  to sColumnValue
         End
+        Else Begin
+            Move 0        to iDecimals
+            Move False    to bInitializeValue
+            Move ""       to sColumnValue
+        End
 
-        Get SqlColumnAddByTableName sTableName sColumnName iDataType iLen iDecimals bInitializeValue sColumnValue to bOK
+        Get SqlColumnAddByTableName sTableName sColumnName iDataType iLength iDecimals bInitializeValue sColumnValue to bOK
 
-        Function_Return (bOK = True)
+        Function_Return bOK
     End_Function
 
     // Sample: Get SqlColumnAddByTableName "MyTable" "NewColumnName" DF_ASCII_DUF 35 0 True "InitValue"
@@ -2363,7 +2368,8 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
             Set Action_Text of ghoStatusPanel to "Restructures table..."
         Structure_End hTable DF_STRUCTEND_OPT_NONE "." ghoDbUpdateHandler
 
-        Set Action_Text of ghoStatusPanel to ""
+        Set Message_Text of ghoStatusPanel to ""
+        Set Action_Text  of ghoStatusPanel to ""
         Function_Return (Err = False)
     End_Function
 
@@ -4117,7 +4123,6 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
             If (iType = DF_BCD) Begin
                 Set_Attribute DF_FIELD_PRECISION of hTable iNew to iPrecision
             End
-
         Structure_End hTable DF_STRUCTEND_OPT_NONE "." ghoDbUpdateHandler
 
         Set Action_Text of ghoStatusPanel to ""
@@ -4896,7 +4901,7 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
             Create_Index hTable at iIndex
             Set_Attribute DF_INDEX_NUMBER_SEGMENTS of hTable iIndex to iNumSgmnts
 
-            for iNumSgmnt from 0 to (iNumSgmnts - 1)
+            For iNumSgmnt from 0 to (iNumSgmnts - 1)
                 Set_Attribute DF_INDEX_SEGMENT_FIELD of hTable iIndex (iNumSgmnt + 1) to iSgmnts[iNumSgmnt]
             Loop
         Structure_End hTable DF_STRUCTEND_OPT_NONE
@@ -5130,7 +5135,7 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
         Decrement iSize
 
         Structure_Start hTable sDriverID
-            for iCount from 0 to iSize
+            For iCount from 0 to iSize
 //                Move False to bIsSQLPrimaryKey
 //                #IF (!@ > 180)   // DF 18.1 and up
 //                    Set Error_Report_Mode to DUF_ERROR_NO_REPORT
@@ -7038,7 +7043,7 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
         Move 0 to iColumn
         Move 0 to iRetval
         Get_Attribute DF_FILE_NUMBER_FIELDS of hTable to iNumColumns
-        for iColumn from 1 to iNumColumns
+        For iColumn from 1 to iNumColumns
             Get_Attribute DF_FIELD_NAME of hTable iColumn to sColumn
             If (Uppercase(sFieldName) = Uppercase(sColumn)) Begin
                 Move iColumn to iRetval
@@ -9022,5 +9027,12 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
 
         Function_Return bOK
     End_Function
-
+    
+    // Returns True if the passed table handle is open.
+    Function IsOpen Handle hTable Returns Boolean
+        Boolean bIsOpen
+        Get_Attribute DF_FILE_OPENED of hTable to bIsOpen
+        Function_Return bIsOpen
+    End_Function
+    
 End_Class

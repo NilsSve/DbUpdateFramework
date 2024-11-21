@@ -1,4 +1,4 @@
-//****************************************************************************
+﻿//****************************************************************************
 // $Module type: Class
 // $Module name: cBaseDbUpdateFuncLib
 // $Author     : Nils Svedmyr, RDC Tools International, <mailto:support@rdctools.com>
@@ -1780,22 +1780,27 @@ Class cBaseDbUpdateFuncLib is a cObject
     // If the spelling or fieldname doesn't exist, the return value is "" (blank).
     Function _SqlFindColumnName String sTableName String sColumnName Returns String
         String sRetval sValue sDriverID
-        String[] sColumnNamesArray
-        Integer iCount iColumns
+        String[] asColumnNamesArray
+        Integer iIndex 
 
         Move "" to sRetval
         Get psDriverID to sDriverID
-        Get _SqlUtilEnumerateColumns sDriverID sTableName to sColumnNamesArray
-        Move (SizeOfArray(sColumnNamesArray)) to iColumns
-        Decrement iColumns
+        Get _SqlUtilEnumerateColumns sDriverID sTableName to asColumnNamesArray
+        Move (SearchArray(sTableName, asColumnNamesArray, Desktop, (RefFunc(DFSTRICMP)))) to iIndex
+        If (iIndex <> -1) Begin
+            Move asColumnNamesArray[iIndex] to sRetval
+        End
 
-        For iCount from 0 to iColumns
-            Move sColumnNamesArray[iCount] to sValue
-            If (Uppercase(sColumnName) = Uppercase(sValue)) Begin
-                Move sValue to sRetval
-                Move iColumns to iCount // We're done.
-            End
-        Loop
+        Function_Return sRetval
+    End_Function
+
+    Function _SqlColumnNumberToColumnName String sTableName Integer iColumn Returns String
+        String sRetval sDriverID
+        String[] asColumnNamesArray
+
+        Get psDriverID to sDriverID
+        Get _SqlUtilEnumerateColumns sDriverID sTableName to asColumnNamesArray
+        Move asColumnNamesArray[iColumn] to sRetval
 
         Function_Return sRetval
     End_Function
@@ -1974,14 +1979,11 @@ Class cBaseDbUpdateFuncLib is a cObject
         End
 
         Get psDriverID to sDriverID
-
-        Move False to Err
         Get_Attribute DF_FILE_TABLE_CHARACTER_FORMAT of hTable to sOrgFormat
         Move (Uppercase(sOrgFormat)) to sOrgFormat
         // Lets swap the OEM/ANSI format, just to make a change in Structure_Start below (and back),
         // to "touch" the table so the driver feels there has been a change and updates the .int file.
         Move (If(sOrgFormat = CS_OEM_Txt, CS_ANSI_Txt, CS_OEM_Txt)) to sNewFormat
-
         Move False to Err
 
         If (hTable > 0) Begin
@@ -4421,22 +4423,32 @@ Class cBaseDbUpdateFuncLib is a cObject
         Function_Return bFound
     End_Function
 
-    // If the SQL table cannot be opened, we do this checking a bit different.
+    // If the SQL table cannot be opened, we do the checking a bit different.
     Function _IsSystemFile Handle hTable Returns Boolean
-        Boolean bIsSystem bIsSQL bExists
+        Boolean bIsSystem bIsSQL bExists bOpen
         String sRootName sDataPath sDriver
         String[] asIndexes
         Move False to bIsSystem
+
+        Open hTable
+        Get_Attribute DF_FILE_OPENED of hTable to bOpen
+        If (bOpen = True) Begin
+            Get_Attribute DF_FILE_IS_SYSTEM_FILE of hTable to bIsSystem
+            Function_Return bIsSystem
+        End
         
         Get_Attribute DF_FILE_ROOT_NAME of hTable to sRootName
         Get _DriverIDFromRootName sRootName to sDriver
         Get _TableNameOnly sRootName to sRootName
-        Get psDataPath of (phoWorkspace(ghoApplication)) to sDataPath
+        Get psDataPath of (phoWorkspace(ghoApplication)) to sDataPath 
+        Get PathAtIndex of (phoWorkspace(ghoApplication))  sDataPath 1 to sDataPath
+        Get vFolderFormat sDataPath to sDataPath
+        
         Get _IsSQLEntry hTable to bIsSQL
         If (bIsSQL = False) Begin
-            File_Exist (sDataPath + "\" + sRootName + ".dat") bExists
+            File_Exist (sDataPath + sRootName + ".dat") bExists
             If (bExists = True) Begin
-                Open (sDataPath + "\" + sRootName + ".dat") as hTable
+                Open (sDataPath + sRootName + ".dat") as hTable
                 Get_Attribute DF_FILE_IS_SYSTEM_FILE of hTable to bIsSystem 
                 Close hTable
             End
