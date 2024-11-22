@@ -283,6 +283,14 @@ Object oFilelistFixerView is a dbView
                 Send ActivateDriverIntSettingsDialog sFileName     
             End_Procedure
         
+            Function IsEnabled Returns Boolean
+                Boolean bExists
+                String sFileName
+                Get psConnIdFile to sFileName
+                File_Exist sFileName bExists
+                Function_Return bExists
+            End_Function
+    
         End_Object
         
         Object oDatabase_fm is a cRDCForm
