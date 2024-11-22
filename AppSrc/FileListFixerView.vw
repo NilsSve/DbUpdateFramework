@@ -1660,19 +1660,23 @@ Object oFilelistFixerView is a dbView
     
     Function RemoveU_Columns Handle hTable String sDriver String[] asIntFileData Returns Boolean
         Boolean bErr bOK
-        String sOrgFormat sNewFormat
+        Integer iColumn
+        
         Move Err to bErr
         Move False to Err
         // We need to close the table permanently, then re-open it, for the
         // Structure_Start/End to work properly.
         Close hTable DF_PERMANENT
         Open hTable 
-        Get_Attribute DF_FILE_TABLE_CHARACTER_FORMAT of hTable to sOrgFormat
-        Move (If(sOrgFormat = CS_OEM_Txt, CS_ANSI_Txt, CS_OEM_Txt)) to sNewFormat
+        Get_Attribute DF_FILE_NUMBER_FIELDS of hTable to iColumn
+        Increment iColumn
         
-        Structure_Start hTable sDriver   
-            Set_Attribute DF_FILE_TABLE_CHARACTER_FORMAT of hTable to sNewFormat
-            Set_Attribute DF_FILE_TABLE_CHARACTER_FORMAT of hTable to sOrgFormat
+        Structure_Start hTable sDriver
+            Create_Field hTable at iColumn
+            Set_Attribute DF_FIELD_NAME of hTable iColumn to "DUFTEMP2024"
+            Set_Attribute DF_FIELD_TYPE of hTable iColumn to DF_DATE
+
+            Delete_Field hTable iColumn            
         Structure_End hTable DF_STRUCTEND_OPT_FORCE "." ghoDbUpdateHandler
 
         Move (not(Err)) to bOK
@@ -2014,57 +2018,6 @@ Object oFilelistFixerView is a dbView
         Function_Return aTargetBlocks
     End_Function
 
-    // Combines two string arrays. The first parameter is the newly created .int file,
-    // and the second is data from the old .int file that existed before this process began.
-//    Function RemoveDuplicates String[] asIntFileData Returns String[]
-//        Integer iCount jCount iBlockStart iBlockEnd
-//        Integer iSize
-//        String sLine
-//        String[] asUniqueAttr asSeenAttrib asResult asEmpty
-//    
-//        Move "" to asResult[-1]
-//        Move (SizeOfArray(asIntFileData)) to iSize
-//        Decrement iSize
-//        // Loop through the array to find the start and end of each block
-//        For iCount from 0 to iSize
-//            Move asIntFileData[iCount] to sLine
-//    
-//            // Detect the start of a new block by finding "FIELD_NUMBER" at the start of the line
-//            If (Left(sLine, 12) = "FIELD_NUMBER") Begin
-//                // Clear the unique attributes array and reset block markers
-//                Move iCount to iBlockStart
-//                Move iCount to iBlockEnd
-//                Move asEmpty to asUniqueAttr
-//                Move asEmpty to asSeenAttrib
-//    
-//                // Process each line in the current block
-//                While (iBlockEnd < iSize)
-//                    Increment iBlockEnd
-//                    Move asIntFileData[iBlockEnd] to sLine
-//    
-//                    // Break when we hit a blank line, marking the end of the block
-//                    If (Trim(sLine) = "") Break
-//    
-//                    // Check if this line is a duplicate attribute within the block 
-//                    If (not(SearchArray(Trim(sLine), asSeenAttrib) <> -1)) Begin
-//                        // If it's unique, add it to both seen and unique attributes arrays
-//                        Move sLine to asSeenAttrib[-1]
-//                        Move sLine to asUniqueAttr[-1]
-//                    End
-//                Loop
-//    
-//                // Append the FIELD_NUMBER line, unique attributes, and blank line to result
-//                Move asIntFileData[iBlockStart] to asResult[-1]
-//                For jCount from 0 to (SizeOfArray(asUniqueAttr) - 1)
-//                    Move asUniqueAttr[jCount] to asResult[-1]
-//                Loop
-//                Move "" to asResult[-1]
-//            End
-//        Loop
-//        Move (RemoveFromArray(asResult, -1)) to asResult
-//        Function_Return asResult
-//    End_Function
-
     // Extracts the top part of the string array that preceeds all
     // "FIELD_NUMBER xx" data, and stops does not include IntFileIndexPart.
     Function IntFileTopPart String[] ByRef asIntFile Returns String[]
@@ -2343,48 +2296,6 @@ Object oFilelistFixerView is a dbView
         
         Function_Return sHidden
     End_Function        
-
-    // Not used anymore. Instead files are backed up file-by-file when processed.
-//    Function BackupAllIntFiles String sBackupFolder Returns Integer
-//        Integer iSize iCount iRetval iCounter
-//        String sDataPath sFilter sFileDateExt
-//        String[] asFiles asInUseDatFiles 
-//        Boolean bExists
-//        
-//        Get psDataPath of (phoWorkspace(ghoApplication)) to sDataPath
-//        Get vFolderFormat sDataPath to sDataPath
-//        Move (sDataPath + sBackupFolder) to sBackupFolder
-//        Get vFolderExists sBackupFolder to bExists
-//        If (bExists = False) Begin
-//            Get vCreateDirectory sBackupFolder to iRetval
-//            If (iRetval <> 0) Begin
-//                Function_Return -1
-//            End
-//        End
-//        Send StartStatusPanel "Backing up *.int files to backup folder:" sBackupFolder 1
-//
-//        Move "int" to sFilter
-//        Get CollectFilteredFiles sDataPath sFilter to asFiles
-//        Get FileDatePrefix to sFileDateExt
-//        Get vFolderFormat sBackupFolder to sBackupFolder 
-//        Set piMaximum of ghoStatusPanel to (SizeOfArray(asFiles))
-//        Move (SizeOfArray(asFiles)) to iSize
-//        If (iSize = 0) Begin
-//            Function_Return 0
-//        End
-//        Move 0 to iCounter
-//        Decrement iSize
-//        For iCount from 0 to iSize
-//            Send UpdateStatusPanel (sDataPath + asFiles[iCount]) 
-//            Get vCopyFile (sDataPath + asFiles[iCount]) (sBackupFolder + String(sFileDateExt) + String(asFiles[iCount])) to iRetval
-//            If (iRetval = 0) Begin
-//                Increment iCounter
-//            End
-//            Send DoAdvance of ghoStatusPanel
-//        Loop
-//        Send StopStatusPanel
-//        Function_Return iCounter
-//    End_Function 
     
     // The sFileName should not contain any path. Creates a backup copy of the passed sFileName
     // in the sBackup folder with a "sFileDateExt" file name suffix (prior to the file name extension).
