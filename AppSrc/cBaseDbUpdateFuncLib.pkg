@@ -1798,9 +1798,12 @@ Class cBaseDbUpdateFuncLib is a cObject
         String sRetval sDriverID
         String[] asColumnNamesArray
 
+        Move "" to sRetval
         Get psDriverID to sDriverID
         Get _SqlUtilEnumerateColumns sDriverID sTableName to asColumnNamesArray
-        Move asColumnNamesArray[iColumn] to sRetval
+        If (iColumn <= SizeOfArray(asColumnNamesArray)) Begin
+            Move asColumnNamesArray[iColumn] to sRetval
+        End
 
         Function_Return sRetval
     End_Function
