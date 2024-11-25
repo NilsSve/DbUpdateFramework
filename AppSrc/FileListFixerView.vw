@@ -1678,23 +1678,22 @@ Object oFilelistFixerView is a dbView
     Function RemoveU_Columns Handle hTable String sDriver Returns Boolean
         Boolean bErr bOK
         Integer iColumn
+        String sNewFieldName
         
         Move Err to bErr
         Move False to Err
         // We need to close the table permanently, then re-open it, for the
         // Structure_Start/End to work properly.
         Close hTable DF_PERMANENT
-        Open hTable 
-        Increment iColumn
-        
+        Open hTable DF_EXCLUSIVE
+        Move "DUFTEMP2024" to sNewFieldName
         Structure_Start hTable sDriver
             // This command creates a new column. If {column-num} is omitted or 0,
             // the column will be appended to the end of the existing record 
+            Move 0 to iColumn
             Create_Field hTable at iColumn
-            Set_Attribute DF_FIELD_NAME of hTable iColumn to "DUFTEMP2024"
+            Set_Attribute DF_FIELD_NAME of hTable iColumn to sNewFieldName
             Set_Attribute DF_FIELD_TYPE of hTable iColumn to DF_DATE
-
-            Get_Attribute DF_FILE_NUMBER_FIELDS of hTable to iColumn
             Delete_Field hTable iColumn            
         Structure_End hTable DF_STRUCTEND_OPT_FORCE "." ghoDbUpdateHandler
 
@@ -1847,7 +1846,7 @@ Object oFilelistFixerView is a dbView
         Decrement iSize
         For iCount from 0 to iSize
             Move "" to sFieldHiddenTxt
-            If (iCount < iSize) Begin
+            If (iCount <= iSize) Begin
                 Move (Trim(Uppercase(asColumnsNamesOrg[iCount]))) to sLine
                 If (Left(sLine, 2) = "U_") Begin
                     Move (Replace("U_", sLine, "")) to sFieldName
@@ -2379,13 +2378,14 @@ Object oFilelistFixerView is a dbView
             Get FileDatePrefix to sFileDateExt
             Move (sDataPath + String(CS_BackupFolder) + String(sFileDateExt)) to sBackupFolder
             Get vCreateDirectory sBackupFolder to iRetval
+            Get vFolderFormat sBackupFolder to sBackupFolder
             If (iRetval <> 0) Begin 
                 Error DFERR_PROGRAM ("Could not create backup folder:" * String(sBackupFolder))
                 Function_Return False
             End
             Get psFileList of (phoWorkspace(ghoApplication)) to sFileListCfg
-            Get ExtractFileName sFileListCfg to sFileName
-            Get vCopyFile sFileListCfg (sBackupFolder + String(sFileName)) to iRetval
+            Get ExtractFileName sFileListCfg to sFileListCfg
+            Get vCopyFile (sDataPath + sFileListCfg) (sBackupFolder + String(sFileListCfg)) to iRetval
             Set psBackupFolder to sBackupFolder
         End
         Get vFolderFormat sBackupFolder to sBackupFolder
