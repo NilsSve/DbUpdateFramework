@@ -581,7 +581,7 @@ Object oFilelistFixerView is a dbView
         
             Procedure OnClick
                 Integer iRetval iCounter
-                Get YesNo_Box "The fix will spin through the Filelist and \n1. Removes non Alias entries that does not have a corresponding .Dat file.\nNote:This only applies to non Alias tables.\n\nPlease take a copy of the Filelist.cfg file first!\n\nContinue?" to iRetval
+                Get YesNo_Box "The fix will spin through the Filelist and \n1. Removes non Alias entries that does not have a corresponding .Dat file.\nNote:This only applies to non Alias tables.\n\nA backup copy of the Filelist.cfg file is made first.\n\nContinue?" to iRetval
                 If (iRetval <> MBR_Yes) Begin
                     Procedure_Return    
                 End
@@ -607,7 +607,7 @@ Object oFilelistFixerView is a dbView
         
             Procedure OnClick
                 Integer iRetval iCounter
-                Get YesNo_Box "The fix will spin through Filelist.cfg and \n1. either add or remove driver prefixes for ALIAS rootnames, depending on the Master RootName\n2. Change all ALIAS table Descriptions to the ROOTNAME + 'ALIAS'\n\nPlease take a copy of the Filelist.cfg file first!\n\nContinue?" to iRetval
+                Get YesNo_Box "The fix will spin through Filelist.cfg and \n1. either add or remove driver prefixes for ALIAS rootnames, depending on the Master RootName\n2. Change all ALIAS table Descriptions to the ROOTNAME + 'ALIAS'\n\nA backup copy of the Filelist.cfg file is made first.\n\nContinue?" to iRetval
                 If (iRetval <> MBR_Yes) Begin
                     Procedure_Return    
                 End
@@ -635,7 +635,7 @@ Object oFilelistFixerView is a dbView
         
             Procedure OnClick
                 Integer iRetval iCounter
-                Get YesNo_Box "The fix will spin through Filelist.cfg and \n1. Remove all driver prefixes for tables that does NOT exist in the SQL Database\n2. OR Add driver prefix for Master filelist entries that are missing a driver prefix.\n\nPlease take a copy of the Filelist.cfg file first!\n\nContinue?" to iRetval
+                Get YesNo_Box "The fix will spin through Filelist.cfg and \n1. Remove all driver prefixes for tables that does NOT exist in the SQL Database\n2. OR Add driver prefix for Master filelist entries that are missing a driver prefix.\n\nA backup copy of the Filelist.cfg file is made first.\n\nContinue?" to iRetval
                 If (iRetval <> MBR_Yes) Begin
                     Procedure_Return    
                 End
@@ -661,7 +661,7 @@ Object oFilelistFixerView is a dbView
             Procedure OnClick
                 Integer iRetval iCounter iOpenErrors
                 
-                Get YesNo_Box "The fix will spin through the Filelist and: \n- Try to fix or remove Non SQL Filelist entries for tables that cannot be opened.\n\nPlease take a copy of the Filelist.cfg file first!\n\nContinue?" to iRetval
+                Get YesNo_Box "The fix will spin through the Filelist and: \n- Try to fix or remove Non SQL Filelist entries for tables that cannot be opened.\n\nA backup copy of the Filelist.cfg file is made first\n\nContinue?" to iRetval
                 If (iRetval <> MBR_Yes) Begin
                     Procedure_Return    
                 End
@@ -828,7 +828,7 @@ Object oFilelistFixerView is a dbView
                 Get psDataPath of (phoWorkspace(ghoApplication)) to sDataPath
                 Get vFolderFormat sDataPath to sDataPath
                 Move (sDataPath + CS_BackupFolder) to sBackup
-                Get YesNo_Box ("This will recreate all .int files. Relations from the current .int file will be preserved, if exists. A backup of .int files will be created here:\n" + String(sBackup) * "folder.\n\nContinue?") to iRetval
+                Get YesNo_Box ("This will recreate all .int files. Relations from the current .int file will be preserved, if exists. A backup of .int files and the Filelist.cfg will be created here:\n" + String(sBackup) * "folder.\n\nContinue?") to iRetval
                 If (iRetval <> MBR_Yes) Begin
                     Procedure_Return    
                 End
@@ -1135,8 +1135,8 @@ Object oFilelistFixerView is a dbView
     Function FixFileListErrors Returns Integer
         Integer iRetval hTable iSize iCount iItem iCh iCounter iAliases
         tFilelist[] FileListArray
-        String sNoDriverRootname sDriver sRootName sRootNameNew sDatabase sLogicalName sDisplayName sDataPath
-        Boolean bIsAlias bIsDatEntry bExists
+        String sNoDriverRootname sDriver sRootName sRootNameNew sDatabase sLogicalName sDisplayName sDataPath sFileList
+        Boolean bIsAlias bIsDatEntry bExists bOK
         
         Move 0 to iCounter 
         Move 0 to hTable
@@ -1150,8 +1150,10 @@ Object oFilelistFixerView is a dbView
         Get piChannel to iCh
         Move (SizeOfArray(FileListArray)) to iSize
         Send StartStatusPanel "Fixing Filelist RootName .dat Errors" "" iSize
-        Decrement iSize
+        Get psFileList of (phoWorkspace(ghoApplication)) to sFileList
+        Get BackupAnyFileToBackupFolder sFileList to bOK
         
+        Decrement iSize
         For iCount from 0 to iSize
             Move FileListArray[iCount].hTable to hTable 
             Send UpdateStatusPanel FileListArray[iCount].sLogicalName
@@ -1187,9 +1189,9 @@ Object oFilelistFixerView is a dbView
     Function FixFileListAliasProblems Returns Integer
         Integer iCounter iIntError iSize
         Handle hTable hMasterTable
-        String sLogicalNameOrg sRootNameOrg sDisplayNameOrg 
+        String sLogicalNameOrg sRootNameOrg sDisplayNameOrg sFileList
         String sDriver sNoDriverRootname sRootNameNew sLogicalNameNew sDisplayNameNew
-        Boolean bIsAlias bIsIntTable bIsAliasSQL bIsMasterSQL
+        Boolean bIsAlias bIsIntTable bIsAliasSQL bIsMasterSQL bOK
         tFilelist[] FilelistArray
         
         Get _CountFileListAliasErrors of ghoDUF to FileListArray
@@ -1197,6 +1199,8 @@ Object oFilelistFixerView is a dbView
         If (iSize = 0) Begin
             Function_Return 0
         End
+        Get psFileList of (phoWorkspace(ghoApplication)) to sFileList
+        Get BackupAnyFileToBackupFolder sFileList to bOK
                 
         Send StartStatusPanel "Fixing Alias Filelist Errors" "" iSize
         Move 0 to iCounter 
@@ -1270,8 +1274,8 @@ Object oFilelistFixerView is a dbView
         Integer iRetval hTable iSize iCount iItem iCh iCounter iAliases iPos
         String[] asSQLTables
         tFilelist[] FileListArray
-        String sNoDriverRootname sDriver sRootName sRootNameNew sDatabase sLogicalName sDisplayName
-        Boolean bIsAlias bIsIntTable bExists
+        String sNoDriverRootname sDriver sRootName sRootNameNew sDatabase sLogicalName sDisplayName sFileList
+        Boolean bIsAlias bIsIntTable bExists bOK
         
         Move 0 to iCounter 
         Move 0 to hTable
@@ -1291,7 +1295,10 @@ Object oFilelistFixerView is a dbView
         Get psDatabase of ghoDUF to sDatabase
         Writeln channel iCh ("Adjustment of RootNames for tables that exists in the SQL database:" * String(sDatabase))
         
-        Move (SizeOfArray(FileListArray)) to iSize
+        Move (SizeOfArray(FileListArray)) to iSize 
+        Get psFileList of (phoWorkspace(ghoApplication)) to sFileList
+        Get BackupAnyFileToBackupFolder sFileList to bOK
+        
         Send StartStatusPanel "Enumerating SQL Tables" "" iSize
         Decrement iSize
         
@@ -1344,8 +1351,8 @@ Object oFilelistFixerView is a dbView
     Function FixFileListOpenErrors Returns Integer        
         Integer iRetval hTable iSize iCount iItem iCh iCounter iAliases iOpenErrors
         tFilelist[] FileListArray
-        String sNoDriverRootname sDriver sRootName sRootNameNew sDatabase sLogicalName sDisplayName sDataPath
-        Boolean bIsAlias bExists bChange bFirst bIsSQLTable bIsIntTable
+        String sNoDriverRootname sDriver sRootName sRootNameNew sDatabase sLogicalName sDisplayName sDataPath sFileList
+        Boolean bIsAlias bExists bChange bFirst bIsSQLTable bIsIntTable bOK
         
         Move False to bFirst
         Move 0 to iCounter 
@@ -1357,6 +1364,8 @@ Object oFilelistFixerView is a dbView
         End    
         
         Send StartStatusPanel "Fixing Filelist Open Errors" "" iSize
+        Get psFileList of (phoWorkspace(ghoApplication)) to sFileList
+        Get BackupAnyFileToBackupFolder sFileList to bOK
         Get psDataPath of (phoWorkspace(ghoApplication)) to sDataPath
         Send OpenLogFile
         Get piChannel to iCh
@@ -1638,7 +1647,7 @@ Object oFilelistFixerView is a dbView
     
         Get pbToANSI of ghoDUF to bAnsi 
         
-        // 1. Backup the .int file
+        // 1. Backup the .int file (also backs-up Filelist.cfg)
         Get BackupIntFile sIntFileName to bOK
         // 2. Collect relation and index info from old .ini file:
         If (bExtractRelations = True) Begin
@@ -1654,19 +1663,19 @@ Object oFilelistFixerView is a dbView
         Get CollectDateTimeAttributes hTable sDriver asIntFieldsData to asIntFieldsData
         // 5. Add "NEXT_COLUMN_HIDDEN UPPERCASED" attributes from the SQL back-end.
         Get CollectHiddenAttributes   hTable sDriver asIntFieldsData (&bIsHidden) to asIntFieldsData
-        // 6. Merge the new .int file with collected data and write to disk:
+        // 6. Merge the new .int file with collected data:
         Get MergeIntFileData hTable sIntFileName asIntFieldsData to asFullIntFileData
-        // 7. Write the updated .int file:      
+        // 7. Write the updated .int file to disk:
         Get WriteArrayToFile sIntFileName asFullIntFileData to bOK 
         
         // 8. Restructure to remove U_ columns
         If (bRemoveUCol = True and bOK = True and bIsHidden = True) Begin
-            Get RemoveU_Columns hTable sDriver asIntFieldsData to bOK
+            Get RemoveU_Columns hTable sDriver to bOK
         End
         Function_Return bOK
     End_Function 
     
-    Function RemoveU_Columns Handle hTable String sDriver String[] asIntFileData Returns Boolean
+    Function RemoveU_Columns Handle hTable String sDriver Returns Boolean
         Boolean bErr bOK
         Integer iColumn
         
@@ -1676,14 +1685,16 @@ Object oFilelistFixerView is a dbView
         // Structure_Start/End to work properly.
         Close hTable DF_PERMANENT
         Open hTable 
-        Get_Attribute DF_FILE_NUMBER_FIELDS of hTable to iColumn
         Increment iColumn
         
         Structure_Start hTable sDriver
+            // This command creates a new column. If {column-num} is omitted or 0,
+            // the column will be appended to the end of the existing record 
             Create_Field hTable at iColumn
             Set_Attribute DF_FIELD_NAME of hTable iColumn to "DUFTEMP2024"
             Set_Attribute DF_FIELD_TYPE of hTable iColumn to DF_DATE
 
+            Get_Attribute DF_FILE_NUMBER_FIELDS of hTable to iColumn
             Delete_Field hTable iColumn            
         Structure_End hTable DF_STRUCTEND_OPT_FORCE "." ghoDbUpdateHandler
 
@@ -1853,8 +1864,8 @@ Object oFilelistFixerView is a dbView
             End
         Loop
         If (SizeOfArray(asFieldHidden) <> 0) Begin
-            Move True to bIsHidden
             Get CombineArrays asIntFileData asFieldHidden to asIntFileData      
+            Move True to bIsHidden
         End
 
         Function_Return asIntFileData
@@ -1914,38 +1925,82 @@ Object oFilelistFixerView is a dbView
 
     Function CombineBlocks tBlock[] aBlocks1 tBlock[] aBlocks2 Returns tBlock[]
         tBlock[] aCombinedBlocks
-        Integer iCount iSize jCount iCombinedSize
-        Boolean bFound
+        Integer iCount iSize
     
-        // Combine blocks from the first array
+        // Initialize the combined blocks with the first array
         Move aBlocks1 to aCombinedBlocks
     
-        // Process blocks from the second array
+        // Process each block in the second array
         Move (SizeOfArray(aBlocks2)) to iSize
         Decrement iSize
         For iCount from 0 to iSize
-            Move False to bFound
-            
-            Move (SizeOfArray(aCombinedBlocks)) to iCombinedSize
-            Decrement iCombinedSize
-            // Check if the FIELD_NUMBER already exists in aCombinedBlocks
-            For jCount from 0 to iCombinedSize
-                If (aCombinedBlocks[jCount].iFieldNumber = aBlocks2[iCount].iFieldNumber) Begin
-                    Move True to bFound
-    
-                    // Merge the asLines array
-                    Move (AppendArray(aBlocks2[iCount].asLines, aCombinedBlocks[jCount].asLines)) to aCombinedBlocks[jCount].asLines
-                    Move iCombinedSize to jCount // We're out of here.
-                End
-            Loop
-    
-            // If FIELD_NUMBER not found, add the block to the combined array
-            If (bFound = False) Begin
-                Move aBlocks2[iCount] to aCombinedBlocks[-1]
-            End
+            Get FindAndMergeBlock aCombinedBlocks aBlocks2[iCount] to aCombinedBlocks
         Loop
     
         Function_Return aCombinedBlocks
+    End_Function
+    
+    // Finds a block with the same FIELD_NUMBER in the combined array and merges the asLines arrays
+    Function FindAndMergeBlock tBlock[] aCombinedBlocks tBlock BlockToMerge Returns tBlock[]
+        Integer iCount iSize
+        Boolean bFound
+    
+        // Initialize flags
+        Move False to bFound
+    
+        // Check for existing FIELD_NUMBER
+        Move (SizeOfArray(aCombinedBlocks)) to iSize
+        Decrement iSize
+        For iCount from 0 to iSize
+            If (aCombinedBlocks[iCount].iFieldNumber = BlockToMerge.iFieldNumber) Begin
+                Move True to bFound
+    
+                // Merge unique lines
+                Get MergeUniqueLines aCombinedBlocks[iCount].asLines BlockToMerge.asLines to aCombinedBlocks[iCount].asLines
+    
+                // Exit loop by updating the loop index
+                Move iSize to iCount
+            End
+        Loop
+    
+        // If FIELD_NUMBER not found, add the block to the combined array
+        If (bFound = False) Begin
+            Move BlockToMerge to aCombinedBlocks[-1]
+        End
+    
+        Function_Return aCombinedBlocks
+    End_Function
+    
+    // Merges two string arrays, retaining only unique values
+    Function MergeUniqueLines String[] aExistingLines String[] aNewLines Returns String[]
+        String[] aMergedLines
+        Integer iCount iSize iExistingIndex
+        Boolean bIsDuplicate
+    
+        // Start with the existing lines
+        Move aExistingLines to aMergedLines
+    
+        // Add only unique lines from the new array
+        Move (SizeOfArray(aNewLines)) to iSize
+        Decrement iSize
+        For iCount from 0 to iSize
+            Move False to bIsDuplicate
+    
+            // Check for duplicates in the existing array
+            For iExistingIndex from 0 to (SizeOfArray(aMergedLines) - 1)
+                If (aNewLines[iCount] = aMergedLines[iExistingIndex]) Begin
+                    Move True to bIsDuplicate
+                    Move (SizeOfArray(aMergedLines)) to iExistingIndex // Exit loop
+                End
+            Loop
+    
+            // Append the line if it's unique
+            If (bIsDuplicate = False) Begin
+                Move aNewLines[iCount] to aMergedLines[-1]
+            End
+        Loop
+    
+        Function_Return aMergedLines
     End_Function
 
     Function BlocksToStringArray tBlock[] aBlocks Returns String[]
@@ -2309,9 +2364,9 @@ Object oFilelistFixerView is a dbView
     // in the sBackup folder with a "sFileDateExt" file name suffix (prior to the file name extension).
     // Example: A passed sFileName of "register.int" will become: "register.2024-11-06__21_34_42.int"
     //          So "register.YYYY-MM-DD__HH_MM_SS.int 
-    //          Note that the "YYYY-MM-DD" format depends on your Windows local date settings.
+    //          Note: The "YYYY-MM-DD" format depends on your Windows local date settings.
     Function BackupIntFile String sFileName Returns Boolean
-        String sDataPath sBackupFolder sFileDateExt sExt
+        String sDataPath sBackupFolder sFileDateExt sExt sFileListCfg
         Integer iRetval
         Boolean bExists
         
@@ -2324,12 +2379,41 @@ Object oFilelistFixerView is a dbView
             Get FileDatePrefix to sFileDateExt
             Move (sDataPath + String(CS_BackupFolder) + String(sFileDateExt)) to sBackupFolder
             Get vCreateDirectory sBackupFolder to iRetval
-            If (iRetval <> 0) Begin
+            If (iRetval <> 0) Begin 
+                Error DFERR_PROGRAM ("Could not create backup folder:" * String(sBackupFolder))
                 Function_Return False
-            End   
+            End
+            Get psFileList of (phoWorkspace(ghoApplication)) to sFileListCfg
+            Get ExtractFileName sFileListCfg to sFileName
+            Get vCopyFile sFileListCfg (sBackupFolder + String(sFileName)) to iRetval
             Set psBackupFolder to sBackupFolder
         End
         Get vFolderFormat sBackupFolder to sBackupFolder
+        Get vCopyFile (sDataPath + sFileName) (sBackupFolder + String(sFileName)) to iRetval
+        Function_Return (iRetval = 0)
+    End_Function
+
+    Function BackupAnyFileToBackupFolder String sFileName Returns Boolean
+        String sDataPath sBackupFolder sFileDateExt sFileListCfg
+        Integer iRetval
+        Boolean bExists
+        
+        Get psDataPath  of (phoWorkspace(ghoApplication)) to sDataPath
+        Get PathAtIndex of (phoWorkspace(ghoApplication)) sDataPath 1 to sDataPath
+        Get vFolderFormat sDataPath to sDataPath
+        Move CS_BackupFolder to sBackupFolder
+        Get FileDatePrefix to sFileDateExt
+        Move (sDataPath + String(CS_BackupFolder) + String(sFileDateExt)) to sBackupFolder
+        Get vFolderExists sBackupFolder to bExists
+        If (bExists = False) Begin
+            Get vCreateDirectory sBackupFolder to iRetval
+            If (iRetval <> 0) Begin 
+                Error DFERR_PROGRAM ("Could not create backup folder:" * String(sBackupFolder))
+                Function_Return False
+            End
+        End
+        Get vFolderFormat sBackupFolder to sBackupFolder
+        Get ExtractFileName sFileName to sFileName
         Get vCopyFile (sDataPath + sFileName) (sBackupFolder + String(sFileName)) to iRetval
         Function_Return (iRetval = 0)
     End_Function

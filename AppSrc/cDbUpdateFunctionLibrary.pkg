@@ -237,9 +237,9 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
     End_Function
 
     Function SqlDatabaseCollationQuery String sDatabase Boolean bSilent Returns String
-        String sStatement sDriverID sRetval //sPrevious
+        String sStatement sDriverID sRetval
         tSQLScriptArray SQLScriptArray SQLScriptArrayPercentReady
-        Integer iDbType iRows iFetchResult //iColumn
+        Integer iDbType iRows iFetchResult
         Handle hoSQLHandler hoSQLConnect hstmt
         tSQLConnection SQLConnection
 
