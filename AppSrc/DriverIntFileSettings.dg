@@ -1,4 +1,4 @@
-Use Windows.pkg
+﻿Use Windows.pkg
 Use cRDCButtonDPI.pkg
 Use cRichEdit.pkg
 Use seq_chnl.pkg
@@ -54,7 +54,7 @@ Object oDbDriverIntSettings_dg is a ModalPanel
             
             Move (SizeOfArray(asData)) to iSize
             If (iSize = 0) Begin
-                Send AppendText "No active settings found in driver .int file."
+                Send AppendText "No active settings found in driver .int file. This means that all settings are commented out in the driver .int file."
                 Procedure_Return
             End
             
