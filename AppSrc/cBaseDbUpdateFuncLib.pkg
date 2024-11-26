@@ -3975,20 +3975,21 @@ Class cBaseDbUpdateFuncLib is a cObject
         tSqlErrorArray aSqlErrorArray
         tSQLConnection SQLConnection
         Boolean bShowProgress
-
+        
         If (num_arguments > 4) Begin
             Move bShowProgr to bShowProgress
         End
         Get phoSQLManager to hoSql
 
         Get _SqlFindKeyWord CI_SQLGO to sGOKeyWord
-        // There seems to be a problem to pass strings when their value gets really big, aka
+        // There seems to be a problem with passing strings when their value's gets really big, aka
         // above the argument_size level. It isn't clear when these problems starts but sooner
         // or later SqlExecDirect stops working correctly with no error messages!
         // To guard from this we set a max number of lines (iChunkMax) that can be processed
         // at a time. Testing with the Create Chinook Database script; 500 seems like a number that works fine.
         // A bonus of this is that it turns out that it is actually faster to run in chunks!
         Get piChunkMax to iChunkMax
+        Move False to Err
         Move 0 to iChunkCounter
         Move "" to sStmt
 
@@ -4100,7 +4101,6 @@ Class cBaseDbUpdateFuncLib is a cObject
                             Move sMessage to sMsg[SizeOfArray(sMsg)]
                             Move sMessage to aSQLQueryMessages[SizeOfArray(aSQLQueryMessages)]
                         Loop
-
 
                         If (ghoDbUpdateHandler > 0) Begin
                             Set paSQLQueryMessages of ghoDbUpdateHandler to aSQLQueryMessages
