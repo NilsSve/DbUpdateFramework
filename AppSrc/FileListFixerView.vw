@@ -22,6 +22,7 @@ Move ghoDbUpdateFunctionLibrary to ghoDUF
 
 Define CS_ReportFileName for "FileListFixes.txt"
 Define CS_BackupFolder   for "Backup"
+Define CS_CRLF           for (Character(13) + Character(10))
 
 Struct tBlock
     Integer iFieldNumber
@@ -148,7 +149,7 @@ Object oFilelistFixerView is a dbView
     End_Object
 
     Object oSQL_grp is a Group
-        Set Size to 142 673
+        Set Size to 175 673
         Set Location to 35 12
         Set Label to "SQL Settings:"
         Set peAnchors to anTopLeftRight
@@ -324,155 +325,171 @@ Object oFilelistFixerView is a dbView
             Set peAnchors to anTopRight
         End_Object
         
-//        Object oCurrentCollatingSequence_fm is a cRDCForm
-//            Set Size to 13 387
-//            Set Location to 135 66
-//            Set pbAutoEnable to True 
-//            Set Label to "Current Collating"
-//            
-//            Procedure Page Integer iPageObject
-//                String sDatabase
-//    
-//                Forward Send Page iPageObject
-//                Get psDatabase of ghoDUF to sDatabase
-//            End_Procedure 
-//            
-//            Procedure UpdateCollatingSequence String sDatabase
-//                String sCollatingSequence
-//                If (sDatabase = "") Begin
-//                    Procedure_Return
-//                End
-//                Get SqlDatabaseCollationQuery of ghoDUF sDatabase True to sCollatingSequence
-//                Set Value to sCollatingSequence
-//            End_Procedure
-//            
-//            Function IsEnabled Returns Boolean
-//                Boolean bEnabled
-//                String sDatabase
-//                Get psDatabase of ghoDUF to sDatabase
-//                If (sDatabase <> "") Begin
-//                    Send UpdateCollatingSequence sDatabase
-//                End
-//                Function_Return False
-//            End_Function
-//    
-//        End_Object
-//        
-//        Object oCollatingSequenceHelp_btn is a cRDCButton
-//            Set Size to 12 50
-//            Set Location to 135 458
-//            Set Label to "Help"
-//            Set psImage to "ActionHelp.ico"
-//        
-//            Procedure OnClick
-//                Runprogram Shell Background "https://learn.microsoft.com/en-us/sql/relational-databases/databases/contained-database-collations?view=sql-server-ver16"
-//            End_Procedure
-//        
-//        End_Object
-//       
-//        Object oCollatingSequence_fm is a cRDCComboForm
-//            Set Size to 13 387
-//            Set Location to 152 66
-//            Set Label to "Change Collating:"
-//            Set pbAutoEnable to True            
-//            Set Entry_State to True
-//    
-//            Procedure Combo_Fill_List
-//                String sCollatingSequence
-//                Send Combo_Add_Item "Latin1_General_CI_AI"
-//                Send Combo_Add_Item "Latin1_General_100_CI_AI"
-//                Send Combo_Add_Item "SQL_Latin1_General_CP1_CI_AI"
-//                Send Combo_Add_Item "Latin1_General_CI_AS"
-//                Send Combo_Add_Item "Latin1_General_100_CI_AS"
-//                Send Combo_Add_Item "SQL_Latin1_General_CP1_CI_AS"  
-//                Send Combo_Add_Item " Latin1_General_100_CI_AS_SC_UTF8"
-//                Get Value of oCurrentCollatingSequence_fm to sCollatingSequence
-//                If (sCollatingSequence <> "") Begin
-//                    Send Combo_Add_Item sCollatingSequence
-//                    Set Value to oCurrentCollatingSequence_fm
-//                End
-//                Else Begin
-//                    Set Value to "Latin1_General_CI_AI"
-//                End
-//            End_Procedure
-//    
-//            Function IsEnabled Returns Boolean
-//                Boolean bEnabled
-//                String sDatabase
-//                Get psDatabase of ghoDUF to sDatabase
-//                Function_Return (sDatabase <> "")
-//            End_Function
-//    
-//        End_Object
-//        
-//        Object oCollatingSequence_btn is a cRDCButton
-//            Set Size to 12 50
-//            Set Location to 152 458
-//            Set Label to "Change"
-//            Set psImage to "ActionSort.ico"
-//            
-//            Procedure OnClick
-//                String sDatabase sCurrentCollatingSequence sCollatingSequence
-//                Integer iRetval
-//                Boolean bOK
-//                
-//                Get psDatabase of ghoDUF to sDatabase   
-//                Get Value of oCurrentCollatingSequence_fm to sCurrentCollatingSequence
-//                Get Value of oCollatingSequence_fm to sCollatingSequence              
-//                If (sCurrentCollatingSequence = sCollatingSequence) Begin
-//                    Send Info_Box "Nope that won't work. The database is already using this collating sequence."
-//                    Procedure_Return
-//                End
-//                Get YesNo_Box ("Are you sure you want to change the collating sequence for database:" * sDatabase * "\nto use this collating sequence:\n'" + sCollatingSequence + "'?\n\nMake the change now?") to iRetval
-//                If (iRetval <> MBR_Yes) Begin
-//                    Procedure_Return
-//                End
-//                Send StartStatusPanel "Checking that nobody is using the database..." "" -1
-//                
-//                Get IsDatabaseInUse of ghoDUF to bOK
-//                If (bOK = False) Begin
-//                    Send Info_Box "Not all tables could be opened exclusivly, which indicates that somebody else is using the database. It is therefor not advised to try to change the collating sequence at current."
-//                    Procedure_Return
-//                End
-//                Get SqlDatabaseCollationChange of ghoDUF sDatabase sCollatingSequence to bOK
-//                Send StopStatusPanel
-//                If (bOK = True) Begin
-//                    Send Info_Box ("Success! The collating sequence was changed for database:" * sDatabase)
-//                End
-//                Else Begin
-//                    Send Info_Box "The change of collating sequence failed, and was *not* changed."
-//                End
-//            End_Procedure
-//        
-//            Function IsEnabled Returns Boolean
-//                Boolean bEnabled
-//                String sDatabase
-//                Get psDatabase of ghoDUF to sDatabase
-//                Function_Return (sDatabase <> "")
-//            End_Function
-//    
-//        End_Object
+        Object oCurrentCollatingSequence_fm is a cRDCForm
+            Set Size to 13 387
+            Set Location to 135 66
+            Set pbAutoEnable to True 
+            Set Label to "Current Collating"
+            
+            Procedure Page Integer iPageObject
+                String sDatabase
+    
+                Forward Send Page iPageObject
+                Get psDatabase of ghoDUF to sDatabase
+            End_Procedure 
+            
+            Procedure UpdateCollatingSequence String sDatabase
+                String sCollatingSequence
+                If (sDatabase = "") Begin
+                    Procedure_Return
+                End
+                Get SqlDatabaseCollationQuery of ghoDUF sDatabase True to sCollatingSequence
+                Set Value to sCollatingSequence
+            End_Procedure
+            
+            Function IsEnabled Returns Boolean
+                Boolean bEnabled
+                String sDatabase
+                Get psDatabase of ghoDUF to sDatabase
+                If (sDatabase <> "") Begin
+                    Send UpdateCollatingSequence sDatabase
+                End
+                Function_Return False
+            End_Function
+    
+        End_Object
+        
+        Object oCollatingSequenceHelp_btn is a cRDCButton
+            Set Size to 12 50
+            Set Location to 135 458
+            Set Label to "Help"
+            Set psImage to "ActionHelp.ico"
+        
+            Procedure OnClick
+                Runprogram Shell Background "https://learn.microsoft.com/en-us/sql/relational-databases/collations/collation-and-unicode-support?view=sql-server-ver16#SQL-collations"
+            End_Procedure
+        
+        End_Object
+       
+        Object oCollatingSequence_fm is a cRDCComboForm
+            Set Size to 13 387
+            Set Location to 152 66
+            Set Label to "Change Collating:"
+            Set pbAutoEnable to True            
+            Set Entry_State to True
+    
+            Procedure Combo_Fill_List
+                String sCollatingSequence
+                Send Combo_Add_Item "Latin1_General_CI_AI"
+                Send Combo_Add_Item "Latin1_General_100_CI_AI"
+                Send Combo_Add_Item "SQL_Latin1_General_CP1_CI_AI"
+                Send Combo_Add_Item "Latin1_General_CI_AS"
+                Send Combo_Add_Item "Latin1_General_100_CI_AS"
+                Send Combo_Add_Item "SQL_Latin1_General_CP1_CI_AS"  
+                Send Combo_Add_Item " Latin1_General_100_CI_AS_SC_UTF8"
+                Get Value of oCurrentCollatingSequence_fm to sCollatingSequence
+                If (sCollatingSequence <> "") Begin
+                    Send Combo_Add_Item sCollatingSequence
+                    Set Value to oCurrentCollatingSequence_fm
+                End
+                Else Begin
+                    Set Value to "Latin1_General_CI_AI"
+                End
+            End_Procedure
+    
+            Function IsEnabled Returns Boolean
+                Boolean bEnabled
+                String sDatabase
+                Get psDatabase of ghoDUF to sDatabase
+                Function_Return (sDatabase <> "")
+            End_Function
+    
+        End_Object
+        
+        Object oCollatingSequence_btn is a cRDCButton
+            Set Size to 12 50
+            Set Location to 152 458
+            Set Label to "Change"
+            Set psImage to "ActionSort.ico"
+            
+            Procedure OnClick
+                String sDatabase sCurrentCollatingSequence sCollatingSequence sSteps
+                Integer iRetval
+                Boolean bOK
+                
+                Get psDatabase of ghoDUF to sDatabase   
+                Get Value of oCurrentCollatingSequence_fm to sCurrentCollatingSequence
+                Get Value of oCollatingSequence_fm to sCollatingSequence              
+                If (sCurrentCollatingSequence = sCollatingSequence) Begin
+                    Send Info_Box "Nope that won't work. The database is already using this collating sequence."
+                    Procedure_Return
+                End
+                
+                Get StepsSetupText to sSteps
+                Get YesNo_Box ("Are you sure you want to change the collating sequence for database:" * sDatabase * "\nTo use the new collating sequence:\n" + sCollatingSequence + "\n\n" + sSteps + "\n\nStart making changes now?") to iRetval
+                If (iRetval <> MBR_Yes) Begin
+                    Procedure_Return
+                End
+                Send StartStatusPanel "Checking that nobody is using the database..." "" -1
+                
+                Get IsDatabaseInUse of ghoDUF to bOK
+                If (bOK = False) Begin
+                    Send Info_Box "Not all tables could be opened exclusivly, which indicates that somebody else is using the database. It is therefor not advised to try to change the collating sequence at current."
+                    Procedure_Return
+                End
+                Get SqlDatabaseCollationChange of ghoDUF sDatabase sCollatingSequence to bOK
+                Send StopStatusPanel
+                If (bOK = True) Begin
+                    Send Info_Box ("Success! The collating sequence was changed for database:" * sDatabase)
+                End
+                Else Begin
+                    Send Info_Box "The change of collating sequence failed, and was *not* changed."
+                End
+            End_Procedure
+            
+            Function StepsSetupText Returns String
+                String sSteps
+                Append sSteps "NOTE: Ensure you have a full database backup before proceeding!" CS_CRLF CS_CRLF
+                Append sSteps "The SQL script will perform the following:" CS_CRLF
+                Append sSteps "Step 1: Capture Definitions of Dependent Objects (saved to a temporary table)" CS_CRLF 
+                Append sSteps "Step 2: Drop Dependencies" CS_CRLF 
+                Append sSteps "Step 3: Set Database to SINGLE_USER, Change Collation and set back to MULTI_USER" CS_CRLF 
+                Append sSteps "Step 4: Update Column Collation" CS_CRLF 
+                Append sSteps "Step 5: Recreate Dropped Objects" CS_CRLF 
+                Append sSteps "Step 6: Remove the temporary table" CS_CRLF 
+                Function_Return sSteps
+            End_Function
+                
+            Function IsEnabled Returns Boolean
+                Boolean bEnabled
+                String sDatabase
+                Get psDatabase of ghoDUF to sDatabase
+                Function_Return (sDatabase <> "")
+            End_Function
+    
+        End_Object
     
     End_Object
 
     Object oCount_grp is a Group
-        Set Size to 166 673
-        Set Location to 184 12
+        Set Size to 129 673
+        Set Location to 219 12
         Set Label to "Filelist.cfg:"
-        Set peAnchors to anTopLeftRight
+        Set peAnchors to anAll
 
         Object oDatTables_edt is a cMyRichEdit
-            Set Size to 110 104
+            Set Size to 71 104
             Set Location to 29 6
             Set Label to "RootName *.dat"
             Set psExtension to ".dat"
+            Set peAnchors to anTopBottom
         End_Object
 
         Object oDatTables_fm is a cNumForm
             Set Size to 12 34
-            Set Location to 144 76
+            Set Location to 103 76
             Set Label to "Counter:"
-            Set peAnchors to anBottomLeft 
+            Set peAnchors to anBottomRight
             Procedure OnChange
                 String sVal
                 Get Value to sVal
@@ -481,80 +498,83 @@ Object oFilelistFixerView is a dbView
         End_Object
 
         Object oAliasErrors_edt is a cMyRichEdit
-            Set Size to 110 104
+            Set Size to 71 104
             Set Location to 29 113
             Set Label to "Alias Table Errors"
             Set psExtension to ".int"
+            Set peAnchors to anTopBottom
         End_Object
 
         Object oAliasErrors_fm is a cNumForm
             Set Size to 12 34
-            Set Location to 144 183
+            Set Location to 103 183
             Set Label to "Counter:"
+            Set peAnchors to anBottomRight
         End_Object
 
         Object oRootNameIntTables_edt is a cMyRichEdit
-            Set Size to 110 104
+            Set Size to 71 104
             Set Location to 29 220
             Set Label to "RootName *.int"
             Set psExtension to ".int"
+            Set peAnchors to anTopBottom
         End_Object
 
         Object oRootNameIntTables_fm is a cNumForm
             Set Size to 12 34
-            Set Location to 144 290
+            Set Location to 103 290
             Set Label to "Counter:"
-            Set peAnchors to anBottomLeft
+            Set peAnchors to anBottomRight
         End_Object
 
         Object oOpenErrorTables_edt is a cMyRichEdit
-            Set Size to 110 125
+            Set Size to 71 125
             Set Location to 29 327
             Set Label to "Open Table Errors"
-            Set peAnchors to anTopLeftRight            
+            Set peAnchors to anTopBottom
             Set psExtension to ".int"
         End_Object
 
         Object oOpenErrorTables_fm is a cNumForm
             Set Size to 12 34
-            Set Location to 144 418
+            Set Location to 103 418
             Set Label to "Counter:"
             Set peAnchors to anBottomRight
         End_Object
 
         Object oFileList_grp is a Group
-            Set Size to 137 209
+            Set Size to 95 209
             Set Location to 25 459
             Set Label to "FileList.cfg Counters:"
-            Set peAnchors to anTopRight 
+            Set peAnchors to anTopBottomRight
 
             Object oNoOfSystemTables_fm is a cNumForm
                 Set Size to 12 34
-                Set Location to 50 102
+                Set Location to 10 102
                 Set Label to "System Tables"
             End_Object
 
             Object oNumberOfMasterFileListSQLTables_fm is a cNumForm
                 Set Size to 12 34
-                Set Location to 72 102
+                Set Location to 32 102
                 Set Label to "Master Tables with SQL prefix:"
             End_Object
             
             Object oNoOfAliasSQLTables_fm is a cNumForm
                 Set Size to 12 34
-                Set Location to 87 102
+                Set Location to 47 102
                 Set Label to "Alias Tables:"
             End_Object
 
             Object oNoOfDatTables2_fm is a cNumForm
                 Set Size to 12 34
-                Set Location to 102 102
+                Set Location to 62 102
                 Set Label to "RootName *.dat Tables:"
             End_Object
             
             Object oNumberOfFileListTables_fm is a cNumForm
                 Set Size to 12 34
-                Set Location to 117 102
+                Set Location to 77 102
                 Set Label to "Total Filelist Tables:"
                 Set Label_FontWeight to fw_Bold
             End_Object
