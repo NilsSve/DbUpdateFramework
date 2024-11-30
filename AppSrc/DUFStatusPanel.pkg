@@ -120,7 +120,7 @@ Object oDUFStatus_Panel is a cProcessStatusPanel
     End_Object
 
     Object oTableNameTxt is a TextBox
-        Set Size to 19 204
+        Set Size to 17 204
         Set Location to 18 9
         Set Auto_Size_State to False
         Set Justification_Mode to JMode_Left
@@ -129,14 +129,14 @@ Object oDUFStatus_Panel is a cProcessStatusPanel
 
     Object oMessageTxt is a TextBox
         Set Location to 39 9
-        Set Size to 19 204
+        Set Size to 17 204
         Set Auto_Size_State to False
         Set Justification_Mode to JMode_Left
         Set Label to "This is the Message text"
     End_Object
 
     Object oActionTxt is a TextBox
-        Set Size to 16 204
+        Set Size to 15 204
         Set Location to 60 9
         Set Auto_Size_State to False
         Set Justification_Mode to JMode_Left
