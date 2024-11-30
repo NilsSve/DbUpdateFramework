@@ -159,7 +159,7 @@ Class cBaseDbUpdateFuncLib is a cObject
         Integer i iCols iItem
         tSqlColumnNew[] aQueryColumns
 
-        Get SqlStmtAttribute of hoStmt SqlSTMTATTRIB_COLUMNCOUNT to iCols
+        Get SQLGetStmtAttribute of hoStmt SqlSTMTATTRIB_COLUMNCOUNT to iCols
         For i from 1 to iCols
             Move (SizeOfArray(aQueryColumns)) to iItem
             Get SqlColAttribute of hoStmt i SqlCOLATTRIB_BASECOLUMNNAME to aQueryColumns[iItem].sBaseColumnName
@@ -1267,7 +1267,7 @@ Class cBaseDbUpdateFuncLib is a cObject
 
         Move 1 to iColumn
         Send SqlExecDirect of hStmt sSQL
-        Get SqlStmtAttribute of hStmt SqlSTMTATTRIB_ROWCOUNT to iRows
+        Get SQLGetStmtAttribute of hStmt SqlSTMTATTRIB_ROWCOUNT to iRows
         Repeat
             Get SQLFetch of hStmt to iFetchResult
             If (iFetchResult <> 0) Begin
@@ -1309,7 +1309,7 @@ Class cBaseDbUpdateFuncLib is a cObject
                 Get SQLOpen of hoSQLConnect to hstmt
                 If (hstmt <> 0) Begin
                     Send SqlExecDirect of hstmt sStmt
-                    Get SqlStmtAttribute of hstmt SqlSTMTATTRIB_ROWCOUNT to iRows
+                    Get SQLGetStmtAttribute of hstmt SqlSTMTATTRIB_ROWCOUNT to iRows
                     Repeat
                         Get SQLFetch of hstmt to iFetchResult
                         If (iFetchResult <> 0) Begin
@@ -1594,9 +1594,9 @@ Class cBaseDbUpdateFuncLib is a cObject
     // Function will "clean/sanitize" the script by removing all comments and blank lines.
     Function _SqlUtilSanitizeScript tSQLScriptArray SqlScriptArray Returns tSQLScriptArray[]
         String[] sSQLScriptArray
-        String sText sLine sTmp sCommentStart sCommentEnd sDashComment
+        String sText sLine sTmp sCommentStart sCommentEnd sDashComment sPrint
         Integer iSize iCount
-        Boolean bCommentStart bCommentEnd bDashComment
+        Boolean bCommentStart bCommentEnd bDashComment bPrint
 
         Move False to bCommentStart
         Move False to bCommentEnd
@@ -1604,6 +1604,7 @@ Class cBaseDbUpdateFuncLib is a cObject
         Move "/*"  to sCommentStart   // These are the standard comment start & stop tokens...
         Move "*/"  to sCommentEnd
         Move "--"  to sDashComment    // ...but a comment can also start with two dashes "--".
+        Move "PRINT " to sPrint
 
         Move (SizeOfArray(SqlScriptArray.sSQLScriptArray)) to iSize
         Decrement iSize
@@ -1613,17 +1614,19 @@ Class cBaseDbUpdateFuncLib is a cObject
             Move SqlScriptArray.sSQLScriptArray[iCount] to sLine
             Move (Trim(sLine)) to sTmp
             If (sTmp <> "") Begin
+                Move False to bPrint
                 Move (Left(sTmp, 2) = sDashComment) to bDashComment
                 If (bCommentStart = False) Begin
                     Move (Left(sTmp, 2) = sCommentStart) to bCommentStart
                     If (bCommentStart = False) Begin
+                        Move (Uppercase(Left(sTmp, 6)) = sPrint) to bPrint
                     End
                 End
                 Move (sTmp contains sCommentEnd) to bCommentEnd
                 If (bCommentEnd = True) Begin
                     Move False to bCommentStart
                 End
-                If (bDashComment = False and bCommentStart = False and bCommentEnd = False) Begin
+                If (bDashComment = False and bCommentStart = False and bCommentEnd = False and bPrint = False) Begin
                     Move sLine to sSQLScriptArray[SizeOfArray(sSQLScriptArray)]
                 End
             End
@@ -1930,7 +1933,7 @@ Class cBaseDbUpdateFuncLib is a cObject
                 Get SqlReturnValue       of hStmt to iRetval
                 If (iRetval = 0) Begin
                     Repeat
-                        Get SqlStmtAttribute of hStmt SqlSTMTATTRIB_COLUMNCOUNT to iCols
+                        Get SQLGetStmtAttribute of hStmt SqlSTMTATTRIB_COLUMNCOUNT to iCols
                         If (iCols > 0) Begin
                             Repeat
                                 Get SqlFetch of hStmt to iFetchResult
@@ -3968,8 +3971,8 @@ Class cBaseDbUpdateFuncLib is a cObject
     Function _SqlUtilExecuteEmbeddedScript tSQLScriptArray SQLScriptArray String sDriverID Boolean bCreateScriptFile String sMemFileName Boolean bShowProgr Returns Boolean
         String sSQLVal sStmt sCR sGOKeyWord sNoCountKeyWord sMessage sExportFile
         Handle hoSql hoSQLConnect hoStmt hoError
-        Integer i iMsgs iRows iRowType iCount iChunkCounter iChunkMax iOut iNextSet iMessage iPos
-        String[] sMsg aSQLQueryMessages
+        Integer i iMsgs iRows jRows iRowType iCount jCount iChunkCounter iChunkMax iCh iNextSet iMessage iPos
+        String[] asMsg asSQLQueryMessages
         DateTime dtQueryExecStart dtQueryExecEnd
         TimeSpan tsQuery
         tSqlErrorArray aSqlErrorArray
@@ -3982,17 +3985,17 @@ Class cBaseDbUpdateFuncLib is a cObject
         Get phoSQLManager to hoSql
 
         Get _SqlFindKeyWord CI_SQLGO to sGOKeyWord
-        // There seems to be a problem with passing strings when their value's gets really big, aka
+        // There seems to be a problem with passing strings when their value gets really big, aka
         // above the argument_size level. It isn't clear when these problems starts but sooner
         // or later SqlExecDirect stops working correctly with no error messages!
         // To guard from this we set a max number of lines (iChunkMax) that can be processed
         // at a time. Testing with the Create Chinook Database script; 500 seems like a number that works fine.
         // A bonus of this is that it turns out that it is actually faster to run in chunks!
-        Get piChunkMax to iChunkMax
+        Get piChunkMax to iChunkMax 
+//        Move 10 to iChunkMax
         Move False to Err
         Move 0 to iChunkCounter
         Move "" to sStmt
-
         Get _SqlFindKeyWord CI_SQLSetNoCountOn to sNoCountKeyWord
         Move (Character(13) + Character(10)) to sCR
 
@@ -4009,8 +4012,8 @@ Class cBaseDbUpdateFuncLib is a cObject
             End
         End
         Send SqlSetConnect of hoSQL sDriverID SQLConnection.sConnectionString
-        Get SqlConnect     of hoSQL "" "" to hoSQLConnect
 
+        Get SqlConnect     of hoSQL "" "" to hoSQLConnect
         If (hoSQLConnect <> 0) Begin
             Move False to Err
             Get SqlOpen of hoSQLConnect to hoStmt
@@ -4021,9 +4024,9 @@ Class cBaseDbUpdateFuncLib is a cObject
                     Get psHome of (phoWorkspace(ghoApplication)) to sExportFile
                     Get vFolderFormat sExportFile to sExportFile
                     Move (sExportFile + sMemFileName) to sExportFile
-                    Get Seq_New_Channel to iOut
-                    If (iOut <> DF_SEQ_CHANNEL_NOT_AVAILABLE) Begin
-                        Direct_Output channel iOut sExportFile
+                    Get Seq_New_Channel to iCh
+                    If (iCh <> DF_SEQ_CHANNEL_NOT_AVAILABLE) Begin
+                        Direct_Output channel iCh sExportFile
                     End
                 End
 
@@ -4036,12 +4039,12 @@ Class cBaseDbUpdateFuncLib is a cObject
                     Move Error_Object_Id to hoError
                     Move Self to Error_Object_Id
                 End
-
-                Move (SizeOfArray(SQLScriptArray.sSQLScriptArray)) to iRows
-                Decrement iRows
                 If (sDriverID = MSSQLDRV_ID) Begin
                     Move (sNoCountKeyWord + sCR) to sStmt
                 End
+
+                Move (SizeOfArray(SQLScriptArray.sSQLScriptArray)) to iRows
+                Decrement iRows
 
                 for iCount from 0 to iRows
                     Move (SQLScriptArray.sSQLScriptArray[iCount]) to sSQLVal
@@ -4059,10 +4062,14 @@ Class cBaseDbUpdateFuncLib is a cObject
 
                         // - It turns out it can be at least 10 times faster to execute SQL statements in chunks,
                         // instead of all in one go.
+                        Send Update_StatusPanel of ghoStatusPanel sStmt
+                        Send Cursor_Wait of Cursor_Control
+                        
                         Send SqlExecDirect of hoStmt sStmt
 
+                        Send Cursor_Ready of Cursor_Control
                         If (bCreateScriptFile = True) Begin
-                            Write channel iOut sStmt
+                            Write channel iCh sStmt
                         End
                         Move "" to sStmt
                         Move 0 to iChunkCounter
@@ -4074,20 +4081,19 @@ Class cBaseDbUpdateFuncLib is a cObject
                     If (pbHandleQueryErrors(Self)) Begin
                         Move hoError to Error_Object_Id
                     End
-                    Move (CurrentDateTime()) to dtQueryExecEnd
 
                     Send _SqlColumnInfo hoStmt
-                    Get SqlStmtAttribute of hoStmt SqlSTMTATTRIB_ROWCOUNT to iRows
-                    Get SqlStmtAttribute of hoStmt SqlSTMTATTRIB_ROWCOUNT_TYPE to iRowType
-                    Get SqlStmtAttribute of hoStmt SqlSTMTATTRIB_NUMMESSAGES to iMsgs
-                    Set piRows    to iRows
+                    Get SQLGetStmtAttribute  of hoStmt SqlSTMTATTRIB_ROWCOUNT to jRows
+                    Get SQLGetStmtAttribute  of hoStmt SqlSTMTATTRIB_ROWCOUNT_TYPE to iRowType
+                    Get SQLGetStmtAttribute  of hoStmt SqlSTMTATTRIB_NUMMESSAGES to iMsgs
+                    Set piRows    to jRows
                     Set piRowType to iRowType
 
                     If (iMsgs <> 0) Begin
                         If (ghoDbUpdateHandler > 0) Begin
-                            Get paSQLQueryMessages of ghoDbUpdateHandler to aSQLQueryMessages
+                            Get paSQLQueryMessages of ghoDbUpdateHandler to asSQLQueryMessages
                         End
-                        for i from 1 to iMsgs
+                        for jCount from 1 to iMsgs
                             Get SqlGetMessage of hoStmt i to sMessage
                             Get RemoveComponentIdentifier of hoStmt sMessage to sMessage
                             If (bShowProgress = True) Begin
@@ -4098,19 +4104,19 @@ Class cBaseDbUpdateFuncLib is a cObject
                                     Showln (Sformat("  SQLGetMessage iMessage %1 returned [%2]", iMessage, sMessage))
                                 End
                             End
-                            Move sMessage to sMsg[SizeOfArray(sMsg)]
-                            Move sMessage to aSQLQueryMessages[SizeOfArray(aSQLQueryMessages)]
+                            Move sMessage to asMsg[SizeOfArray(asMsg)]
+                            Move sMessage to asSQLQueryMessages[SizeOfArray(asSQLQueryMessages)]
                         Loop
 
                         If (ghoDbUpdateHandler > 0) Begin
-                            Set paSQLQueryMessages of ghoDbUpdateHandler to aSQLQueryMessages
+                            Set paSQLQueryMessages of ghoDbUpdateHandler to asSQLQueryMessages
                         End
-                        Set paQueryMessages to sMsg
+                        Set paQueryMessages to asMsg
                     End
 
                     Get SQLNextResultSet of hoStmt to iNextSet
                 Until (iNextSet = 0)
-
+    
                 Move (CurrentDateTime()) to dtQueryExecEnd
             End
 
@@ -4119,8 +4125,8 @@ Class cBaseDbUpdateFuncLib is a cObject
             Send SqlClose of hoStmt
 
             If (bCreateScriptFile = True) Begin
-                Close_Output channel iOut
-                Send Seq_Release_Channel iOut
+                Close_Output channel iCh
+                Send Seq_Release_Channel iCh
             End
         End
         Send SqlDisconnect of hoSQLConnect
