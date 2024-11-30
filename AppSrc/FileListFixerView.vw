@@ -437,7 +437,11 @@ Object oFilelistFixerView is a dbView
                     Send Info_Box "Not all tables could be opened exclusivly, which indicates that somebody else is using the database. It is therefor not advised to try to change the collating sequence at current."
                     Procedure_Return
                 End
+                Set Title_Text of ghoStatusPanel to "Running SQL script to change collating sequence." 
+                Set Message_Text of ghoStatusPanel to ("For database:" * String(sDatabase))
+
                 Get SqlDatabaseCollationChange of ghoDUF sDatabase sCollatingSequence to bOK
+                
                 Send StopStatusPanel
                 If (bOK = True) Begin
                     Send Info_Box ("Success! The collating sequence was changed for database:" * sDatabase)
@@ -450,13 +454,17 @@ Object oFilelistFixerView is a dbView
             Function StepsSetupText Returns String
                 String sSteps
                 Append sSteps "NOTE: Ensure you have a full database backup before proceeding!" CS_CRLF CS_CRLF
-                Append sSteps "The SQL script will perform the following:" CS_CRLF
-                Append sSteps "Step 1: Capture Definitions of Dependent Objects (saved to a temporary table)" CS_CRLF 
-                Append sSteps "Step 2: Drop Dependencies" CS_CRLF 
-                Append sSteps "Step 3: Set Database to SINGLE_USER, Change Collation and set back to MULTI_USER" CS_CRLF 
-                Append sSteps "Step 4: Update Column Collation" CS_CRLF 
-                Append sSteps "Step 5: Recreate Dropped Objects" CS_CRLF 
-                Append sSteps "Step 6: Remove the temporary table" CS_CRLF 
+                Append sSteps "The SQL script will do the following:" CS_CRLF
+                //
+                Append sSteps "Step 1: Capture Schema-Bound Dependencies (saves to temporary tables)" CS_CRLF 
+                Append sSteps "Step 2: Drop Schema-Bound Objects" CS_CRLF 
+                Append sSteps "Step 3: Set Database to SINGLE_USER, Change Collation and set back to MULTI_USER" CS_CRLF
+                Append sSteps "Step 4: Capture Computed Columns" CS_CRLF
+                Append sSteps "Step 5: Change Database Collation" CS_CRLF
+                Append sSteps "Step 6: Update Column Collations" CS_CRLF 
+                Append sSteps "Step 7: Recreate Computed Columns" CS_CRLF
+                Append sSteps "Step 8: Recreate Schema-Bound Objects" CS_CRLF 
+                Append sSteps "Step 9: Cleanup Temporary Tables" CS_CRLF 
                 Function_Return sSteps
             End_Function
                 
@@ -587,7 +595,7 @@ Object oFilelistFixerView is a dbView
         Set Size to 60 403
         Set Location to 357 12
         Set Label to "Pre-Update Database Actions:"
-        Set peAnchors to anNone
+        Set peAnchors to anBottomLeft
 
         // Will remove non Alias Filelist entries that:
         //   - Does not have a corresponding .Dat file, 
@@ -750,7 +758,7 @@ Object oFilelistFixerView is a dbView
         Set Size to 60 260
         Set Location to 357 424
         Set Label to "More Database Actions:"
-        Set peAnchors to anTopRight
+        Set peAnchors to anBottomLeftRight
 
 //        Object oRefreshAllIntFiles_btn is a cRDCButton
 //            Set Size to 32 61
@@ -910,7 +918,7 @@ Object oFilelistFixerView is a dbView
         Set Size to 30 669
         Set Location to 423 12
         Set Label to "Logged Changes:"
-        Set peAnchors to anTopLeftRight
+        Set peAnchors to anBottomLeftRight
 
         Object oLogFile_fm is a cRDCForm
             Set Size to 12 387
