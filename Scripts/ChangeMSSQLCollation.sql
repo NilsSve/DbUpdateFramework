@@ -68,12 +68,23 @@ WHERE o.type IN ('FN', 'TF', 'IF'); -- Scalar, Table-Valued, and Inline Function
 INSERT INTO #TempObjects (ObjectType, Definition)
 SELECT 'FUNCTION', @functions;
 
--- Capture computed columns
+-- Capture computed columns with proper ordering
 DECLARE @computed_columns NVARCHAR(MAX) = N'';
-SELECT @computed_columns += 'ALTER TABLE ' + QUOTENAME(SCHEMA_NAME(t.schema_id)) + '.' + QUOTENAME(t.name) +
-    ' ADD ' + QUOTENAME(c.name) + ' AS ' + c.definition + ';' + CHAR(13) + CHAR(13) + 'GO' + CHAR(13)
-FROM sys.computed_columns c
-INNER JOIN sys.tables t ON c.object_id = t.object_id;
+WITH OrderedComputedColumns AS (
+    SELECT 
+        t.schema_id,
+        t.name AS table_name,
+        c.name AS column_name,
+        c.definition,
+        -- Assign lower number to non U_ columns so they're created first
+        CASE WHEN c.name LIKE 'U[_]%' THEN 2 ELSE 1 END AS creation_order
+    FROM sys.computed_columns c
+    INNER JOIN sys.tables t ON c.object_id = t.object_id
+)
+SELECT @computed_columns += 'ALTER TABLE ' + QUOTENAME(SCHEMA_NAME(schema_id)) + '.' + QUOTENAME(table_name) +
+    ' ADD ' + QUOTENAME(column_name) + ' AS ' + definition + ';' + CHAR(13) + CHAR(13) + 'GO' + CHAR(13)
+FROM OrderedComputedColumns
+ORDER BY creation_order;
 
 INSERT INTO #TempObjects (ObjectType, Definition)
 SELECT 'COMPUTED_COLUMN', @computed_columns;
@@ -129,12 +140,22 @@ FROM sys.objects o
 WHERE o.type IN ('FN', 'TF', 'IF');
 EXEC sp_executesql @drop_functions;
 
--- Drop computed columns
+-- Drop computed columns in reverse order
 DECLARE @drop_computed NVARCHAR(MAX) = N'';
-SELECT @drop_computed += 'ALTER TABLE ' + QUOTENAME(SCHEMA_NAME(t.schema_id)) + '.' + QUOTENAME(t.name) +
-    ' DROP COLUMN ' + QUOTENAME(c.name) + ';' + CHAR(13)
-FROM sys.computed_columns c
-INNER JOIN sys.tables t ON c.object_id = t.object_id;
+WITH OrderedComputedColumns AS (
+    SELECT 
+        t.schema_id,
+        t.name AS table_name,
+        c.name AS column_name,
+        -- Assign higher number to U_ columns so they're dropped first
+        CASE WHEN c.name LIKE 'U[_]%' THEN 1 ELSE 2 END AS drop_order
+    FROM sys.computed_columns c
+    INNER JOIN sys.tables t ON c.object_id = t.object_id
+)
+SELECT @drop_computed += 'ALTER TABLE ' + QUOTENAME(SCHEMA_NAME(schema_id)) + '.' + QUOTENAME(table_name) +
+    ' DROP COLUMN ' + QUOTENAME(column_name) + ';' + CHAR(13)
+FROM OrderedComputedColumns
+ORDER BY drop_order;
 EXEC sp_executesql @drop_computed;
 
 -- Drop constraints
