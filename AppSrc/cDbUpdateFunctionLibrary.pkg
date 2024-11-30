@@ -238,7 +238,7 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
 
     Function SqlDatabaseCollationQuery String sDatabase Boolean bSilent Returns String
         String sStatement sDriverID sRetval
-        tSQLScriptArray SQLScriptArray SQLScriptArrayPercentReady
+        tSQLScriptArray SQLScriptArray
         Integer iDbType iRows iFetchResult
         Handle hoSQLHandler hoSQLConnect hstmt
         tSQLConnection SQLConnection
@@ -294,10 +294,9 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
     // are using the database!
     Function SqlDatabaseCollationChange String sDatabase String sCollation Boolean bSilent Returns Boolean
         String sStatement sDriverID sRetval
-        Integer iDbType iRows iFetchResult iSize iCount
-        Handle hoSQLHandler hoSQLConnect hstmt
+        Integer iDbType iSize iCount
         Boolean bOK
-        tSQLScriptArray SQLScriptArray SQLScriptArrayPercentReady
+        tSQLScriptArray SQLScriptArray
         tSQLConnection SQLConnection
 
         If (sDatabase = "") Begin
@@ -327,6 +326,8 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
                         Move (Replaces("DUF_COLLATION_CI_AS_XXX", SQLScriptArray.sSQLScriptArray[iCount], String(sCollation))) to SQLScriptArray.sSQLScriptArray[iCount]
                     End
                 Loop
+
+                Set Title_Text of ghoStatusPanel to "Running SQL script to change collating sequence."
                 Get _SqlUtilExecuteEmbeddedScript SQLScriptArray sDriverID False "" to bOK
 
 //                Get phoSQLManager to hoSQLHandler
