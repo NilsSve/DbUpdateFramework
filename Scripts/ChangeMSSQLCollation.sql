@@ -1,8 +1,50 @@
--- Step 1: Backup Notice
--- PRINT 'Ensure you have a full database backup before proceeding!';
+-- Note: A SET NOCOUNT ON is inserted at the top automatically
+-- by the DUF _SqlUtilExecuteEmbeddedScript function.
+-- SET NOCOUNT ON
+ 
+-- Step 1: Backup Database
+PRINT 'Backing up database';
+DECLARE @BackupFileName NVARCHAR(255)
+DECLARE @DateTime NVARCHAR(20)
+-- Get current DateTime in the format YYYYMMDD_HHMMSS
+SET @DateTime = CONVERT(NVARCHAR, GETDATE(), 112) + '_' + REPLACE(CONVERT(NVARCHAR, GETDATE(), 108), ':', '')
+-- Set the backup file name with DateTime
+SET @BackupFileName = 'DUF_DATABASE_NAME_XXX_' + @DateTime + '.bak'
+
+BACKUP DATABASE [DUF_DATABASE_NAME_XXX]
+TO DISK = @BackupFileName
+WITH FORMAT,
+     MEDIANAME = 'SQLServerBackups',
+     NAME = 'Full Backup of DUF_DATABASE_NAME_XXX'
+PRINT 'Database was backed-up';
+GO
+
+-- Step 2: Reset Database Configurations (Optional: Set Change Tracking Off and Simple Recovery)
+USE master;
+GO
+
+IF EXISTS (SELECT * FROM sys.databases WHERE name = 'DUF_DATABASE_NAME_XXX')
+BEGIN
+    PRINT 'Resetting database configurations for the database...';
+    ALTER DATABASE ROW_TEST SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
+
+    -- Disable Change Tracking (if enabled)
+    IF EXISTS (SELECT 1 FROM sys.change_tracking_databases WHERE database_id = DB_ID('DUF_DATABASE_NAME_XXX'))
+    BEGIN
+        ALTER DATABASE DUF_DATABASE_NAME_XXX SET CHANGE_TRACKING = OFF;
+        PRINT 'Change Tracking disabled.';
+    END;
+
+    -- Set Recovery Model to SIMPLE (or desired model)
+    ALTER DATABASE DUF_DATABASE_NAME_XXX SET RECOVERY SIMPLE;
+    PRINT 'Recovery Model set to SIMPLE.';
+
+    ALTER DATABASE DUF_DATABASE_NAME_XXX SET MULTI_USER;
+END;
 GO
 
 -- Step 2: Capture Definitions of Dependent Objects
+-- (Views, Functions, Computed Columns, Constraints, Indexes)
 
 -- Save captured objects to a temporary table
 IF OBJECT_ID('tempdb..#TempObjects') IS NOT NULL DROP TABLE #TempObjects;
@@ -72,16 +114,12 @@ WHERE i.is_primary_key = 0 AND i.is_unique_constraint = 0;
 INSERT INTO #TempObjects (ObjectType, Definition)
 SELECT 'INDEX', @indexes;
 
--- PRINT 'Dependent objects captured (Views, Functions, Computed Columns, Constraints, Indexes).';
-
 -- Step 3: Drop Dependencies
-
 -- Drop views
 DECLARE @drop_views NVARCHAR(MAX) = N'';
 SELECT @drop_views += 'DROP VIEW ' + QUOTENAME(SCHEMA_NAME(o.schema_id)) + '.' + QUOTENAME(o.name) + ';' + CHAR(13)
 FROM sys.objects o
 WHERE o.type = 'V';
-
 EXEC sp_executesql @drop_views;
 
 -- Drop functions
@@ -89,7 +127,6 @@ DECLARE @drop_functions NVARCHAR(MAX) = N'';
 SELECT @drop_functions += 'DROP FUNCTION ' + QUOTENAME(SCHEMA_NAME(o.schema_id)) + '.' + QUOTENAME(o.name) + ';' + CHAR(13)
 FROM sys.objects o
 WHERE o.type IN ('FN', 'TF', 'IF');
-
 EXEC sp_executesql @drop_functions;
 
 -- Drop computed columns
@@ -98,7 +135,6 @@ SELECT @drop_computed += 'ALTER TABLE ' + QUOTENAME(SCHEMA_NAME(t.schema_id)) + 
     ' DROP COLUMN ' + QUOTENAME(c.name) + ';' + CHAR(13)
 FROM sys.computed_columns c
 INNER JOIN sys.tables t ON c.object_id = t.object_id;
-
 EXEC sp_executesql @drop_computed;
 
 -- Drop constraints
@@ -108,7 +144,6 @@ SELECT @drop_constraints += 'ALTER TABLE ' + QUOTENAME(SCHEMA_NAME(t.schema_id))
 FROM sys.objects o
 INNER JOIN sys.tables t ON o.parent_object_id = t.object_id
 WHERE o.type_desc IN ('CHECK_CONSTRAINT', 'DEFAULT_CONSTRAINT');
-
 EXEC sp_executesql @drop_constraints;
 
 -- Drop indexes
@@ -117,7 +152,6 @@ SELECT @drop_indexes += 'DROP INDEX ' + QUOTENAME(i.name) + ' ON ' + QUOTENAME(S
 FROM sys.indexes i
 INNER JOIN sys.tables t ON i.object_id = t.object_id
 WHERE i.is_primary_key = 0 AND i.is_unique_constraint = 0;
-
 EXEC sp_executesql @drop_indexes;
 
 -- Step 4: Set Database to SINGLE_USER and Change Collation
@@ -183,6 +217,5 @@ DEALLOCATE recreate_cursor;
 
 -- Cleanup
 DROP TABLE #TempObjects;
-
--- PRINT 'Collation change and object restoration completed successfully.';
+PRINT 'Collation change and object restoration completed successfully.';
 GO
