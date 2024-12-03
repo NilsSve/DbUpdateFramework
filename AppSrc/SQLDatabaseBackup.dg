@@ -1,4 +1,4 @@
-// Note: At the bottom of this package there's a general purpose access method for this dialog.
+﻿// Note: At the bottom of this package there's a general purpose access method for this dialog.
 Use Windows.pkg
 Use vWin32fh.pkg
 
@@ -140,7 +140,8 @@ Object oSQLDatabaseBackup_dg is a ModalPanel
         Set Size to 14 96
         Set Location to 80 32
         Set Label to "Enum table types"
-
+        Set Visible_State to False
+        
         Procedure OnClick
             String sDriverID
             tSQLConnection SQLConnection
@@ -201,7 +202,11 @@ Function MakeSQLDatabaseBackup Returns Boolean
         If (bDefault = False) Begin
             Get Value of (oPath_fm(ho)) to sPath
         End
+        Send StartStatusPanel "The Database Update Framework" "Backup of SQL Database" 100
+
         Get SqlDatabaseBackupToDisk of ghoDbUpdateFunctionLibrary sDatabase sBackupName sPath True to bOK
+
+        Send StopStatusPanel
     End
 
     Function_Return bOK
