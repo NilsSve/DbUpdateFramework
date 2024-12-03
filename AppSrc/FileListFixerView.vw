@@ -15,6 +15,7 @@ Use cNumForm.pkg
 Use cMyRichEdit.pkg
 Use vWin32fh.pkg
 Use DriverIntFileSettings.dg
+Use SQLDatabaseBackup.dg
 
 // Just to get a shorter handle name
 Global_Variable Handle ghoDUF 
@@ -302,10 +303,29 @@ Object oFilelistFixerView is a dbView
             Set peAnchors to anNone
             Set Label_Row_Offset to 1
         End_Object
+
+        Object oBackupSQLDatabase_btn is a cRDCButton
+            Set Size to 12 50
+            Set Location to 119 458
+            Set Label to "Backup"
+            Set psImage to "DbBackup.ico"
+
+            Procedure OnClick
+                Boolean bOK
+
+                // Show SQLDatabaseBackup dialog:
+                Get MakeSQLDatabaseBackup to bOK
+
+                If (bOK = True) Begin
+                    Send Info_Box "The backup of the database was successful!"
+                End
+            End_Procedure
+
+        End_Object
         
         Object oConnIDErrors_edt is a cMyRichEdit
             Set Size to 74 77
-            Set Location to 23 517
+            Set Location to 23 557
             Set Label to "DFCONNID Changes:"
             Set peAnchors to anTopLeftRight
             Set Label_Col_Offset to -5
@@ -313,15 +333,15 @@ Object oFilelistFixerView is a dbView
         
         Object oConnIDErrors_fm is a cNumForm
             Set Size to 12 34
-            Set Location to 103 560
+            Set Location to 103 600
             Set Label to "Counter:"
             Set peAnchors to anTopRight
         End_Object
         
         Object oNumberOfSQLTables_fm is a cNumForm
-            Set Label to "Number of SQL Tables:"
+            Set Label to "Tot SQL Tables:"
             Set Size to 12 34
-            Set Location to 119 560
+            Set Location to 119 600
             Set peAnchors to anTopRight
         End_Object
         
@@ -333,7 +353,6 @@ Object oFilelistFixerView is a dbView
             
             Procedure Page Integer iPageObject
                 String sDatabase
-    
                 Forward Send Page iPageObject
                 Get psDatabase of ghoDUF to sDatabase
             End_Procedure 
@@ -348,7 +367,6 @@ Object oFilelistFixerView is a dbView
             End_Procedure
             
             Function IsEnabled Returns Boolean
-                Boolean bEnabled
                 String sDatabase
                 Get psDatabase of ghoDUF to sDatabase
                 If (sDatabase <> "") Begin
@@ -386,19 +404,18 @@ Object oFilelistFixerView is a dbView
                 Send Combo_Add_Item "Latin1_General_CI_AS"
                 Send Combo_Add_Item "Latin1_General_100_CI_AS"
                 Send Combo_Add_Item "SQL_Latin1_General_CP1_CI_AS"  
-                Send Combo_Add_Item " Latin1_General_100_CI_AS_SC_UTF8"
+                Send Combo_Add_Item "Latin1_General_100_CI_AS_SC_UTF8"
                 Get Value of oCurrentCollatingSequence_fm to sCollatingSequence
                 If (sCollatingSequence <> "") Begin
                     Send Combo_Add_Item sCollatingSequence
                     Set Value to oCurrentCollatingSequence_fm
                 End
                 Else Begin
-                    Set Value to "Latin1_General_CI_AI"
+                    Set Value to "Latin1_General_CI_AS"
                 End
             End_Procedure
     
             Function IsEnabled Returns Boolean
-                Boolean bEnabled
                 String sDatabase
                 Get psDatabase of ghoDUF to sDatabase
                 Function_Return (sDatabase <> "")
@@ -415,8 +432,9 @@ Object oFilelistFixerView is a dbView
             Procedure OnClick
                 String sDatabase sCurrentCollatingSequence sCollatingSequence sSteps
                 Integer iRetval
-                Boolean bOK
+                Boolean bOK bBackup
                 
+                Get Checked_State of oMakeBackup_cb to bBackup
                 Get psDatabase of ghoDUF to sDatabase   
                 Get Value of oCurrentCollatingSequence_fm to sCurrentCollatingSequence
                 Get Value of oCollatingSequence_fm to sCollatingSequence              
@@ -440,9 +458,13 @@ Object oFilelistFixerView is a dbView
                 Set Title_Text of ghoStatusPanel to "Running SQL script to change collating sequence." 
                 Set Message_Text of ghoStatusPanel to ("For database:" * String(sDatabase))
 
-                Get SqlDatabaseCollationChange of ghoDUF sDatabase sCollatingSequence to bOK
-                
+                // Note: For unknown reason the result variable cannot be trusted. Instead it is 
+                //       checked if the collation was actually changed or not.
+                Get SqlDatabaseCollationChange of ghoDUF sDatabase sCollatingSequence False bBackup True to bOK
                 Send StopStatusPanel
+
+                Get SqlDatabaseCollationQuery of ghoDUF sDatabase to sCurrentCollatingSequence                
+                Move (sCurrentCollatingSequence = sCollatingSequence) to bOK
                 If (bOK = True) Begin
                     Send Info_Box ("Success! The collating sequence was changed for database:" * sDatabase)
                 End
@@ -456,20 +478,36 @@ Object oFilelistFixerView is a dbView
                 Append sSteps "NOTE: Ensure you have a full database backup before proceeding!" CS_CRLF CS_CRLF
                 Append sSteps "The SQL script will do the following:" CS_CRLF
                 //
-                Append sSteps "Step 1: Capture Schema-Bound Dependencies (saves to temporary tables)" CS_CRLF 
-                Append sSteps "Step 2: Drop Schema-Bound Objects" CS_CRLF 
-                Append sSteps "Step 3: Set Database to SINGLE_USER, Change Collation and set back to MULTI_USER" CS_CRLF
-                Append sSteps "Step 4: Capture Computed Columns" CS_CRLF
-                Append sSteps "Step 5: Change Database Collation" CS_CRLF
-                Append sSteps "Step 6: Update Column Collations" CS_CRLF 
-                Append sSteps "Step 7: Recreate Computed Columns" CS_CRLF
-                Append sSteps "Step 8: Recreate Schema-Bound Objects" CS_CRLF 
-                Append sSteps "Step 9: Cleanup Temporary Tables" CS_CRLF 
+                Append sSteps "-- Step 1: Backup Database w todays date and time added to backup name" CS_CRLF
+                Append sSteps "-- Step 2: Backup Schema-Bound Objects" CS_CRLF 
+                Append sSteps "-- Step 3: Drop Dependencies and Schema-Bound Objects" CS_CRLF
+                Append sSteps "-- Step 4: Backup all index information" CS_CRLF 
+                Append sSteps "-- Step 5: Drop all dependent indexes and constraints" CS_CRLF
+                Append sSteps "-- Step 6: Backup and Drop Computed Columns" CS_CRLF
+                Append sSteps "-- Step 7: Change Database Collation" CS_CRLF 
+                Append sSteps "-- Step 8: Recreate Computed Columns" CS_CRLF
+                Append sSteps "-- Step 9: Step 9: Recreate indexes and constraints" CS_CRLF 
+                Append sSteps "-- Step 10: Recreate Schema-Bound Objects" CS_CRLF 
+                Append sSteps "-- Step 11: Cleanup Temporary Tables" CS_CRLF 
                 Function_Return sSteps
             End_Function
                 
             Function IsEnabled Returns Boolean
-                Boolean bEnabled
+                String sDatabase
+                Get psDatabase of ghoDUF to sDatabase
+                Function_Return (sDatabase <> "")
+            End_Function
+    
+        End_Object
+
+        Object oMakeBackup_cb is a cRDCCheckBox
+            Set Size to 12 55
+            Set Location to 154 515
+            Set Label to "Make Database Backup"
+            Set psToolTip to "If checked, a database backup with a name that ends with todays date and time, is made before attempting to change the database collation."
+            Set Checked_State to True
+            
+            Function IsEnabled Returns Boolean
                 String sDatabase
                 Get psDatabase of ghoDUF to sDatabase
                 Function_Return (sDatabase <> "")
@@ -558,31 +596,31 @@ Object oFilelistFixerView is a dbView
 
             Object oNoOfSystemTables_fm is a cNumForm
                 Set Size to 12 34
-                Set Location to 10 102
+                Set Location to 10 142
                 Set Label to "System Tables"
             End_Object
 
             Object oNumberOfMasterFileListSQLTables_fm is a cNumForm
                 Set Size to 12 34
-                Set Location to 32 102
+                Set Location to 32 142
                 Set Label to "Master Tables with SQL prefix:"
             End_Object
             
             Object oNoOfAliasSQLTables_fm is a cNumForm
                 Set Size to 12 34
-                Set Location to 47 102
+                Set Location to 47 142
                 Set Label to "Alias Tables:"
             End_Object
 
             Object oNoOfDatTables2_fm is a cNumForm
                 Set Size to 12 34
-                Set Location to 62 102
+                Set Location to 62 142
                 Set Label to "RootName *.dat Tables:"
             End_Object
             
             Object oNumberOfFileListTables_fm is a cNumForm
                 Set Size to 12 34
-                Set Location to 77 102
+                Set Location to 77 142
                 Set Label to "Total Filelist Tables:"
                 Set Label_FontWeight to fw_Bold
             End_Object
