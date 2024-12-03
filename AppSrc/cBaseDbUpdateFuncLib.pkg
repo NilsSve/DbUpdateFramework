@@ -3992,7 +3992,6 @@ Class cBaseDbUpdateFuncLib is a cObject
         // at a time. Testing with the Create Chinook Database script; 500 seems like a number that works fine.
         // A bonus of this is that it turns out that it is actually faster to run in chunks!
         Get piChunkMax to iChunkMax 
-//        Move 10 to iChunkMax
         Move False to Err
         Move 0 to iChunkCounter
         Move "" to sStmt
@@ -4063,13 +4062,13 @@ Class cBaseDbUpdateFuncLib is a cObject
                         // - It turns out it can be at least 10 times faster to execute SQL statements in chunks,
                         // instead of all in one go.
                         Send Update_StatusPanel of ghoStatusPanel sStmt
-                        Send Cursor_Wait of Cursor_Control
                         
+                        // *** Execute script lines: ***
                         Send SqlExecDirect of hoStmt sStmt
 
-                        Send Cursor_Ready of Cursor_Control
                         If (bCreateScriptFile = True) Begin
-                            Write channel iCh sStmt
+                            Writeln channel iCh sStmt 
+                            Writeln channel iCh "GO"
                         End
                         Move "" to sStmt
                         Move 0 to iChunkCounter
