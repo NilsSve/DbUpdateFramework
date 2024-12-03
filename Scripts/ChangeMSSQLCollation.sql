@@ -1,242 +1,288 @@
--- Note: A SET NOCOUNT ON is inserted at the top automatically
--- by the DUF _SqlUtilExecuteEmbeddedScript function.
--- SET NOCOUNT ON
- 
--- Step 1: Backup Database
-PRINT 'Backing up database';
-DECLARE @BackupFileName NVARCHAR(255)
-DECLARE @DateTime NVARCHAR(20)
--- Get current DateTime in the format YYYYMMDD_HHMMSS
-SET @DateTime = CONVERT(NVARCHAR, GETDATE(), 112) + '_' + REPLACE(CONVERT(NVARCHAR, GETDATE(), 108), ':', '')
--- Set the backup file name with DateTime
-SET @BackupFileName = 'DUF_DATABASE_NAME_XXX_' + @DateTime + '.bak'
+--SET NOCOUNT ON
+DECLARE @BackupFileName NVARCHAR(255);
+DECLARE @ShouldBackup BIT = 1
+DECLARE @DateTime NVARCHAR(20);
+DECLARE @ErrorMessage NVARCHAR(MAX);
+DECLARE @ErrorSeverity INT;
+DECLARE @ErrorState INT;     
 
-BACKUP DATABASE [DUF_DATABASE_NAME_XXX]
-TO DISK = @BackupFileName
-WITH FORMAT,
-     MEDIANAME = 'SQLServerBackups',
-     NAME = 'Full Backup of DUF_DATABASE_NAME_XXX'
-PRINT 'Database was backed-up';
-GO
-
--- Step 2: Reset Database Configurations (Optional: Set Change Tracking Off and Simple Recovery)
-USE master;
-GO
-
-IF EXISTS (SELECT * FROM sys.databases WHERE name = 'DUF_DATABASE_NAME_XXX')
+-- Step 1: Backup Database w todays date and time added to backup name
+IF @ShouldBackup = 1
 BEGIN
-    PRINT 'Resetting database configurations for the database...';
-    ALTER DATABASE ROW_TEST SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
+    PRINT 'Backing up database';
+    -- Get current DateTime in the format YYYYMMDD_HHMMSS
+    SET @DateTime = CONVERT(NVARCHAR, GETDATE(), 112) + '_' + REPLACE(CONVERT(NVARCHAR, GETDATE(), 108), ':', '');
+    SET @BackupFileName = 'DATABASE_NAME_XXX_' + @DateTime + '.bak';
 
-    -- Disable Change Tracking (if enabled)
-    IF EXISTS (SELECT 1 FROM sys.change_tracking_databases WHERE database_id = DB_ID('DUF_DATABASE_NAME_XXX'))
-    BEGIN
-        ALTER DATABASE DUF_DATABASE_NAME_XXX SET CHANGE_TRACKING = OFF;
-        PRINT 'Change Tracking disabled.';
-    END;
-
-    -- Set Recovery Model to SIMPLE (or desired model)
-    ALTER DATABASE DUF_DATABASE_NAME_XXX SET RECOVERY SIMPLE;
-    PRINT 'Recovery Model set to SIMPLE.';
-
-    ALTER DATABASE DUF_DATABASE_NAME_XXX SET MULTI_USER;
-END;
-GO
-
--- Step 2: Capture Definitions of Dependent Objects
--- (Views, Functions, Computed Columns, Constraints, Indexes)
-
--- Save captured objects to a temporary table
-IF OBJECT_ID('tempdb..#TempObjects') IS NOT NULL DROP TABLE #TempObjects;
-CREATE TABLE #TempObjects (ObjectType NVARCHAR(50), Definition NVARCHAR(MAX));
-
--- Capture views
-DECLARE @views NVARCHAR(MAX) = N'';
-SELECT @views += OBJECT_DEFINITION(o.object_id) + CHAR(13) + CHAR(13) + 'GO' + CHAR(13)
-FROM sys.objects o
-WHERE o.type = 'V';
-
-INSERT INTO #TempObjects (ObjectType, Definition)
-SELECT 'VIEW', @views;
-
--- Capture functions
-DECLARE @functions NVARCHAR(MAX) = N'';
-SELECT @functions += OBJECT_DEFINITION(o.object_id) + CHAR(13) + CHAR(13) + 'GO' + CHAR(13)
-FROM sys.objects o
-WHERE o.type IN ('FN', 'TF', 'IF'); -- Scalar, Table-Valued, and Inline Functions
-
-INSERT INTO #TempObjects (ObjectType, Definition)
-SELECT 'FUNCTION', @functions;
-
--- Capture computed columns with proper ordering
-DECLARE @computed_columns NVARCHAR(MAX) = N'';
-WITH OrderedComputedColumns AS (
-    SELECT 
-        t.schema_id,
-        t.name AS table_name,
-        c.name AS column_name,
-        c.definition,
-        -- Assign lower number to non U_ columns so they're created first
-        CASE WHEN c.name LIKE 'U[_]%' THEN 2 ELSE 1 END AS creation_order
-    FROM sys.computed_columns c
-    INNER JOIN sys.tables t ON c.object_id = t.object_id
-)
-SELECT @computed_columns += 'ALTER TABLE ' + QUOTENAME(SCHEMA_NAME(schema_id)) + '.' + QUOTENAME(table_name) +
-    ' ADD ' + QUOTENAME(column_name) + ' AS ' + definition + ';' + CHAR(13) + CHAR(13) + 'GO' + CHAR(13)
-FROM OrderedComputedColumns
-ORDER BY creation_order;
-
-INSERT INTO #TempObjects (ObjectType, Definition)
-SELECT 'COMPUTED_COLUMN', @computed_columns;
-
--- Capture constraints
-DECLARE @constraints NVARCHAR(MAX) = N'';
-SELECT @constraints += 'ALTER TABLE ' + QUOTENAME(SCHEMA_NAME(t.schema_id)) + '.' + QUOTENAME(t.name) +
-    ' ADD CONSTRAINT ' + QUOTENAME(o.name) + ' ' + OBJECT_DEFINITION(o.object_id) + ';' + CHAR(13) + CHAR(13) + 'GO' + CHAR(13)
-FROM sys.objects o
-INNER JOIN sys.tables t ON o.parent_object_id = t.object_id
-WHERE o.type_desc IN ('CHECK_CONSTRAINT', 'DEFAULT_CONSTRAINT');
-
-INSERT INTO #TempObjects (ObjectType, Definition)
-SELECT 'CONSTRAINT', @constraints;
-
--- Capture indexes
-DECLARE @indexes NVARCHAR(MAX) = N'';
-SELECT @indexes += 'CREATE ' + 
-    CASE WHEN i.is_unique = 1 THEN 'UNIQUE ' ELSE '' END +
-    i.type_desc + ' INDEX ' + QUOTENAME(i.name) +
-    ' ON ' + QUOTENAME(SCHEMA_NAME(t.schema_id)) + '.' + QUOTENAME(t.name) +
-    ' (' + STUFF((SELECT ', ' + QUOTENAME(c.name) + 
-                    CASE WHEN ic.is_descending_key = 1 THEN ' DESC' ELSE ' ASC' END
-                  FROM sys.index_columns ic
-                  INNER JOIN sys.columns c ON ic.object_id = c.object_id AND ic.column_id = c.column_id
-                  WHERE ic.object_id = i.object_id AND ic.index_id = i.index_id
-                  FOR XML PATH('')), 1, 2, '') + ')' +
-    ISNULL(' INCLUDE (' + STUFF((SELECT ', ' + QUOTENAME(c.name)
-                  FROM sys.index_columns ic
-                  INNER JOIN sys.columns c ON ic.object_id = c.object_id AND ic.column_id = c.column_id
-                  WHERE ic.object_id = i.object_id AND ic.index_id = i.index_id AND ic.is_included_column = 1
-                  FOR XML PATH('')), 1, 2, '') + ')', '') +
-    ';' + CHAR(13) + CHAR(13) + 'GO' + CHAR(13)
-FROM sys.indexes i
-INNER JOIN sys.tables t ON i.object_id = t.object_id
-WHERE i.is_primary_key = 0 AND i.is_unique_constraint = 0;
-
-INSERT INTO #TempObjects (ObjectType, Definition)
-SELECT 'INDEX', @indexes;
-
--- Step 3: Drop Dependencies
--- Drop views
-DECLARE @drop_views NVARCHAR(MAX) = N'';
-SELECT @drop_views += 'DROP VIEW ' + QUOTENAME(SCHEMA_NAME(o.schema_id)) + '.' + QUOTENAME(o.name) + ';' + CHAR(13)
-FROM sys.objects o
-WHERE o.type = 'V';
-EXEC sp_executesql @drop_views;
-
--- Drop functions
-DECLARE @drop_functions NVARCHAR(MAX) = N'';
-SELECT @drop_functions += 'DROP FUNCTION ' + QUOTENAME(SCHEMA_NAME(o.schema_id)) + '.' + QUOTENAME(o.name) + ';' + CHAR(13)
-FROM sys.objects o
-WHERE o.type IN ('FN', 'TF', 'IF');
-EXEC sp_executesql @drop_functions;
-
--- Drop computed columns in reverse order
-DECLARE @drop_computed NVARCHAR(MAX) = N'';
-WITH OrderedComputedColumns AS (
-    SELECT 
-        t.schema_id,
-        t.name AS table_name,
-        c.name AS column_name,
-        -- Assign higher number to U_ columns so they're dropped first
-        CASE WHEN c.name LIKE 'U[_]%' THEN 1 ELSE 2 END AS drop_order
-    FROM sys.computed_columns c
-    INNER JOIN sys.tables t ON c.object_id = t.object_id
-)
-SELECT @drop_computed += 'ALTER TABLE ' + QUOTENAME(SCHEMA_NAME(schema_id)) + '.' + QUOTENAME(table_name) +
-    ' DROP COLUMN ' + QUOTENAME(column_name) + ';' + CHAR(13)
-FROM OrderedComputedColumns
-ORDER BY drop_order;
-EXEC sp_executesql @drop_computed;
-
--- Drop constraints
-DECLARE @drop_constraints NVARCHAR(MAX) = N'';
-SELECT @drop_constraints += 'ALTER TABLE ' + QUOTENAME(SCHEMA_NAME(t.schema_id)) + '.' + QUOTENAME(t.name) +
-    ' DROP CONSTRAINT ' + QUOTENAME(o.name) + ';' + CHAR(13)
-FROM sys.objects o
-INNER JOIN sys.tables t ON o.parent_object_id = t.object_id
-WHERE o.type_desc IN ('CHECK_CONSTRAINT', 'DEFAULT_CONSTRAINT');
-EXEC sp_executesql @drop_constraints;
-
--- Drop indexes
-DECLARE @drop_indexes NVARCHAR(MAX) = N'';
-SELECT @drop_indexes += 'DROP INDEX ' + QUOTENAME(i.name) + ' ON ' + QUOTENAME(SCHEMA_NAME(t.schema_id)) + '.' + QUOTENAME(t.name) + ';' + CHAR(13)
-FROM sys.indexes i
-INNER JOIN sys.tables t ON i.object_id = t.object_id
-WHERE i.is_primary_key = 0 AND i.is_unique_constraint = 0;
-EXEC sp_executesql @drop_indexes;
-
--- Step 4: Set Database to SINGLE_USER and Change Collation
-USE master;
-GO
-
-ALTER DATABASE DUF_DATABASE_NAME_XXX SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
-GO
-
-ALTER DATABASE DUF_DATABASE_NAME_XXX COLLATE DUF_COLLATION_CI_AS_XXX;
-GO
-
-ALTER DATABASE DUF_DATABASE_NAME_XXX SET MULTI_USER;
-GO
-
--- Step 5: Update Column Collation
-DECLARE @update_columns NVARCHAR(MAX) = N'';
-SELECT @update_columns += N'
-    ALTER TABLE ' + QUOTENAME(SCHEMA_NAME(t.schema_id)) + '.' + QUOTENAME(t.name) + 
-    ' ALTER COLUMN ' + QUOTENAME(c.name) + ' ' + 
-    UPPER(tp.name) +
-    CASE 
-        WHEN tp.name IN ('nchar', 'nvarchar') THEN '(' + 
-            CASE 
-                WHEN c.max_length = -1 THEN 'MAX' 
-                ELSE CAST(c.max_length / 2 AS NVARCHAR(10)) 
-            END + ')'
-        WHEN tp.name IN ('char', 'varchar') THEN '(' + 
-            CASE 
-                WHEN c.max_length = -1 THEN 'MAX' 
-                ELSE CAST(c.max_length AS NVARCHAR(10)) 
-            END + ')'
-        ELSE ''
-    END + 
-    ' COLLATE DUF_COLLATION_CI_AS_XXX ' + 
-    CASE WHEN c.is_nullable = 1 THEN 'NULL' ELSE 'NOT NULL' END + ';' + CHAR(13)
-FROM sys.columns c
-INNER JOIN sys.tables t ON c.object_id = t.object_id
-INNER JOIN sys.schemas s ON t.schema_id = s.schema_id
-INNER JOIN sys.types tp ON c.user_type_id = tp.user_type_id
-WHERE tp.name IN ('char', 'varchar', 'nchar', 'nvarchar')
-AND c.collation_name IS NOT NULL
-AND c.collation_name <> 'DUF_COLLATION_CI_AS_XXX';
-
-EXEC sp_executesql @update_columns;
-
--- Step 6: Recreate Dropped Objects
-DECLARE @recreate_sql NVARCHAR(MAX);
-DECLARE recreate_cursor CURSOR FOR 
-SELECT Definition FROM #TempObjects;
-
-OPEN recreate_cursor;
-FETCH NEXT FROM recreate_cursor INTO @recreate_sql;
-
-WHILE @@FETCH_STATUS = 0
-BEGIN
-    EXEC (@recreate_sql); -- Proper batch execution
-    FETCH NEXT FROM recreate_cursor INTO @recreate_sql;
+    -- Backup the database
+    BACKUP DATABASE [DATABASE_NAME_XXX]
+    TO DISK = @BackupFileName
+    WITH FORMAT, 
+         MEDIANAME = 'SQLServerBackups', 
+         NAME = 'Full Backup of DATABASE_NAME_XXX';
+    PRINT 'Database Backup created: ' + @BackupFileName;
 END
+GO
 
-CLOSE recreate_cursor;
-DEALLOCATE recreate_cursor;
+-- Step 2: Backup Schema-Bound Objects
+    PRINT 'Backing up schema-bound object definitions...';
+    IF OBJECT_ID('tempdb..##BackupSchemaBoundObjects') IS NOT NULL DROP TABLE ##BackupSchemaBoundObjects;
+    CREATE TABLE ##BackupSchemaBoundObjects (ObjectType NVARCHAR(50), ObjectName NVARCHAR(255), Definition NVARCHAR(MAX));
+GO
 
--- Cleanup
-DROP TABLE #TempObjects;
-PRINT 'Collation change and object restoration completed successfully.';
+    -- Retrieve object names dynamically, e.g., schema-bound functions and views
+    INSERT INTO ##BackupSchemaBoundObjects (ObjectType, ObjectName, Definition)
+    SELECT 
+        o.type_desc AS ObjectType,
+        QUOTENAME(SCHEMA_NAME(o.schema_id)) + '.' + QUOTENAME(o.name) AS ObjectName,
+        OBJECT_DEFINITION(o.object_id) AS Definition
+    FROM sys.objects o
+    WHERE o.is_ms_shipped = 0
+    AND OBJECT_DEFINITION(o.object_id) IS NOT NULL
+    AND o.TYPE IN ('FN', 'IF', 'TF', 'V');  -- Function types: Scalar (FN), Inline Table-Valued (IF), Multi-Statement Table-Valued (TF), and Views (V)
+GO
+
+-- Step 3: Drop Dependencies and Schema-Bound Objects
+    PRINT 'Dropping dependencies and schema-bound objects...';
+    DECLARE @drop_deps_sql NVARCHAR(MAX) = N'';
+    SELECT @drop_deps_sql += 
+        CASE 
+            WHEN ObjectType = 'VIEW' THEN 'DROP VIEW ' + ObjectName + ';'
+            WHEN ObjectType LIKE '%FUNCTION' THEN 'DROP FUNCTION ' + ObjectName + ';'
+        END + CHAR(13)
+    FROM ##BackupSchemaBoundObjects;
+
+    -- Execute drop statements for schema-bound objects
+    IF @drop_deps_sql <> N'' EXEC sp_executesql @drop_deps_sql;
+
+    PRINT 'Dependencies and schema-bound objects dropped successfully.';
+GO
+
+-- Step 4: Backup all index information
+    PRINT 'Backing up indexes, primary keys, and unique constraints...';
+    IF OBJECT_ID('tempdb..##IndexesBackup') IS NOT NULL DROP TABLE ##IndexesBackup;
+    CREATE TABLE ##IndexesBackup (
+        TableName NVARCHAR(255),
+        IndexName NVARCHAR(255),
+        IndexDefinition NVARCHAR(MAX),
+        IsPrimaryKey BIT,
+        IsUnique BIT,
+        DropStatement NVARCHAR(MAX)
+    );
+GO
+
+    -- Backup ALL indexes including PKs and unique constraints that depend on computed columns
+    INSERT INTO ##IndexesBackup
+    SELECT 
+        QUOTENAME(SCHEMA_NAME(t.schema_id)) + '.' + QUOTENAME(t.name) AS TableName,
+        i.name AS IndexName,
+        CASE 
+            WHEN i.is_primary_key = 1 THEN 
+                'ALTER TABLE ' + QUOTENAME(SCHEMA_NAME(t.schema_id)) + '.' + QUOTENAME(t.name) + 
+                ' ADD CONSTRAINT ' + QUOTENAME(i.name) + ' PRIMARY KEY ' +
+                CASE i.TYPE WHEN 1 THEN 'CLUSTERED ' ELSE 'NONCLUSTERED ' END +
+                ' (' + key_col.columns + ')'
+            WHEN i.is_unique_constraint = 1 THEN
+                'ALTER TABLE ' + QUOTENAME(SCHEMA_NAME(t.schema_id)) + '.' + QUOTENAME(t.name) + 
+                ' ADD CONSTRAINT ' + QUOTENAME(i.name) + ' UNIQUE ' +
+                CASE i.TYPE WHEN 1 THEN 'CLUSTERED ' ELSE 'NONCLUSTERED ' END +
+                ' (' + key_col.columns + ')'
+            ELSE 
+                'CREATE ' + 
+                CASE WHEN i.is_unique = 1 THEN 'UNIQUE ' ELSE '' END +
+                CASE i.TYPE 
+                    WHEN 1 THEN 'CLUSTERED '
+                    WHEN 2 THEN 'NONCLUSTERED '
+                END + 'INDEX ' + QUOTENAME(i.name) + ' ON ' + 
+                QUOTENAME(SCHEMA_NAME(t.schema_id)) + '.' + QUOTENAME(t.name) + 
+                ' (' + key_col.columns + ')' +
+                CASE WHEN include_col.columns IS NOT NULL THEN ' INCLUDE (' + include_col.columns + ')' ELSE '' END
+        END AS IndexDefinition,
+        i.is_primary_key,
+        i.is_unique_constraint,
+        CASE 
+            WHEN i.is_primary_key = 1 OR i.is_unique_constraint = 1 THEN
+                'ALTER TABLE ' + QUOTENAME(SCHEMA_NAME(t.schema_id)) + '.' + QUOTENAME(t.name) + 
+                ' DROP CONSTRAINT ' + QUOTENAME(i.name)
+            ELSE 
+                'DROP INDEX ' + QUOTENAME(i.name) + ' ON ' + QUOTENAME(SCHEMA_NAME(t.schema_id)) + '.' + QUOTENAME(t.name)
+        END AS DropStatement
+    FROM sys.indexes i
+    INNER JOIN sys.tables t ON i.object_id = t.object_id
+    CROSS APPLY (
+        SELECT STUFF((
+            SELECT ', ' + QUOTENAME(c.name)
+            FROM sys.index_columns ic
+            JOIN sys.columns c ON ic.object_id = c.object_id AND ic.column_id = c.column_id
+            WHERE ic.object_id = i.object_id AND ic.index_id = i.index_id AND ic.is_included_column = 0
+            ORDER BY ic.key_ordinal
+            FOR XML PATH('')
+        ), 1, 2, '') AS columns
+    ) key_col
+    LEFT JOIN (
+        SELECT i2.object_id, i2.index_id, STRING_AGG(QUOTENAME(c.name), ', ') AS columns
+        FROM sys.index_columns ic
+        JOIN sys.columns c ON ic.object_id = c.object_id AND ic.column_id = c.column_id
+        JOIN sys.indexes i2 ON ic.object_id = i2.object_id AND ic.index_id = i2.index_id
+        WHERE ic.is_included_column = 1
+        GROUP BY i2.object_id, i2.index_id
+    ) include_col ON i.object_id = include_col.object_id AND i.index_id = include_col.index_id
+    WHERE i.TYPE IN (1,2) -- Only clustered and nonclustered indexes
+    AND EXISTS (
+        SELECT 1 
+        FROM sys.index_columns ic2
+        JOIN sys.columns c ON ic2.object_id = c.object_id AND ic2.column_id = c.column_id
+        WHERE ic2.object_id = i.object_id 
+        AND ic2.index_id = i.index_id
+        AND c.is_computed = 1
+    );
+GO
+
+-- Step 5: Drop all dependent indexes and constraints
+    PRINT 'Dropping dependent indexes and constraints...';
+    DECLARE @DropIndexes NVARCHAR(MAX) = '';
+    SELECT @DropIndexes += DropStatement + ';' + CHAR(13)
+    FROM ##IndexesBackup
+    ORDER BY IsPrimaryKey DESC, IsUnique DESC;
+
+    IF @DropIndexes <> ''
+    BEGIN
+        PRINT 'Executing drop commands:';
+        PRINT @DropIndexes;
+        EXEC sp_executesql @DropIndexes;
+    END
+GO
+
+-- Step 6: Backup and Drop Computed Columns
+    PRINT 'Backing up computed columns...';
+    IF OBJECT_ID('tempdb..##ComputedColumnsBackup') IS NOT NULL DROP TABLE ##ComputedColumnsBackup;
+    CREATE TABLE ##ComputedColumnsBackup (
+        TableName NVARCHAR(255),
+        ColumnName NVARCHAR(255),
+        Definition NVARCHAR(MAX),
+        IsComputed BIT
+    );
+GO
+
+    INSERT INTO ##ComputedColumnsBackup (TableName, ColumnName, Definition, IsComputed)
+    SELECT 
+        QUOTENAME(SCHEMA_NAME(t.schema_id)) + '.' + QUOTENAME(t.name) AS TableName,
+        QUOTENAME(c.name) AS ColumnName,
+        cc.definition AS Definition,
+        1 AS IsComputed
+    FROM sys.computed_columns cc
+    JOIN sys.columns c ON cc.object_id = c.object_id AND cc.column_id = c.column_id
+    JOIN sys.tables t ON cc.object_id = t.object_id;
+
+    -- Also backup regular columns
+    INSERT INTO ##ComputedColumnsBackup (TableName, ColumnName, Definition, IsComputed)
+    SELECT 
+        QUOTENAME(SCHEMA_NAME(t.schema_id)) + '.' + QUOTENAME(t.name) AS TableName,
+        QUOTENAME(c.name) AS ColumnName,
+        'CAST(' + QUOTENAME(c.name) + ' AS ' + 
+        CASE WHEN typ.name IN ('char', 'varchar', 'nchar', 'nvarchar')
+             THEN typ.name + '(' + 
+                  CASE WHEN c.max_length = -1 
+                       THEN 'MAX'
+                       ELSE CAST(CASE WHEN typ.name LIKE 'n%' 
+                                     THEN c.max_length/2 
+                                     ELSE c.max_length 
+                                END AS VARCHAR(10))
+                  END + ')'
+             ELSE typ.name
+        END + ')' AS Definition,
+        0 AS IsComputed
+    FROM sys.columns c
+    JOIN sys.tables t ON c.object_id = t.object_id
+    JOIN sys.types typ ON c.user_type_id = typ.user_type_id
+    WHERE c.is_computed = 0;
+
+    PRINT 'Backed up columns:';
+    SELECT * FROM ##ComputedColumnsBackup ORDER BY TableName, IsComputed DESC, ColumnName;
+GO
+
+    PRINT 'Dropping computed columns...';
+    DECLARE @DropComputedColumns NVARCHAR(MAX) = '';
+    SELECT @DropComputedColumns += 'ALTER TABLE ' + TableName + ' DROP COLUMN ' + ColumnName + ';' + CHAR(13)
+    FROM ##ComputedColumnsBackup
+    WHERE IsComputed = 1;
+
+    IF @DropComputedColumns <> ''
+    BEGIN
+        PRINT 'Executing drop commands:';
+        PRINT @DropComputedColumns;
+        EXEC sp_executesql @DropComputedColumns;
+    END
+GO
+
+-- Step 7: Change Database Collation
+    PRINT 'Changing database collation...';
+    USE master;
+GO    
+    ALTER DATABASE DATABASE_NAME_XXX SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
+    ALTER DATABASE DATABASE_NAME_XXX COLLATE COLLATION_NAME_XXX;
+    ALTER DATABASE DATABASE_NAME_XXX SET MULTI_USER;
+    USE DATABASE_NAME_XXX;
+GO
+
+-- Step 8: Recreate Computed Columns
+    PRINT 'Recreating computed columns...';
+    DECLARE @RecreateComputedColumns NVARCHAR(MAX) = '';
+    SELECT @RecreateComputedColumns += 'ALTER TABLE ' + TableName + ' ADD ' + ColumnName + ' AS ' + Definition + ';' + CHAR(13)
+    FROM ##ComputedColumnsBackup
+    WHERE IsComputed = 1;
+
+    IF @RecreateComputedColumns COLLATE COLLATION_NAME_XXX <> '' COLLATE COLLATION_NAME_XXX
+    BEGIN
+        PRINT 'Executing recreate commands:';
+        PRINT @RecreateComputedColumns;
+        EXEC sp_executesql @RecreateComputedColumns;
+    END
+GO
+
+-- Step 9: Recreate indexes and constraints
+	PRINT 'Recreating indexes and constraints...';
+	DECLARE @RecreateIndexes NVARCHAR(MAX) = '';
+	SELECT @RecreateIndexes += IndexDefinition + ';' + CHAR(13)
+	FROM ##IndexesBackup
+	ORDER BY IsPrimaryKey ASC, IsUnique ASC;
+
+	-- Check for NULL or empty string
+	IF @RecreateIndexes IS NOT NULL AND @RecreateIndexes <> ''
+	BEGIN
+		EXEC sp_executesql @RecreateIndexes;
+	END
+GO
+
+-- Step 10: Recreate Schema-Bound Objects
+    PRINT 'Recreating schema-bound objects...';
+    DECLARE @recreate_deps_sql NVARCHAR(MAX);
+    DECLARE deps_cursor CURSOR FOR 
+    SELECT Definition
+    FROM ##BackupSchemaBoundObjects;
+
+    OPEN deps_cursor;
+    FETCH NEXT FROM deps_cursor INTO @recreate_deps_sql;
+
+    WHILE @@FETCH_STATUS = 0
+    BEGIN
+        BEGIN TRY
+            EXEC sp_executesql @recreate_deps_sql;
+        END TRY
+        BEGIN CATCH
+            PRINT 'Error recreating object: ' + ERROR_MESSAGE();
+        END CATCH
+        FETCH NEXT FROM deps_cursor INTO @recreate_deps_sql;
+    END
+
+    CLOSE deps_cursor;
+    DEALLOCATE deps_cursor;
+    PRINT 'Schema-bound objects recreation completed.';
+GO
+
+-- Step 11: Cleanup Temporary Tables
+    DROP TABLE IF EXISTS ##BackupSchemaBoundObjects;
+    DROP TABLE IF EXISTS ##ComputedColumnsBackup;
+    DROP TABLE IF EXISTS ##IndexesBackup;
+    PRINT 'Script completed successfully.';
 GO
