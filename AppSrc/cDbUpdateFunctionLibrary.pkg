@@ -197,7 +197,7 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
 
         // Create backup-folder if it doesn't exist
         Get vFolderExists sPath to bExists
-        If (bExists = False) Begin
+        If (bExists = False and sPath <> "") Begin
             Get vCreateDirectory sPath to bErr
             If (bErr = True) Begin
                 Error DFERR_PROGRAM ("Could not create database backup folder:" * sPath)
@@ -232,7 +232,7 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
             Case Else
                 Send Info_Box ("The SqlUtilBackupDatabaseToDisk function is currently not implemented for the driver:" * sDriverID + ". It would be great if you could spend a couple of minutes and add a little ESQL code snippet to make it work for that driver! Thanks for helping out.")
         Case End
-
+        
         Function_Return bOK
     End_Function
 
@@ -292,7 +292,7 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
     // To change the collation sequence for an existing database.
     // Please take a backup copy of the database first, then make sure *no* users
     // are using the database!
-    Function SqlDatabaseCollationChange String sDatabase String sCollation Boolean bSilent Returns Boolean
+    Function SqlDatabaseCollationChange String sDatabase String sCollation Boolean bCreateScriptFile Boolean bBackup Boolean bSilent Returns Boolean
         String sStatement sDriverID sRetval
         Integer iDbType iSize iCount
         Boolean bOK
@@ -317,44 +317,28 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
 
                 Move (SizeOfArray(SQLScriptArray.sSQLScriptArray)) to iSize
                 Decrement iSize
-        
+                
+                // Parameter replacements in the script: sDatabase, sCollation.
                 For iCount from 0 to iSize
-                    If (SQLScriptArray.sSQLScriptArray[iCount] contains "DUF_DATABASE_NAME_XXX") Begin
-                        Move (Replaces("DUF_DATABASE_NAME_XXX",  SQLScriptArray.sSQLScriptArray[iCount], String(sDatabase))) to SQLScriptArray.sSQLScriptArray[iCount]
+                    If (SQLScriptArray.sSQLScriptArray[iCount] contains "DATABASE_NAME_XXX") Begin
+                        Move (Replaces("DATABASE_NAME_XXX",  SQLScriptArray.sSQLScriptArray[iCount], String(sDatabase))) to SQLScriptArray.sSQLScriptArray[iCount]
                     End
-                    If (SQLScriptArray.sSQLScriptArray[iCount] contains "DUF_COLLATION_CI_AS_XXX") Begin
-                        Move (Replaces("DUF_COLLATION_CI_AS_XXX", SQLScriptArray.sSQLScriptArray[iCount], String(sCollation))) to SQLScriptArray.sSQLScriptArray[iCount]
+                    If (SQLScriptArray.sSQLScriptArray[iCount] contains "COLLATION_NAME_XXX") Begin
+                        Move (Replaces("COLLATION_NAME_XXX", SQLScriptArray.sSQLScriptArray[iCount], String(sCollation))) to SQLScriptArray.sSQLScriptArray[iCount]
+                    End
+                    If (bBackup = False) Begin
+                        Move (Replace("DECLARE @ShouldBackup BIT = 1", SQLScriptArray.sSQLScriptArray[iCount], String("DECLARE @ShouldBackup BIT = 0"))) to SQLScriptArray.sSQLScriptArray[iCount]                        
                     End
                 Loop
 
                 Set Title_Text of ghoStatusPanel to "Running SQL script to change collating sequence."
-                Get _SqlUtilExecuteEmbeddedScript SQLScriptArray sDriverID False "" to bOK
+                Get _SqlUtilExecuteEmbeddedScript SQLScriptArray sDriverID bCreateScriptFile "SQLChangeCollation.sql" to bOK
 
-//                Get phoSQLManager to hoSQLHandler
-//
-//                If (hoSQLHandler <> 0) Begin
-//                    Get pSQLConnection of ghoSQLConnectionHandler to SQLConnection
-//                    Get SQLConnect of hoSQLHandler SQLConnection.sDriverID SQLConnection.sConnectionString to hoSQLConnect
-//
-//                    If (hoSQLConnect <> 0) Begin
-//                        Get SQLOpen of hoSQLConnect to hstmt
-//                        If (hstmt <> 0) Begin
-//                            Send SqlExecDirect of hstmt sStatement
-//                            Get SqlStmtAttribute of hstmt SqlSTMTATTRIB_ROWCOUNT to iRows
-//                            Get SQLFetch of hstmt to iFetchResult
-//                            If (iFetchResult <> 0) Begin
-//                                Get SQLColumnValue of hstmt 2 to sRetval // Column 1 = Database Name, 2 = Collation Name.
-//                            End
-//                            Send SQLClose of hstmt
-//                        End
-//                        Send SQLDisconnect of hoSQLConnect
-//                    End
-//                End
                 Case Break
             Case Else 
                 Move False to bOK
                 If (bSilent = False) Begin
-                    Send Info_Box ("The SqlDatabaseCollationChange function is currently not implemented for this driver:" * sDriverID + ". It would be great if you could spend a couple of minutes and create a little SQL code snippet and send it to RDC Tools to make this routine work for this driver! Thanks for helping out.")
+                    Send Info_Box ("The SqlDatabaseCollationChange function is currently not implemented for selected driver:" * sDriverID + ". It would be great if you could spend a couple of minutes and create a little SQL code snippet and send it to RDC Tools to make this routine work for this driver! Thanks for helping out.")
                 End
         Case End
 
