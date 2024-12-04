@@ -630,7 +630,7 @@ Object oFilelistFixerView is a dbView
     End_Object
 
     Object oFixProblemsPreUpdate_grp is a Group
-        Set Size to 60 403
+        Set Size to 60 340
         Set Location to 357 12
         Set Label to "Pre-Update Database Actions:"
         Set peAnchors to anBottomLeft
@@ -639,7 +639,7 @@ Object oFilelistFixerView is a dbView
         //   - Does not have a corresponding .Dat file, 
         Object oFixFileListErrors_btn is a cRDCButton
             Set Size to 32 61
-            Set Location to 12 68
+            Set Location to 12 8
             Set Label to "1. Fix 'RootName .dat Errors'"
             Set peAnchors to anTopRight
             Set MultiLineState to True
@@ -665,7 +665,7 @@ Object oFilelistFixerView is a dbView
 
         Object oFixAliasProblems_btn is a cRDCButton
             Set Size to 32 61
-            Set Location to 12 134
+            Set Location to 12 74
             Set Label to "2. Fix 'Alias Table Errors'"
             Set peAnchors to anTopRight
             Set MultiLineState to True
@@ -693,7 +693,7 @@ Object oFilelistFixerView is a dbView
 
         Object oFixFileListSQLMissingTables_btn is a cRDCButton
             Set Size to 32 61
-            Set Location to 12 199
+            Set Location to 12 139
             Set Label to "3. Make Filelist RootNames equal to SQL Database"
             Set peAnchors to anTopRight
             Set MultiLineState to True
@@ -718,7 +718,7 @@ Object oFilelistFixerView is a dbView
 
         Object oFixFileListOpenErrors_btn is a cRDCButton
             Set Size to 32 61
-            Set Location to 12 266
+            Set Location to 12 206
             Set Label to "4. Fix Filelist: 'Open Table Errors'"
             Set peAnchors to anTopRight
             Set MultiLineState to True
@@ -752,7 +752,7 @@ Object oFilelistFixerView is a dbView
 
         Object oFixIntFileError_btn is a cRDCButton
             Set Size to 32 61
-            Set Location to 12 332
+            Set Location to 12 272
             Set Label to "5. Recreate 'Open Table Errors' *.int files"
             Set peAnchors to anTopRight
             Set MultiLineState to True
@@ -793,8 +793,8 @@ Object oFilelistFixerView is a dbView
     End_Object
 
     Object oFixExtraProblems_grp is a Group
-        Set Size to 60 260
-        Set Location to 357 424
+        Set Size to 60 323
+        Set Location to 357 362
         Set Label to "More Database Actions:"
         Set peAnchors to anBottomLeftRight
 
@@ -840,6 +840,14 @@ Object oFilelistFixerView is a dbView
             Set Label to "Extract Relationships"
             Set Checked_State to True   
             Set psToolTip to "Check this if you would like to extract relationships from the current .int file, and add that info to the new .int file."
+            Set pbCreateInfoItem to False
+
+            Function IsEnabled Returns Boolean
+                String sDatabase
+                Get psDatabase of ghoDUF to sDatabase
+                Function_Return (sDatabase <> "")
+            End_Function
+    
         End_Object
 
         Object oRemoveUColumns_cb is a cRDCCheckBox
@@ -847,25 +855,20 @@ Object oFilelistFixerView is a dbView
             Set Location to 31 6
             Set Label to "Remove U_ Columns"
             Set Checked_State to True
-            Set psToolTip to "Check this if you would like to Remove Uppercased Columns. It is strongly suggested to do so IF you have applied an General Insensitive collation like 'Latin1_General_CI_AS'. Please read the help about the subject first, by clicking the help button 'Remove Uppercased Columns'"
+            Set psToolTip to "Check the box if you would like to Remove Uppercased Columns. It is strongly suggested to do so IF you have applied an General Insensitive collation like 'Latin1_General_CI_AS'. Please read the help about the subject first, by clicking the help button 'Remove Uppercased Columns'"
+            Set pbCreateInfoItem to False
+
+            Function IsEnabled Returns Boolean
+                String sDatabase
+                Get psDatabase of ghoDUF to sDatabase
+                Function_Return (sDatabase <> "")
+            End_Function
+    
         End_Object
 
-        Object oUColHelp_btn is a cRDCButton
-            Set Size to 12 120
-            Set Location to 45 4
-            Set Label to "Remove Uppercased Columns"
-            Set peAnchors to anNone
-            Set psImage to "ActionHelp.ico"
-        
-            Procedure OnClick
-                Runprogram Shell Background "https://docs.dataaccess.com/dataflexhelp/index.htm#t=mergedProjects%2FDevelopmentGuide%2FIgnore_Case_Support_and_Uppercase_Columns.htm"
-            End_Procedure
-        
-        End_Object  
-
         Object oSelectCollationHelp_btn is a cRDCButton
-            Set Size to 12 124
-            Set Location to 45 127
+            Set Size to 12 116
+            Set Location to 45 5
             Set Label to "Select the Right SQL Collation"
             Set peAnchors to anNone
             Set psImage to "ActionHelp.ico"
@@ -876,9 +879,22 @@ Object oFilelistFixerView is a dbView
         
         End_Object  
 
+        Object oUColHelp_btn is a cRDCButton
+            Set Size to 12 116
+            Set Location to 45 125
+            Set Label to "Remove Uppercased Columns"
+            Set peAnchors to anNone
+            Set psImage to "ActionHelp.ico"
+        
+            Procedure OnClick
+                Runprogram Shell Background "https://docs.dataaccess.com/dataflexhelp/index.htm#t=mergedProjects%2FDevelopmentGuide%2FIgnore_Case_Support_and_Uppercase_Columns.htm"
+            End_Procedure
+        
+        End_Object  
+
         Object oRecreateAllIntFiles_btn is a cRDCButton
             Set Size to 32 61
-            Set Location to 11 126
+            Set Location to 11 91
             Set Label to "Recreate All *.int files"
             Set MultiLineState to True
             Set psToolTip to "This will recreate all .int files."
@@ -918,9 +934,51 @@ Object oFilelistFixerView is a dbView
 
         End_Object
 
+        Object oRemove_U_Columns_btn is a cRDCButton
+            Set Size to 32 61
+            Set Location to 11 159
+            Set Label to "Remove Uppercased Columns"
+            Set MultiLineState to True
+            Set psToolTip to "This will remove Uppercased (U_) columns from all tables. This will also be done when the 'Recreate All .int files' button is clicked while the 'Remove U_ Columns' checkbox is selected, but with this button Only the columns are being removed."
+            Set psImage to "TableColumnDelete.ico"
+            Set piImageSize to 24
+            Set pbAutoActivate to True
+            
+            Procedure OnClick
+                Integer iRetval iCounter
+                Boolean bBackup
+                String sDataPath sBackup sHelpLable
+                
+                Get psDataPath of (phoWorkspace(ghoApplication)) to sDataPath
+                Get vFolderFormat sDataPath to sDataPath
+                Move (sDataPath + CS_BackupFolder) to sBackup
+                Get YesNo_Box ("This will remove all uppercased columns (U_ computed columns). A backup of .int files and the Filelist.cfg will be created here:\n" + String(sBackup) * "folder.\n\nContinue?") to iRetval
+                If (iRetval <> MBR_Yes) Begin
+                    Procedure_Return    
+                End
+                Get YesNo_Box "Would you like to make a backup copy of the SQL database and .int files?" to iRetval
+                Move (iRetval = MBR_Yes) to bBackup
+                
+                Get FindAllUColumnsFiles bBackup to iCounter
+                If (iCounter > 0) Begin
+                    Send Info_Box ("Ready!" * "Uppercased columns for:" * String(iCounter) * "tables were removed.")
+                End
+                Else If (iCounter = 0) Begin
+                    Send Info_Box "Ready! No changes made."
+                End
+            End_Procedure
+            
+            Function IsEnabled Returns Boolean
+                String sDatabase
+                Get psDatabase of ghoDUF to sDatabase
+                Function_Return (sDatabase <> "")
+            End_Function
+
+        End_Object
+
         Object oMoveUnusedDatFiles_btn is a cRDCButton
             Set Size to 32 61
-            Set Location to 11 189
+            Set Location to 11 257
             Set Label to "Move *.dat files to Backup"
             Set MultiLineState to True
             Set psToolTip to "This will move all *.dat related files, that does not exist in the Filelist, to the workspace's '.\Data\Backup' folder."
@@ -1741,6 +1799,117 @@ Object oFilelistFixerView is a dbView
         Function_Return bOK
     End_Function 
     
+    Function FindAllUColumnsFiles Boolean bBackup Returns Integer
+        Integer iRetval iSize iCount iCounter iDriver iLastErr iErrLine
+        tFilelist[] FileListArray
+        String[] asIntFileData
+        String sDriver sIntFileName sConnectionID sErrorText sText sDataPath
+        Boolean bExists bOK bIsSystem bAnsi bIsAlias bIsSQL bCurrentUcaseMode bErr
+        Handle hTable
+    
+        Get pFileListArray of ghoDUF to FileListArray
+        If (SizeOfArray(FileListArray) = 0) Begin
+            Send RefreshData
+            Get pFileListArray of ghoDUF to FilelistArray
+        End
+    
+        Move 0 to iCounter
+        Move Err to bErr
+        Move LastErr to iLastErr
+        Move ErrLine to iErrLine
+        Move False to Err
+        Move 0 to LastErr
+        Move 0 to ErrLine 
+        
+        If (bBackup = True) Begin
+            Get MakeSQLDatabaseBackup to bOK
+        End
+        
+        Send OpenLogFile
+        Get psDriverID of ghoDUF to sDriver
+        Get DriverIndex of ghoDUF sDriver to iDriver
+        // Note: If Ignore_Ucase_Support is set to false, the Connectivity Kit will 
+        //       behave the same as earlier driver versions.
+        //       This means that "U_" columns will be kept during a restructure.
+        Get_Attribute DF_DRIVER_IGNORE_UCASE_SUPPORT of iDriver to bCurrentUcaseMode
+        Set_Attribute DF_DRIVER_IGNORE_UCASE_SUPPORT of iDriver to True
+        Get psDataPath of (phoWorkspace(ghoApplication)) to sDataPath
+        Get psConnId to sConnectionID 
+        Get pbToANSI of ghoDUF to bAnsi 
+        Move (SizeOfArray(FileListArray)) to iSize     
+        Decrement iSize
+        Set psBackupFolder to ""
+        
+        // Each Start_Restructure/End_Restructure calls the "Callback" message 3 times,
+        // and each one does a "Send DoAdvance" to the ghoProgressBar...
+        Send StartStatusPanel "Finding and removing 'U_' columns" "" (iSize * 3)
+    
+        For iCount from 0 to iSize
+            Move FileListArray[iCount].sDriver  to sDriver
+            Move FileListArray[iCount].hTable   to hTable
+            Get _IsSQLEntry of ghoDUF hTable    to bIsSQL
+            Move FileListArray[iCount].bIsAlias to bIsAlias                   
+            Set Message_Text of ghoStatusPanel to ("Table number:" * String(hTable))
+            If (bIsSQL = True and bIsAlias = False) Begin
+                Move (FileListArray[iCount].sNoDriverRootname + ".int") to sIntFileName
+                If (sDriver <> DATAFLEX_ID) Begin
+                    Open hTable
+                    Get _IsSystemFile of ghoDUF hTable to bIsSystem
+                    Send UpdateStatusPanel ("Searhing Table:" * String(FileListArray[iCount].sNoDriverRootname))
+                    
+                    Get FindSingleUColumnsFile hTable sDriver sConnectionID bIsSystem sIntFileName bBackup to bOK
+                    
+                    Close hTable
+                    If (bOK) Begin 
+                        Increment iCounter
+                    End
+                    Else Begin
+                        Send WriteError ("Searching for 'U_' columns for table:" * String(FileListArray[iCount].sNoDriverRootname) * "failed.") 
+                    End
+                End
+            End
+            Send DoAdvance of ghoStatusPanel 
+        Loop
+    
+        Set_Attribute DF_DRIVER_IGNORE_UCASE_SUPPORT of iDriver to bCurrentUcaseMode
+        Set psBackupFolder to ""
+        Send CloseLogFile
+        Send StopStatusPanel
+        Move bErr to Err
+        Move iLastErr to LastErr
+        Move iErrLine to ErrLine
+        If (iCounter > 0) Begin
+            Send RefreshData
+        End
+    
+        Function_Return iCounter
+    End_Function
+
+    // Helper function to recreate a single .int file
+    Function FindSingleUColumnsFile Handle hTable String sDriver String sConnectionID Boolean bIsSystem String sIntFileName Boolean bBackup Returns Boolean
+        Boolean bOK bAnsi bIsHidden
+        String sErrorText sText
+        Integer iRetval iDbType
+        String[] asIntFieldsData asIntFileHiddenFields asFullIntFileData
+    
+        Get pbToANSI of ghoDUF to bAnsi 
+        // 1. Backup the .int file (also backs-up Filelist.cfg)
+        If (bBackup = True) Begin    
+            Get BackupIntFile sIntFileName to bOK
+        End
+        // 2. Find "NEXT_COLUMN_HIDDEN UPPERCASED" attributes from the SQL back-end.
+        Get CollectHiddenAttributes hTable sDriver asIntFieldsData (&bIsHidden) to asIntFieldsData
+        If (bIsHidden = True) Begin
+            // 3. Merge the new .int file with collected data:
+            Get MergeIntFileData hTable sIntFileName asIntFieldsData to asFullIntFileData
+            // 4. Write the updated .int file to disk:
+            Get WriteArrayToFile sIntFileName asFullIntFileData to bOK 
+            // 5. Restructure to remove U_ columns
+            Get RemoveU_Columns hTable sDriver to bOK
+        End
+        Function_Return bOK
+    End_Function 
+    
     Function RemoveU_Columns Handle hTable String sDriver Returns Boolean
         Boolean bErr bOK
         Integer iColumn
@@ -1898,12 +2067,6 @@ Object oFilelistFixerView is a dbView
         String[] asColumnsNamesOrg asColumnsNames asFieldTimeDates asFieldHidden
         
         Move False to bIsHidden
-        Open hTable
-        Get_Attribute DF_FILE_OPENED of hTable to bOpen
-        If (bOpen = False) Begin
-            Function_Return asIntFileData
-        End
-        
         Get piDbType of ghoDUF to iDbType
         Get _SqlUtilEnumerateColumnsByHandle of ghoDUF sDriver hTable to asColumnsNamesOrg
         Get SanitizeColumnNames asColumnsNamesOrg to asColumnsNames
