@@ -9009,7 +9009,7 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
 
     // Scans to see if all tables can be opened exclusivly. I.e. that nobody else is running the application.
     // It does not check Flexerrs, CodeType & CodeMast
-    // Returns: False if nobody else is running
+    // Returns: True if nobody else is running
     //          True if at least one table is open by another process (e.g. another user is running the application)
     // N.B! Only works for Embedded DataFlex Tables! It will _not_ work for Sql tables because; these
     //      tables are not locked as DataFlex tables are.
