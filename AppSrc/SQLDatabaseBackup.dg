@@ -59,7 +59,7 @@ Object oSQLDatabaseBackup_dg is a ModalPanel
     Object oUseDefaultBackupFolder_cb is a CheckBox
         Set Size to 10 50
         Set Location to 50 71
-        Set Label to "Use Default SQL Backup Folder"
+        Set Label to "Use SQL Server default backup folder"
         Set Checked_State to True
 
         Procedure OnChange
@@ -75,7 +75,7 @@ Object oSQLDatabaseBackup_dg is a ModalPanel
         Set Location to 62 71
         Set Label_Justification_Mode to JMode_Right
         Set Label_Col_Offset to 2
-        Set Label to "Path"
+        Set Label to "Or use path:"
         Set Prompt_Button_Mode to PB_PromptOn
         Set peAnchors to anTopLeftRight
         Set Enabled_State to False
