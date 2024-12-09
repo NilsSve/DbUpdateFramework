@@ -4353,6 +4353,7 @@ Class cBaseDbUpdateFuncLib is a cObject
         End
         Function_Return sDriverID
     End_Function
+
     // Does the Rootname points to a .dat file?
     Function _IsDatEntry Handle hTable Returns Boolean
         Boolean bFound bIsIntEntry
@@ -4425,7 +4426,6 @@ Class cBaseDbUpdateFuncLib is a cObject
         Get_Attribute DF_FILE_LOGICAL_NAME of hTable to sLogicalName
         Get_Attribute DF_FILE_ROOT_NAME    of hTable to sRootName
         Get _TableNameOnly sRootName to sNoDriverRootname
-        Get _IsIntEntry hTable to bIsIntTable
         // Do we have an Alias table?
         Move (Lowercase(sLogicalName) <> Lowercase(sNoDriverRootname)) to bFound
         Function_Return bFound
