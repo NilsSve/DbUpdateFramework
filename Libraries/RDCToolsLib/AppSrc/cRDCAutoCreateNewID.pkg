@@ -1,4 +1,4 @@
-Use Windows.pkg
+﻿Use Windows.pkg
 Use Datadict.pkg
 
 // Mixin class to auto-create a unique ID value - without the need to use a system file to
@@ -54,7 +54,7 @@ Class cRDCAutoCreateNewIDMixin is a Mixin
 End_Class
 
 // This function is used when working with e.g. the global record buffer and _not_
-// with datadictionaries - then use the above mixin class instead.
+// with datadictionaries - in which case the mixin class above should be used.
 // The syntax for the AutoCreateNewID function is the same as in the
 // above mixin class - a part from the function name.
 // Example:
