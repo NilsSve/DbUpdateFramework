@@ -1215,22 +1215,22 @@ Class cBaseDbUpdateFuncLib is a cObject
     End_Function
 
     // Only done for MSSQLDRV_ID so far...
-    Function _SqlEnumerateDatabaseCollations String sDriverID Returns String[]
+    Function _SqlEnumerateDatabaseCollations String sDriverID Returns tSQLCollation[]
         String sSQL sConnectionID sConnectionString sSelect sName sPre
-        String sDescription sFrom sSys sValue sPrevious
+        String sDescription sFrom sSys sValue sDescr sPrevious
         Handle hStmt hoSQLManager hoSQLConnect
-        Integer iFetchResult iRows iColumn iPos
+        Integer iFetchResult iRows iColumn iPos iRow
         tSQLConnection SQLConnection
-        String[] asCollations
+        tSQLCollation[] aCollations
         
         If (sDriverID = "") Begin
             Error DFERR_PROGRAM "The database driver ID was not passed as a parameter to the '_SqlEnumerateDatabaseCollations' function"
-            Function_Return asCollations
+            Function_Return aCollations
         End
 
         // Only done for MSSQLDRV_ID so far...
         If (sDriverID <> MSSQLDRV_ID) Begin
-            Function_Return asCollations
+            Function_Return aCollations
         End                 
 
         Get phoSQLManager to hoSQLManager
@@ -1243,7 +1243,7 @@ Class cBaseDbUpdateFuncLib is a cObject
         Send Trap_Error of Error_Object_Id CLIERR_LOGIN_UNSUCCESSFUL
         If (LastErr = CLIERR_LOGIN_UNSUCCESSFUL) Begin
             Error DFERR_PROGRAM ("Login failed to the database server. The following connect string was used:\n" + sConnectionString)
-            Function_Return asCollations
+            Function_Return aCollations
         End
 
         Get SqlOpen of hoSQLConnect to hStmt
@@ -1251,9 +1251,10 @@ Class cBaseDbUpdateFuncLib is a cObject
         If (hStmt = 0) Begin
             Send SqlDisconnect of hoSQLManager
             Error DFERR_PROGRAM CS_DUF_ConnectError
-            Function_Return asCollations
+            Function_Return aCollations
         End
-
+        
+        Move 0 to iRow
         Get _SqlFindKeyWord CI_SQLSelect      to sSelect
         Get _SqlFindKeyWord CI_SQLName        to sName
         Get _SqlFindKeyWord CI_SQLDescription to sDescription
@@ -1265,19 +1266,21 @@ Class cBaseDbUpdateFuncLib is a cObject
         //   from sys.fn_helpcollations();
         Move (sSelect  * String(sName) * String(",") * String(sDescription) * String(sFrom) * String(sSys) * String(".fn_helpcollations();")) to sSQL
 
-        Move 1 to iColumn
         Send SqlExecDirect of hStmt sSQL
         Get SQLGetStmtAttribute of hStmt SqlSTMTATTRIB_ROWCOUNT to iRows
         Repeat
             Get SQLFetch of hStmt to iFetchResult
             If (iFetchResult <> 0) Begin
-                Get SQLColumnValue of hStmt iColumn to sValue 
+                Get SQLColumnValue of hStmt 1 to sValue 
                 If (sValue <> sPrevious) Begin         
                     // We need to skip all collations starting with "SQL" because they
                     // are obsolete and for pre-SQL Server 2000.
                     Move (Pos("SQL", Uppercase(sValue))) to iPos
                     If (iPos <> 1) Begin
-                        Move (Trim(sValue)) to asCollations[SizeOfArray(asCollations)
+                        Move (Trim(sValue)) to aCollations[iRow].sCollation
+                        Get SQLColumnValue of hStmt 2 to sDescr
+                        Move (Trim(sDescr)) to aCollations[iRow].sDescription
+                        Increment iRow
                     End
                 End
                 Move sValue to sPrevious
@@ -1286,7 +1289,7 @@ Class cBaseDbUpdateFuncLib is a cObject
         Send SQLClose of hStmt
         Send SQLDisconnect of hoSQLConnect
 
-        Function_Return asCollations
+        Function_Return aCollations
     End_Function
 
     // To enumerate SQL database resources with ESQL and return the result as a string array,
@@ -1804,7 +1807,7 @@ Class cBaseDbUpdateFuncLib is a cObject
         Move "" to sRetval
         Get psDriverID to sDriverID
         Get _SqlUtilEnumerateColumns sDriverID sTableName to asColumnNamesArray
-        If (iColumn <= SizeOfArray(asColumnNamesArray)) Begin
+        If (iColumn > -1 and iColumn <= SizeOfArray(asColumnNamesArray)) Begin
             Move asColumnNamesArray[iColumn] to sRetval
         End
 
@@ -2258,14 +2261,14 @@ Class cBaseDbUpdateFuncLib is a cObject
                 Get _DriverIDFromRootName sRootName to sDriver
                 Set Message_Text of ghoStatusPanel to ("Reading table" * String(hTable) * "LogicalName =" * sLogicalName)
                 Send DoAdvance of ghoProgressBar
-                Send Ignore_All of Error_Object_Id
+//                Send Ignore_All of Error_Object_Id
                 Move False to bIsSystem
                 Open hTable
                 Get_Attribute DF_FILE_OPENED of hTable to bOpened
                 If (bOpened = True) Begin
                     Get_Attribute DF_FILE_IS_SYSTEM_FILE of hTable to bIsSystem
                 End
-                Send Trap_All of Error_Object_Id
+//                Send Trap_All of Error_Object_Id
                 Close hTable
                 Get_Attribute DF_FILE_DISPLAY_NAME of hTable to sDisplayName
                 Get _TableNameOnly sRootName to sNoDriverRootname
@@ -4065,7 +4068,8 @@ Class cBaseDbUpdateFuncLib is a cObject
                         
                         // *** Execute script lines: ***
                         Send SqlExecDirect of hoStmt sStmt
-
+//                        Get SQLFetchResultsetValues of hoStmt to asSQLQueryMessages
+                        
                         If (bCreateScriptFile = True) Begin
                             Writeln channel iCh sStmt 
                             Writeln channel iCh "GO"
