@@ -16,6 +16,7 @@ Use cMyRichEdit.pkg
 Use vWin32fh.pkg
 Use DriverIntFileSettings.dg
 Use SQLDatabaseBackup.dg
+Use SQLCollations.sl
 
 // Just to get a shorter handle name
 Global_Variable Handle ghoDUF 
@@ -52,7 +53,7 @@ Object oFilelistFixerView is a dbView
         Set Size to 12 387
         Set Location to 14 77
         Set Label to "Filelist.cfg:" 
-        Set Prompt_Object to Self
+        Set Prompt_Object to Self 
         
         Property Boolean pbFirst True
         
@@ -89,6 +90,7 @@ Object oFilelistFixerView is a dbView
                     Send UpdateConnIdData of oConnidInfo_edt
                     Get ChangeFilelistPathing of ghoApplication sFileList to bOK
                     Send UpdateDriverIniFile of oDriver_fm
+                    Send Combo_Fill_List of oCollatingSequence_fm
                     Get ParseFolderName sFileList to sPath
                     Get vFolderFormat sPath to sPath
                     Set Value of oLogFile_fm to (sPath + CS_ReportFileName)
@@ -156,10 +158,11 @@ Object oFilelistFixerView is a dbView
         Set peAnchors to anTopLeftRight
 
         Object oConnidInfo_edt is a cMyRichEdit
-            Set Size to 75 449
+            Set Size to 75 448
             Set Location to 23 5
             Set peAnchors to anNone
             Set Skip_State to True
+            Set pbUseSpellChecker to False
             
             Procedure Page Integer iPageObject
                 Forward Send Page iPageObject
@@ -167,7 +170,7 @@ Object oFilelistFixerView is a dbView
             End_Procedure
             
             Procedure UpdateConnIdData
-                String sDFConnidFile sText sDatapath sDatabase
+                String sDFConnidFile sText sDatapath sServer sDatabase
                 Boolean bExists
                 tConnection[] Connections
                 
@@ -197,7 +200,9 @@ Object oFilelistFixerView is a dbView
                     Send AppendTextLn ("connection=" + String(Connections[0].sString))
                     Send AppendTextLn ("trusted_connection=" + String(Connections[0].bTrustedConnection))
                     Send AppendTextLn ("disabled=" + String(Connections[0].bDisabled)) 
-                    Send Beginning_of_Data  
+                    Send Beginning_of_Data
+                    Get psServer   of ghoDUF to sServer
+                    Set Value of oDatabaseServer_fm to sServer
                     Get psDatabase of ghoDUF to sDatabase
                     Set Value of oDatabase_fm to sDatabase
                 End   
@@ -295,13 +300,38 @@ Object oFilelistFixerView is a dbView
     
         End_Object
         
-        Object oDatabase_fm is a cRDCForm
-            Set Label to "Database Name:"
-            Set Size to 12 387
+        Object oDatabaseServer_fm is a cRDCForm
+            Set Label to "Database Server:"
+            Set Size to 12 168
             Set Location to 119 66
             Set Label_Col_Offset to 0
             Set peAnchors to anNone
             Set Label_Row_Offset to 1
+            Set pbAutoEnable to True
+
+            Function IsEnabled Returns Boolean
+                String sServer
+                Get psServer of ghoDUF to sServer
+                Function_Return (sServer <> "")
+            End_Function
+    
+        End_Object
+
+        Object oDatabase_fm is a cRDCForm
+            Set Label to "Database Name:"
+            Set Size to 12 157
+            Set Location to 119 296
+            Set Label_Col_Offset to 0
+            Set peAnchors to anNone
+            Set Label_Row_Offset to 1
+            Set pbAutoEnable to True
+
+            Function IsEnabled Returns Boolean
+                String sDatabase
+                Get psDatabase of ghoDUF to sDatabase
+                Function_Return (sDatabase <> "")
+            End_Function
+    
         End_Object
 
         Object oBackupSQLDatabase_btn is a cRDCButton
@@ -321,30 +351,16 @@ Object oFilelistFixerView is a dbView
                 End
             End_Procedure
 
+            Function IsEnabled Returns Boolean
+                Boolean bExists
+                String sFileName
+                Get psConnIdFile to sFileName
+                File_Exist sFileName bExists
+                Function_Return bExists
+            End_Function
+    
         End_Object
-        
-        Object oConnIDErrors_edt is a cMyRichEdit
-            Set Size to 74 77
-            Set Location to 23 557
-            Set Label to "DFCONNID Changes:"
-            Set peAnchors to anTopLeftRight
-            Set Label_Col_Offset to -5
-        End_Object
-        
-        Object oConnIDErrors_fm is a cNumForm
-            Set Size to 12 34
-            Set Location to 103 600
-            Set Label to "Counter:"
-            Set peAnchors to anTopRight
-        End_Object
-        
-        Object oNumberOfSQLTables_fm is a cNumForm
-            Set Label to "Tot SQL Tables:"
-            Set Size to 12 34
-            Set Location to 119 600
-            Set peAnchors to anTopRight
-        End_Object
-        
+
         Object oCurrentCollatingSequence_fm is a cRDCForm
             Set Size to 13 387
             Set Location to 135 66
@@ -376,7 +392,7 @@ Object oFilelistFixerView is a dbView
             End_Function
     
         End_Object
-        
+
         Object oCollatingSequenceHelp_btn is a cRDCButton
             Set Size to 12 50
             Set Location to 135 458
@@ -388,31 +404,32 @@ Object oFilelistFixerView is a dbView
             End_Procedure
         
         End_Object
-       
-        Object oCollatingSequence_fm is a cRDCComboForm
+
+        Object oCollatingSequence_fm is a cRDCForm
             Set Size to 13 387
             Set Location to 152 66
             Set Label to "Change Collating:"
-            Set pbAutoEnable to True            
-            Set Entry_State to True
-    
-            Procedure Combo_Fill_List
-                String sCollatingSequence
-                Send Combo_Add_Item "Latin1_General_CI_AI"
-                Send Combo_Add_Item "Latin1_General_100_CI_AI"
-                Send Combo_Add_Item "SQL_Latin1_General_CP1_CI_AI"
-                Send Combo_Add_Item "Latin1_General_CI_AS"
-                Send Combo_Add_Item "Latin1_General_100_CI_AS"
-                Send Combo_Add_Item "SQL_Latin1_General_CP1_CI_AS"  
-                Send Combo_Add_Item "Latin1_General_100_CI_AS_SC_UTF8"
-                Get Value of oCurrentCollatingSequence_fm to sCollatingSequence
-                If (sCollatingSequence <> "") Begin
-                    Send Combo_Add_Item sCollatingSequence
-                    Set Value to oCurrentCollatingSequence_fm
+            Set pbAutoEnable to True
+            Set Prompt_Object to (oSQLCollations(Self))
+            Set Prompt_Button_Mode to PB_PromptOn
+            
+            Procedure Prompt
+                tSQLCollation[] aCollations
+                tSQLCollation Collation
+                String sDriverID sCollation
+                
+                Get psDriverID of ghoDUF to sDriverID
+                Get _SqlEnumerateDatabaseCollations of ghoDUF sDriverID to aCollations
+                Get Value to Collation.sCollation
+                Get psToolTip to Collation.sDescription
+                Get ActivateSQLCollations Collation aCollations to Collation
+                Get Value to sCollation
+                If (sCollation <> "" and Collation.sCollation = "") Begin
+                    Set psToolTip to ""
+                    Procedure_Return
                 End
-                Else Begin
-                    Set Value to "Latin1_General_CI_AS"
-                End
+                Set Value to Collation.sCollation
+                Set psToolTip to Collation.sDescription
             End_Procedure
     
             Function IsEnabled Returns Boolean
@@ -422,7 +439,7 @@ Object oFilelistFixerView is a dbView
             End_Function
     
         End_Object
-        
+
         Object oCollatingSequence_btn is a cRDCButton
             Set Size to 12 50
             Set Location to 152 458
@@ -439,7 +456,7 @@ Object oFilelistFixerView is a dbView
                 Get Value of oCurrentCollatingSequence_fm to sCurrentCollatingSequence
                 Get Value of oCollatingSequence_fm to sCollatingSequence              
                 If (sCurrentCollatingSequence = sCollatingSequence) Begin
-                    Send Info_Box "Nope that won't work. The database is already using this collating sequence."
+                    Send Info_Box "Nope that won't work. The database is already using the selected collating sequence."
                     Procedure_Return
                 End
                 
@@ -483,9 +500,9 @@ Object oFilelistFixerView is a dbView
                 Append sSteps "-- Step 3: Drop Dependencies and Schema-Bound Objects" CS_CRLF
                 Append sSteps "-- Step 4: Backup all index information" CS_CRLF 
                 Append sSteps "-- Step 5: Drop all dependent indexes and constraints" CS_CRLF
-                Append sSteps "-- Step 6: Backup and Drop Computed Columns" CS_CRLF
+                Append sSteps "-- Step 6: Backup and Drop Columns" CS_CRLF
                 Append sSteps "-- Step 7: Change Database Collation" CS_CRLF 
-                Append sSteps "-- Step 8: Recreate Computed Columns" CS_CRLF
+                Append sSteps "-- Step 8: Recreate Columns" CS_CRLF
                 Append sSteps "-- Step 9: Step 9: Recreate indexes and constraints" CS_CRLF 
                 Append sSteps "-- Step 10: Recreate Schema-Bound Objects" CS_CRLF 
                 Append sSteps "-- Step 11: Cleanup Temporary Tables" CS_CRLF 
@@ -493,9 +510,9 @@ Object oFilelistFixerView is a dbView
             End_Function
                 
             Function IsEnabled Returns Boolean
-                String sDatabase
-                Get psDatabase of ghoDUF to sDatabase
-                Function_Return (sDatabase <> "")
+                String sValue
+                Get Value of oCollatingSequence_fm to sValue
+                Function_Return (sValue <> "")
             End_Function
     
         End_Object
@@ -503,8 +520,8 @@ Object oFilelistFixerView is a dbView
         Object oMakeBackup_cb is a cRDCCheckBox
             Set Size to 12 55
             Set Location to 154 515
-            Set Label to "Make Database Backup"
-            Set psToolTip to "If checked, a database backup with a name that ends with todays date and time, is made before attempting to change the database collation."
+            Set Label to "Create Database Backup"
+            Set psToolTip to "If checked, a database backup with a name that ends with todays date and time, is taken before attempting to change the database collation."
             Set Checked_State to True
             
             Function IsEnabled Returns Boolean
@@ -513,6 +530,28 @@ Object oFilelistFixerView is a dbView
                 Function_Return (sDatabase <> "")
             End_Function
     
+        End_Object
+
+        Object oNumberOfSQLTables_fm is a cNumForm
+            Set Label to "Tot SQL Tables:"
+            Set Size to 12 34
+            Set Location to 119 600
+            Set peAnchors to anTopRight
+        End_Object
+        
+        Object oConnIDErrors_edt is a cMyRichEdit
+            Set Size to 74 77
+            Set Location to 23 557
+            Set Label to "DFCONNID Changes:"
+            Set peAnchors to anTopLeftRight
+            Set Label_Col_Offset to -5
+        End_Object
+        
+        Object oConnIDErrors_fm is a cNumForm
+            Set Size to 12 34
+            Set Location to 103 600
+            Set Label to "Counter:"
+            Set peAnchors to anTopRight
         End_Object
     
     End_Object
@@ -1065,7 +1104,7 @@ Object oFilelistFixerView is a dbView
         
         Procedure OnCreate
             Set phoOrgError_Object_Id to Error_Object_Id
-            Move Self to Error_Object_Id
+            Move Self to Error_Object_Id 
             Move Self to ghoErrorHandler
         End_Procedure
         Send OnCreate
@@ -1105,6 +1144,10 @@ Object oFilelistFixerView is a dbView
             Function_Return sErrText
         End_Function
         
+        Procedure UnhandledErrorDisplay Integer iErrNum String sMessage
+            Send WriteError ("Error:" * String(iErrNum) * "at line:" * String(iErrNum) * "Text:" * String(sMessage))
+        End_Procedure            
+
         Procedure Ignore_Error Integer iError
         End_Procedure
         
@@ -1135,6 +1178,7 @@ Object oFilelistFixerView is a dbView
         String sDataPath
         tFilelist[] FileListArray
         
+        Send OnCreate of oLocalError_Info_Object
         Get _UtilNumberOfFileListTables of ghoDUF to iCount
         Send StartStatusPanel "Filling Filelist Struct Array" "" iCount
 
