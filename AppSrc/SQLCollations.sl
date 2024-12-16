@@ -1,6 +1,7 @@
 ﻿Use cRDCModalPanel.pkg
 Use DFClient.pkg
-Use cCJGridColumnRowIndicator.pkg
+Use cCJGridColumnRowIndicator.pkg 
+Use cRDCCJGrid.pkg
 Use cCJGridColumn.pkg
 Use cDbUpdateFunctionLibrary.inc
 Use cRDCCJGridColumnSuggestion.pkg
@@ -17,22 +18,13 @@ Object oSQLCollations is a cRDCModalPanel
     Property tSQLCollation psSelectedCollation
     Property Boolean pbOkButton False
     
-    Object oSelList is a cCJGrid
-        Set peAnchors to anAll
+    Object oSelList is a cRDCCJGrid
         Set Size to 216 372
         Set Location  to 6 6
-        Set pbRestoreLayout to True
-        Set psLayoutSection to (Name(Self) + "_grid")
         Set pbHeaderPrompts to False
-        Set piTooltipMaxWidth to 400
         Set pbAllowInsertRow to False
-        Set pbSelectionEnable to True
         Set pbAllowAppendRow to False
-        Set pbShowRowFocus to True 
         Set pbEditOnClick to False
-        Set pbUseAlternateRowBackgroundColor to True
-        Set peVisualTheme to xtpThemeVisualStudio2012Light
-        Set peAnchors to anAll
 
         Object oCJGridColumnRowIndicator is a cCJGridColumnRowIndicator
             Set piWidth to 5
