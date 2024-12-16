@@ -398,6 +398,7 @@ Object oFilelistFixerView is a dbView
             Set Location to 135 458
             Set Label to "Help"
             Set psImage to "ActionHelp.ico"
+            Set psToolTip to "Help about using collations for a SQL database."
         
             Procedure OnClick
                 Runprogram Shell Background "https://learn.microsoft.com/en-us/sql/relational-databases/collations/collation-and-unicode-support?view=sql-server-ver16#SQL-collations"
