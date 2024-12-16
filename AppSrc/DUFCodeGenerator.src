@@ -82,20 +82,19 @@ Object oMain is a Panel
         #IF (!@ > 182)
             Set pbAutoResizeIcons to True
             Set pbTabbedWorkspaces to True
-            Set peVisualTheme to xtpThemeOffice2013Publisher
+            Set peVisualTheme to xtpThemeOffice2016Publisher //xtpThemeOffice2013Publisher
             Set pbLargeIcons to True
         #ENDIF
 
         Procedure OnCreateCommandBars
             Integer eTheme
             Forward Send OnCreateCommandBars
-
-#IF (!@ < 191)
-            Get ReadDword of ghoApplication CS_PropertiesKeyWord CS_ThemeKeyWord xtpThemeWhidbey to eTheme
-#ELSE
-            Get ReadDword of ghoApplication CS_PropertiesKeyWord CS_ThemeKeyWord xtpThemeOffice2013Publisher to eTheme
-#ENDIF
-            Send SetTheTheme eTheme
+//#IF (!@ < 191)
+//            Get ReadDword of ghoApplication CS_PropertiesKeyWord CS_ThemeKeyWord xtpThemeWhidbey to eTheme
+//#ELSE
+//            Get ReadDword of ghoApplication CS_PropertiesKeyWord CS_ThemeKeyWord xtpThemeOffice2013Publisher to eTheme
+//#ENDIF
+//            Send SetTheTheme eTheme
             Send DisplayTabWorkspace
         End_Procedure
 
@@ -128,18 +127,24 @@ Object oMain is a Panel
             Set pvComObject     of hoPaintManager to vPaintManager
 
             // Sets the tab-pages to display on the left side, instead of at the top:
-            Set ComPosition     of hoPaintManager to xtpTabPositionLeft
+//            Set ComPosition     of hoPaintManager to xtpTabPositionLeft
 
             // This will truncate the middle part of long items
             Set ComDrawTextPathEllipsis of hoPaintManager to True
             Set ComLayout               of hoPaintManager to xtpTabLayoutMultiRow
 
+            Move 24 to iSize
+            Send ComSetIconSize of hoPaintManager iSize iSize   // Set icon size for Tab-workspace.
+            // To show or not to show tab-page icons...
+            Set ComShowIcons    of hoPaintManager to True 
+            
             Move 32 to iSize
             Send ComSetIconSize     of hoOptions False iSize iSize  // Set icon size for Toolbar buttons.
             Get Create (RefClass(cCJPaintManager)) to hoPaintManager
             Get ComPaintManager of hoPaintManager  to vPaintManager
             Set pvComObject     of hoPaintManager  to vPaintManager
             Set ComAutoResizeIcons of hoPaintManager to True
+
             Send Destroy of hoPaintManager
             Send ComRecalcLayout
             Send Destroy of hoTab
@@ -161,16 +166,28 @@ Object oMain is a Panel
             Broadcast Recursive Set Color of (Client_Id(phoMainPanel(ghoApplication))) to iColor
         End_Procedure
 
-        Object oActions_Toolbar is a cCJToolbar
+//        Object oActions_Toolbar is a cCJToolbar
+//            Set pbCloseable to False
+//            Set pbCustomizable to False
+//            Set pbShowExpandButton to False
+//            Set psTitle to "Actions"
+//        End_Object
+
+        // This is needed to get the "Key_Shift+Key_Tab" key combination to activate
+        // the previous tab workspace view.
+
+        Object oEditToolBar is a cCJToolbar
+            Set psTitle to "Edit Toolbar"
             Set pbCloseable to False
             Set pbCustomizable to False
             Set pbShowExpandButton to False
-            Set psTitle to "Actions"
 
             Object oCodeGenerator_MenuItem is a cCJMenuItem
                 Set psCaption to "Code &Generator"
                 Set psImage to "SqlScript.ico"
                 Set peControlStyle to xtpButtonIconAndCaption
+                Set pbVisible to False
+
                 Procedure OnExecute Variant vCommandBarControl
                     Forward Send OnExecute vCommandBarControl
                     Set pbChecked to True
@@ -184,6 +201,7 @@ Object oMain is a Panel
                 Set psImage to "DbCompare.ico"
                 Set peControlStyle to xtpButtonIconAndCaption
                 Set pbChecked to True
+                Set pbVisible to False
 
                 Procedure OnExecute Variant vCommandBarControl  
                     Forward Send OnExecute vCommandBarControl
@@ -192,17 +210,6 @@ Object oMain is a Panel
                     Send Activate_oCompareDatabases_vw of (Client_Id(phoMainPanel(ghoApplication)))
                 End_Procedure
             End_Object
-
-        End_Object
-
-        // This is needed to get the "Key_Shift+Key_Tab" key combination to activate
-        // the previous tab workspace view.
-
-        Object oEditToolBar is a cCJToolbar
-            Set psTitle to "Edit Toolbar"
-            Set pbCloseable to False
-            Set pbCustomizable to False
-            Set pbShowExpandButton to False
 
             Object oCutToolbarItem is a cCJCutMenuItem
                 Set psImage to "ActionCut.ico"

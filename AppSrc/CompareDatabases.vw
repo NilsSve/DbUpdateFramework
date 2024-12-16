@@ -42,7 +42,8 @@ Global_Variable Integer giDifferenceTables
 Activate_View Activate_oCompareDatabases_vw for oCompareDatabases_vw
 Object oCompareDatabases_vw is a dbView
     Set Size to 323 490
-    Set Label to "Compare"
+    Set Label to "Compare Databases"
+    Set Icon to "DbCompare.ico"
     Set piMinSize to 89 211
     Set Border_Style To Border_Thick
     Set pbAutoActivate to True

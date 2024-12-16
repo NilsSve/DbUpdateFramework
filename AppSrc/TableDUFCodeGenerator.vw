@@ -42,7 +42,8 @@ End_Struct
 Activate_View Activate_oTableDUFCodeGenerator for oTableDUFCodeGenerator
 Object oTableDUFCodeGenerator is a dbView
     Set Size to 328 501
-    Set Label to "Generator"
+    Set Label to "Code Generator"
+    Set Icon to "SqlScript.ico"
     Set Border_Style to Border_Thick
     Set pbAcceptDropFiles to True
     Set pbAutoActivate to True
@@ -184,16 +185,8 @@ Object oTableDUFCodeGenerator is a dbView
             Set Location to 27 29
             Set Status_Help to "Select with the spacebar, or use the selection buttons above the grid"
             Set piLayoutBuild to 8
-            Set piTooltipMaxWidth to 400
-            Set pbAllowInsertRow to False
-            Set pbHeaderPrompts to False
-            Set pbSelectionEnable to True
-            Set pbShowFooter to True
-            Set pbAllowAppendRow to False
-            Set pbShowRowFocus to True
             Set pbReadOnly to False
             Set pbAllowEdit to True
-            Set pbAllowDeleteRow to False 
             Set pbEditOnClick to False
 
             Property Handle phDbVersion
@@ -518,7 +511,7 @@ Object oTableDUFCodeGenerator is a dbView
         Set peAnchors to anBottomLeftRight
         Set psLabel to "Configure Code Generation"
         Set psImage to "Settings.ico"   
-        Set psToolTip to "Select how code is generated. If you are not sure what the flags does, leave the default settings."
+        Set psToolTip to "Select what code is being generated. If you are not sure what the flags does, leave the default settings. See also the tooltips for each checkbox."
         
         Object oUseConnectionID_cb is a cSQLCheckBox
             Set Size to 9 78
