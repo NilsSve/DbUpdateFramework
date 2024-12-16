@@ -26,8 +26,6 @@ Object oDbDriverIntSettings_dg is a ModalPanel
         Set Location to 16 11
         Set peAnchors to anAll
         Set Label_Row_Offset to 3
-//        Set TextColor to clBlack
-//        Set Color to clGreenGreyLight
         Set piFontSize to 200
         Set psTypeFace to 'Consolas'
 
