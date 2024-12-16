@@ -9,14 +9,14 @@
 			<libraryID>Lib1</libraryID>
 		</library>
 		<library>
-			<libraryPath>Libraries\vwin32fh\StudioLibrary\vWin32fhLibraryDF24.0.sws</libraryPath>
-			<libraryTimeStamp>2023-04-30T09:36:03</libraryTimeStamp>
-			<libraryID>Lib3</libraryID>
-		</library>
-		<library>
 			<libraryPath>..\Lib\RDCToolsLib\RDCToolsLib24.0.sws</libraryPath>
 			<libraryTimeStamp>2024-09-24T09:11:21</libraryTimeStamp>
 			<libraryID>Lib4</libraryID>
+		</library>
+		<library>
+			<libraryPath>..\Lib\vwin32fh\StudioLibrary\vWin32fhLibraryDF24.0.sws</libraryPath>
+			<libraryTimeStamp>2024-12-15T12:02:58</libraryTimeStamp>
+			<libraryID>Lib2</libraryID>
 		</library>
 	</libraries>
 	<classes>
