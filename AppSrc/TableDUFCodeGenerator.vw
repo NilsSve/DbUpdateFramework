@@ -314,18 +314,6 @@ Object oTableDUFCodeGenerator is a dbView
                 Send Stop_StatusPanel of ghoStatusPanel
             End_Procedure
 
-            // Augment message to also show "# xx" for the selection column footer.
-            Procedure DoSetCheckboxFooterText
-                Integer iCol iSelected
-                Handle hoCol hoCheckbox_Col  
-                
-                Forward Send DoSetCheckboxFooterText
-                Get piColumnId of (phoCheckbox_Col(Self)) to iCol
-                Get ColumnObject iCol to hoCol
-                Get CheckedItems to iSelected
-                Set psFooterText of hoCol  to ("#" * String(iSelected))
-            End_Procedure
-
             Function SelectedTableNumber Returns Handle
                 Integer hTable iTableNo iRowNo
                 Handle hoDataSource
