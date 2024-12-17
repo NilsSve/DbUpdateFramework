@@ -184,7 +184,7 @@ Object oTableDUFCodeGenerator is a dbView
             Set Size to 56 423
             Set Location to 27 29
             Set Status_Help to "Select with the spacebar, or use the selection buttons above the grid"
-            Set piLayoutBuild to 8
+            Set piLayoutBuild to 10
             Set pbReadOnly to False
             Set pbAllowEdit to True
             Set pbEditOnClick to False
@@ -200,6 +200,9 @@ Object oTableDUFCodeGenerator is a dbView
                 Set piWidth to 74
                 Set psCaption to "Filelist No"
                 Set psToolTip to (psCaption(Self) * "(Suggestion List)")
+                Set peHeaderAlignment to xtpAlignmentCenter
+                Set peTextAlignment   to xtpAlignmentCenter
+                Set peFooterAlignment to xtpAlignmentCenter
                 Set piFindIndex to 1
             End_Object
 
@@ -303,9 +306,24 @@ Object oTableDUFCodeGenerator is a dbView
                 Until (hTable = 0)
                                     
                 Send InitializeData TheData
-                Set psFooterText of oLogicalName_col to ("No of Tables:" * String(iRow))
-                Set psFooterText of oIsAlias_Col     to ("Alias:" * String(iAliasCount))
+                Set psFooterText of oFilelistNumber_col to ("#" * String(iRow))
+                Set psFooterText of oLogicalName_col    to ("Tot # of Tables:" * String(iRow))
+                Set psFooterText of oRootName_col       to ("Selected" * String(0) * "of" * String(iRow))
+                Set psFooterText of oIsAlias_Col        to ("#" * String(iAliasCount))
+                Set psFooterText of oCheckbox_Col       to ("#" * String("0"))
                 Send Stop_StatusPanel of ghoStatusPanel
+            End_Procedure
+
+            // Augment message to also show "# xx" for the selection column footer.
+            Procedure DoSetCheckboxFooterText
+                Integer iCol iSelected
+                Handle hoCol hoCheckbox_Col  
+                
+                Forward Send DoSetCheckboxFooterText
+                Get piColumnId of (phoCheckbox_Col(Self)) to iCol
+                Get ColumnObject iCol to hoCol
+                Get CheckedItems to iSelected
+                Set psFooterText of hoCol  to ("#" * String(iSelected))
             End_Procedure
 
             Function SelectedTableNumber Returns Handle
