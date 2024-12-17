@@ -1,10 +1,20 @@
 Use cRDCRichEditor.pkg
 Use vWin32fh.pkg
 
+#IFNDEF clGreenGrey
+    Define clGreenGrey                for (RGB(64, 84, 93))
+    Define clGreenGreyLight           for (RGB(7, 117, 104))
+#ENDIF
+
 Class cMyRichEdit is a cRDCRichEditor
     Procedure Construct_Object
         Forward Send Construct_Object
-        Property String psExtension ".int" 
+        Property String psExtension ".int"   
+
+        Set TextColor to clWhite
+        Set TextBackColor to clGreenGrey
+        Set Color to clGreenGrey
+        
     End_Procedure     
     
     Procedure End_Construct_Object
