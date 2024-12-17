@@ -26,6 +26,8 @@ Define CS_ReportFileName for "FileListFixes.txt"
 Define CS_BackupFolder   for "Backup"
 Define CS_CRLF           for (Character(13) + Character(10))
 
+Register_Object oConnIDErrors_edt
+
 Struct tBlock
     Integer iFieldNumber
     String[] asLines    
@@ -126,11 +128,81 @@ Object oFilelistFixerView is a dbView
         Set Label to "Select"
         Set peAnchors to anNone
         Set psImage to "ActionOpen.ico"
-    
+        Set psToolTip to "Select a Filelist.cfg file from a Data folder."
+        
         Procedure OnClick
             Send Prompt of oFilelist_fm
         End_Procedure
     
+    End_Object
+
+    Object oConnIDErrors_btn is a cRDCButton
+        Set Size to 30 61
+        Set Location to 3 536
+        Set Label to "Change .int files to use DFConnid"
+        Set psToolTip to "Changes or updates all .int files in the Data folder - except for DAW driver .int files (MSSQL_DRV.int, DB2_DRV.int & ODBC_DRV.int) - to use 'SERVER_NAME DFCONNID=xxx', where xxx is the 'id=' of the DFConnid.ini file displayed to the left."
+        Set peAnchors to anNone
+        Set MultiLineState to True
+        Set psImage to "ChangeToDFConnid.ico"
+        Set piImageSize to 24
+        Set pbAutoEnable to True
+        
+        Procedure OnClick
+            String sDataPath sConnectionID sText
+            String[] asFileChanges
+            Boolean bExists bActive bOK
+            Integer iRetval iSize iCount 
+            Handle ho
+
+            Get psDataPath of (phoWorkspace(ghoApplication)) to sDataPath
+            Get psConnId to sConnectionID
+            Get YesNo_Box ("Do you want to change all .int files in folder:\n" + sDataPath + "\n\nTo use 'DFCONNID=" + sConnectionID +"' ?") to iRetval
+            If (iRetval <> MBR_Yes) Begin
+                Procedure_Return
+            End
+            
+            Move 0 to iCount
+            Set Value of oConnIDErrors_fm to 0
+            Move oConnIDErrors_edt to ho     
+            Send Delete_Data of ho
+            Send StartStatusPanel "Changing to Connection ID's in .int files" "" -1
+
+            Get SqlUtilChangeIntFilesToConnectionIDs of ghoDUF sDataPath sConnectionID True to asFileChanges
+
+            Send UpdateStatusPanel ""
+            Get Active_State of ghoStatusPanel to bActive
+            If (bActive = False) Begin
+                Send StopStatusPanel
+                Send Info_Box "Process interupted..."
+                Procedure_Return
+            End
+
+            Move (SizeOfArray(asFileChanges)) to iSize
+            Set Value of oConnIDErrors_fm to (iSize max 0)
+            Send StopStatusPanel
+            If (SizeOfArray(asFileChanges) <> 0) Begin
+                Decrement iSize
+                For iCount from 0 to iSize
+                    Send AppendTextLn of ho asFileChanges[iCount]
+                Loop       
+                Send Beginning_of_Data of ho
+                // Note: Remove all cache-files:
+                EraseFile (sDataPath + "\*.cch")
+                Send RefreshData
+                Send Info_Box ("Ready!" * String(iSize + 1) * ".int files contained errors and were changed to be using DFConnID's.")
+            End
+            Else Begin
+                Send Info_Box "Ready! No problems found."    
+            End
+            Send StopStatusPanel
+        End_Procedure 
+        
+        Function IsEnabled Returns Boolean
+            String sDatabase
+            Get psDatabase of ghoDUF to sDatabase
+            Function_Return (sDatabase <> "")
+        End_Function
+
     End_Object
 
     Object oRefresh_btn is a cRDCButton
@@ -143,12 +215,19 @@ Object oFilelistFixerView is a dbView
         Set psImage to "ActionRefresh.ico"
         Set piImageSize to 32
         Set MultiLineState to True
+        Set pbAutoEnable to True
         Set peAnchors to anNone
         
         Procedure OnClick
             Send RefreshData
         End_Procedure
     
+        Function IsEnabled Returns Boolean
+            String sDatabase
+            Get psDatabase of ghoDUF to sDatabase
+            Function_Return (sDatabase <> "")
+        End_Function
+
     End_Object
 
     Object oSQL_grp is a Group
@@ -207,7 +286,7 @@ Object oFilelistFixerView is a dbView
                     Set Value of oDatabase_fm to sDatabase
                 End   
                 Else Begin
-                    Send AppendTextLn "No DFConnid.ini file found, or no active connection."
+                    Send AppendTextLn "No DFConnId.ini file found, or no active connection."
                 End
             End_Procedure
     
@@ -219,7 +298,8 @@ Object oFilelistFixerView is a dbView
             Set Label to "Edit"
             Set peAnchors to anNone
             Set psImage to "ActionEdit.ico"
-        
+            Set psToolTip to "Edit the .ini file"
+            
             Procedure OnClick
                 String sFileName
                 Get psConnIdFile to sFileName
@@ -240,6 +320,7 @@ Object oFilelistFixerView is a dbView
             Set Size to 12 387
             Set Location to 103 66
             Set Label to "Driver .int file:"
+            Set pbAutoEnable to True
             Set peAnchors to anNone
             
             Procedure Page Integer iPageObject
@@ -275,6 +356,14 @@ Object oFilelistFixerView is a dbView
                 Set Value to sFileName
             End_Procedure
             
+            Function IsEnabled Returns Boolean
+                Boolean bExists
+                String sFileName
+                Get psConnIdFile to sFileName
+                File_Exist sFileName bExists
+                Function_Return bExists
+            End_Function
+    
         End_Object    
         
         Object oViewDriverProperties_btn is a cRDCButton
@@ -283,7 +372,8 @@ Object oFilelistFixerView is a dbView
             Set Label to "View"
             Set peAnchors to anNone
             Set psImage to "View.ico"
-        
+            Set psToolTip to "View the content of the driver .ini file."
+            
             Procedure OnClick
                 String sFileName
                 Get Value of oDriver_fm to sFileName
@@ -310,11 +400,11 @@ Object oFilelistFixerView is a dbView
             Set pbAutoEnable to True
 
             Function IsEnabled Returns Boolean
-                String sServer
-                Get psServer of ghoDUF to sServer
-                Function_Return (sServer <> "")
+                String sDatabase
+                Get psDatabase of ghoDUF to sDatabase
+                Function_Return (sDatabase <> "")
             End_Function
-    
+        
         End_Object
 
         Object oDatabase_fm is a cRDCForm
@@ -339,7 +429,8 @@ Object oFilelistFixerView is a dbView
             Set Location to 119 458
             Set Label to "Backup"
             Set psImage to "DbBackup.ico"
-
+            Set psToolTip to "Make a backup copy of the SQL database. The file will be created in the SQL Server standard Backup folder, with a file name that is the database name followed by the todays date and time."
+            
             Procedure OnClick
                 Boolean bOK
 
@@ -446,7 +537,8 @@ Object oFilelistFixerView is a dbView
             Set Location to 152 458
             Set Label to "Change"
             Set psImage to "ActionSort.ico"
-            
+            Set psToolTip to "To change the collating sequence for the SQL database to use a new collating sequence."
+
             Procedure OnClick
                 String sDatabase sCurrentCollatingSequence sCollatingSequence sSteps
                 Integer iRetval
@@ -683,6 +775,7 @@ Object oFilelistFixerView is a dbView
             Set Label to "1. Fix 'RootName .dat Errors'"
             Set peAnchors to anTopRight
             Set MultiLineState to True
+            Set pbAutoActivate to True
             Set psToolTip to "The fix will spin through the Filelist and \n1. Removes non Alias entries that does not have a corresponding .Dat file.\nNote:This only applies to non Alias tables."
         
             Procedure OnClick
@@ -701,6 +794,12 @@ Object oFilelistFixerView is a dbView
                 End
             End_Procedure
                           
+            Function IsEnabled Returns Boolean
+                String sDatabase
+                Get psDatabase of ghoDUF to sDatabase
+                Function_Return (sDatabase <> "")
+            End_Function
+
         End_Object
 
         Object oFixAliasProblems_btn is a cRDCButton
@@ -709,6 +808,7 @@ Object oFilelistFixerView is a dbView
             Set Label to "2. Fix 'Alias Table Errors'"
             Set peAnchors to anTopRight
             Set MultiLineState to True
+            Set pbAutoActivate to True
             Set psToolTip to "The fix will spin through Filelist.cfg and \n1. either add or remove driver prefixes for ALIAS rootnames, depending on the Master RootName\n2. Change all ALIAS table Descriptions to the ROOTNAME + 'ALIAS'"
         
             Procedure OnClick
@@ -729,6 +829,12 @@ Object oFilelistFixerView is a dbView
                 End
             End_Procedure
                           
+            Function IsEnabled Returns Boolean
+                String sDatabase
+                Get psDatabase of ghoDUF to sDatabase
+                Function_Return (sDatabase <> "")
+            End_Function
+
         End_Object
 
         Object oFixFileListSQLMissingTables_btn is a cRDCButton
@@ -737,6 +843,7 @@ Object oFilelistFixerView is a dbView
             Set Label to "3. Make Filelist RootNames equal to SQL Database"
             Set peAnchors to anTopRight
             Set MultiLineState to True
+            Set pbAutoActivate to True
             Set psToolTip to "The fix will spin through Filelist.cfg and \n1. Remove all driver prefixes for Master tables that does NOT exist in the SQL Database\n2. OR Add driver prefix for Master filelist entries that are missing a driver prefix."
         
             Procedure OnClick
@@ -754,6 +861,12 @@ Object oFilelistFixerView is a dbView
                 End
             End_Procedure
                           
+            Function IsEnabled Returns Boolean
+                String sDatabase
+                Get psDatabase of ghoDUF to sDatabase
+                Function_Return (sDatabase <> "")
+            End_Function
+
         End_Object
 
         Object oFixFileListOpenErrors_btn is a cRDCButton
@@ -762,6 +875,7 @@ Object oFilelistFixerView is a dbView
             Set Label to "4. Fix Filelist: 'Open Table Errors'"
             Set peAnchors to anTopRight
             Set MultiLineState to True
+            Set pbAutoActivate to True
             Set psToolTip to "The fix will spin through the Filelist and \n1. Try to fix or removes Non SQL entries for tables that cannot be opened."
         
             Procedure OnClick
@@ -788,6 +902,12 @@ Object oFilelistFixerView is a dbView
                 End
             End_Procedure
                           
+            Function IsEnabled Returns Boolean
+                String sDatabase
+                Get psDatabase of ghoDUF to sDatabase
+                Function_Return (sDatabase <> "")
+            End_Function
+
         End_Object
 
         Object oFixIntFileError_btn is a cRDCButton
@@ -910,6 +1030,7 @@ Object oFilelistFixerView is a dbView
             Set Size to 12 116
             Set Location to 45 5
             Set Label to "Select the Right SQL Collation"
+            Set psToolTip to "Help on selecting the Right SQL Collation"
             Set peAnchors to anNone
             Set psImage to "ActionHelp.ico"
         
@@ -923,6 +1044,7 @@ Object oFilelistFixerView is a dbView
             Set Size to 12 116
             Set Location to 45 125
             Set Label to "Remove Uppercased Columns"
+            Set psToolTip to "Help on selecting the Right SQL Collation and removing ppercased columns"
             Set peAnchors to anNone
             Set psImage to "ActionHelp.ico"
         
@@ -1024,6 +1146,7 @@ Object oFilelistFixerView is a dbView
             Set psToolTip to "This will move all *.dat related files, that does not exist in the Filelist, to the workspace's '.\Data\Backup' folder."
             Set psImage to "MoveFiles.ico"
             Set piImageSize to 24
+            Set pbAutoActivate to True
             
             Procedure OnClick
                 Integer iRetval iCounter 
@@ -1046,6 +1169,12 @@ Object oFilelistFixerView is a dbView
                 End
             End_Procedure  
             
+            Function IsEnabled Returns Boolean
+                String sDatabase
+                Get psDatabase of ghoDUF to sDatabase
+                Function_Return (sDatabase <> "")
+            End_Function
+
         End_Object
         
     End_Object
@@ -1079,6 +1208,8 @@ Object oFilelistFixerView is a dbView
             Set Label to "View"
             Set peAnchors to anNone
             Set psImage to "View.ico"
+            Set pbAutoActivate to True
+            Set psToolTip to "View the content of the log file."
         
             Procedure OnClick
                 String sFileName
@@ -1092,6 +1223,12 @@ Object oFilelistFixerView is a dbView
                 Runprogram Shell Background sFileName
             End_Procedure
         
+            Function IsEnabled Returns Boolean
+                String sDatabase
+                Get psDatabase of ghoDUF to sDatabase
+                Function_Return (sDatabase <> "")
+            End_Function
+
         End_Object  
 
     End_Object
@@ -3040,75 +3177,6 @@ Object oFilelistFixerView is a dbView
         // This is the crucial bit:
         Set Border_Style of (Client_Id(ghoCommandBars)) to Border_None
     End_Procedure
-
-    Object oConnIDErrors_btn is a cRDCButton
-        Set Size to 30 61
-        Set Location to 3 536
-        Set Label to "Change .int files to use DFConnid"
-        Set psToolTip to "Changes or updates all .int files in the Data folder - except for DAW driver .int files (MSSQL_DRV.int, DB2_DRV.int & ODBC_DRV.int) - to use 'SERVER_NAME DFCONNID=xxx', where xxx is the 'id=' of the DFConnid.ini file displayed to the left."
-        Set peAnchors to anNone
-        Set MultiLineState to True
-        Set psImage to "ChangeToDFConnid.ico"
-        Set piImageSize to 24
-        Set pbAutoEnable to True
-        
-        Procedure OnClick
-            String sDataPath sConnectionID sText
-            String[] asFileChanges
-            Boolean bExists bActive bOK
-            Integer iRetval iSize iCount 
-            Handle ho
-
-            Get psDataPath of (phoWorkspace(ghoApplication)) to sDataPath
-            Get psConnId to sConnectionID
-            Get YesNo_Box ("Do you want to change all .int files in folder:\n" + sDataPath + "\n\nTo use 'DFCONNID=" + sConnectionID +"' ?") to iRetval
-            If (iRetval <> MBR_Yes) Begin
-                Procedure_Return
-            End
-            
-            Move 0 to iCount
-            Set Value of oConnIDErrors_fm to 0
-            Move oConnIDErrors_edt to ho     
-            Send Delete_Data of ho
-            Send StartStatusPanel "Changing to Connection ID's in .int files" "" -1
-
-            Get SqlUtilChangeIntFilesToConnectionIDs of ghoDUF sDataPath sConnectionID True to asFileChanges
-
-            Send UpdateStatusPanel ""
-            Get Active_State of ghoStatusPanel to bActive
-            If (bActive = False) Begin
-                Send StopStatusPanel
-                Send Info_Box "Process interupted..."
-                Procedure_Return
-            End
-
-            Move (SizeOfArray(asFileChanges)) to iSize
-            Set Value of oConnIDErrors_fm to (iSize max 0)
-            Send StopStatusPanel
-            If (SizeOfArray(asFileChanges) <> 0) Begin
-                Decrement iSize
-                For iCount from 0 to iSize
-                    Send AppendTextLn of ho asFileChanges[iCount]
-                Loop       
-                Send Beginning_of_Data of ho
-                // Note: Remove all cache-files:
-                EraseFile (sDataPath + "\*.cch")
-                Send RefreshData
-                Send Info_Box ("Ready!" * String(iSize + 1) * ".int files contained errors and were changed to be using DFConnID's.")
-            End
-            Else Begin
-                Send Info_Box "Ready! No problems found."    
-            End
-            Send StopStatusPanel
-        End_Procedure 
-        
-        Function IsEnabled Returns Boolean
-            String sDatabase
-            Get psDatabase of ghoDUF to sDatabase
-            Function_Return (sDatabase <> "")
-        End_Function
-
-    End_Object
 
     On_Key kClear Send RefreshData
 End_Object    
