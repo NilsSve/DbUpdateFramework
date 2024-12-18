@@ -16,6 +16,7 @@ Use cMyRichEdit.pkg
 Use vWin32fh.pkg
 Use DriverIntFileSettings.dg
 Use SQLDatabaseBackup.dg
+Use SQLCollations.sl
 
 // Just to get a shorter handle name
 Global_Variable Handle ghoDUF 
@@ -218,11 +219,18 @@ Object oFilelistFixerView is a dbView
         Set piImageSize to 32
         Set MultiLineState to True
         Set peAnchors to anNone
+        Set pbAutoEnable to True
         
         Procedure OnClick
             Send RefreshData
         End_Procedure
     
+        Function IsEnabled Returns Boolean
+            String sDatabase
+            Get psDatabase of ghoDUF to sDatabase
+            Function_Return (sDatabase <> "")
+        End_Function
+
     End_Object
 
     Object oSQL_grp is a Group
@@ -243,7 +251,7 @@ Object oFilelistFixerView is a dbView
             End_Procedure
             
             Procedure UpdateConnIdData
-                String sDFConnidFile sText sDatapath sDatabase
+                String sDFConnidFile sText sDatapath sDatabase sServer
                 Boolean bExists
                 tConnection[] Connections
                 
@@ -273,7 +281,9 @@ Object oFilelistFixerView is a dbView
                     Send AppendTextLn ("connection=" + String(Connections[0].sString))
                     Send AppendTextLn ("trusted_connection=" + String(Connections[0].bTrustedConnection))
                     Send AppendTextLn ("disabled=" + String(Connections[0].bDisabled)) 
-                    Send Beginning_of_Data  
+                    Send Beginning_of_Data
+                    Get psServer of ghoduf to sServer
+                    Set Value of oServer_fm to sServer
                     Get psDatabase of ghoDUF to sDatabase
                     Set Value of oDatabase_fm to sDatabase
                 End   
@@ -290,6 +300,7 @@ Object oFilelistFixerView is a dbView
             Set Label to "Edit"
             Set peAnchors to anNone
             Set psImage to "ActionEdit.ico"
+            Set pbAutoEnable to True
         
             Procedure OnClick
                 String sFileName
@@ -354,6 +365,7 @@ Object oFilelistFixerView is a dbView
             Set Label to "View"
             Set peAnchors to anNone
             Set psImage to "View.ico"
+            Set pbAutoEnable to True
         
             Procedure OnClick
                 String sFileName
@@ -371,13 +383,16 @@ Object oFilelistFixerView is a dbView
     
         End_Object
         
+        Object oServer_fm is a cRDCForm
+            Set Label to "SQL Server Name:"
+            Set Size to 12 171
+            Set Location to 119 66
+        End_Object
+
         Object oDatabase_fm is a cRDCForm
             Set Label to "Database Name:"
-            Set Size to 12 387
-            Set Location to 119 66
-            Set Label_Col_Offset to 0
-            Set peAnchors to anNone
-            Set Label_Row_Offset to 1
+            Set Size to 12 154
+            Set Location to 119 298
         End_Object
 
         Object oBackupSQLDatabase_btn is a cRDCButton
@@ -385,10 +400,10 @@ Object oFilelistFixerView is a dbView
             Set Location to 119 458
             Set Label to "Backup"
             Set psImage to "DbBackup.ico"
+            Set pbAutoEnable to True
 
             Procedure OnClick
                 Boolean bOK
-
                 // Show SQLDatabaseBackup dialog:
                 Get MakeSQLDatabaseBackup to bOK
 
@@ -396,6 +411,12 @@ Object oFilelistFixerView is a dbView
                     Send Info_Box "The backup of the database was successful!"
                 End
             End_Procedure
+
+            Function IsEnabled Returns Boolean
+                String sDatabase
+                Get psDatabase of ghoDUF to sDatabase
+                Function_Return (sDatabase <> "")
+            End_Function
 
         End_Object
         
@@ -465,32 +486,30 @@ Object oFilelistFixerView is a dbView
         
         End_Object
        
-        Object oCollatingSequence_fm is a cRDCComboForm
+        Object oCollatingSequence_fm is a cRDCForm
             Set Size to 13 387
             Set Location to 152 66
             Set Label to "Change Collating:"
             Set pbAutoEnable to True            
             Set Entry_State to True
-    
-            Procedure Combo_Fill_List
-                String sCollatingSequence
-                Send Combo_Add_Item "Latin1_General_CI_AI"
-                Send Combo_Add_Item "Latin1_General_100_CI_AI"
-                Send Combo_Add_Item "SQL_Latin1_General_CP1_CI_AI"
-                Send Combo_Add_Item "Latin1_General_CI_AS"
-                Send Combo_Add_Item "Latin1_General_100_CI_AS"
-                Send Combo_Add_Item "SQL_Latin1_General_CP1_CI_AS"  
-                Send Combo_Add_Item "Latin1_General_100_CI_AS_SC_UTF8"
-                Get Value of oCurrentCollatingSequence_fm to sCollatingSequence
-                If (sCollatingSequence <> "") Begin
-                    Send Combo_Add_Item sCollatingSequence
-                    Set Value to oCurrentCollatingSequence_fm
-                End
-                Else Begin
-                    Set Value to "Latin1_General_CI_AS"
+            Set Prompt_Button_Mode to PB_PromptOn
+            Set Prompt_Object to (oSQLCollations(Self))
+
+            Procedure Prompt
+                String sDriverID
+                tSQLCollation Collation
+                tSQLCollation[] aCollations 
+                
+                Get Value to Collation
+                Get psDriverID of ghoDUF to sDriverID
+                Get _SqlEnumerateDatabaseCollations of ghoDUF sDriverID to aCollations
+                Get ActivateSQLCollations Collation aCollations to Collation
+                If (Collation.sCollation <> "") Begin
+                    Set Value to Collation.sCollation
+                    Set psToolTip to Collation.sDescription
                 End
             End_Procedure
-    
+            
             Function IsEnabled Returns Boolean
                 String sDatabase
                 Get psDatabase of ghoDUF to sDatabase
@@ -504,6 +523,7 @@ Object oFilelistFixerView is a dbView
             Set Location to 152 458
             Set Label to "Change"
             Set psImage to "ActionSort.ico"
+            Set pbAutoEnable to True
             
             Procedure OnClick
                 String sDatabase sCurrentCollatingSequence sCollatingSequence sSteps
@@ -720,6 +740,7 @@ Object oFilelistFixerView is a dbView
             Set peAnchors to anTopRight
             Set MultiLineState to True
             Set psToolTip to "The fix will spin through the Filelist and \n1. Removes non Alias entries that does not have a corresponding .Dat file.\nNote:This only applies to non Alias tables."
+            Set pbAutoEnable to True
         
             Procedure OnClick
                 Integer iRetval iCounter
@@ -737,6 +758,12 @@ Object oFilelistFixerView is a dbView
                 End
             End_Procedure
                           
+            Function IsEnabled Returns Boolean
+                String sDatabase
+                Get psDatabase of ghoDUF to sDatabase
+                Function_Return (sDatabase <> "")
+            End_Function
+
         End_Object
 
         Object oFixAliasProblems_btn is a cRDCButton
@@ -746,6 +773,7 @@ Object oFilelistFixerView is a dbView
             Set peAnchors to anTopRight
             Set MultiLineState to True
             Set psToolTip to "The fix will spin through Filelist.cfg and \n1. either add or remove driver prefixes for ALIAS rootnames, depending on the Master RootName\n2. Change all ALIAS table Descriptions to the ROOTNAME + 'ALIAS'"
+            Set pbAutoEnable to True
         
             Procedure OnClick
                 Integer iRetval iCounter
@@ -765,6 +793,12 @@ Object oFilelistFixerView is a dbView
                 End
             End_Procedure
                           
+            Function IsEnabled Returns Boolean
+                String sDatabase
+                Get psDatabase of ghoDUF to sDatabase
+                Function_Return (sDatabase <> "")
+            End_Function
+
         End_Object
 
         Object oFixFileListSQLMissingTables_btn is a cRDCButton
@@ -774,6 +808,7 @@ Object oFilelistFixerView is a dbView
             Set peAnchors to anTopRight
             Set MultiLineState to True
             Set psToolTip to "The fix will spin through Filelist.cfg and \n1. Remove all driver prefixes for Master tables that does NOT exist in the SQL Database\n2. OR Add driver prefix for Master filelist entries that are missing a driver prefix."
+            Set pbAutoEnable to True
         
             Procedure OnClick
                 Integer iRetval iCounter
@@ -790,6 +825,12 @@ Object oFilelistFixerView is a dbView
                 End
             End_Procedure
                           
+            Function IsEnabled Returns Boolean
+                String sDatabase
+                Get psDatabase of ghoDUF to sDatabase
+                Function_Return (sDatabase <> "")
+            End_Function
+
         End_Object
 
         Object oFixFileListOpenErrors_btn is a cRDCButton
@@ -799,6 +840,7 @@ Object oFilelistFixerView is a dbView
             Set peAnchors to anTopRight
             Set MultiLineState to True
             Set psToolTip to "The fix will spin through the Filelist and \n1. Try to fix or removes Non SQL entries for tables that cannot be opened."
+            Set pbAutoEnable to True
         
             Procedure OnClick
                 Integer iRetval iCounter iOpenErrors
@@ -824,6 +866,12 @@ Object oFilelistFixerView is a dbView
                 End
             End_Procedure
                           
+            Function IsEnabled Returns Boolean
+                String sDatabase
+                Get psDatabase of ghoDUF to sDatabase
+                Function_Return (sDatabase <> "")
+            End_Function
+
         End_Object
 
         Object oFixIntFileError_btn is a cRDCButton
@@ -1060,6 +1108,7 @@ Object oFilelistFixerView is a dbView
             Set psToolTip to "This will move all *.dat related files, that does not exist in the Filelist, to the workspace's '.\Data\Backup' folder."
             Set psImage to "MoveFiles.ico"
             Set piImageSize to 24
+            Set pbAutoEnable to True
             
             Procedure OnClick
                 Integer iRetval iCounter 
@@ -1082,6 +1131,12 @@ Object oFilelistFixerView is a dbView
                 End
             End_Procedure  
             
+            Function IsEnabled Returns Boolean
+                String sDatabase
+                Get psDatabase of ghoDUF to sDatabase
+                Function_Return (sDatabase <> "")
+            End_Function
+
         End_Object
         
     End_Object
@@ -1115,6 +1170,7 @@ Object oFilelistFixerView is a dbView
             Set Label to "View"
             Set peAnchors to anNone
             Set psImage to "View.ico"
+            Set pbAutoEnable to True
         
             Procedure OnClick
                 String sFileName
@@ -1128,6 +1184,11 @@ Object oFilelistFixerView is a dbView
                 Runprogram Shell Background sFileName
             End_Procedure
         
+            Function IsEnabled Returns Boolean
+                String sDatabase
+                Get psDatabase of ghoDUF to sDatabase
+                Function_Return (sDatabase <> "")
+            End_Function
         End_Object  
 
     End_Object
