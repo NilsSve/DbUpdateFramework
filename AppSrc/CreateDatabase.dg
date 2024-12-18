@@ -117,6 +117,7 @@ Object oCreateDatabase_dg is a cRDCModalPanel
             Set Prompt_Button_Mode to PB_PromptOn
             
             Function ReadWorkspaceIniFile Returns String[]
+                tSQLCollation[] aCollations
                 String[] asCollations   
                 Integer iCount iSize      
                 String sDriverID sCollation
@@ -124,19 +125,19 @@ Object oCreateDatabase_dg is a cRDCModalPanel
                 Get psDriverID to sDriverID      
                 // The _SqlEnumerateDatabaseCollations function is at current for MSSQLDRV_ID only.
                 If (sDriverID <> MSSQLDRV_ID) Begin
-                    Function_Return asCollations
+                    Function_Return aCollations
                 End                 
                 
                 Send Cursor_Wait of Cursor_Control
-                Get _SqlEnumerateDatabaseCollations of ghoDbUpdateFunctionLibrary sDriverID to asCollations
-                Set psSavedFormValues to asCollations
+                Get _SqlEnumerateDatabaseCollations of ghoDbUpdateFunctionLibrary sDriverID to aCollations
+                Set psSavedFormValues to aCollations
                     
                 If (sDriverID = MSSQLDRV_ID) Begin
                     Get psCollation of ghoDbUpdateFunctionLibrary to sCollation
                     Set Value to sCollation
                 End
                 Send Cursor_Ready of Cursor_Control
-                Function_Return asCollations
+                Function_Return aCollations
             End_Function
     
             Procedure OnChange

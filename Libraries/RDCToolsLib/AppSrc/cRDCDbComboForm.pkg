@@ -85,10 +85,10 @@ Class cRDCDbComboForm is a dbComboForm
         Boolean bAutoShadowLabelObject
         String sTooltip sStatus_Help
 
-        Get pbAutoShadowLabelObject to bAutoShadowLabelObject
-        If (bAutoShadowLabelObject = True) Begin
-            Set Private.Label_Shadow_Display_Mode to TBSHADOW_ON_LOCAL
-        End
+//        Get pbAutoShadowLabelObject to bAutoShadowLabelObject
+//        If (bAutoShadowLabelObject = True) Begin
+//            Set Private.Label_Shadow_Display_Mode to TBSHADOW_ON_LOCAL
+//        End
 
         Forward Send End_Construct_Object
 

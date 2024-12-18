@@ -27,10 +27,11 @@ Struct txxfBase64Buffer
     Integer iLength
 End_Struct
 
-Global_Variable Integer oBase64Functions
+Global_Variable Integer ghoBase64Functions
+Move 0 to ghoBase64Functions
 
 Object _oBase64Functions is a cObject
-    Move Self to oBase64Functions
+    Move Self to ghoBase64Functions
 
 #IFNDEF get_Base64Encode
             Procedure _TestDllPresent

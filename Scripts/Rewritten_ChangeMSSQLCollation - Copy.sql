@@ -1,15 +1,44 @@
-SET NOCOUNT ON
+
+-- Initialize the temporary table to store variables
+IF OBJECT_ID('tempdb..##TempVariables') IS NOT NULL
+    DROP TABLE ##TempVariables;
+
+CREATE TABLE ##TempVariables (
+    VariableName NVARCHAR(255),
+    VariableValue NVARCHAR(MAX)
+);
+
+-- Insert variable values
+INSERT INTO ##TempVariables (VariableName, VariableValue)
+VALUES
+    ('DatabaseName', 'ROW_TEST'),
+    ('CollationName', 'SQL_Latin1_General_CP1_CI_AS'),
+    ('ShouldBackup', '0');
+
 GO
+
+-- Retrieve variables into local variables for the current batch
+DECLARE @DatabaseName NVARCHAR(255);
+DECLARE @CollationName NVARCHAR(255);
+DECLARE @ShouldBackup BIT;
+DECLARE @SQL NVARCHAR(MAX);
+
+SELECT @DatabaseName = VariableValue FROM ##TempVariables WHERE VariableName = 'DatabaseName';
+SELECT @CollationName = VariableValue FROM ##TempVariables WHERE VariableName = 'CollationName';
+SELECT @ShouldBackup = CAST(VariableValue AS BIT) FROM ##TempVariables WHERE VariableName = 'ShouldBackup';
+
+SET NOCOUNT ON;
+
 -- Step 1: Backup Database w today's date and time added to backup name
-DECLARE @DatabaseName NVARCHAR(255) = 'ROW_TEST';
-DECLARE @CollationName NVARCHAR(255) = 'SQL_Latin1_General_CP1_CI_AS';
+--DECLARE @DatabaseName NVARCHAR(255) = 'ROW_TEST';
+--DECLARE @CollationName NVARCHAR(255) = 'SQL_Latin1_General_CP1_CI_AS';
 DECLARE @BackupFileName NVARCHAR(255);
-DECLARE @ShouldBackup BIT = 0
+--DECLARE @ShouldBackup BIT = 0
 DECLARE @DateTime NVARCHAR(20);
 DECLARE @ErrorMessage NVARCHAR(MAX);
 DECLARE @ErrorSeverity INT;
 DECLARE @ErrorState INT;
-DECLARE @SQL NVARCHAR(MAX);
+--DECLARE @SQL NVARCHAR(MAX);
 
 IF @ShouldBackup = 1
 BEGIN
@@ -29,13 +58,33 @@ BEGIN
 END
 GO
 
+-- Retrieve variables into local variables for the current batch
+DECLARE @DatabaseName NVARCHAR(255);
+DECLARE @CollationName NVARCHAR(255);
+DECLARE @ShouldBackup BIT;
+DECLARE @SQL NVARCHAR(MAX);
+
+SELECT @DatabaseName = VariableValue FROM ##TempVariables WHERE VariableName = 'DatabaseName';
+SELECT @CollationName = VariableValue FROM ##TempVariables WHERE VariableName = 'CollationName';
+SELECT @ShouldBackup = CAST(VariableValue AS BIT) FROM ##TempVariables WHERE VariableName = 'ShouldBackup';
+
 -- Step 2: Backup Schema-Bound Objects
     PRINT 'Backing up schema-bound object definitions...';
     IF OBJECT_ID('tempdb..##BackupSchemaBoundObjects') IS NOT NULL DROP TABLE ##BackupSchemaBoundObjects;
     CREATE TABLE ##BackupSchemaBoundObjects (ObjectType NVARCHAR(50), ObjectName NVARCHAR(255), Definition NVARCHAR(MAX));
 GO
 
-    -- Retrieve object names dynamically, e.g., schema-bound functions and views
+-- Retrieve variables into local variables for the current batch
+DECLARE @DatabaseName NVARCHAR(255);
+DECLARE @CollationName NVARCHAR(255);
+DECLARE @ShouldBackup BIT;
+DECLARE @SQL NVARCHAR(MAX);
+
+SELECT @DatabaseName = VariableValue FROM ##TempVariables WHERE VariableName = 'DatabaseName';
+SELECT @CollationName = VariableValue FROM ##TempVariables WHERE VariableName = 'CollationName';
+SELECT @ShouldBackup = CAST(VariableValue AS BIT) FROM ##TempVariables WHERE VariableName = 'ShouldBackup';
+
+-- Retrieve object names dynamically, e.g., schema-bound functions and views
     INSERT INTO ##BackupSchemaBoundObjects (ObjectType, ObjectName, Definition)
     SELECT 
         o.type_desc AS ObjectType,
@@ -46,6 +95,16 @@ GO
     AND OBJECT_DEFINITION(o.object_id) IS NOT NULL
     AND o.TYPE IN ('FN', 'IF', 'TF', 'V');  -- Function types: Scalar (FN), Inline Table-Valued (IF), Multi-Statement Table-Valued (TF), and Views (V)
 GO
+
+-- Retrieve variables into local variables for the current batch
+DECLARE @DatabaseName NVARCHAR(255);
+DECLARE @CollationName NVARCHAR(255);
+DECLARE @ShouldBackup BIT;
+DECLARE @SQL NVARCHAR(MAX);
+
+SELECT @DatabaseName = VariableValue FROM ##TempVariables WHERE VariableName = 'DatabaseName';
+SELECT @CollationName = VariableValue FROM ##TempVariables WHERE VariableName = 'CollationName';
+SELECT @ShouldBackup = CAST(VariableValue AS BIT) FROM ##TempVariables WHERE VariableName = 'ShouldBackup';
 
 -- Step 3: Drop Dependencies and Schema-Bound Objects
     PRINT 'Dropping dependencies and schema-bound objects...';
@@ -63,6 +122,16 @@ GO
     PRINT 'Dependencies and schema-bound objects dropped successfully.';
 GO
 
+-- Retrieve variables into local variables for the current batch
+DECLARE @DatabaseName NVARCHAR(255);
+DECLARE @CollationName NVARCHAR(255);
+--DECLARE @ShouldBackup BIT;
+DECLARE @SQL NVARCHAR(MAX);
+
+SELECT @DatabaseName = VariableValue FROM ##TempVariables WHERE VariableName = 'DatabaseName';
+SELECT @CollationName = VariableValue FROM ##TempVariables WHERE VariableName = 'CollationName';
+--SELECT @ShouldBackup = CAST(VariableValue AS BIT) FROM ##TempVariables WHERE VariableName = 'ShouldBackup';
+
 -- Step 4: Backup all index information
     PRINT 'Backing up indexes, primary keys, and unique constraints...';
     IF OBJECT_ID('tempdb..##IndexesBackup') IS NOT NULL DROP TABLE ##IndexesBackup;
@@ -76,7 +145,17 @@ GO
     );
 GO
 
-    -- Backup ALL indexes including PKs and unique constraints that depend on computed columns
+-- Retrieve variables into local variables for the current batch
+DECLARE @DatabaseName NVARCHAR(255);
+DECLARE @CollationName NVARCHAR(255);
+--DECLARE @ShouldBackup BIT;
+DECLARE @SQL NVARCHAR(MAX);
+
+SELECT @DatabaseName = VariableValue FROM ##TempVariables WHERE VariableName = 'DatabaseName';
+SELECT @CollationName = VariableValue FROM ##TempVariables WHERE VariableName = 'CollationName';
+--SELECT @ShouldBackup = CAST(VariableValue AS BIT) FROM ##TempVariables WHERE VariableName = 'ShouldBackup';
+
+-- Backup ALL indexes including PKs and unique constraints that depend on computed columns
     INSERT INTO ##IndexesBackup
     SELECT 
         QUOTENAME(SCHEMA_NAME(t.schema_id)) + '.' + QUOTENAME(t.name) AS TableName,
@@ -143,6 +222,16 @@ GO
     );
 GO
 
+-- Retrieve variables into local variables for the current batch
+DECLARE @DatabaseName NVARCHAR(255);
+DECLARE @CollationName NVARCHAR(255);
+--DECLARE @ShouldBackup BIT;
+DECLARE @SQL NVARCHAR(MAX);
+
+SELECT @DatabaseName = VariableValue FROM ##TempVariables WHERE VariableName = 'DatabaseName';
+SELECT @CollationName = VariableValue FROM ##TempVariables WHERE VariableName = 'CollationName';
+--SELECT @ShouldBackup = CAST(VariableValue AS BIT) FROM ##TempVariables WHERE VariableName = 'ShouldBackup';
+
 -- Step 5: Drop all dependent indexes and constraints
     PRINT 'Dropping dependent indexes and constraints...';
     DECLARE @DropIndexes NVARCHAR(MAX) = '';
@@ -157,6 +246,16 @@ GO
         EXEC sp_executesql @DropIndexes;
     END
 GO
+
+-- Retrieve variables into local variables for the current batch
+DECLARE @DatabaseName NVARCHAR(255);
+DECLARE @CollationName NVARCHAR(255);
+--DECLARE @ShouldBackup BIT;
+DECLARE @SQL NVARCHAR(MAX);
+
+SELECT @DatabaseName = VariableValue FROM ##TempVariables WHERE VariableName = 'DatabaseName';
+SELECT @CollationName = VariableValue FROM ##TempVariables WHERE VariableName = 'CollationName';
+--SELECT @ShouldBackup = CAST(VariableValue AS BIT) FROM ##TempVariables WHERE VariableName = 'ShouldBackup';
 
 -- Step 6: Backup and Drop Computed Columns
     PRINT 'Backing up computed columns...';
@@ -218,105 +317,70 @@ GO
     END
 GO
 
--- Step 7: Backup All Computed Columns
-PRINT 'Backing up all computed columns...';
-
-IF OBJECT_ID('tempdb..##ComputedColumnsBackup') IS NOT NULL DROP TABLE ##ComputedColumnsBackup;
-CREATE TABLE ##ComputedColumnsBackup (
-    TableName NVARCHAR(255),
-    ColumnName NVARCHAR(255),
-    Definition NVARCHAR(MAX),
-    IsComputed BIT
-);
-
-INSERT INTO ##ComputedColumnsBackup (TableName, ColumnName, Definition, IsComputed)
-SELECT 
-    QUOTENAME(SCHEMA_NAME(t.schema_id)) + '.' + QUOTENAME(t.name) AS TableName,
-    QUOTENAME(c.name) AS ColumnName,
-    cc.definition AS Definition,
-    1 AS IsComputed
-FROM sys.computed_columns cc
-JOIN sys.columns c ON cc.object_id = c.object_id AND cc.column_id = c.column_id
-JOIN sys.tables t ON cc.object_id = t.object_id;
-
--- Drop all computed columns
-PRINT 'Dropping all computed columns...';
-
-DECLARE @DropComputedColumns NVARCHAR(MAX) = '';
-
-SELECT @DropComputedColumns += 'ALTER TABLE ' + TableName + ' DROP COLUMN ' + ColumnName + ';' + CHAR(13)
-FROM ##ComputedColumnsBackup
-WHERE IsComputed = 1;
-
-IF @DropComputedColumns <> ''
-BEGIN
-    PRINT 'Executing drop commands for computed columns:';
-    PRINT @DropComputedColumns;
-    EXEC sp_executesql @DropComputedColumns;  -- Execute the drop commands
-END
-GO
-
--- Step 8: Drop Other Schema-Bound Objects
-PRINT 'Dropping other schema-bound objects...';
-
--- Drop views that may depend on the collation
-DECLARE @DropViews NVARCHAR(MAX) = '';
-
-SELECT @DropViews += 'DROP VIEW ' + QUOTENAME(s.name) + '.' + QUOTENAME(o.name) + ';' + CHAR(13)
-FROM sys.objects o
-JOIN sys.schemas s ON o.schema_id = s.schema_id
-WHERE o.type IN ('V')  -- Only views
-AND o.is_ms_shipped = 0;  -- Exclude system views
-
-IF @DropViews <> ''
-BEGIN
-    PRINT 'Executing drop commands for views:';
-    PRINT @DropViews;
-    EXEC sp_executesql @DropViews;  -- Execute the drop commands
-END
-GO
-
--- Step 9: Change Database Collation
-PRINT 'Changing database collation...';
-
--- Declare variables again after GO
+-- Retrieve variables into local variables for the current batch
 DECLARE @DatabaseName NVARCHAR(255);
 DECLARE @CollationName NVARCHAR(255);
-DECLARE @SQL NVARCHAR(MAX);  -- Added line to declare @SQL
+--DECLARE @ShouldBackup BIT;
+DECLARE @SQL NVARCHAR(MAX);
 
--- Retrieve variables again after GO
 SELECT @DatabaseName = VariableValue FROM ##TempVariables WHERE VariableName = 'DatabaseName';
 SELECT @CollationName = VariableValue FROM ##TempVariables WHERE VariableName = 'CollationName';
+--SELECT @ShouldBackup = CAST(VariableValue AS BIT) FROM ##TempVariables WHERE VariableName = 'ShouldBackup';
 
+-- Step 7: Change Database Collation
+  -- Set the SQL command for changing to single-user mode
 SET @SQL = 'ALTER DATABASE ' + QUOTENAME(@DatabaseName) + ' SET SINGLE_USER WITH ROLLBACK IMMEDIATE;';
 EXEC sp_executesql @SQL;  -- Execute the command
 
+-- Set the SQL command for changing the collation
 SET @SQL = 'ALTER DATABASE ' + QUOTENAME(@DatabaseName) + ' COLLATE ' + @CollationName + ';';
 EXEC sp_executesql @SQL;  -- Execute the command
 
+-- Set the SQL command for changing back to multi-user mode
 SET @SQL = 'ALTER DATABASE ' + QUOTENAME(@DatabaseName) + ' SET MULTI_USER;';
+EXEC sp_executesql @SQL;  -- Execute the command
+
+-- Set the SQL command for using the database
+SET @SQL = 'USE ' + QUOTENAME(@DatabaseName) + ';';
 EXEC sp_executesql @SQL;  -- Execute the command
 GO
 
--- Step 10: Recreate Computed Columns
-PRINT 'Recreating computed columns...';
+-- Retrieve variables into local variables for the current batch
+DECLARE @DatabaseName NVARCHAR(255);
+DECLARE @CollationName NVARCHAR(255);
+--DECLARE @ShouldBackup BIT;
+DECLARE @SQL NVARCHAR(MAX);
 
-DECLARE @RecreateComputedColumns NVARCHAR(MAX) = '';
+SELECT @DatabaseName = VariableValue FROM ##TempVariables WHERE VariableName = 'DatabaseName';
+SELECT @CollationName = VariableValue FROM ##TempVariables WHERE VariableName = 'CollationName';
+--SELECT @ShouldBackup = CAST(VariableValue AS BIT) FROM ##TempVariables WHERE VariableName = 'ShouldBackup';
 
-SELECT @RecreateComputedColumns += 'ALTER TABLE ' + TableName + ' ADD ' + ColumnName + ' AS ' + Definition + ';' + CHAR(13)
-FROM ##ComputedColumnsBackup
-WHERE IsComputed = 1
-ORDER BY TableName, ColumnName;  -- Ensure the order is preserved
+-- Step 8: Recreate Computed Columns
+    PRINT 'Recreating computed columns...';
+    DECLARE @RecreateComputedColumns NVARCHAR(MAX) = '';
+    SELECT @RecreateComputedColumns += 'ALTER TABLE ' + TableName + ' ADD ' + ColumnName + ' AS ' + Definition + ';' + CHAR(13)
+    FROM ##ComputedColumnsBackup
+    WHERE IsComputed = 1;
 
-IF @RecreateComputedColumns <> ''
-BEGIN
-    PRINT 'Executing recreate commands for computed columns:';
-    PRINT @RecreateComputedColumns;
-    EXEC sp_executesql @RecreateComputedColumns;  -- Execute the recreate commands
-END
+    IF @RecreateComputedColumns <> ''
+    BEGIN
+        PRINT 'Executing recreate commands:';
+        PRINT @RecreateComputedColumns;
+        EXEC sp_executesql @RecreateComputedColumns;
+    END
 GO
 
--- Step 11: Recreate indexes and constraints
+-- Retrieve variables into local variables for the current batch
+DECLARE @DatabaseName NVARCHAR(255);
+DECLARE @CollationName NVARCHAR(255);
+--DECLARE @ShouldBackup BIT;
+DECLARE @SQL NVARCHAR(MAX);
+
+SELECT @DatabaseName = VariableValue FROM ##TempVariables WHERE VariableName = 'DatabaseName';
+SELECT @CollationName = VariableValue FROM ##TempVariables WHERE VariableName = 'CollationName';
+--SELECT @ShouldBackup = CAST(VariableValue AS BIT) FROM ##TempVariables WHERE VariableName = 'ShouldBackup';
+
+-- Step 9: Recreate indexes and constraints
 	PRINT 'Recreating indexes and constraints...';
 	DECLARE @RecreateIndexes NVARCHAR(MAX) = '';
 	SELECT @RecreateIndexes += IndexDefinition + ';' + CHAR(13)
@@ -330,7 +394,17 @@ GO
 	END
 GO
 
--- Step 12: Recreate Schema-Bound Objects
+-- Retrieve variables into local variables for the current batch
+DECLARE @DatabaseName NVARCHAR(255);
+DECLARE @CollationName NVARCHAR(255);
+--DECLARE @ShouldBackup BIT;
+DECLARE @SQL NVARCHAR(MAX);
+
+SELECT @DatabaseName = VariableValue FROM ##TempVariables WHERE VariableName = 'DatabaseName';
+SELECT @CollationName = VariableValue FROM ##TempVariables WHERE VariableName = 'CollationName';
+--SELECT @ShouldBackup = CAST(VariableValue AS BIT) FROM ##TempVariables WHERE VariableName = 'ShouldBackup';
+
+-- Step 10: Recreate Schema-Bound Objects
     PRINT 'Recreating schema-bound objects...';
     DECLARE @recreate_deps_sql NVARCHAR(MAX);
     DECLARE deps_cursor CURSOR FOR 
@@ -356,7 +430,17 @@ GO
     PRINT 'Schema-bound objects recreation completed.';
 GO
 
--- Step 13: Cleanup Temporary Tables
+-- Retrieve variables into local variables for the current batch
+DECLARE @DatabaseName NVARCHAR(255);
+DECLARE @CollationName NVARCHAR(255);
+--DECLARE @ShouldBackup BIT;
+DECLARE @SQL NVARCHAR(MAX);
+
+SELECT @DatabaseName = VariableValue FROM ##TempVariables WHERE VariableName = 'DatabaseName';
+SELECT @CollationName = VariableValue FROM ##TempVariables WHERE VariableName = 'CollationName';
+--SELECT @ShouldBackup = CAST(VariableValue AS BIT) FROM ##TempVariables WHERE VariableName = 'ShouldBackup';
+
+-- Step 11: Cleanup Temporary Tables
     DROP TABLE IF EXISTS ##BackupSchemaBoundObjects;
     DROP TABLE IF EXISTS ##ComputedColumnsBackup;
     DROP TABLE IF EXISTS ##IndexesBackup;

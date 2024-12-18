@@ -1,5 +1,5 @@
-SET NOCOUNT ON
-GO
+SET NOCOUNT ON;
+
 -- Step 1: Backup Database w today's date and time added to backup name
 DECLARE @DatabaseName NVARCHAR(255) = 'ROW_TEST';
 DECLARE @CollationName NVARCHAR(255) = 'SQL_Latin1_General_CP1_CI_AS';
@@ -218,105 +218,40 @@ GO
     END
 GO
 
--- Step 7: Backup All Computed Columns
-PRINT 'Backing up all computed columns...';
-
-IF OBJECT_ID('tempdb..##ComputedColumnsBackup') IS NOT NULL DROP TABLE ##ComputedColumnsBackup;
-CREATE TABLE ##ComputedColumnsBackup (
-    TableName NVARCHAR(255),
-    ColumnName NVARCHAR(255),
-    Definition NVARCHAR(MAX),
-    IsComputed BIT
-);
-
-INSERT INTO ##ComputedColumnsBackup (TableName, ColumnName, Definition, IsComputed)
-SELECT 
-    QUOTENAME(SCHEMA_NAME(t.schema_id)) + '.' + QUOTENAME(t.name) AS TableName,
-    QUOTENAME(c.name) AS ColumnName,
-    cc.definition AS Definition,
-    1 AS IsComputed
-FROM sys.computed_columns cc
-JOIN sys.columns c ON cc.object_id = c.object_id AND cc.column_id = c.column_id
-JOIN sys.tables t ON cc.object_id = t.object_id;
-
--- Drop all computed columns
-PRINT 'Dropping all computed columns...';
-
-DECLARE @DropComputedColumns NVARCHAR(MAX) = '';
-
-SELECT @DropComputedColumns += 'ALTER TABLE ' + TableName + ' DROP COLUMN ' + ColumnName + ';' + CHAR(13)
-FROM ##ComputedColumnsBackup
-WHERE IsComputed = 1;
-
-IF @DropComputedColumns <> ''
-BEGIN
-    PRINT 'Executing drop commands for computed columns:';
-    PRINT @DropComputedColumns;
-    EXEC sp_executesql @DropComputedColumns;  -- Execute the drop commands
-END
-GO
-
--- Step 8: Drop Other Schema-Bound Objects
-PRINT 'Dropping other schema-bound objects...';
-
--- Drop views that may depend on the collation
-DECLARE @DropViews NVARCHAR(MAX) = '';
-
-SELECT @DropViews += 'DROP VIEW ' + QUOTENAME(s.name) + '.' + QUOTENAME(o.name) + ';' + CHAR(13)
-FROM sys.objects o
-JOIN sys.schemas s ON o.schema_id = s.schema_id
-WHERE o.type IN ('V')  -- Only views
-AND o.is_ms_shipped = 0;  -- Exclude system views
-
-IF @DropViews <> ''
-BEGIN
-    PRINT 'Executing drop commands for views:';
-    PRINT @DropViews;
-    EXEC sp_executesql @DropViews;  -- Execute the drop commands
-END
-GO
-
--- Step 9: Change Database Collation
-PRINT 'Changing database collation...';
-
--- Declare variables again after GO
-DECLARE @DatabaseName NVARCHAR(255);
-DECLARE @CollationName NVARCHAR(255);
-DECLARE @SQL NVARCHAR(MAX);  -- Added line to declare @SQL
-
--- Retrieve variables again after GO
-SELECT @DatabaseName = VariableValue FROM ##TempVariables WHERE VariableName = 'DatabaseName';
-SELECT @CollationName = VariableValue FROM ##TempVariables WHERE VariableName = 'CollationName';
-
+-- Step 7: Change Database Collation
+  -- Set the SQL command for changing to single-user mode
 SET @SQL = 'ALTER DATABASE ' + QUOTENAME(@DatabaseName) + ' SET SINGLE_USER WITH ROLLBACK IMMEDIATE;';
 EXEC sp_executesql @SQL;  -- Execute the command
 
+-- Set the SQL command for changing the collation
 SET @SQL = 'ALTER DATABASE ' + QUOTENAME(@DatabaseName) + ' COLLATE ' + @CollationName + ';';
 EXEC sp_executesql @SQL;  -- Execute the command
 
+-- Set the SQL command for changing back to multi-user mode
 SET @SQL = 'ALTER DATABASE ' + QUOTENAME(@DatabaseName) + ' SET MULTI_USER;';
+EXEC sp_executesql @SQL;  -- Execute the command
+
+-- Set the SQL command for using the database
+SET @SQL = 'USE ' + QUOTENAME(@DatabaseName) + ';';
 EXEC sp_executesql @SQL;  -- Execute the command
 GO
 
--- Step 10: Recreate Computed Columns
-PRINT 'Recreating computed columns...';
+-- Step 8: Recreate Computed Columns
+    PRINT 'Recreating computed columns...';
+    DECLARE @RecreateComputedColumns NVARCHAR(MAX) = '';
+    SELECT @RecreateComputedColumns += 'ALTER TABLE ' + TableName + ' ADD ' + ColumnName + ' AS ' + Definition + ';' + CHAR(13)
+    FROM ##ComputedColumnsBackup
+    WHERE IsComputed = 1;
 
-DECLARE @RecreateComputedColumns NVARCHAR(MAX) = '';
-
-SELECT @RecreateComputedColumns += 'ALTER TABLE ' + TableName + ' ADD ' + ColumnName + ' AS ' + Definition + ';' + CHAR(13)
-FROM ##ComputedColumnsBackup
-WHERE IsComputed = 1
-ORDER BY TableName, ColumnName;  -- Ensure the order is preserved
-
-IF @RecreateComputedColumns <> ''
-BEGIN
-    PRINT 'Executing recreate commands for computed columns:';
-    PRINT @RecreateComputedColumns;
-    EXEC sp_executesql @RecreateComputedColumns;  -- Execute the recreate commands
-END
+    IF @RecreateComputedColumns <> ''
+    BEGIN
+        PRINT 'Executing recreate commands:';
+        PRINT @RecreateComputedColumns;
+        EXEC sp_executesql @RecreateComputedColumns;
+    END
 GO
 
--- Step 11: Recreate indexes and constraints
+-- Step 9: Recreate indexes and constraints
 	PRINT 'Recreating indexes and constraints...';
 	DECLARE @RecreateIndexes NVARCHAR(MAX) = '';
 	SELECT @RecreateIndexes += IndexDefinition + ';' + CHAR(13)
@@ -330,7 +265,7 @@ GO
 	END
 GO
 
--- Step 12: Recreate Schema-Bound Objects
+-- Step 10: Recreate Schema-Bound Objects
     PRINT 'Recreating schema-bound objects...';
     DECLARE @recreate_deps_sql NVARCHAR(MAX);
     DECLARE deps_cursor CURSOR FOR 
@@ -356,7 +291,7 @@ GO
     PRINT 'Schema-bound objects recreation completed.';
 GO
 
--- Step 13: Cleanup Temporary Tables
+-- Step 11: Cleanup Temporary Tables
     DROP TABLE IF EXISTS ##BackupSchemaBoundObjects;
     DROP TABLE IF EXISTS ##ComputedColumnsBackup;
     DROP TABLE IF EXISTS ##IndexesBackup;

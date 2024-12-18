@@ -1,8 +1,8 @@
-﻿Use cDbCJGrid.pkg
+Use cDbCJGrid.pkg
 #IF (!@ < 230)
     Use cRDCDbCJGridColumnHyperLink.pkg
 #ENDIF    
-Use RefactorConstants.inc
+//Use RefactorConstants.inc
 
 Enum_List
     Define cx_DbSelect_All
@@ -10,6 +10,7 @@ Enum_List
     Define cx_DbSelect_Invert
 End_Enum_List
 
+Register_Object oCheckbox_Col
 
 // Classes used by the cRDCCJSelectionGrid
 Class cRDCDbCJToggleSelectMenuItem is a cCJMenuItem
@@ -39,14 +40,14 @@ Class cRDCDbCJSelectAllMenuItem is a cCJMenuItem
     End_Procedure
 
     Procedure OnExecute Variant vCommandBarControl
-        Forward Send OnExecute vCommandBarControl
+
         Send SelectAll of (Server(Self))
         Send RefreshSelectionUpdate
     End_Procedure
 
 End_Class
 
-Class cRDCDbCJDeSelectAllMenuItem is a cCJMenuItem
+Class cRDCDbCJSelectNoneMenuItem is a cCJMenuItem
 
     Procedure Construct_Object
         Forward Send Construct_Object
@@ -56,8 +57,7 @@ Class cRDCDbCJDeSelectAllMenuItem is a cCJMenuItem
     End_Procedure
 
     Procedure OnExecute Variant vCommandBarControl
-        Forward Send OnExecute vCommandBarControl
-        Send DeSelectAll of (Server(Self)) 
+        Send SelectNone of (Server(Self)) 
         Send RefreshSelectionUpdate
     End_Procedure
 
@@ -73,7 +73,7 @@ Class cRDCDbCJInvertSelectionsMenuItem is a cCJMenuItem
     End_Procedure
 
     Procedure OnExecute Variant vCommandBarControl
-        Forward Send OnExecute vCommandBarControl
+        Send SelectInvert
 //        Set SelectItems to cx_Select_Invert
     End_Procedure
 
@@ -91,6 +91,23 @@ Class cRDCDbCJAddFolderMenuItem is a cCJMenuItem
     Procedure OnExecute Variant vCommandBarControl
         Forward Send OnExecute vCommandBarControl
         Send BrowseForFolder
+    End_Procedure
+
+End_Class
+
+Register_Function phoData_Col Returns Handle
+
+Class cRDCDbCJOpenContainingFolderMenuItem is a cCJMenuItem
+    Procedure Construct_Object
+        Forward Send Construct_Object
+        Set psCaption to "Open Containing Folder"
+        Set psImage to "ActionOpenContainingFolder.ico"
+    End_Procedure
+
+    Procedure OnExecute Variant vCommandBarControl
+        String sPath
+        Get SelectedRowValue of (phoData_Col(Self)) to sPath
+        Send vShellExecute "open" "explorer.exe" sPath ""
     End_Procedure
 
 End_Class
@@ -182,65 +199,145 @@ Class cRDCDbCJGrid is a cDbCJGrid
         On_Key Key_Space Send ToggleCurrentItem 
         On_Key Key_Ctrl+Key_A send SelectAll
         On_Key Key_Ctrl+Key_N send SelectNone
+        On_Key Key_Ctrl+Key_I Send SelectInvert
+        On_Key Key_Insert     Send BrowseForFolder
+    End_Procedure 
+    Procedure Set peGridvisualTheme Integer eGridTheme
+        Set peVisualTheme to eGridTheme 
     End_Procedure
 
     Procedure End_Construct_Object    
         Handle hoContextMenu
+        Integer eGridTheme
         Forward Send End_Construct_Object
         Get Create (RefClass(cDbGridContext_mnu)) to hoContextMenu
         Set phoContextMenu to hoContextMenu
     End_Procedure
 
+    Procedure SelectAll
+        Set SelectItems to cx_DbSelect_All
+    End_Procedure
+
+    Procedure SelectNone
+        Set SelectItems to cx_DbSelect_None
+    End_Procedure
+
+    Procedure SelectInvert
+        Set SelectItems to cx_DbSelect_Invert
+    End_Procedure
     { EnumList="cx_Select_All, cx_Select_None, cx_Select_Invert" }
     // Set checkbox column to selected states.
     // iState can be one of the following:
     // cx_Select_All, cx_Select_None or cx_Select_Invert
     Procedure Set SelectItems Integer iState
-        Integer iCount iSize iCheckbox_Col
+        Integer iCount iSize iCheckbox_Col iData_Col iSelectedRow
         Boolean bChecked
-        Handle hoDataSource hoCheckBox_Col hoDD
+        Handle hoDataSource hoCheckBox_Col hoData_Col hoDD
+        String sDataVal
         tDataSourceRow[] TheData
         
+        Get Server to hoDD
         Get phoCheckbox_Col to hoCheckBox_Col
+        Get phoData_Col     to hoData_Col
         If (hoCheckBox_Col = 0) Begin
             Procedure_Return
         End                 
         
-        Get piColumnId of (phoCheckbox_Col(Self)) to iCheckbox_Col
-        Get phoDataSource               to hoDataSource
-        Get DataSource of hoDataSource  to TheData
-        Move (SizeOfArray(TheData))     to iSize
+        Get piColumnId of hoCheckbox_Col to iCheckbox_Col
+        Get piColumnId of hoData_Col     to iData_Col
+        Get phoDataSource                to hoDataSource
+        Get DataSource of hoDataSource   to TheData
+        Get piSelectedRow of hoDataSource to iSelectedRow
+        Move (SizeOfArray(TheData))      to iSize
         Decrement iSize
         For iCount from 0 to iSize
             Case Begin
+                Move TheData[iCount].sValue[iData_Col] to sDataVal
                 Case (iState = cx_DbSelect_All)
-                    Move True to TheData[iCount].sValue[iCheckbox_Col]
+                    Move True to bChecked
                     Case Break
                 Case (iState = cx_DbSelect_None)
-                    Move False to TheData[iCount].sValue[iCheckbox_Col]
+                    Move False to bChecked
                     Case Break
                 Case (iState = cx_DbSelect_Invert)
                     Move TheData[iCount].sValue[iCheckbox_Col] to bChecked
-                    Move (not(bChecked)) to TheData[iCount].sValue[iCheckbox_Col]
+                    Move (not(bChecked)) to bChecked
                     Case Break
             Case End
+            Move bChecked to TheData[iCount].sValue[iCheckbox_Col]
+            If (hoDD <> 0) Begin   
+                // This will select the next (iCount) DDO record, else we would update
+                // the same record over and over again.
+                Send SelectRow of hoDataSource iCount True    
+                Send UpdateCurrentValue of hoCheckBox_Col bChecked  
+                Send Request_Save      
+            End
         Loop
-
-        Send ReInitializeData TheData False
-        Send Request_Save
-        Get Main_DD to hoDD
-        If (hoDD <> 0) Begin    
-            If (iState = cx_DbSelect_All) Begin
-                Send SelectAll of hoDD
-            End 
-            If (iState = cx_DbSelect_None) Begin
-                Send DeSelectAll of hoDD
-            End 
-            Send Request_Assign of hoDD
-            Send Refind_Records of hoDD
-        End
+        
+        // Reset the current row to what it was before the loop.
+        Send SelectRow of hoDataSource iSelectedRow True    
+        Send RefreshDataFromSelectedRow
         Send DoSetCheckboxFooterText
     End_Procedure
+
+
+//    Procedure Set SelectItems Integer iState
+//        Integer iCount iSize iCheckbox_Col
+//        Boolean bChecked
+//        Handle hoDataSource hoCheckBox_Col hoDD
+//
+//        tDataSourceRow[] TheData
+v        
+//
+//        Get phoCheckbox_Col to hoCheckBox_Col
+//
+//        If (hoCheckBox_Col = 0) Begin
+//            Procedure_Return
+//        End                 
+//        
+//        Get piColumnId of (phoCheckbox_Col(Self)) to iCheckbox_Col
+//
+//        Get phoDataSource               to hoDataSource
+//        Get DataSource of hoDataSource  to TheData
+//
+//        Move (SizeOfArray(TheData))     to iSize
+//        Decrement iSize
+//        For iCount from 0 to iSize
+//            Case Begin
+//
+//                Case (iState = cx_DbSelect_All)
+//                    Move True to TheData[iCount].sValue[iCheckbox_Col]
+//                    Case Break
+//                Case (iState = cx_DbSelect_None)
+//                    Move False to TheData[iCount].sValue[iCheckbox_Col]
+//                    Case Break
+//                Case (iState = cx_DbSelect_Invert)
+//                    Move TheData[iCount].sValue[iCheckbox_Col] to bChecked
+//                    Move (not(bChecked)) to TheData[iCount].sValue[iCheckbox_Col]
+//                    Case Break
+//            Case End
+//        Loop
+//
+//
+//
+//        Send ReInitializeData TheData False
+//
+//        Send Request_Save
+//        Get Main_DD to hoDD
+//        If (hoDD <> 0) Begin    
+//            If (iState = cx_DbSelect_All) Begin
+//                Send SelectAll of hoDD
+//            End 
+//            If (iState = cx_DbSelect_None) Begin
+//                Send DeSelectAll of hoDD
+//            End 
+//            Send Request_Assign of hoDD
+//
+//
+//            Send Refind_Records of hoDD
+//        End
+//        Send DoSetCheckboxFooterText
+//    End_Procedure
 
     Procedure RefreshSelectionUpdate 
         Handle hoDataSource
@@ -291,43 +388,63 @@ Register_Object oCheckbox_Col
         Function_Return sDataArray
     End_Function
 
-    Procedure SelectAll
-        Set SelectItems to cx_DbSelect_All
-    End_Procedure
-
-    Procedure SelectNone
-        Set SelectItems to cx_DbSelect_None
-    End_Procedure
-
-    Procedure SelectInvert
-        Set SelectItems to cx_DbSelect_Invert
-    End_Procedure
-
+//    Procedure SelectAll
+//        Set SelectItems to cx_DbSelect_All
+//    End_Procedure
+//
+//    Procedure SelectNone
+//        Set SelectItems to cx_DbSelect_None
+//    End_Procedure
+//
+//    Procedure SelectInvert
+//        Set SelectItems to cx_DbSelect_Invert
+//    End_Procedure
     Procedure AddItem String sDataValue
         Handle hoDataSource
-        tDataSourceRow[] TheData
-        tsSearchResult[] asFolderArray
-        Integer iSize iData_Col iCheckbox_Col
-
+        tDataSourceRow[] TheData  
+        String [] asValues
+        Integer iSelectedRow iItem iSize iCount
+        Boolean bOK
+        
         If (not(IsComObjectCreated(Self))) Begin
             Procedure_Return
         End
 
-        Get piColumnId of (phoData_Col(Self)) to iData_Col
-        Get piColumnId of (phoCheckbox_Col(Self)) to iCheckbox_Col
         Get phoDataSource to hoDataSource
+        // Make sure the sDataValue does not exist already,
+        // in which case we would get a "Duplicate record" error. 
         Get DataSource of hoDataSource to TheData
         Move (SizeOfArray(TheData)) to iSize
-        Move sDataValue to TheData[iSize].sValue[iData_Col]
-        Move False      to TheData[iSize].sValue[iCheckbox_Col]
-
-        Send ReInitializeData TheData False
-        Send MoveToFirstRow
+        Decrement iSize
+        For iCount from 0 to iSize
+            Move TheData[iCount].sValue to asValues
+            Move (SearchArray(sDataValue,asValues)) to iItem
+            If (iItem <> -1) Begin
+                Send UserError ("The value:\n" * String(sDataValue) * "\nalready exists in the grid! Please try again.")
+                Procedure_Return
+            End
+        Loop
+        
+        Get piSelectedRow of hoDataSource to iSelectedRow
+        Get AddRow iSelectedRow to bOK
+        Send SelectRow of hoDataSource iSelectedRow True    
+        Send UpdateCurrentValue of (phoData_Col(Self)) sDataValue
+        Get SaveSelectedRow of hoDataSource to bOK
+        Send Request_Save
+        Send RefreshDataFromExternal iSelectedRow
     End_Procedure
 
     Procedure BrowseForFolder
-        String sFolderName
-        Get vSHBrowseForFolder "Select Folder to Add" to sFolderName
+        String sFolderName sHome sHeader
+        Handle ho
+        If (pbDbShowAddFolderMenuItem(Self) = False) Begin
+            Procedure_Return
+        End
+        Move "Select Folder to Add" to sHeader
+        Get psHomePath of ghoApplication to sHome
+        Get Create (RefClass(cSelectFolderDialog)) to ho
+        Get SelectFolder of ho sHeader sHome to sFolderName
+        Send Destroy of ho
         If (sFolderName <> "") Begin
             Send AddItem sFolderName
         End
@@ -339,10 +456,9 @@ Register_Object oCheckbox_Col
         Handle hoDataSource
         tDataSourceRow[] TheData
 
-        Get phoDataSource to hoDataSource
+        Get phoDataSource to hoDataSource   
         Get DataSource of hoDataSource to TheData
         Move (SizeOfArray(TheData)) to iItems
-
         Function_Return iItems
     End_Function
 
@@ -440,7 +556,7 @@ Register_Object oCheckbox_Col
         Get ComTextFont of hoPaintManager to vFont    // Bind the font object to the Grid's text font
         Set pvComObject of hoFont to vFont            // Connect DataFlex object with com object
 
-        Get ReadString of ghoApplication CS_Settings CS_GridFontSize 8 to iVal
+        Get ReadInteger of ghoApplication CS_Settings CS_GridFontSize 8 to iVal
         Set ComSize of hoFont to iVal
         Send ComRedraw
         Send Destroy to hoFont                        // Destroy the font object (releases memory)
@@ -545,9 +661,17 @@ Register_Object oCheckbox_Col
         End
     End_Procedure
 
+   Function GetSelectedRow Returns Integer
+      Integer iRow
+      Get SelectedRow of (phoDataSource(Self)) to iRow
+      Function_Return iRow      
+   End_Function
+   
     Procedure Request_Delete
         Forward Send Request_Delete
-
+        If (pbStaticData(Self) = True) Begin
+            Send Reset of (phoDataSource(Self))
+        End
         // Needed to ensure list of remaining records displayed correctly
         Send RefreshGrid
     End_Procedure
@@ -598,7 +722,7 @@ Register_Object oCheckbox_Col
         End
         Send Destroy to hoFont 
         Send ComRedraw  
-        Send WriteString of ghoApplication CS_Settings CS_GridFontSize iSize
+        Send WriteInteger of ghoApplication CS_Settings CS_GridFontSize iSize
     End_Procedure 
 
 End_Class

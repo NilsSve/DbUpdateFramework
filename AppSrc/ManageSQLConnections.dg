@@ -1410,12 +1410,12 @@ Procedure Activate_SQLMaintainConnections_dg Boolean bNew Integer iCurrentRow tS
     If (bExists = True) Begin
         Set Label  of ho to ("Connection Properties" * "[" + String(sPath) + String(sSQLConnectionsFileName) + "]")
     End
-    Set pTheData                of ho to TheData
+    Set pTheData of ho to TheData
 
-    Send Popup                  of ho
+    Send Popup of ho
 
-    Get pSQLConnectionData      of ho to SQLConnectionData
-    Get pbChanged               of ho to bChanged
+    Get pSQLConnectionData of ho to SQLConnectionData
+    Get pbChanged of ho to bChanged
 End_Procedure
 
 // Read-only access message
@@ -1425,13 +1425,12 @@ Procedure Activate_ReadOnlySQLMaintainConnections_dg tSQLConnection SQLConnectio
 
     Send Cursor_Wait of Cursor_Control
     Move (oSQLMaintainConnections_dg(Self)) to ho
-    Set pbReadOnly              of ho to True
+    Set pbReadOnly of ho to True
 
-    Set pSQLConnectionData      of ho to SQLConnectionData
-    Get psIniFilePath of (phoSQLConnectionIniFile(ghoSQLConnectionHandler)) to sPath
-    Get psIniFileName of (phoSQLConnectionIniFile(ghoSQLConnectionHandler)) to sSQLConnectionsFileName
-    Set Label  of ho to ("Connection Properties (Read-Only)" * "[" + String(sPath) + String(sSQLConnectionsFileName) + "]")
+    Set pSQLConnectionData of ho to SQLConnectionData 
+    Get psIniFilePath of ghoSQLConnectionHandler to sPath
+    Get psIniFileName of ghoSQLConnectionHandler to sSQLConnectionsFileName
+    Set Label of ho to ("Connection Properties (Read-Only)" * "[" + String(sPath) + String(sSQLConnectionsFileName) + "]")
 
     Send Popup of ho
 End_Procedure
-

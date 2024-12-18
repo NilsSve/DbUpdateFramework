@@ -1,21 +1,30 @@
-Use cRichEdit.pkg
+Use cRDCRichEditor.pkg
 Use vWin32fh.pkg
 
-Class cMyRichEdit is a cRichEdit
+#IFNDEF clGreenGrey
+    Define clGreenGrey                for (RGB(64, 84, 93))
+    Define clGreenGreyLight           for (RGB(7, 117, 104))
+#ENDIF
+
+Class cMyRichEdit is a cRDCRichEditor
     Procedure Construct_Object
         Forward Send Construct_Object
-        Property String psExtension ".int"
+        Property String psExtension ".int"   
+
+        Set TextColor to clWhite
+        Set TextBackColor to clGreenGrey
+        Set Color to clGreenGrey
+        
+    End_Procedure     
+    
+    Procedure End_Construct_Object
+        Forward Send End_Construct_Object
     End_Procedure
     
     Procedure ClearData
         Send Delete_Data
     End_Procedure
 
-    // Hide/Show vertical scrollbar
-    Procedure Set HideVerticalScrollbar Boolean bState
-        Set Window_Style to WS_VSCROLL (Not(bState))
-    End_Procedure
-    
     Procedure Mouse_Click Integer iWindowNumber Integer iPosition
         Integer iLine iPos
         String sLine sFileName sPath sExt

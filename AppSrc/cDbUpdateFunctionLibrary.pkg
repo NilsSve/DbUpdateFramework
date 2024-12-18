@@ -8380,7 +8380,7 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
         End
 
         Send Ignore_Error of Error_Object_Id CLIERR_LOGIN_UNSUCCESSFUL
-        Send Ignore_Error of Error_Info_Object DFERR_FILE_ACCESS_VIOLATION
+        Send Ignore_Error of Error_Object_Id DFERR_FILE_ACCESS_VIOLATION
         If (hTable = 0) Begin
             Get NextFreeFilelistSlot to hTable
         End
@@ -8449,7 +8449,7 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
         Case End
 
         Send Trap_Error of Error_Object_Id CLIERR_LOGIN_UNSUCCESSFUL
-        Send Trap_Error of Error_Info_Object DFERR_FILE_ACCESS_VIOLATION
+        Send Trap_Error of Error_Object_Id DFERR_FILE_ACCESS_VIOLATION
         If (LastErr = CLIERR_LOGIN_UNSUCCESSFUL) Begin
             Move False to Found
         End

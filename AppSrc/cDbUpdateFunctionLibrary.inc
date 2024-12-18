@@ -100,6 +100,13 @@ Struct tSQLScriptArray
 End_Struct
 #ENDIF
 
+#IFNDEF _struct_tSQLCollation
+Struct tSQLCollation
+    String sCollation
+    String sDescription
+End_Struct
+#ENDIF
+
 #IFNDEF _struct_tSqlErrorArray
 Struct tSqlErrorArray
     String[]  sSqlErrorArray

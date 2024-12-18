@@ -2,13 +2,13 @@
 Version=24.0
 [WorkspacePaths]
 ConfigFile=.\Programs\Config.ws
-[Libraries]
-Lib1=Libraries\DFAbout\DFAbout24.0.sws
-Lib2=Libraries\RDCToolsLib\RDCToolsLib24.0.sws
-Lib3=Libraries\vwin32fh\StudioLibrary\vWin32fhLibraryDF24.0.sws
 [Conditionals]
 Is$WebApp=False
 Is$Win64=True
+[Libraries]
+Lib1=Libraries\DFAbout\DFAbout24.0.sws
+Lib4=..\Lib\RDCToolsLib\RDCToolsLib24.0.sws
+Lib2=..\Lib\vwin32fh\StudioLibrary\vWin32fhLibraryDF24.0.sws
 [Projects]
 Project0=DUFCodeGenerator.src
 Project1=DUFTestProgram.src
@@ -16,3 +16,5 @@ Project2=DUFSQLConnections.src
 Project3=ReadDFDriverDefXML.src
 Project4=WriteDateTimeHeaderFile.src
 Project5=DUFFileListRepair.src
+[ProjectParameters]
+DUFFileListRepair.src=C:\Projects\DF20\ROW_TEST\ROW_TEST_Cust_2024.sws
