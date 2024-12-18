@@ -8,6 +8,11 @@
 			<libraryTimeStamp>2019-08-15T15:10:39</libraryTimeStamp>
 			<libraryID>Lib1</libraryID>
 		</library>
+		<library>
+			<libraryPath>..\Lib\vwin32fh\StudioLibrary\vWin32fhLibraryDF24.0.sws</libraryPath>
+			<libraryTimeStamp>2024-12-18T20:25:02</libraryTimeStamp>
+			<libraryID>Lib2</libraryID>
+		</library>
 	</libraries>
 	<classes>
 		<class>
