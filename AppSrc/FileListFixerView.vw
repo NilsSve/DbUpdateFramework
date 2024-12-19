@@ -301,7 +301,8 @@ Object oFilelistFixerView is a dbView
             Set peAnchors to anNone
             Set psImage to "ActionEdit.ico"
             Set pbAutoEnable to True
-        
+            Set psToolTip to "Edit the SQL connection file."
+            
             Procedure OnClick
                 String sFileName
                 Get psConnIdFile to sFileName
@@ -366,6 +367,7 @@ Object oFilelistFixerView is a dbView
             Set peAnchors to anNone
             Set psImage to "View.ico"
             Set pbAutoEnable to True
+            Set psToolTip to "View the SQL driver .ini file."
         
             Procedure OnClick
                 String sFileName
