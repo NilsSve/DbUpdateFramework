@@ -17,4 +17,4 @@ DUFFileListRepair.src=C:\Projects\DF20\ROW_TEST\ROW_TEST_Cust_2024.sws
 [Libraries]
 Lib3=Libraries\Library-DFAbout\DFAbout24.0.sws
 Lib4=Libraries\Library-RDCToolsLib\RDCToolsLib24.0.sws
-Lib5=Libraries\Library-vwin32fh\StudioLibrary\vWin32fhLibraryDF24.0.sws
+Lib1=Libraries\Library-vwin32fh\StudioLibrary\vWin32fhLibraryDF24.0.sws
