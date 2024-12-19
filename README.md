@@ -14,3 +14,5 @@ It is suggesed to add the "DUFCodeGenerator.exe" and "DUFFileListRepair.exe" pro
 
 NOTE: When you compile one of the programs for the first time and you get e.g. this compile error: "Error 4295: C:\Temp\DUF\AppSrc\DUFFileListRepair.src (ln 538) Can't include resource COMPILEHEADER.H",
       You will need to first compile/create the program: "WriteDateTimeHeaderFile". It creates the "COMPILERHEEADER.H" file automatically and is used by the programs to get the compiled date & time.
+
+The workspace now uses other RDC Tools libraries that are also published at GitHub. This should not be of any concern to you as this should all be automatic when cloning this repository.
