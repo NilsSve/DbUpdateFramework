@@ -75,3 +75,5 @@ Programs/DUFTestProgram64.dbg
 *.dsk
 *.dep
 **/HelpText**/*.*
+Libraries/Library-DFAbout/
+Libraries/Library-RDCToolsLib/
