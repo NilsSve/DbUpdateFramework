@@ -75,4 +75,3 @@ Programs/DUFTestProgram64.dbg
 *.dsk
 *.dep
 **/HelpText**/*.*
-Libraries/**/*.*
