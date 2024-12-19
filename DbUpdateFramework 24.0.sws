@@ -5,10 +5,6 @@ ConfigFile=.\Programs\Config.ws
 [Conditionals]
 Is$WebApp=False
 Is$Win64=True
-[Libraries]
-Lib1=Libraries\DFAbout\DFAbout24.0.sws
-Lib4=..\Lib\RDCToolsLib\RDCToolsLib24.0.sws
-Lib2=..\Lib\vwin32fh\StudioLibrary\vWin32fhLibraryDF24.0.sws
 [Projects]
 Project0=DUFCodeGenerator.src
 Project1=DUFTestProgram.src
@@ -18,3 +14,7 @@ Project4=WriteDateTimeHeaderFile.src
 Project5=DUFFileListRepair.src
 [ProjectParameters]
 DUFFileListRepair.src=C:\Projects\DF20\ROW_TEST\ROW_TEST_Cust_2024.sws
+[Libraries]
+Lib3=Libraries\Library-DFAbout\DFAbout24.0.sws
+Lib4=Libraries\Library-RDCToolsLib\RDCToolsLib24.0.sws
+Lib5=Libraries\Library-vwin32fh\StudioLibrary\vWin32fhLibraryDF24.0.sws
