@@ -6,4 +6,4 @@
 	url = https://github.com/NilsSve/Library-RDCToolsLib
 [submodule "libraries/Library-vwin32fh"]
 	path = libraries/Library-vwin32fh
-	url = https://github.com/DataFlexCode/vwin32fh
+	url = https://github.com/NilsSve/Library-vwin32fh
