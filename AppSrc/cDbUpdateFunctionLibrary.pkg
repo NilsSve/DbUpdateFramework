@@ -183,7 +183,7 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
     Function SqlDatabaseBackupToDisk String sDatabase String sBackupName String sPath Boolean bShowProg Returns Boolean
         Boolean bOK bExists bShowProgress bErr
         String sStatement sDriverID
-        tSQLScriptArray SQLScriptArray SQLScriptArrayPercentReady
+        tSQLScriptArray SQLScriptArray //SQLScriptArrayPercentReady
         Integer iDbType
 
         If (sDatabase = "") Begin
@@ -220,7 +220,7 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
                 SQLIncludeScriptFile ..\Scripts\BackupMSSQLDatabase.sql as BackupMSSQLDatabase.sql
                 SQLIncludeScriptFile ..\Scripts\GetPercentageBackupCompletionMSSQL.sql as GetPercentageBackupCompletionMSSQL.sql
                 Get _SqlUtilReadResource  "BackupMSSQLDatabase.sql" sDriverID False to SQLScriptArray
-                Get _SqlUtilReadResource "GetPercentageBackupCompletionMSSQL.sql" sDriverID False to SQLScriptArrayPercentReady
+//                Get _SqlUtilReadResource "GetPercentageBackupCompletionMSSQL.sql" sDriverID False to SQLScriptArrayPercentReady
 
                 Move SQLScriptArray.sSQLScriptArray[0] to sStatement
                 Move (Replaces("DATABASE_NAME_XXX", sStatement, sDatabase))   to sStatement
