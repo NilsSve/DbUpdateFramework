@@ -2261,14 +2261,12 @@ Class cBaseDbUpdateFuncLib is a cObject
                 Get _DriverIDFromRootName sRootName to sDriver
                 Set Message_Text of ghoStatusPanel to ("Reading table" * String(hTable) * "LogicalName =" * sLogicalName)
                 Send DoAdvance of ghoProgressBar
-//                Send Ignore_All of Error_Object_Id
                 Move False to bIsSystem
                 Open hTable
                 Get_Attribute DF_FILE_OPENED of hTable to bOpened
                 If (bOpened = True) Begin
                     Get_Attribute DF_FILE_IS_SYSTEM_FILE of hTable to bIsSystem
                 End
-//                Send Trap_All of Error_Object_Id
                 Close hTable
                 Get_Attribute DF_FILE_DISPLAY_NAME of hTable to sDisplayName
                 Get _TableNameOnly sRootName to sNoDriverRootname
