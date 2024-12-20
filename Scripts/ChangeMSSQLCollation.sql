@@ -182,21 +182,23 @@ CREATE TABLE ##ComputedColumnsBackup (
     TableName NVARCHAR(255),
     ColumnName NVARCHAR(255),
     Definition NVARCHAR(MAX),
-    IsComputed BIT
+    IsComputed BIT,
+    OrdinalPosition INT
 );
 
-INSERT INTO ##ComputedColumnsBackup (TableName, ColumnName, Definition, IsComputed)
+INSERT INTO ##ComputedColumnsBackup (TableName, ColumnName, Definition, IsComputed, OrdinalPosition)
 SELECT 
     QUOTENAME(SCHEMA_NAME(t.schema_id)) + '.' + QUOTENAME(t.name) AS TableName,
     QUOTENAME(c.name) AS ColumnName,
     cc.definition AS Definition,
-    1 AS IsComputed
+    1 AS IsComputed,
+    c.column_id AS OrdinalPosition
 FROM sys.computed_columns cc
 JOIN sys.columns c ON cc.object_id = c.object_id AND cc.column_id = c.column_id
 JOIN sys.tables t ON cc.object_id = t.object_id;
 
 -- Also backup regular columns
-INSERT INTO ##ComputedColumnsBackup (TableName, ColumnName, Definition, IsComputed)
+INSERT INTO ##ComputedColumnsBackup (TableName, ColumnName, Definition, IsComputed, OrdinalPosition)
 SELECT 
     QUOTENAME(SCHEMA_NAME(t.schema_id)) + '.' + QUOTENAME(t.name) AS TableName,
     QUOTENAME(c.name) AS ColumnName,
@@ -212,13 +214,15 @@ SELECT
               END + ')'
          ELSE typ.name
     END + ')' AS Definition,
-    0 AS IsComputed
+    0 AS IsComputed,
+    c.column_id AS OrdinalPosition
 FROM sys.columns c
 JOIN sys.tables t ON c.object_id = t.object_id
 JOIN sys.types typ ON c.user_type_id = typ.user_type_id
 WHERE c.is_computed = 0;
+
 PRINT 'Backed up columns:';
-SELECT * FROM ##ComputedColumnsBackup ORDER BY TableName, IsComputed DESC;
+SELECT * FROM ##ComputedColumnsBackup ORDER BY TableName, OrdinalPosition;
 GO
 
 PRINT 'Dropping computed columns...';
@@ -283,7 +287,7 @@ DECLARE @RecreateComputedColumns NVARCHAR(MAX) = '';
 SELECT @RecreateComputedColumns += 'ALTER TABLE ' + TableName + ' ADD ' + ColumnName + ' AS ' + Definition + ';' + CHAR(13)
 FROM ##ComputedColumnsBackup
 WHERE IsComputed = 1
-ORDER BY TableName, ColumnName;  -- Ensure the order is preserved
+ORDER BY TableName, OrdinalPosition;  -- Ensure the order is preserved
 
 IF @RecreateComputedColumns <> ''
 BEGIN
