@@ -236,6 +236,40 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
         Function_Return bOK
     End_Function
 
+    // Drops an SQL database. It first checks that nobody is using the database.
+    Function SqlDatabaseDrop String sDatabase Boolean bShowProg Returns Boolean
+        Boolean bShowProgress bOK
+        String sStatement sDriverID
+        Integer iDbType
+        tSQLScriptArray SQLScriptArray
+
+        If (sDatabase = "") Begin
+            Error DFERR_PROGRAM "The database name was not passed as a parameter to the 'SqlUtilBackupDatabaseToDisk' function"
+            Function_Return False
+        End
+
+        Get psDriverID to sDriverID
+        Get piDbType   to iDbType
+        If (num_arguments > 3) Begin
+            Move bShowProg to bShowProgress
+        End
+
+        Case Begin
+            Case (iDbType = EN_DbTypeMSSQL)
+                SQLIncludeScriptFile ..\Scripts\DropMSSQLDatabase.sql as DropMSSQLDatabase.sql
+                Get _SqlUtilReadResource  "DropMSSQLDatabase.sql" sDriverID False to SQLScriptArray
+                Move SQLScriptArray.sSQLScriptArray[0] to sStatement
+                Move (Replaces("DATABASE_NAME_XXX", sStatement, sDatabase))   to sStatement
+                Move sStatement to SQLScriptArray.sSQLScriptArray[0]
+                Get _SqlUtilExecuteEmbeddedScript SQLScriptArray sDriverID False "" bShowProgress to bOK
+                Case Break
+            Case Else
+                Send Info_Box ("The SqlDatabaseDrop function is currently not implemented for the driver:" * sDriverID + ". It would be great if you could spend a couple of minutes and add a little ESQL code snippet to make it work for that driver! Thanks for helping out.")
+        Case End
+        
+        Function_Return bOK
+    End_Function
+
     Function SqlDatabaseCollationQuery String sDatabase Boolean bSilent Returns String
         String sStatement sDriverID sRetval
         tSQLScriptArray SQLScriptArray
