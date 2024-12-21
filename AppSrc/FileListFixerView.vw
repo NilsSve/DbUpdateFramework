@@ -561,7 +561,7 @@ Object oFilelistFixerView is a dbView
                     Procedure_Return
                 End
                 
-                Get StepsSetupText to sSteps
+                Get StepsSetupText bBackup to sSteps
                 Get YesNo_Box ("Are you sure you want to change the collating sequence for database:" * sDatabase * "\nTo use the new collating sequence:\n" + sCollatingSequence + "\n\n" + sSteps + "\n\nStart making changes now?") to iRetval
                 If (iRetval <> MBR_Yes) Begin
                     Procedure_Return
@@ -591,24 +591,26 @@ Object oFilelistFixerView is a dbView
                 End
             End_Procedure
             
-            Function StepsSetupText Returns String
+            Function StepsSetupText Boolean bBackup Returns String
                 String sSteps
-                Append sSteps "NOTE: Ensure you have a full database backup before proceeding!" CS_CRLF CS_CRLF
+                If (bBackup = False) Begin
+                    Append sSteps "NOTE: You have not selected the 'Create Database Backup' checkbox. Ensure you have a full database backup before proceeding!" CS_CRLF CS_CRLF
+                End
                 Append sSteps "The SQL script will do the following:" CS_CRLF
                 //
-                Append sSteps "-- Step 1: Initialize Temporary Table for Variables" CS_CRLF
-                Append sSteps "-- Step 2: Backup Database w todays date and time added to backup name" CS_CRLF
-                Append sSteps "-- Step 3: Backup Schema-Bound Objects" CS_CRLF 
-                Append sSteps "-- Step 4: Drop Dependencies and Schema-Bound Objects" CS_CRLF
-                Append sSteps "-- Step 5: Backup all index information" CS_CRLF 
-                Append sSteps "-- Step 6: Drop all dependent indexes and constraints" CS_CRLF
-                Append sSteps "-- Step 7: Backup and Drop Computed Columns" CS_CRLF
-                Append sSteps "-- Step 8: Drop Other Schema-Bound Objects" CS_CRLF
-                Append sSteps "-- Step 9: Change Database Collation" CS_CRLF 
-                Append sSteps "-- Step 10: Recreate Computed Columns" CS_CRLF
+                Append sSteps "-- Step 1:  Create temporary table for variables" CS_CRLF
+                Append sSteps "-- Step 2:  Backup database w todays date-time added to the name" CS_CRLF
+                Append sSteps "-- Step 3:  Backup schema-bound objects" CS_CRLF 
+                Append sSteps "-- Step 4:  Drop dependencies and schema-bound objects" CS_CRLF
+                Append sSteps "-- Step 5:  Backup all index information" CS_CRLF 
+                Append sSteps "-- Step 6:  Drop all dependent indexes and constraints" CS_CRLF
+                Append sSteps "-- Step 7:  Backup/drop computed- and backup regular-columns" CS_CRLF
+                Append sSteps "-- Step 8:  Drop other schema-bound objects" CS_CRLF
+                Append sSteps "-- Step 9:  Change database collation" CS_CRLF 
+                Append sSteps "-- Step 10: Recreate computed columns" CS_CRLF
                 Append sSteps "-- Step 11: Recreate indexes and constraints" CS_CRLF 
-                Append sSteps "-- Step 12: Recreate Schema-Bound Objects" CS_CRLF 
-                Append sSteps "-- Step 13: Cleanup Temporary Tables" CS_CRLF 
+                Append sSteps "-- Step 12: Recreate schema-bound objects" CS_CRLF 
+                Append sSteps "-- Step 13: Cleanup temporary tables" CS_CRLF 
                 Function_Return sSteps
             End_Function
                 
