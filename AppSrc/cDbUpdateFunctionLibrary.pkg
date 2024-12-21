@@ -327,7 +327,7 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
                         Move (Replaces("COLLATION_NAME_XXX", SQLScriptArray.sSQLScriptArray[iCount], String(sCollation))) to SQLScriptArray.sSQLScriptArray[iCount]
                     End
                     If (bBackup = False) Begin
-                        Move (Replace("DECLARE @ShouldBackup BIT = 1", SQLScriptArray.sSQLScriptArray[iCount], String("DECLARE @ShouldBackup BIT = 0"))) to SQLScriptArray.sSQLScriptArray[iCount]                        
+                        Move (Replace("('ShouldBackup', '0')", SQLScriptArray.sSQLScriptArray[iCount], String("('ShouldBackup', '1')"))) to SQLScriptArray.sSQLScriptArray[iCount]                        
                     End
                 Loop
 
