@@ -82,7 +82,7 @@ PRINT 'Dependencies and schema-bound objects dropped successfully.';
 GO
 
 -- Step 5: Backup all index information
-PRINT 'Backing up indexes, primary keys, and unique constraints...';
+PRINT 'Backup ALL indexes including PKs and unique constraints that depend on computed columns...';
 IF OBJECT_ID('tempdb..##IndexesBackup') IS NOT NULL DROP TABLE ##IndexesBackup;
 CREATE TABLE ##IndexesBackup (
     TableName NVARCHAR(255),
@@ -93,7 +93,6 @@ CREATE TABLE ##IndexesBackup (
     DropStatement NVARCHAR(MAX)
 );
 
--- Backup ALL indexes including PKs and unique constraints that depend on computed columns
 INSERT INTO ##IndexesBackup
 SELECT 
     QUOTENAME(SCHEMA_NAME(t.schema_id)) + '.' + QUOTENAME(t.name) AS TableName,
@@ -175,8 +174,8 @@ BEGIN
 END
 GO
 
--- Step 7: Backup and Drop Computed Columns
-PRINT 'Backing up computed columns...';
+-- Step 7: Backup and Drop Computed and regular columns
+PRINT 'Backing up computed columns and regular columns...';
 IF OBJECT_ID('tempdb..##ComputedColumnsBackup') IS NOT NULL DROP TABLE ##ComputedColumnsBackup;
 CREATE TABLE ##ComputedColumnsBackup (
     TableName NVARCHAR(255),
@@ -221,7 +220,7 @@ JOIN sys.tables t ON c.object_id = t.object_id
 JOIN sys.types typ ON c.user_type_id = typ.user_type_id
 WHERE c.is_computed = 0;
 
-PRINT 'Backed up columns:';
+PRINT 'Backed up all columns:';
 SELECT * FROM ##ComputedColumnsBackup ORDER BY TableName, OrdinalPosition;
 GO
 
