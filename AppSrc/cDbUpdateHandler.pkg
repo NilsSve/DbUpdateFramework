@@ -207,7 +207,7 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary
         Property Integer Private.piDbVersionFieldNumber 1
 
         { MethodType=Property Category="Check int. Files" InitialValue=False }
-        Property Handle  piIntFilesFileNumber -1
+        Property Integer piIntFilesFileNumber -1
         { Visibility=Private }
         Property Boolean pbRestoreIntFilesNow False   
         // In parallell with the above property, the pbSaveIntFilesNow can be set. That same property
