@@ -87,8 +87,7 @@ Object oMain is a Panel
         #ENDIF
 
         Procedure OnCreateCommandBars
-            Integer eTheme
-            Forward Send OnCreateCommandBars
+//            Integer eTheme
 //#IF (!@ < 191)
 //            Get ReadDword of ghoApplication CS_PropertiesKeyWord CS_ThemeKeyWord xtpThemeWhidbey to eTheme
 //#ELSE
