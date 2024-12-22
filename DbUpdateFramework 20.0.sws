@@ -4,16 +4,16 @@ Version=20.0
 ConfigFile=.\Programs\Config.ws
 [Conditionals]
 Is$WebApp=False
-Is$Win64=False
-DUF_Use_Mertech_Drivers=False
+Is$Win64=True
+[Libraries]
+Lib3=Libraries\Library-DFAbout\DFAbout24.0.sws
+Lib4=Libraries\Library-RDCToolsLib\RDCToolsLib24.0.sws
+Lib1=Libraries\Library-vwin32fh\StudioLibrary\vWin32fhLibraryDF24.0.sws
 [Projects]
 Project0=DUFCodeGenerator.src
-Project1=DUFCreateDbVersionTable.src
-Project2=DUFTestProgram.src
-Project3=DUFSQLConnections.src
-Project4=ReadDFDriverDefXML.src
-Project5=DUFInternalUpdateProgram.src
-[Libraries]
-Lib1=Libraries\vwin32fh\StudioLibrary\vWin32fh-Library-DF200.sws
-Lib3=Libraries\DFAbout\DFAbout20.1.sws
-Lib2=Libraries\RDCToolsLib\RDCToolsLib 20.1.sws
+Project1=DUFTestProgram.src
+Project2=DUFSQLConnections.src
+Project3=ReadDFDriverDefXML.src
+Project4=WriteDateTimeHeaderFile.src
+Project5=DUFFileListRepair.src
+[ProjectParameters]
