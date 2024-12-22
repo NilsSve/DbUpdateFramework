@@ -9,8 +9,8 @@
 			<libraryID>Lib3</libraryID>
 		</library>
 		<library>
-			<libraryPath>Libraries\Library-vwin32fh\StudioLibrary\vWin32fhLibraryDF24.0.sws</libraryPath>
-			<libraryTimeStamp>2024-12-19T16:38:22</libraryTimeStamp>
+			<libraryPath>Libraries\Library-vwin32fh\StudioLibrary\vWin32fh-Library-DF24.0.sws</libraryPath>
+			<libraryTimeStamp>2024-12-19T21:51:07</libraryTimeStamp>
 			<libraryID>Lib1</libraryID>
 		</library>
 	</libraries>
