@@ -1,7 +1,23 @@
-Use cApplication.pkg
+﻿Use cApplication.pkg
 Use cIniFile.pkg
 Use cDbUpdateFunctionLibrary.pkg
 Use vWin32fh.pkg
+
+#IFNDEF CS_Settings
+    Define CS_Settings for "Settings"
+#ENDIF
+#IFNDEF CS_GridRowBackgroundColor
+    Define CS_GridRowBackgroundColor for "GridRowBackgroundColor"
+#ENDIF
+
+#IFNDEF clAlternateRowBgColor
+    Define clAlternateRowBgColor    for (RGB(216, 217, 227))    // HTML #D8D9E3
+    Define clStatusBarColor         for (RGB(45, 130, 149))     // HTML #2D8295
+    Define clEditorBackGround       for (RGB(36, 49, 68))       // HTML 243144
+    Define clBaseColor              for (RGB(239, 239, 239))    // HTML #EFEFEF  
+    Define clActiveRow              for (RGB(1, 82, 119))       // HTML #015277 
+    Define clProgramIconBg          for (RGB(43, 59, 83))       // HTML #2B3B53
+#ENDIF
 
 Class cMyApplication is a cApplication
     
@@ -15,6 +31,8 @@ Class cMyApplication is a cApplication
         Property String psFilelistFrom ""
         Property String private.psFilelistFromOrg ""
         Property String psOrgOpenPath ""
+        {Visibility=Private}
+        Property String private.psGridRowBackgroundColor 0
     
     End_Procedure
 
@@ -29,6 +47,28 @@ Class cMyApplication is a cApplication
             Move (Left(sPath, Length(sPath) -1)) to sPath
         End
         Function_Return sPath
+    End_Function
+
+    { MethodType=Property }
+    Procedure Set psGridRowBackgroundColor String sColor
+        Set private.psGridRowBackgroundColor to sColor
+        Send WriteString CS_Settings CS_GridRowBackgroundColor sColor
+        Broadcast Recursive Set piSelectedRowBackColor of (Client_Id(phoMainPanel(ghoApplication))) to sColor
+        Broadcast Recursive Set piHighlightBackColor   of (Client_Id(phoMainPanel(ghoApplication))) to sColor
+    End_Procedure
+
+    { MethodType=Property }
+    Function psGridRowBackgroundColor Returns String
+        String sColor
+        Get private.psGridRowBackgroundColor to sColor
+        If (sColor = "0") Begin
+            Get ReadString CS_Settings CS_GridRowBackgroundColor clActiveRow to sColor
+            If (sColor contains "clBlueGrey") Begin
+                Move (Replace("clBlueGrey", sColor, "clStatusBarColor")) to sColor
+            End
+            Set private.psGridRowBackgroundColor to sColor
+        End
+        Function_Return sColor
     End_Function
 
     Procedure OnCreate

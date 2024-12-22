@@ -1,4 +1,4 @@
-Use Windows.pkg
+﻿Use Windows.pkg
 Use DFClient.pkg
 Use Cursor.pkg
 Use Batchdd.pkg
@@ -185,10 +185,8 @@ Object oTableDUFCodeGenerator is a dbView
             Set Location to 27 29
             Set Status_Help to "Select with the spacebar, or use the selection buttons above the grid"
             Set piLayoutBuild to 10
-            Set pbReadOnly to False
-            Set pbAllowEdit to True
             Set pbEditOnClick to False
-
+            
             Property Handle phDbVersion
             Property Integer piCurrentRow -1
 
@@ -344,7 +342,6 @@ Object oTableDUFCodeGenerator is a dbView
 
                 Set_Attribute DF_DECIMAL_SEPARATOR to (Ascii('.'))
                 Get Value of oPnVersionNumber_fm to sVersionNumber
-//                Move nVersionNumber to sVersionNumber
                 Move (Pos(".", sVersionNumber)) to iPos
                 If (iPos = 0) Begin
                     Move (sVersionNumber + String(".0")) to sVersionNumber
