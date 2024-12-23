@@ -1285,6 +1285,10 @@ Object oTableDUFCodeGenerator is a dbView
         End
     End_Procedure 
     
+    // Don't allow to close the view if Escape is pressed in the grid.
+    Procedure Request_Cancel
+    End_Procedure
+    
 //    On_Key Key_Ctrl+Key_A  Send KeyAction of oSelectAll_btn
 //    On_Key Key_Ctrl+Key_N  Send KeyAction of oDeSelectAll_btn
 //    On_Key Key_Ctrl+Key_I  Send KeyAction of oInvertSelection_btn
