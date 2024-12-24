@@ -556,6 +556,10 @@ Object oFilelistFixerView is a dbView
                 Get psDatabase of ghoDUF to sDatabase   
                 Get Value of oCurrentCollatingSequence_fm to sCurrentCollatingSequence
                 Get Value of oCollatingSequence_fm to sCollatingSequence              
+                If (sCollatingSequence = "") Begin
+                    Send Info_Box "Nope that won't work. You need to specify a collating sequence to change to, first."
+                    Procedure_Return
+                End
                 If (sCurrentCollatingSequence = sCollatingSequence) Begin
                     Send Info_Box "Nope that won't work. The database is already using the selected collating sequence."
                     Procedure_Return
