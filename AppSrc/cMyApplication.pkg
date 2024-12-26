@@ -9,14 +9,23 @@ Use vWin32fh.pkg
 #IFNDEF CS_GridRowBackgroundColor
     Define CS_GridRowBackgroundColor for "GridRowBackgroundColor"
 #ENDIF
-
 #IFNDEF clAlternateRowBgColor
-    Define clAlternateRowBgColor    for (RGB(216, 217, 227))    // HTML #D8D9E3
-    Define clStatusBarColor         for (RGB(45, 130, 149))     // HTML #2D8295
-    Define clEditorBackGround       for (RGB(36, 49, 68))       // HTML 243144
-    Define clBaseColor              for (RGB(239, 239, 239))    // HTML #EFEFEF  
-    Define clActiveRow              for (RGB(1, 82, 119))       // HTML #015277 
-    Define clProgramIconBg          for (RGB(43, 59, 83))       // HTML #2B3B53
+    Define clAlternateRowBgColor     for (RGB(216, 217, 227))    // HTML #D8D9E3
+#ENDIF
+#IFNDEF clStatusBarColor
+    Define clStatusBarColor          for (RGB(45, 130, 149))     // HTML #2D8295
+#ENDIF
+#IFNDEF clEditorBackGround
+    Define clEditorBackGround        for (RGB(36, 49, 68))       // HTML 243144
+#ENDIF
+#IFNDEF clBaseColor
+    Define clBaseColor               for (RGB(239, 239, 239))    // HTML #EFEFEF  
+#ENDIF
+#IFNDEF clActiveRow
+    Define clActiveRow               for (RGB(1, 82, 119))       // HTML #015277 
+#ENDIF
+#IFNDEF clProgramIconBg
+    Define clProgramIconBg           for (RGB(43, 59, 83))       // HTML #2B3B53
 #ENDIF
 
 Class cMyApplication is a cApplication
