@@ -4,53 +4,58 @@
 **/apphtml/global.asa
 
 # AppSrc
-**/appsrc/**/*.prn
-**/appsrc/**/*.dep
-**/appsrc/**/*.dbg
-**/appsrc/**/*.exe.manifest
-**/appsrc/**/*.err
-**/appsrc/**/*.fld
-**/appsrc/**/*.pbg
-**/appsrc/**/*.pdp
-**/appsrc/**/*.pkd
-**/appsrc/**/*.prn
-**/appsrc/**/*.prp
+**/AppSrc/**/*.prn
+**/AppSrc/**/*.dep
+**/AppSrc/**/*.dbg
+**/AppSrc/**/*.exe.manifest
+**/AppSrc/**/*.err
+**/AppSrc/**/*.fld
+**/AppSrc/**/*.pbg
+**/AppSrc/**/*.pdp
+**/AppSrc/**/*.pkd
+**/AppSrc/**/*.prn
+**/AppSrc/**/*.prp
 loginEncryptionkey.inc
 
 # Data
-**/data/**/*.log
-**/data/**/*.dat
-**/data/**/*.vld
-**/data/**/*.k*
-**/data/**/*.bad
-**/data/**/*.hdr
-**/data/**/*.cch
-**/data/**/*.cfg
+**/Data/**/*.log
+**/Data/**/*.dat
+**/Data/**/*.vld
+**/Data/**/*.k*
+**/Data/**/*.bad
+**/Data/**/*.hdr
+**/Data/**/*.cch
+**/Data/**/*.cfg
+**/Data/**/*.tag
+**/Data/**/Deploy/**
 
 # DDSrc
-**/ddsrc/**/*.def
+**/DdSrc/**/*.def
 
 # IdeSrc
-**/idesrc/*.dsk
-**/idesrc/*.loc
-**/idesrc/*.mtd
+**/IdeSrc/*.dsk
+**/IdeSrc/*.loc
+**/IdeSrc/*.mtd
 
 # Programs
-**/programs/*.dbg
-**/programs/*.exe
-**/programs/*.exe.manifest
-**/programs/*.log
+**/Programs/*.dbg
+**/Programs/*.exe
+**/Programs/*.exe.manifest
+**/Programs/*.log
+**/Programs/*.ini
 
 # Workspace specific
-**/data/compileheader.h
-**/help/**/*.hnd
-**/help/**/assets
-**/help/**/online help
-**/install
-**/capture
+**/Data/compileheader.h
+**/Help/**/*.hnd
+**/Help/**/Assets
+**/Help/**/Online Help
+**/HelpText**/*.*
+
+**/Install
+
+**/Capture
 **/dfrefactor backup
 **/*.mp4
-**/HelpText**/*.*
 FileListFixes.txt
 DUFUpdatelog.txt
 TableStructLog.txt
