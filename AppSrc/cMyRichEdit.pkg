@@ -1,9 +1,8 @@
-Use cRDCRichEditor.pkg
+﻿Use cRDCRichEditor.pkg
 Use vWin32fh.pkg
 
-#IFNDEF clGreenGrey
-    Define clGreenGrey                for (RGB(64, 84, 93))
-    Define clGreenGreyLight           for (RGB(7, 117, 104))
+#IFNDEF clActiveRow
+    Define clActiveRow for (RGB(1, 82, 119))       // HTML #015277 
 #ENDIF
 
 Class cMyRichEdit is a cRDCRichEditor
@@ -12,8 +11,8 @@ Class cMyRichEdit is a cRDCRichEditor
         Property String psExtension ".int"   
 
         Set TextColor to clWhite
-        Set TextBackColor to clGreenGrey
-        Set Color to clGreenGrey
+        Set TextBackColor to clActiveRow
+        Set Color to clActiveRow
         
     End_Procedure     
     
