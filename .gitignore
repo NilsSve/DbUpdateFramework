@@ -75,3 +75,4 @@ Programs/DUFTestProgram64.dbg
 *.dsk
 *.dep
 **/HelpText**/*.*
+FileListFixes.txt
