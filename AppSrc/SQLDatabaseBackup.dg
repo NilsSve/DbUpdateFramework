@@ -66,6 +66,7 @@ Object oSQLDatabaseBackup_dg is a ModalPanel
             Boolean bChecked
             Get Checked_State to bChecked
             Set Enabled_State of oPath_fm to (bChecked = False)
+            Send SetupPath of oPath_fm
         End_Procedure
 
     End_Object
@@ -80,13 +81,17 @@ Object oSQLDatabaseBackup_dg is a ModalPanel
         Set peAnchors to anTopLeftRight
         Set Enabled_State to False
 
-        Procedure Page Integer iPageObject
+        Procedure SetupPath
             String sValue
-            Get psDataPathFirstPart of ghoDbUpdateFunctionLibrary to sValue
-            Get vFolderFormat sValue to sValue
-            Move (sValue + "Backup") to sValue
-            Set Value to sValue
-            Forward Send Page iPageObject
+            Boolean bEnabled
+            
+            Get Enabled_State to bEnabled
+            If (bEnabled = True) Begin                
+                Get psDataPathFirstPart of ghoDbUpdateFunctionLibrary to sValue
+                Get vFolderFormat sValue to sValue
+                Move (sValue + "Backup") to sValue
+                Set Value to sValue
+            End
         End_Procedure
 
         Procedure Prompt
