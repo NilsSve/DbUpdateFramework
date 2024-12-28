@@ -1,3 +1,6 @@
 [submodule "Libraries/DFAbout"]
 	path = Libraries/DFAbout
 	url = https://github.com/NilsSve/Library-DFAbout.git
+[submodule "Libraries/RDCToolsLib"]
+	path = Libraries/RDCToolsLib
+	url = https://github.com/NilsSve/Library-RDCToolsLib
