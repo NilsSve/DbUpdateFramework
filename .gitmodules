@@ -4,3 +4,6 @@
 [submodule "Libraries/RDCToolsLib"]
 	path = Libraries/RDCToolsLib
 	url = https://github.com/NilsSve/Library-RDCToolsLib
+[submodule "Libraries/vwin32fh"]
+	path = Libraries/vwin32fh
+	url = https://github.com/NilsSve/Library-vwin32fh
