@@ -1,3 +1,0 @@
-ID
-IntFileName
-IntLineText
