@@ -37,7 +37,6 @@ Object oApplication is a cMyApplication
         Use DatabaseLoginDialog.dg
     End_Object
     #ENDIF
-
 End_Object
 
 Object oDbUpdateHandler is a cDbUpdateHandler
