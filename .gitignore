@@ -59,3 +59,4 @@ loginEncryptionkey.inc
 FileListFixes.txt
 DUFUpdatelog.txt
 TableStructLog.txt
+AppSrc/CompileHeader.h
