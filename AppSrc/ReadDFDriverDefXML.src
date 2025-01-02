@@ -24,7 +24,7 @@ Object oApplication is a cApplication
     Set psCompany to "RDC Tools International"
     Set psProduct to "Driver Info Import"
     Set psProgram to "Read DF Driver Def XML file"
-    Set psVersion to "2023"
+    Set psVersion to "2025"
     Property String psCompileDateAndTime
 End_Object
 
