@@ -2175,10 +2175,8 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
         Case Begin
             Case (sDriverID = MSSQLDRV_ID)
                 Get phoMSSQLHandler to hoSQLHandler 
-//                Get EnumerateServersLocal of hoSQLHandler to iNumItems  
                 Get EnumerateServersNetworkOrLocal of hoSQLHandler 1 to iNumItems
                 If (iNumItems = 0) Begin
-//                    Get EnumerateServers of hoSQLHandler to iNumItems 
                     Get EnumerateServersNetworkOrLocal of hoSQLHandler 0 to iNumItems
                 End
                 For iCount from 0 to (iNumItems - 1)
