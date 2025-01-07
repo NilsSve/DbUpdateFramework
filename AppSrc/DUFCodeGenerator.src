@@ -19,7 +19,7 @@ End_Object
 Define CS_PropertiesKeyWord     for "Properties"
 Define CS_ThemeKeyWord          for "Theme"
 
-#IF (!@ < 210)
+#IF (!@ < 201)
     Send Stop_Box "Nope, that won't work. You need at least DataFlex 21.0 to run this program."
     Send Exit_Application
 #ENDIF
@@ -593,23 +593,6 @@ Object oMain is a Panel
 
                 End_Object
 
-//                Object oCheckforUpdatesMenuItem is a cCJMenuItem
-//                    Set psCaption to "Check for Updates"
-//                    Set psDescription to "Check for Updates..."
-//                    Set psImage to "InternetUpdate.ico"
-//                    Set pbControlBeginGroup to True
-//                    
-//                    Procedure OnExecute Variant vCommandBarControl
-//                        String sPath sUpdateProgram sParam
-//                        Get psProgramPath of (phoWorkspace(ghoApplication)) to sPath
-//                        Get vFolderFormat sPath to sPath
-//                        Move "updater.exe" to sUpdateProgram
-//                        Move "/checknow"   to sParam
-//                        Runprogram Shell Wait ('"' + sPath + sUpdateProgram + '"') sParam
-//                    End_Procedure
-//                
-//                End_Object
-                
             End_Object
 
             Object oExitMenuItem is a cCJExitMenuItem

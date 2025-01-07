@@ -11,7 +11,6 @@ Use Dferror.pkg                 // Error handling class and object
 Use seq_chnl.pkg                // Sequential channel management
 Use Statpnl.pkg                 // StatusPanel class
 Use File_dlg.pkg                // SaveAsDialog & OpenDialog class
-Use Flexml.pkg
 Use cli.pkg
 Use vWin32fh.pkg
 Use oEditContextMenu.pkg

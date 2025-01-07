@@ -1,4 +1,4 @@
-Use DFClient.pkg
+﻿Use DFClient.pkg
 Use cCJCommandBarSystem.pkg
 Use cCJGrid.pkg
 Use cCJGridColumnRowIndicator.pkg
@@ -844,7 +844,7 @@ Object oSQLMaintainConnection is a dbView
 
         Get phoSQLConnectionIniFile of ghoSQLConnectionHandler to ho
         Get psIniFileName of ho to sFileName
-        Move (Uppercase(sFileName) = Uppercase(CS_SQLDF19IniFileName)) to bDFConnId
+        Move (Uppercase(sFileName) = Uppercase(CS_SQLDFConnIdFileName)) to bDFConnId
         Set pbDFConnId of ho to bDFConnId
 
         Function_Return bDFConnId
@@ -862,7 +862,7 @@ Object oSQLMaintainConnection is a dbView
             Move (oSQLConnections_grd(Self)) to hoGrid
             Get ParseFolderName sFilename to sPath
             Get ParseFileName   sFilename to sFilename
-            If (Uppercase(sFilename) <> Uppercase(CS_SQLIniFileName) and Uppercase(sFilename) <> Uppercase(CS_SQLDF19IniFileName)) Begin
+            If (Uppercase(sFilename) <> Uppercase(CS_SQLIniFileName) and Uppercase(sFilename) <> Uppercase(CS_SQLDFConnIdFileName)) Begin
                 Send Info_Box ("Sorry, only" * CS_SQLIniFileName * "files can be dropped!")
                 Procedure_Return
             End

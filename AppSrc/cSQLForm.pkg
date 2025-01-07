@@ -1,4 +1,4 @@
-Use Windows.pkg
+﻿Use Windows.pkg
 
 Class cSQLForm is a Form
     Procedure Construct_Object

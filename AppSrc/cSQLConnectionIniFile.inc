@@ -1,4 +1,4 @@
-//****************************************************************************
+﻿//****************************************************************************
 // $Module type: Include file
 // $Module name: cSQLConnectionIniFile.inc
 //
@@ -93,7 +93,7 @@ Define CS_DbTypePervasive   for "Pervasive.SQL (Btrieve)"
 #ENDIF
 
 Define CS_SQLIniFileName                for "SQLConnections.ini"
-Define CS_SQLDF19IniFileName            for "DFConnId.ini"
+Define CS_SQLDFConnIdFileName           for "DFConnId.ini"
 Define CS_SQLIniConnectionSection       for "SQL Connections" // Obsolete!
 Define CS_SQLIniSectionName             for "Connection"
 Define CS_SQLODBCIniSectionName         for "ODBC"

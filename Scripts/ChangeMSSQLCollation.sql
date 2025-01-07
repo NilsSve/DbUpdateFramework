@@ -12,10 +12,10 @@ CREATE TABLE ##TempVariables (
 -- Insert initial variable values
 INSERT INTO ##TempVariables (VariableName, VariableValue)
 VALUES
---    ('DatabaseName', 'DATABASE_NAME_XXX'),  -- Replace with your actual database name
---    ('CollationName', 'COLLATION_NAME_XXX'),  -- Replace with your desired collation
-    ('DatabaseName', 'ROW_TEST'),  -- Replace with your actual database name
-    ('CollationName', 'Finnish_Swedish_100_CI_AI_SC_UTF8'),  -- Replace with your desired collation
+    ('DatabaseName', 'DATABASE_NAME_XXX'),  -- Replace with your actual database name
+    ('CollationName', 'COLLATION_NAME_XXX'),  -- Replace with your desired collation
+--    ('DatabaseName', 'ROW_TEST'),  -- Replace with your actual database name
+--    ('CollationName', 'Finnish_Swedish_100_CI_AI_SC_UTF8'),  -- Replace with your desired collation
     ('ShouldBackup', '0');  -- Set to 1 to enable backup, 0 to disable
 
 GO

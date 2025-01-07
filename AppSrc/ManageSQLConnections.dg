@@ -189,9 +189,9 @@ Object oSQLMaintainConnections_dg is a ModalPanel
             Set Label to "Server"
             Set psToolTip to "Server/DSN: Depending on the selected database type the label can either display as 'Server' or 'DSN'. Either enter the name - if you know it - or by using the selection list (F4). Tip: If you are using Microsoft SQL Server and you are testing on the same machine as the MS SQL Server instance is running and you are using SQLEXPRESS you can enter e.g. '.\SQLEXPRESS'. That will mean use the SQLEXPRESS instance of Microsoft SQL Server running on this machine. If you press [F4] and the selection list comes up empty for Microsoft SQL Server it probably is because the service hasn't been started. Type 'Services' in Windows menu system to start Windows Services app. Type 'SQL' to jump to the SQL Server services. Check that the 'SQL Server Browser' service is started and set to 'Automatic'."
             Set piItem to 5
+            Set Prompt_Button_Mode to PB_PromptOn
+            Set Prompt_Object to (oServerSelection_sl(Self))  
             Set peAnchors to anTopLeftRight
-            Set Prompt_Button_Mode to PB_PromptOn  
-            Property Handle phoPromptObject (oServerSelection_sl(Self))
 
             Procedure Prompt
                 String sDriverID sValue
@@ -230,7 +230,7 @@ Object oSQLMaintainConnections_dg is a ModalPanel
                 End
 
                 Get SqlUtilEnumerateServers of ghoDbUpdateFunctionLibrary sDriverID iODBCType to sTheData
-                Set psTheData  of ho to sTheData
+                Set psTheData of ho to sTheData
                 Set Label of oShowInfo_tb to ""
 
                 Forward Send Prompt
@@ -300,7 +300,7 @@ Object oSQLMaintainConnections_dg is a ModalPanel
                 String sLabel
                 Handle ho
 
-                Get phoPromptObject to ho
+                Move (Prompt_Object(Self)) to ho
                 Set Prompt_Button_Mode to PB_PromptOn
                 Case Begin
                     Case (iDbType = EN_dbTypeDB2)
@@ -341,7 +341,6 @@ Object oSQLMaintainConnections_dg is a ModalPanel
                     Case Else
                 Case End
 
-                Set Prompt_Object to ho
                 Set Label to sLabel
             End_Procedure
 
@@ -709,7 +708,7 @@ Object oSQLMaintainConnections_dg is a ModalPanel
             Set Prompt_Button_Mode to PB_PromptOn
             Set Prompt_Object to (oDatabaseSelection_sl(Self))
 
-            Property Handle phoPromptObject (oDatabaseSelection_sl(Self))
+//            Property Handle phoPromptObject (oDatabaseSelection_sl(Self))
 
             Procedure Prompt
                 String[] sTheData

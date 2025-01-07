@@ -2163,9 +2163,9 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
     // The iDataSourceType (iDatSrcType) parameter is optional and is for the ODBC driver only.
     // Note: Returns servers for MSSQLDRV; else data-sources on the machine.
     Function SqlUtilEnumerateServers String sDriverID Integer iDatSrcType Returns String[]
-        String[] sReturnArray
+        String[] asReturnArray
         Handle hoSQLHandler
-        String sServer
+        String sServer sText
         Integer iCount iNumItems iDataSourceType
 
         If (num_arguments > 1) Begin
@@ -2175,14 +2175,24 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
         Case Begin
             Case (sDriverID = MSSQLDRV_ID)
                 Get phoMSSQLHandler to hoSQLHandler 
-                Get EnumerateServersLocal of hoSQLHandler to iNumItems
+//                Get EnumerateServersLocal of hoSQLHandler to iNumItems  
+                Get EnumerateServersNetworkOrLocal of hoSQLHandler 1 to iNumItems
                 If (iNumItems = 0) Begin
-                    Get EnumerateServers of hoSQLHandler to iNumItems 
+//                    Get EnumerateServers of hoSQLHandler to iNumItems 
+                    Get EnumerateServersNetworkOrLocal of hoSQLHandler 0 to iNumItems
                 End
                 For iCount from 0 to (iNumItems - 1)
                     Get String_Value of hoSQLHandler iCount to sServer
-                    Move (Trim(sServer)) to sReturnArray[iCount]
-                Loop
+                    Move (Trim(sServer)) to asReturnArray[iCount]
+                Loop 
+                If (SizeOfArray(asReturnArray) = 0) Begin
+                    Move         "No SQL Servers found!\n" to sText
+                    Append sText "There can be a multitude of reasons for this:\n"
+                    Append sText "1. If on a network, check firewall settings.\n"
+                    Append sText "2. Check the SQL Server network protocols, both TCP/IP and Named Pipes needs to be enabled.\n"
+                    Append sText "3. Check that the 'SQL Server Browser' service is running - or restart it.\n"
+                    Send Info_Box sText
+                End
                 Case Break
 
             Case (sDriverID = DB2_DRV_ID)
@@ -2193,7 +2203,7 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
                     Get DataSources of hoSQLHandler to sServer
                     If (sServer <> "") Begin
                         Move (Replace(",", sServer, "")) to sServer
-                        Move sServer to sReturnArray[iCount]
+                        Move sServer to asReturnArray[iCount]
                     End
                     Increment iCount
                 Until (sServer = "")
@@ -2207,7 +2217,7 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
                     Get DataSources of hoSQLHandler to sServer
                     If (sServer <> "") Begin
                         Move (Replace(",", sServer, ", ")) to sServer
-                        Move sServer to sReturnArray[iCount]
+                        Move sServer to asReturnArray[iCount]
                     End
                     Increment iCount
                 Until (sServer = "")
@@ -2217,12 +2227,12 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
                 Error DFERR_PROGRAM "Unsupported DriverID passed to SqlUtilEnumerateServers function"
         Case End
 
-        Function_Return sReturnArray
+        Function_Return asReturnArray
     End_Function
 
     // Returns all databases as a string array for the passed driver id.
     Function SqlUtilEnumerateDatabases String sDriverID Returns String[]
-        String[] sReturnArray
+        String[] asReturnArray
         String sServer sVal
         tSQLIntTableInfo[] sReturnStructArray
         tSQLConnection SQLConnection
@@ -2231,15 +2241,15 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
 
         Get _SqlCheckCurrentDriver sDriverID to bOK
         If (bOK = False) Begin
-            Function_Return sReturnArray
+            Function_Return asReturnArray
         End
 
         Case Begin
             Case (sDriverID = MSSQLDRV_ID)
-                Get _SqlDatabasesArrayMSSQL to sReturnArray
+                Get _SqlDatabasesArrayMSSQL to asReturnArray
                 Case Break
             Case (sDriverID = DB2_DRV_ID)
-                Get _SqlDatabasesArrayDB2 to sReturnArray
+                Get _SqlDatabasesArrayDB2 to asReturnArray
                 Case Break
 
             // This is needed to be able to check if a database exists or not.
@@ -2248,7 +2258,7 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
                 If (SizeOfArray(sReturnStructArray)) Begin
                     If (SizeOfArray(sReturnStructArray) = 1 and sReturnStructArray[0].sServerName = "") Begin
                         // If a FILEDSN: (can only be one database name)
-                        Move sReturnStructArray[0].sDatabaseName to sReturnArray[0]
+                        Move sReturnStructArray[0].sDatabaseName to asReturnArray[0]
                     End
                     Else Begin
                         // Else the DSN's were read from the registry.
@@ -2259,7 +2269,7 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
                         for iCount from 0 to iSize
                             Move (sReturnStructArray[iCount].sServerName) to sVal
                             If (Uppercase(sServer) = Uppercase(sVal)) Begin
-                                Move sReturnStructArray[iCount].sDatabaseName to sReturnArray[0]
+                                Move sReturnStructArray[iCount].sDatabaseName to asReturnArray[0]
                                 Move iSize to iCount // We're done.
                             End
                         Loop
@@ -2271,7 +2281,7 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
 //                Error DFERR_PROGRAM "Unsupported DriverID passed to SqlUtilEnumerateDatabases function"
         Case End
 
-        Function_Return sReturnArray
+        Function_Return asReturnArray
     End_Function
 
     

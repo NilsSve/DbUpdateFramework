@@ -80,13 +80,23 @@ Object oFilelistFixerView is a dbView
             String sFileList sPath sHome sChar
             Boolean bExists bCfgFile bOK
             Integer iPos
+            Handle hoLocalError_Object_Id hoOrgError_Object_Id
             
             Get Value to sFileList
             Get vFilePathExists sFileList to bExists
             Move (Lowercase(sFileList) contains ".cfg") to bCfgFile
             If (bExists = True and bCfgFile = True) Begin
                 // A little trick to show the filelist.cfg in the form before we start filling the control.
-                Send PumpMsgQueue of Desktop
+//                Send PumpMsgQueue of Desktop
+                
+                // We need to reroute the error_info_object to the original one, before
+                // changing filelist paths, as that involves a new login if SQL.
+                // So we temporarily re-initialize the original error handler, and
+                // reset it to our own, when filelist path has been changed.
+                Move (oLocalError_Info_Object(Self)) to hoLocalError_Object_Id
+                Get phoOrgError_Object_Id of hoLocalError_Object_Id to hoOrgError_Object_Id
+                Move hoOrgError_Object_Id to Error_Object_Id
+                
                 Get ChangeFilelistPathing of ghoApplication sFileList to bOK
                 If (bOK = True) Begin
                     Set psFilelistFrom of ghoApplication to sFileList
@@ -111,6 +121,8 @@ Object oFilelistFixerView is a dbView
                 Send ClearData of oConnidInfo_edt
                 Set Value of oDriver_fm to ""
             End
+
+            Move hoLocalError_Object_Id to Error_Object_Id
             Send ShowSQLTablesCount
         End_Procedure
 
@@ -1259,7 +1271,9 @@ Object oFilelistFixerView is a dbView
         Procedure OnCreate
             Set phoOrgError_Object_Id to Error_Object_Id
             Move Self to Error_Object_Id 
+#IF (!@ > 210)
             Move Self to ghoErrorHandler
+#ENDIF
         End_Procedure
         Send OnCreate
 
