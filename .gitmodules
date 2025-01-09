@@ -1,9 +1,0 @@
-[submodule "Libraries/DFAbout"]
-	path = Libraries/DFAbout
-	url = https://github.com/NilsSve/Library-DFAbout.git
-[submodule "Libraries/vwin32fh"]
-	path = Libraries/vwin32fh
-	url = https://github.com/NilsSve/Library-vwin32fh
-[submodule "Libraries/RDCToolsLib"]
-	path = Libraries/RDCToolsLib
-	url = https://github.com/NilsSve/Library-RDCToolsLib
