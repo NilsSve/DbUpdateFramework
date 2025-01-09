@@ -70,7 +70,8 @@ Object oMain is a Panel
     Set Label to (psProduct(ghoApplication))
     Set Location to 92 194
     Set Size to 508 684
-    Set piMinSize to 442 625
+    Set piMinSize to 442 625  
+    Set Icon to "DUFFilelistRepairer.ico"
 
     Object oCommandBarSystem is a cCJCommandBarSystem
         Set pbTimerUpdate to True
