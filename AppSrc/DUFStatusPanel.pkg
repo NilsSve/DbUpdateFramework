@@ -279,6 +279,11 @@ Object oDUFStatus_Panel is a cProcessStatusPanel
         Send DoAdvance of ghoProgressBar
     End_Procedure
 
+   Procedure UpdateStatusBar
+       Send DoAdvance of ghoProgressBar
+//       Send ProcessEvents
+   End_Procedure
+
     Procedure Set piPosition Integer iPos
         Set piPosition of ghoProgressBar to iPos
     End_Procedure
