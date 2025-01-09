@@ -20,8 +20,7 @@ Define CS_PropertiesKeyWord     for "Properties"
 Define CS_ThemeKeyWord          for "Theme"
 
 #IF (!@ < 201)
-    Send Stop_Box "Nope, that won't work. You need at least DataFlex 21.0 to run this program."
-    Send Exit_Application
+     "Nope, that won't work. You need at least DataFlex 21.0 to compile/run this program."
 #ENDIF
 
 Object oApplication is a cMyApplication

@@ -5,7 +5,7 @@
 	<libraries>
 		<library>
 			<libraryPath>Libraries\DFAbout\DFAbout24.0.sws</libraryPath>
-			<libraryTimeStamp>2024-12-28T16:22:42</libraryTimeStamp>
+			<libraryTimeStamp>2025-01-09T15:47:06</libraryTimeStamp>
 			<libraryID>Lib1</libraryID>
 		</library>
 		<library>
@@ -1136,6 +1136,13 @@
 			<libraryID>Lib1</libraryID>
 		</class>
 		<class>
+			<className>cComSWXMap</className>
+			<image>ControlCOM.ico</image>
+			<package>cComSWXMap.pkg</package>
+			<groupName>ActiveX</groupName>
+			<libraryID>Lib1</libraryID>
+		</class>
+		<class>
 			<className>cSkinComboBoxCJMenuItem</className>
 			<image>ControlCJSkinFramework.ico</image>
 			<package>cSkinComboBoxCJMenuItem.pkg</package>
@@ -1154,13 +1161,6 @@
 			<image>ControlObject.ico</image>
 			<package>cDbUpdateVersion.pkg</package>
 			<groupName>Database Update Framework</groupName>
-			<libraryID>Lib1</libraryID>
-		</class>
-		<class>
-			<className>cComSWXMap</className>
-			<image>ControlCOM.ico</image>
-			<package>cComSWXMap.pkg</package>
-			<groupName>ActiveX</groupName>
 			<libraryID>Lib1</libraryID>
 		</class>
 	</classes>
