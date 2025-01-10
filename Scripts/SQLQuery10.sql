@@ -12,15 +12,12 @@ CREATE TABLE ##TempVariables (
 -- Insert initial variable values
 INSERT INTO ##TempVariables (VariableName, VariableValue)
 VALUES
---    ('DatabaseName', 'DATABASE_NAME_XXX'),  -- Replace with your actual database name
---    ('CollationName', 'COLLATION_NAME_XXX'),  -- Replace with your desired collation
     ('DatabaseName', 'ROW_TEST'),  -- Replace with your actual database name
     ('CollationName', 'Finnish_Swedish_100_CI_AI_SC_UTF8'),  -- Replace with your desired collation
     ('ShouldBackup', '0');  -- Set to 1 to enable backup, 0 to disable
-
 GO
 
--- Step 2: Backup Database w today's date and time added to backup name
+-- Step 2: Backup Database with today's date and time added to the backup name
 DECLARE @DatabaseName NVARCHAR(255);
 DECLARE @CollationName NVARCHAR(255);
 DECLARE @BackupFileName NVARCHAR(255);
@@ -92,8 +89,7 @@ CREATE TABLE ##IndexesBackup (
     IndexDefinition NVARCHAR(MAX),
     IsPrimaryKey BIT,
     IsUnique BIT,
-    DropStatement NVARCHAR(MAX),
-    OrdinalPosition INT  -- Add OrdinalPosition column
+    DropStatement NVARCHAR(MAX)
 );
 
 INSERT INTO ##IndexesBackup
@@ -130,8 +126,7 @@ SELECT
             ' DROP CONSTRAINT ' + QUOTENAME(i.name)
         ELSE 
             'DROP INDEX ' + QUOTENAME(i.name) + ' ON ' + QUOTENAME(SCHEMA_NAME(t.schema_id)) + '.' + QUOTENAME(t.name)
-    END AS DropStatement,
-    ic.key_ordinal AS OrdinalPosition  -- Populate OrdinalPosition
+    END AS DropStatement
 FROM sys.indexes i
 INNER JOIN sys.tables t ON i.object_id = t.object_id
 CROSS APPLY (
@@ -162,7 +157,7 @@ AND EXISTS (
     AND c.is_computed = 1
 );
 GO
-    
+
 -- Step 6: Drop all dependent indexes and constraints
 PRINT 'Dropping dependent indexes and constraints...';
 DECLARE @DropIndexes NVARCHAR(MAX) = '';
@@ -273,6 +268,13 @@ DECLARE @SQL NVARCHAR(MAX);
 SELECT @DatabaseName = VariableValue FROM ##TempVariables WHERE VariableName = 'DatabaseName';
 SELECT @CollationName = VariableValue FROM ##TempVariables WHERE VariableName = 'CollationName';
 
+-- Ensure valid database name and collation
+IF @DatabaseName = 'YOUR_DATABASE_NAME' OR @CollationName = 'YOUR_COLLATION_NAME'
+BEGIN
+    PRINT 'Please replace with your actual database name and desired collation.';
+    RETURN;
+END
+
 SET @SQL = 'ALTER DATABASE ' + QUOTENAME(@DatabaseName) + ' SET SINGLE_USER WITH ROLLBACK IMMEDIATE;';
 EXEC sp_executesql @SQL;  -- Execute the command
 
@@ -299,13 +301,13 @@ BEGIN
     EXEC sp_executesql @RecreateComputedColumns;  -- Execute the recreate commands
 END
 GO
-    
+
 -- Step 11: Recreate indexes and constraints
 PRINT 'Recreating indexes and constraints...';
 DECLARE @RecreateIndexes NVARCHAR(MAX) = '';
 SELECT @RecreateIndexes += IndexDefinition + ';' + CHAR(13)
 FROM ##IndexesBackup
-ORDER BY IsPrimaryKey ASC, IsUnique ASC, TableName, OrdinalPosition;  -- Ensure the order is preserved
+ORDER BY IsPrimaryKey ASC, IsUnique ASC;
 
 -- Check for NULL or empty string
 IF @RecreateIndexes IS NOT NULL AND @RecreateIndexes <> ''
@@ -313,7 +315,7 @@ BEGIN
     EXEC sp_executesql @RecreateIndexes;
 END
 GO
-    
+
 -- Step 12: Recreate Schema-Bound Objects
 PRINT 'Recreating schema-bound objects...';
 DECLARE @recreate_deps_sql NVARCHAR(MAX);
