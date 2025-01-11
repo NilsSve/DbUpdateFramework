@@ -221,14 +221,6 @@ JOIN sys.types typ ON c.user_type_id = typ.user_type_id
 WHERE c.is_computed = 0;
 GO
 
--- Step 7a: Ensure ComputedColumnsBackup is correctly populated after GO
-PRINT 'Ensuring ComputedColumnsBackup is correctly populated...';
-IF OBJECT_ID('tempdb..##ComputedColumnsBackup') IS NOT NULL
-BEGIN
-    SELECT * FROM ##ComputedColumnsBackup ORDER BY TableName, OrdinalPosition;
-END
-GO
-
 PRINT 'Dropping computed columns...';
 DECLARE @DropComputedColumns NVARCHAR(MAX) = '';
 SELECT @DropComputedColumns += 'ALTER TABLE ' + TableName + ' DROP COLUMN ' + ColumnName + ';' + CHAR(13)
