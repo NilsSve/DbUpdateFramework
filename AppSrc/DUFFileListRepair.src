@@ -280,6 +280,11 @@ Object oMain is a Panel
         Send DoDisplayKeyword of oHtmlHelp "DUF Filelist Repairer"
     End_Procedure
 
+    Procedure End_Construct_Object
+        Forward Send End_Construct_Object
+        Set Icon to "DUFFilelistRepairer.ico"
+    End_Procedure
+
     On_Key Key_F1 Send ShowProgramHelp
 End_Object
 
