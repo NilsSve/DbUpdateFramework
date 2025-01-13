@@ -36,8 +36,8 @@ End_Struct
 Activate_View Acivate_oFileListFixerView for oFileListFixerView
 Object oFilelistFixerView is a dbView 
     Set Location to 2 1
-    Set Size to 456 691
-    Set piMinSize to 425 691
+    Set Size to 464 691
+    Set piMinSize to 464 691
     Set Maximize_Icon to True
     Set Border_Style to Border_Thick
     Set pbAutoActivate to True
@@ -678,13 +678,13 @@ Object oFilelistFixerView is a dbView
     End_Object
 
     Object oCount_grp is a Group
-        Set Size to 129 673
+        Set Size to 137 673
         Set Location to 219 12
         Set Label to "Filelist.cfg:"
         Set peAnchors to anAll
 
         Object oDatTables_edt is a cMyRichEdit
-            Set Size to 71 104
+            Set Size to 79 104
             Set Location to 29 6
             Set Label to "RootName *.dat"
             Set psExtension to ".dat"
@@ -693,7 +693,7 @@ Object oFilelistFixerView is a dbView
 
         Object oDatTables_fm is a cNumForm
             Set Size to 12 34
-            Set Location to 103 76
+            Set Location to 111 76
             Set Label to "Counter:"
             Set peAnchors to anBottomRight
             Procedure OnChange
@@ -704,7 +704,7 @@ Object oFilelistFixerView is a dbView
         End_Object
 
         Object oAliasErrors_edt is a cMyRichEdit
-            Set Size to 71 104
+            Set Size to 79 104
             Set Location to 29 113
             Set Label to "Alias Table Errors"
             Set psExtension to ".int"
@@ -713,13 +713,13 @@ Object oFilelistFixerView is a dbView
 
         Object oAliasErrors_fm is a cNumForm
             Set Size to 12 34
-            Set Location to 103 183
+            Set Location to 111 183
             Set Label to "Counter:"
             Set peAnchors to anBottomRight
         End_Object
 
         Object oRootNameIntTables_edt is a cMyRichEdit
-            Set Size to 71 104
+            Set Size to 79 104
             Set Location to 29 220
             Set Label to "RootName *.int"
             Set psExtension to ".int"
@@ -728,13 +728,13 @@ Object oFilelistFixerView is a dbView
 
         Object oRootNameIntTables_fm is a cNumForm
             Set Size to 12 34
-            Set Location to 103 290
+            Set Location to 111 290
             Set Label to "Counter:"
             Set peAnchors to anBottomRight
         End_Object
 
         Object oOpenErrorTables_edt is a cMyRichEdit
-            Set Size to 71 125
+            Set Size to 79 125
             Set Location to 29 327
             Set Label to "Open Table Errors"
             Set peAnchors to anTopBottom
@@ -743,13 +743,13 @@ Object oFilelistFixerView is a dbView
 
         Object oOpenErrorTables_fm is a cNumForm
             Set Size to 12 34
-            Set Location to 103 418
+            Set Location to 111 418
             Set Label to "Counter:"
             Set peAnchors to anBottomRight
         End_Object
 
         Object oFileList_grp is a Group
-            Set Size to 95 209
+            Set Size to 103 209
             Set Location to 25 459
             Set Label to "FileList.cfg Counters:"
             Set peAnchors to anTopBottomRight
@@ -791,7 +791,7 @@ Object oFilelistFixerView is a dbView
 
     Object oFixProblemsPreUpdate_grp is a Group
         Set Size to 60 340
-        Set Location to 357 12
+        Set Location to 361 12
         Set Label to "Pre-Update Database Actions:"
         Set peAnchors to anBottomLeft
 
@@ -982,7 +982,7 @@ Object oFilelistFixerView is a dbView
 
     Object oFixExtraProblems_grp is a Group
         Set Size to 60 323
-        Set Location to 357 362
+        Set Location to 361 362
         Set Label to "More Database Actions:"
         Set peAnchors to anBottomLeftRight
 
@@ -1208,8 +1208,8 @@ Object oFilelistFixerView is a dbView
     End_Object
     
     Object oLogFile_grp is a Group
-        Set Size to 30 669
-        Set Location to 423 12
+        Set Size to 30 673
+        Set Location to 425 12
         Set Label to "Logged Changes:"
         Set peAnchors to anBottomLeftRight
 
