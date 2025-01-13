@@ -44,7 +44,7 @@ Object oDbUpdateHandler is a cDbUpdateHandler
     Set piIntFilesFileNumber   to 256
     Set pbUseIntFilesBackup    to True
     Set pbExitIfDebuggerActive to False
-    Set phoDbUpdateHandler of ghoApplication to Self
+    Set phoDbUpdateHandler of ghoApplication to Self 
     
     Procedure OnPreUpdate
     End_Procedure  
