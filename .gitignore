@@ -51,6 +51,7 @@ loginEncryptionkey.inc
 **/Help/**/Online Help
 **/Help/About.rtf
 **/HelpText/*.*
+HelpText/
 
 **/Install
 
