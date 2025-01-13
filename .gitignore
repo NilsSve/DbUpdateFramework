@@ -49,6 +49,7 @@ loginEncryptionkey.inc
 **/Help/**/*.hnd
 **/Help/**/Assets
 **/Help/**/Online Help
+**/Help/About.rtf
 **/HelpText**/*.*
 
 **/Install
@@ -60,4 +61,3 @@ FileListFixes.txt
 DUFUpdatelog.txt
 TableStructLog.txt
 AppSrc/CompileHeader.h
-Help/About.rtf
