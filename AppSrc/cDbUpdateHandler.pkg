@@ -270,7 +270,7 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary
         { Category="Error Handling" MethodType=Property Visibility=Public }
         Property Boolean pbContinueOnError False
         // Stops execution in other cDbUpdateVersion objecs,
-        // if errors occurred in one cDbUpdateVersion object.
+        // If errors occurred in one cDbUpdateVersion Object.
         { Category="Error Handling" MethodType=Property Visibility=Public }
         Property Boolean pbStopOnFirstError False
         // If True errors that occured while updating the database
