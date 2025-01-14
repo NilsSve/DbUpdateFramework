@@ -9,6 +9,8 @@ Object oHtmlHelp is a cHtmlHelp
     Set pbAlwaysOnTop to False
 End_Object
 
+Declare_Datafile IntFilesTable
+
 Object oApplication is a cMyApplication
     Set peHelpType to htHtmlHelp
     Set psProgram to "DUFFileListRepair"
@@ -22,6 +24,15 @@ Object oApplication is a cMyApplication
         Use DatabaseLoginDialog.dg
     End_Object  
     #ENDIF
+
+    Procedure OnWorkspaceOpened
+        Forward Send OnWorkspaceOpened
+        // Test
+//        If (pbReindexCodeFiles(ghoDatabaseFunctions) = True) Begin
+//            Open IntFilesTable
+//            Send CheckCollatingSequence of ghoDatabaseFunctions File_Field IntFilesTable.IntFileName
+//        End
+    End_Procedure
 
 End_Object
 
