@@ -77,21 +77,21 @@ Object oMain is a Panel
 
     Object oCommandBarSystem is a cCJCommandBarSystem
         Set pbTimerUpdate to True
+        Set pbLargeIcons to True
         #IF (!@ > 182)
             Set pbAutoResizeIcons to True
             Set pbTabbedWorkspaces to True
-            Set peVisualTheme to xtpThemeOffice2016Publisher //xtpThemeOffice2013Publisher
-            Set pbLargeIcons to True
         #ENDIF
 
         Procedure OnCreateCommandBars
-//            Integer eTheme
-//#IF (!@ < 191)
-//            Get ReadDword of ghoApplication CS_PropertiesKeyWord CS_ThemeKeyWord xtpThemeWhidbey to eTheme
-//#ELSE
-//            Get ReadDword of ghoApplication CS_PropertiesKeyWord CS_ThemeKeyWord xtpThemeOffice2013Publisher to eTheme
-//#ENDIF
-//            Send SetTheTheme eTheme
+            Integer eTheme
+#IF (!@ < 191)
+            Move xtpThemeWhidbey to eTheme
+#ELSE
+            Move xtpThemeOffice2016Word to eTheme
+#ENDIF
+            Set peVisualTheme to eTheme
+            Send ComRecalcLayout of ghoCommandBars
             Send DisplayTabWorkspace
         End_Procedure
 
@@ -154,14 +154,6 @@ Object oMain is a Panel
                 Set ComFlags of hoTabWorkspace to xtpWorkspaceHideAll //xtpWorkspaceHideClose //xtpWorkspaceShowCloseTab
             End_Procedure
         #ENDIF
-
-        Procedure SetTheTheme Integer eTheme
-            Integer iColor
-            Set peVisualTheme of ghoCommandBars to eTheme
-            Send ComRecalcLayout of ghoCommandBars
-            Get ComGetSpecialColor of ghoCommandBars XPCOLOR_TOOLBAR_FACE to iColor
-            Broadcast Recursive Set Color of (Client_Id(phoMainPanel(ghoApplication))) to iColor
-        End_Procedure
 
 //        Object oActions_Toolbar is a cCJToolbar
 //            Set pbCloseable to False

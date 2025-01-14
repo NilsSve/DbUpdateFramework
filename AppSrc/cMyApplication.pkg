@@ -35,6 +35,7 @@ Class cMyApplication is a cApplication
         Set peHelpType to htHtmlHelp
         // Note: The help file settings gets changed by the Help toolbar button(s).
         Set psHelpFile to "Developer5.chm"
+        Set psVersion to (String(piVersionMajor(phoVersionInfo(Self))) + "." + String(piVersionMinor(phoVersionInfo(Self))))
 
         Property Handle phoDbUpdateHandler 0
         Property String psFilelistFrom ""

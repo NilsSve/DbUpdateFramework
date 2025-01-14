@@ -3,21 +3,19 @@
 #ENDIF
 Use DFAllEnt.pkg
 Use cCJStandardCommandBarSystem.pkg
-Use vWin32fh.pkg
-Use cCJSkinFramework.pkg
 Use cCJCommandBarSystem.pkg                      
+//Use cCJSkinFramework.pkg   
+Use cMyApplication.pkg
 Use cSQLConnectionIniFile.pkg
+Use vWin32fh.pkg
 
 Object oHtmlHelp is a cHtmlHelp
     Set pbAlwaysOnTop to False
 End_Object
 
-Object oApplication is a cApplication
-    Set peHelpType to htHtmlHelp
-    Set psHelpFile to "Developer5.chm"
+Object oApplication is a cMyApplication
     Set psCompany to "RDC Tools International"
     Set psProduct to "DUF - SQL Connections Manager"
-    Set psVersion to (String(piVersionMajor(phoVersionInfo(Self))) + "." + String(piVersionMinor(phoVersionInfo(Self))))
     Set psAutoOpenWorkspace to ""
 
     Property String psCommandLineIniFilePath ""
@@ -154,13 +152,11 @@ Object oMain is a Panel
         Procedure OnCreateCommandBars
             Handle hoOptions
             Integer iSize
-
+            Set peVisualTheme to xtpThemeOffice2016Word
             Send DoChangeToolTipFormat
-
             Get OptionsObject to hoOptions
             Move 32 to iSize
             Send ComSetIconSize of hoOptions False iSize iSize  // Set icon size for Toolbar buttons.
-            Forward Send OnCreateCommandBars
         End_Procedure
 
         Procedure DoChangeToolTipFormat
@@ -192,11 +188,11 @@ Object oMain is a Panel
                     Send ComShowTitleAndDescription of hoObject True xtpToolTipIconInfo
                 End
             End
-            Set  ComShowOfficeBorder        of hoObject to True
-            Set  ComShowShadow              of hoObject to True
+            Set ComShowOfficeBorder of hoObject to True
+            Set ComShowShadow of hoObject to True
             // Set the max width for a tooltip. 250 just seems to be a good
             // compromise. After 250 pixels the text will wrap to the next line automatically.
-            Set  ComMaxTipWidth             of hoObject to 250 // In pixels
+            Set  ComMaxTipWidth of hoObject to 250 // In pixels
             Send Destroy of hoObject
             If (phoStatusBar(ghoCommandBars)) Begin
                 Send DoChangeToolTipFormat of (phoStatusBar(Self))

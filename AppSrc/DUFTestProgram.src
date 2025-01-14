@@ -3,7 +3,8 @@
 #ENDIF
 Use DFAllEnt.pkg
 Use cCJStandardCommandBarSystem.pkg
-Use cCJCommandBarSystem.pkg
+Use cCJCommandBarSystem.pkg 
+Use cMyApplication.pkg
 Use cDbUpdateHandler.pkg
 
 Object oHtmlHelp is a cHtmlHelp
@@ -23,12 +24,8 @@ Object oHtmlHelp is a cHtmlHelp
 
 End_Object
 
-Object oApplication is a cApplication
+Object oApplication is a cMyApplication
     Set peHelpType to htHtmlHelp
-
-    // Note: These help file settings gets changed by the Help toolbar button(s).
-    Set psHelpFile to "Developer5.chm"
-
     Set pbPreserveEnvironment to True
     Set psProduct to "Database Update Framework Lab"
     Set psCompany to "RDC Tools International" 
@@ -75,7 +72,7 @@ Object oMain is a Panel
         #IF (!@ >= 190)
             Set pbAutoResizeIcons to True
             Set pbTabbedWorkspaces to True // Switch on for DF 19 to see the new tabbed-view look.
-            Set peVisualTheme to xtpThemeOffice2013Publisher
+            Set peVisualTheme to xtpThemeOffice2016Word
             Set pbLargeIcons to True
         #ENDIF
 

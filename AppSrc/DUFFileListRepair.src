@@ -75,7 +75,7 @@ Object oMain is a Panel
 
     Object oCommandBarSystem is a cCJCommandBarSystem
         Set pbTimerUpdate to True
-        Set peVisualTheme to xtpThemeOffice2013Outlook
+        Set peVisualTheme to xtpThemeOffice2016Word
         Set pbAutoResizeIcons to True
         Set pbLargeIcons to True
 

@@ -1,8 +1,7 @@
 ﻿Use DFClient.pkg
 Use cCJCommandBarSystem.pkg
-Use cCJGrid.pkg
+Use cRDCCJGrid.pkg
 Use cCJGridColumnRowIndicator.pkg
-Use cCJGridColumn.pkg
 Use cSQLConnectionButton.pkg
 
 Use DatabaseSelection.dg
@@ -42,30 +41,30 @@ Object oSQLMaintainConnection is a dbView
         Set Justification_Mode to JMode_Left
     End_Object
 
-    Object oSQLConnections_grd is a cCJGrid
+    Object oSQLConnections_grd is a cRDCCJGrid
         Set Size to 98 503
         Set Location to 25 19
-        Set peAnchors to anAll
-        Set pbShowRowFocus to True
-        Set pbUseAlternateRowBackgroundColor to True
-        Set pbSelectionEnable to True
-        Set pbRestoreLayout to True
-        Set psLayoutSection to "oSQLConnections_grd"
-        Set piLayoutBuild to 13
+//        Set peAnchors to anAll
+//        Set pbShowRowFocus to True
+//        Set pbUseAlternateRowBackgroundColor to True
+//        Set pbSelectionEnable to True
+//        Set pbRestoreLayout to True
+//        Set psLayoutSection to "oSQLConnections_grd"
+//        Set piLayoutBuild to 13
         Set pbShowFooter to True
-        Set pbAllowAppendRow to False
-        Set pbAllowEdit to False
-        Set pbAllowInsertRow to False
-        Set pbAutoAppend to False
+//        Set pbAllowAppendRow to False
+//        Set pbAllowEdit to False
+//        Set pbAllowInsertRow to False
+//        Set pbAutoAppend to False
         Set pbAutoSave to False
         Set pbEditOnTyping to False
-        #IF (!@ > 180)
-            #IF (!@ < 230)
-                Set peVisualTheme to xtpReportThemeExplorer
-            #ELSE
-                Set peVisualTheme to xtpGridThemeExplorer
-            #ENDIF
-        #ENDIF
+//        #IF (!@ > 180)
+//            #IF (!@ < 230)
+//                Set peVisualTheme to xtpReportThemeExplorer
+//            #ELSE
+//                Set peVisualTheme to xtpGridThemeExplorer
+//            #ENDIF
+//        #ENDIF
         
         Object oCJGridColumnRowIndicator is a cCJGridColumnRowIndicator
             Set piWidth to 18
