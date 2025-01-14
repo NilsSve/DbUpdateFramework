@@ -3433,6 +3433,7 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
         Function_Return (Err = False)
     End_Function
 
+    // Note: This table update function does _not_ convert an embedded table to SQL. Use function ApiTableConvertToSQL first for that.
     Function ApiTableUpdate tAPITableNameInfo APITableNameInfoFrom tAPIColumn[] aColumnsFrom tAPIIndex[] aIndexesFrom tAPIRelation[] aRelationsFrom Returns Boolean
         Handle hTable
         String sTableName
@@ -4339,7 +4340,7 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
         Get_Attribute DF_FILE_NUMBER_FIELDS of hTable to iNumberOfFieldsTo
         Move (iSize max iNumberOfFieldsTo) to iSize
         Decrement iSize
-        for iCount from 0 to iSize
+        For iCount from 0 to iSize
             If (Uppercase(aAPIColumnCompare[iCount].sFieldNameFrom) <> Uppercase(aAPIColumnCompare[iCount].sFieldNameTo)) Begin
                 Set Error_Report_Mode to DUF_ERROR_NO_REPORT
 
@@ -4367,6 +4368,7 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
         Move False to Err
         Move 0 to LastErr
         Set Error_Report_Mode to DUF_ERROR_REPORT
+        Send Trap_Error of Error_Object_Id DFERR_CANT_FIND_FIELD
         Function_Return aAPIColumnsToInsert
     End_Function
 
@@ -4427,8 +4429,9 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
 
         Move False to Err
         Decrement iSize
-        for iCount from 0 to iSize
+        For iCount from 0 to iSize
             Set Error_Report_Mode to DUF_ERROR_NO_REPORT
+            Send Ignore_Error of Error_Object_Id DFERR_ARRAY_INDEX_OUT_OF_BOUNDS
             If (aAPIColumnsToMove[iCount].bExistsFrom = True and aAPIColumnsToMove[iCount].bExistsTo = True) Begin
                 Get ApiColumnMove hTable aAPIColumnsToMove[iCount].iFieldNumberTo aAPIColumnsToMove[iCount].iFieldNumber aAPIColumnsToMove[iCount].bIsSQLTypeFrom aAPIColumnsToMove[iCount].iLengthFrom aAPIColumnsToMove[iCount].iPrecisionFrom to bOK
                 If (bOK = True) Begin
@@ -4448,6 +4451,7 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
         Loop
 
         Set Error_Report_Mode to DUF_ERROR_REPORT
+        Send Trap_Error of Error_Object_Id DFERR_ARRAY_INDEX_OUT_OF_BOUNDS
         If (LastErr = DFERR_ARRAY_INDEX_OUT_OF_BOUNDS) Begin
             Move 0 to LastErr
         End
@@ -4801,7 +4805,7 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
         Structure_End hFile DF_STRUCTEND_OPT_NONE "." ghoDbUpdateHandler
 
         Set Action_Text of ghoStatusPanel to ""
-        Function_Return (Not(Err))
+        Function_Return (Err = False)
     End_Function
 
     // * Dummy function for the Studio's Code Explorer *
@@ -7040,7 +7044,7 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
 
         Move (SizeOfArray(APIColumnFrom)) to iSizeFrom
         Decrement iSizeFrom
-        for iCount from 0 to iSizeFrom
+        For iCount from 0 to iSizeFrom
             Move APIColumnFrom[iCount].iFieldNumber     to aAPIColumnCompare[iCount].iFieldNumber
             Move APIColumnFrom[iCount].sFieldName       to aAPIColumnCompare[iCount].sFieldNameFrom
             Move APIColumnFrom[iCount].iType            to aAPIColumnCompare[iCount].iTypeFrom
@@ -7059,7 +7063,7 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
 
         Move (SizeOfArray(APIColumnTo)) to iSizeTo
         Decrement iSizeTo
-        for iCount from 0 to iSizeTo
+        For iCount from 0 to iSizeTo
             Move APIColumnTo[iCount].iFieldNumber       to APIColumnCompare.iFieldNumber
             // Search if the field number already exists in the "to" array; else add it. <
             Move (SearchArray(APIColumnCompare, aAPIColumnCompare)) to iItem

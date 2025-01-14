@@ -1266,19 +1266,20 @@ Class cBaseDbUpdateFuncLib is a cObject
         //   from sys.fn_helpcollations();
         Move (sSelect  * String(sName) * String(",") * String(sDescription) * String(sFrom) * String(sSys) * String(".fn_helpcollations();")) to sSQL
 
+        Move 1 to iColumn
         Send SqlExecDirect of hStmt sSQL
         Get SQLGetStmtAttribute of hStmt SqlSTMTATTRIB_ROWCOUNT to iRows
         Repeat
             Get SQLFetch of hStmt to iFetchResult
             If (iFetchResult <> 0) Begin
-                Get SQLColumnValue of hStmt 1 to sValue 
+                Get SQLColumnValue of hStmt iColumn to sValue 
                 If (sValue <> sPrevious) Begin         
                     // We need to skip all collations starting with "SQL" because they
                     // are obsolete and for pre-SQL Server 2000.
                     Move (Pos("SQL", Uppercase(sValue))) to iPos
                     If (iPos <> 1) Begin
                         Move (Trim(sValue)) to aCollations[iRow].sCollation
-                        Get SQLColumnValue of hStmt 2 to sDescr
+                        Get SQLColumnValue of hStmt (iColumn +1) to sDescr
                         Move (Trim(sDescr)) to aCollations[iRow].sDescription
                         Increment iRow
                     End
@@ -4012,8 +4013,8 @@ Class cBaseDbUpdateFuncLib is a cObject
             End
         End
         Send SqlSetConnect of hoSQL sDriverID SQLConnection.sConnectionString
-
         Get SqlConnect     of hoSQL "" "" to hoSQLConnect
+
         If (hoSQLConnect <> 0) Begin
             Move False to Err
             Get SqlOpen of hoSQLConnect to hoStmt
@@ -4046,7 +4047,7 @@ Class cBaseDbUpdateFuncLib is a cObject
                 Move (SizeOfArray(SQLScriptArray.sSQLScriptArray)) to iRows
                 Decrement iRows
 
-                for iCount from 0 to iRows
+                For iCount from 0 to iRows
                     Move (SQLScriptArray.sSQLScriptArray[iCount]) to sSQLVal
 
                     If (Uppercase(sSQLVal) <> sGOKeyWord) Begin

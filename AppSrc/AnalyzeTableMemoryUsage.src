@@ -18,6 +18,7 @@ Use cProgressBar.pkg
 
 
 Global_Variable Handle ghoAnalysisStatusPanel
+Move 0 to ghoAnalysisStatusPanel
 
 Struct tSqlVarTypes
     Integer iType
@@ -30,7 +31,6 @@ Struct tTableMemoryUseData
     Integer iExpectedMemUse
 End_Struct
     
-
 // Object to show progress while process runs
 Object oAnalysisStatusPanel is a cProcessStatusPanel
     Set Size to 93 326

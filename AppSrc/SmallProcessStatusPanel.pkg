@@ -5,7 +5,9 @@ Use cAnimation.pkg
 
 #IFNDEF ghoSmallStatusPanel
     Global_Variable Handle ghoSmallStatusPanel // will contain the ID of the global StatusPanel object
+    Move 0 to ghoSmallStatusPanel
     Global_Variable Handle ghoSmallAnimation
+    Move 0 to ghoSmallAnimation
 #ENDIF
 
 Object oSmallStatus_Panel is a cProcessStatusPanel

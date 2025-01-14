@@ -38,6 +38,7 @@ Struct tRelationDiffs
 End_Struct
 
 Global_Variable Integer giDifferenceTables
+Move 0 to giDifferenceTables
 
 Activate_View Activate_oCompareDatabases_vw for oCompareDatabases_vw
 Object oCompareDatabases_vw is a dbView

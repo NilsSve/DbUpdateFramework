@@ -177,19 +177,15 @@ External_Function Win32_CloseHandle "CloseHandle" KERNEL32.DLL ;
     Returns Integer
 #ENDIF
 
-#IFNDEF get_SetDefaultPrinterEf
-External_Function SetDefaultPrinterEf "SetDefaultPrinterA" winspool.drv Pointer lpPrinter Returns Boolean
-// Sample:
-// Get DoSetDefaultPrinter "HP LaserJet 4" to bVoid
-Function DoSetDefaultPrinter String sPrinter Returns Boolean
-    Boolean bReturn
-#IF (!@ > 191)
-    Move (Utf8ToAnsi(sPrinter)) to sPrinter
-#ELSE
-    Move (ToANSI(sPrinter)) to sPrinter
-#ENDIF
-    Move (sPrinter + (Character(0))) to sPrinter
-    Move (SetDefaultPrinterEf(AddressOf(sPrinter))) to bReturn
-    Function_Return bReturn
-End_Function
-#ENDIF
+//#IFNDEF get_SetDefaultPrinterEf
+//External_Function SetDefaultPrinterEf "SetDefaultPrinterA" winspool.drv Pointer lpPrinter Returns Boolean
+//// Sample:
+//// Get DoSetDefaultPrinter "HP LaserJet 4" to bVoid
+//Function DoSetDefaultPrinter String sPrinter Returns Boolean
+//    Boolean bReturn
+//    Move (Utf8ToAnsi(sPrinter)) to sPrinter
+//    Move (sPrinter + (Character(0))) to sPrinter
+//    Move (SetDefaultPrinterEf(AddressOf(sPrinter))) to bReturn
+//    Function_Return bReturn
+//End_Function
+//#ENDIF
