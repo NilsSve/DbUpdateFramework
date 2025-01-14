@@ -18,16 +18,16 @@
 loginEncryptionkey.inc
 
 # Data
-**/Data/**/*.log
-**/Data/**/*.dat
-**/Data/**/*.vld
-**/Data/**/*.k*
-**/Data/**/*.bad
-**/Data/**/*.hdr
-**/Data/**/*.cch
-**/Data/**/*.cfg
-**/Data/**/*.tag
-**/Data/**/Deploy/**
+#**/Data/**/*.log
+#**/Data/**/*.dat
+#**/Data/**/*.vld
+#**/Data/**/*.k*
+#**/Data/**/*.bad
+#**/Data/**/*.hdr
+#**/Data/**/*.cch
+#**/Data/**/*.cfg
+#**/Data/**/*.tag
+#**/Data/**/Deploy/**
 
 # DDSrc
 **/DdSrc/**/*.def
