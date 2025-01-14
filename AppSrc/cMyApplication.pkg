@@ -2,6 +2,7 @@
 Use cIniFile.pkg
 Use cDbUpdateFunctionLibrary.pkg
 Use vWin32fh.pkg
+Use cDataBaseFunctions.pkg
 
 #IFNDEF CS_Settings
     Define CS_Settings for "Settings"
@@ -130,7 +131,8 @@ Class cMyApplication is a cApplication
         Set psOrgOpenPath to sOrgOpenPath
     End_Procedure
 
-    Procedure OnWorkspaceOpened
+    Procedure OnWorkspaceOpened 
+        Forward Send OnWorkspaceOpened
         Send Save_DF_OPEN_PATH
     End_Procedure
 
