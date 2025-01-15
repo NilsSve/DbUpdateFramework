@@ -3974,7 +3974,8 @@ Class cBaseDbUpdateFuncLib is a cObject
         String sSQLVal sStmt sCR sGOKeyWord sNoCountKeyWord sMessage sExportFile
         Handle hoSql hoSQLConnect hoStmt hoError
         Integer i iMsgs iRows jRows iRowType iCount jCount iChunkCounter iChunkMax iCh iNextSet iMessage iPos
-        String[] asMsg asSQLQueryMessages
+        String[] asMsg 
+        String[][] asSQLQueryMessages
         DateTime dtQueryExecStart dtQueryExecEnd
         TimeSpan tsQuery
         tSqlErrorArray aSqlErrorArray
@@ -4001,7 +4002,6 @@ Class cBaseDbUpdateFuncLib is a cObject
         Move (Character(13) + Character(10)) to sCR
 
         Get pSQLConnection of ghoSQLConnectionHandler to SQLConnection
-
         Get phoSQLManager  to hoSQL
         If (sDriverID = ODBC_DRV_ID) Begin
             If (Uppercase(SQLConnection.sConnectionString) contains CS_SQLIniDSNKeyword) Begin
