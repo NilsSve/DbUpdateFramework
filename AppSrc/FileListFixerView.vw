@@ -577,7 +577,7 @@ Object oFilelistFixerView is a dbView
                     Procedure_Return
                 End
                 
-                Get StepsSetupText bBackup to sSteps
+                Get HoToStepsText bBackup to sSteps
                 Get YesNo_Box ("Are you sure you want to change the collating sequence for database:" * sDatabase * "\nTo use the new collating sequence:\n" + sCollatingSequence + "\n\n" + sSteps + "\n\nStart making changes now?") to iRetval
                 If (iRetval <> MBR_Yes) Begin
                     Procedure_Return
@@ -595,10 +595,10 @@ Object oFilelistFixerView is a dbView
                 // Note: For unknown reason the result variable cannot be trusted. Instead it is 
                 //       checked if the collation was actually changed or not.
                 Get SqlDatabaseCollationChange of ghoDUF sDatabase sCollatingSequence False bBackup True to bOK
-                Send StopStatusPanel
 
                 Get SqlDatabaseCollationQuery of ghoDUF sDatabase to sCurrentCollatingSequence                
                 Move (sCurrentCollatingSequence = sCollatingSequence) to bOK
+                Send StopStatusPanel
                 If (bOK = True) Begin
                     Send Info_Box ("Success! The collating sequence was changed for database:" * sDatabase)
                 End
@@ -607,7 +607,7 @@ Object oFilelistFixerView is a dbView
                 End
             End_Procedure
             
-            Function StepsSetupText Boolean bBackup Returns String
+            Function HoToStepsText Boolean bBackup Returns String
                 String sSteps
                 If (bBackup = False) Begin
                     Append sSteps "NOTE: You have not selected the 'Create Database Backup' checkbox. Ensure you have a full database backup before proceeding!" CS_CRLF CS_CRLF
