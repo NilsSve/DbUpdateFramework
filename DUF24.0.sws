@@ -16,7 +16,6 @@ Project2=DUFSQLConnections.src
 Project3=DUFTestProgram.src
 Project4=ReadDFDriverDefXML.src
 Project5=WriteDateTimeHeaderFile.src
-Project6=StatusPanelExample.src
 [ProjectParameters]
 DUFCodeGenerator.src=C:\Projects\DF20\ROW_TEST\ROW_TEST_Cust_2024.sws
 DUFFileListRepair.src=C:\Projects\DF20\ROW_TEST\ROW_TEST_Cust_2024.sws
