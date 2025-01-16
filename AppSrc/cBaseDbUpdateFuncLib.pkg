@@ -2252,7 +2252,8 @@ Class cBaseDbUpdateFuncLib is a cObject
         Move LastErr to iLastErr
         Move ErrLine to iErrLine
         Repeat
-            Get_Attribute DF_FILE_NEXT_USED of hTable to hTable
+            Get_Attribute DF_FILE_NEXT_USED of hTable to hTable 
+            Send DoAdvance of ghoProgressBar
             // 0 = no more table in Filelist.cfg, 50 = Flexerrs.
             If (hTable <> 0 and hTable <> 50) Begin  
                 Move False to Err
@@ -2261,7 +2262,6 @@ Class cBaseDbUpdateFuncLib is a cObject
                 Get_Attribute DF_FILE_LOGICAL_NAME of hTable to sLogicalName
                 Get _DriverIDFromRootName sRootName to sDriver
                 Set Message_Text of ghoStatusPanel to ("Reading table" * String(hTable) * "LogicalName =" * sLogicalName)
-                Send DoAdvance of ghoProgressBar
                 Move False to bIsSystem
                 Open hTable
                 Get_Attribute DF_FILE_OPENED of hTable to bOpened
