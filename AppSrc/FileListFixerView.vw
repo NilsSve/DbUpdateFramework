@@ -212,7 +212,6 @@ Object oFilelistFixerView is a dbView
             Else Begin
                 Send Info_Box "Ready! No problems found."    
             End
-            Send StopStatusPanel
         End_Procedure 
         
         Function IsEnabled Returns Boolean
@@ -518,7 +517,7 @@ Object oFilelistFixerView is a dbView
         Object oCollatingSequence_fm is a cRDCForm
             Set Size to 13 387
             Set Location to 152 66
-            Set Label to "Change Collating:"
+            Set Label to "Select Collating:"
             Set pbAutoEnable to True
             Set Entry_State to True
             Set Prompt_Object to (oSQLCollations(Self))
@@ -832,7 +831,7 @@ Object oFilelistFixerView is a dbView
 
         Object oFixAliasProblems_btn is a cRDCButton
             Set Size to 32 61
-            Set Location to 12 74
+            Set Location to 11 74
             Set Label to "2. Fix 'Alias Table Errors'"
             Set peAnchors to anTopRight
             Set MultiLineState to True
@@ -1477,7 +1476,7 @@ Object oFilelistFixerView is a dbView
         Integer iRetval hTable iSize iCount iItem iCh iCounter iAliases
         tFilelist[] FileListArray
         String sNoDriverRootname sDriver sRootName sRootNameNew sDatabase sLogicalName sDisplayName sDataPath sFileList
-        Boolean bIsAlias bIsDatEntry bExists bOK
+        Boolean bIsAlias bIsDatEntry bExists bOK bCancel
         
         Move 0 to iCounter 
         Move 0 to hTable
@@ -1516,6 +1515,10 @@ Object oFilelistFixerView is a dbView
                         Increment iCounter
                     End
                 End
+            End 
+            Get Check_StatusPanel of ghoStatusPanel to bCancel
+            If (bCancel = True) Begin
+                Function_Return iCounter
             End
         Loop
         
@@ -1532,7 +1535,7 @@ Object oFilelistFixerView is a dbView
         Handle hTable hMasterTable
         String sLogicalNameOrg sRootNameOrg sDisplayNameOrg sFileList
         String sDriver sNoDriverRootname sRootNameNew sLogicalNameNew sDisplayNameNew
-        Boolean bIsAlias bIsIntTable bIsAliasSQL bIsMasterSQL bOK
+        Boolean bIsAlias bIsIntTable bIsAliasSQL bIsMasterSQL bOK bCancel
         tFilelist[] FilelistArray
         
         Get _CountFileListAliasErrors of ghoDUF to FileListArray
@@ -1606,6 +1609,10 @@ Object oFilelistFixerView is a dbView
                     Increment iCounter
                 End
             End
+            Get Check_StatusPanel of ghoStatusPanel to bCancel
+            If (bCancel = True) Begin
+                Function_Return iCounter
+            End
         Until (hTable = 0)
         Send StopStatusPanel
         Function_Return iCounter
@@ -1616,7 +1623,7 @@ Object oFilelistFixerView is a dbView
         String[] asSQLTables
         tFilelist[] FileListArray
         String sNoDriverRootname sDriver sRootName sRootNameNew sDatabase sLogicalName sDisplayName sFileList
-        Boolean bIsAlias bIsIntTable bExists bOK
+        Boolean bIsAlias bIsIntTable bExists bOK bCancel
         
         Move 0 to iCounter 
         Move 0 to hTable
@@ -1679,6 +1686,10 @@ Object oFilelistFixerView is a dbView
                     Increment iCounter
                 End
             End
+            Get Check_StatusPanel of ghoStatusPanel to bCancel
+            If (bCancel = True) Begin
+                Function_Return iCounter
+            End
         Loop
 
         Send CloseLogFile
@@ -1693,7 +1704,7 @@ Object oFilelistFixerView is a dbView
         Integer iRetval hTable iSize iCount iItem iCh iCounter iAliases iOpenErrors
         tFilelist[] FileListArray
         String sNoDriverRootname sDriver sRootName sRootNameNew sDatabase sLogicalName sDisplayName sDataPath sFileList
-        Boolean bIsAlias bExists bChange bFirst bIsSQLTable bIsIntTable bOK
+        Boolean bIsAlias bExists bChange bFirst bIsSQLTable bIsIntTable bOK bCancel
         
         Move False to bFirst
         Move 0 to iCounter 
@@ -1750,6 +1761,10 @@ Object oFilelistFixerView is a dbView
                     Increment iCounter
                 End
             End
+            Get Check_StatusPanel of ghoStatusPanel to bCancel
+            If (bCancel = True) Begin
+                Function_Return iCounter
+            End
         Loop
 
         Send CloseLogFile
@@ -1764,7 +1779,7 @@ Object oFilelistFixerView is a dbView
         Integer iRetval iSize iCount iCounter iDriver
         tFilelist[] ErrorFilesArray FileListArray
         String sDriver sRootName sIntFileName sConnectionID sErrorText sText
-        Boolean bOK bIsSystem bCurrentUcaseMode
+        Boolean bOK bIsSystem bCurrentUcaseMode bCancel
         Handle hTable hoCurrentErrorObject
 
         Get pFileListArray of ghoDUF to FileListArray
@@ -1816,6 +1831,10 @@ Object oFilelistFixerView is a dbView
                 Else Begin
                     Send WriteError ("The recreation of the.int file:" * String(sIntFileName) * "failed.") 
                 End
+            End
+            Get Check_StatusPanel of ghoStatusPanel to bCancel
+            If (bCancel = True) Begin
+                Function_Return iCounter
             End
         Loop
     
@@ -1901,7 +1920,7 @@ Object oFilelistFixerView is a dbView
         tFilelist[] FileListArray
         String[] asIntFileData
         String sDriver sIntFileName sConnectionID sErrorText sText sDataPath
-        Boolean bExists bOK bIsSystem bAnsi bIsAlias bIsSQL bCurrentUcaseMode bErr
+        Boolean bExists bOK bIsSystem bAnsi bIsAlias bIsSQL bCurrentUcaseMode bErr bCancel
         Handle hTable
     
         Get pFileListArray of ghoDUF to FileListArray
@@ -1961,6 +1980,10 @@ Object oFilelistFixerView is a dbView
                         Send WriteError ("The recreation of the.int file:" * String(sIntFileName) * "failed.") 
                     End
                 End
+            End                              
+            Get Check_StatusPanel of ghoStatusPanel to bCancel
+            If (bCancel = True) Begin
+                Function_Return 0
             End
             Send DoAdvance of ghoStatusPanel 
         Loop
@@ -2021,7 +2044,7 @@ Object oFilelistFixerView is a dbView
         tFilelist[] FileListArray
         String[] asIntFileData
         String sDriver sIntFileName sConnectionID sErrorText sText sDataPath
-        Boolean bExists bOK bIsSystem bAnsi bIsAlias bIsSQL bCurrentUcaseMode bErr
+        Boolean bExists bOK bIsSystem bAnsi bIsAlias bIsSQL bCurrentUcaseMode bErr bCancel
         Handle hTable
     
         Get pFileListArray of ghoDUF to FileListArray
@@ -2084,6 +2107,10 @@ Object oFilelistFixerView is a dbView
                         Send WriteError ("Searching for 'U_' columns for table:" * String(FileListArray[iCount].sNoDriverRootname) * "failed.") 
                     End
                 End
+            End
+            Get Check_StatusPanel of ghoStatusPanel to bCancel
+            If (bCancel = True) Begin
+                Function_Return 0
             End
             Send DoAdvance of ghoStatusPanel 
         Loop
@@ -2898,7 +2925,7 @@ Object oFilelistFixerView is a dbView
         Integer iSize iCount iRetval iCounter
         String sDataPath sFilter
         String[] asFiles asInUseDatFiles
-        Boolean bExists
+        Boolean bExists bCancel
         
         Get psDataPath of (phoWorkspace(ghoApplication)) to sDataPath
         Get vFolderFormat sDataPath to sDataPath
@@ -2927,10 +2954,14 @@ Object oFilelistFixerView is a dbView
         For iCount from 0 to iSize
             Set Action_Text of ghoStatusPanel to (sDataPath + asFiles[iCount]) 
             Get vMoveFile (sDataPath + asFiles[iCount]) sBackupFolder to iRetval 
-            Send DoAdvance of ghoStatusPanel
             If (iRetval = 0) Begin
                 Increment iCounter
             End
+            Get Check_StatusPanel of ghoStatusPanel to bCancel
+            If (bCancel = True) Begin
+                Function_Return iCounter
+            End
+            Send DoAdvance of ghoStatusPanel
         Loop
         
         Send StopStatusPanel
