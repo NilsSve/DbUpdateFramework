@@ -17,7 +17,7 @@ Use seq_chnl.pkg
 Use GlobalFunctionsProcedures.pkg
 Use Datadict.pkg                        // Declaration of DF_FILE_SQL_TABLE_NAME
 Use Dfcursor.pkg
-Use DUFStatusPanel.pkg
+Use RDCStatusPanel.pkg
 Use cDbUpdateFunctionLibrary_Mixin.pkg  // Properties used by the cDbUpdateFunctionLibrary class.
 Use cSQLConnectionHandler.pkg
 Use vWin32fh.pkg
@@ -2239,7 +2239,7 @@ Class cBaseDbUpdateFuncLib is a cObject
     End_Procedure
     
     // This collects *all* filelist entries and sets the pFileListArray struct property.
-    Procedure UtilFillFileListStruct
+    Procedure UtilFillFileListStruct Boolean ByRef bCancel
         tFilelist[] Tables
         String sRootName sLogicalName sDisplayName sDriver sNoDriverRootname
         Handle hTable
@@ -2252,7 +2252,8 @@ Class cBaseDbUpdateFuncLib is a cObject
         Move LastErr to iLastErr
         Move ErrLine to iErrLine
         Repeat
-            Get_Attribute DF_FILE_NEXT_USED of hTable to hTable
+            Get_Attribute DF_FILE_NEXT_USED of hTable to hTable 
+            Send DoAdvance of ghoProgressBar
             // 0 = no more table in Filelist.cfg, 50 = Flexerrs.
             If (hTable <> 0 and hTable <> 50) Begin  
                 Move False to Err
@@ -2261,7 +2262,6 @@ Class cBaseDbUpdateFuncLib is a cObject
                 Get_Attribute DF_FILE_LOGICAL_NAME of hTable to sLogicalName
                 Get _DriverIDFromRootName sRootName to sDriver
                 Set Message_Text of ghoStatusPanel to ("Reading table" * String(hTable) * "LogicalName =" * sLogicalName)
-                Send DoAdvance of ghoProgressBar
                 Move False to bIsSystem
                 Open hTable
                 Get_Attribute DF_FILE_OPENED of hTable to bOpened
@@ -2282,6 +2282,10 @@ Class cBaseDbUpdateFuncLib is a cObject
                 Get _IsAliasTable hTable to Tables[iItem].bIsAlias 
                 Move False to Err
                 Increment iItem
+            End 
+            Get Check_StatusPanel of ghoStatusPanel to bCancel
+            If (bCancel = True) Begin
+                Procedure_Return 
             End
         Until (hTable = 0)
         
@@ -3974,7 +3978,8 @@ Class cBaseDbUpdateFuncLib is a cObject
         String sSQLVal sStmt sCR sGOKeyWord sNoCountKeyWord sMessage sExportFile
         Handle hoSql hoSQLConnect hoStmt hoError
         Integer i iMsgs iRows jRows iRowType iCount jCount iChunkCounter iChunkMax iCh iNextSet iMessage iPos
-        String[] asMsg asSQLQueryMessages
+        String[] asMsg 
+        String[][] asSQLQueryMessages
         DateTime dtQueryExecStart dtQueryExecEnd
         TimeSpan tsQuery
         tSqlErrorArray aSqlErrorArray
@@ -4001,7 +4006,6 @@ Class cBaseDbUpdateFuncLib is a cObject
         Move (Character(13) + Character(10)) to sCR
 
         Get pSQLConnection of ghoSQLConnectionHandler to SQLConnection
-
         Get phoSQLManager  to hoSQL
         If (sDriverID = ODBC_DRV_ID) Begin
             If (Uppercase(SQLConnection.sConnectionString) contains CS_SQLIniDSNKeyword) Begin

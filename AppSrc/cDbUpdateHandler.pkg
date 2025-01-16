@@ -141,8 +141,8 @@ Use VdfBase.pkg
 Use Dferror.pkg
 Use seq_chnl.pkg
 Use Datadict.pkg
+Use RDCStatusPanel.pkg
 Use DUFLanguageConstants.inc
-Use DUFStatusPanel.pkg
 Use cDbUpdateHandler.inc // Contains cDbUpdateHandler class constants, structs etc.
 Use cDbUpdateLogFile.pkg
 Use cDbUpdateVersion.pkg
@@ -1794,39 +1794,11 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary
         Send Cleanup
     End_Procedure
     
-    Procedure StartStatusPanel String sMsg String sMsg2 Integer iSze
-        Integer iSize
+    Procedure StartStatusPanel String sMsg String sMsg2 Integer iSze Integer iSze2
+        Integer iSize iSize2
         String sMessage sMessage2
-        
-        // Make it optional to pass an argument
-        If (num_arguments > 0) Begin
-            Move sMsg to sMessage
-        End
 
-        // Make it optional to pass a second argument
-        If (num_arguments > 1) Begin
-            Move sMsg2 to sMessage2
-        End
-
-        Move 0 to iSize
-        // Make it optional to pass a third argument
-        If (num_arguments > 2) Begin
-            Move iSze to iSize
-        End                   
-        If (iSize = -1) Begin
-            Set Progress_Bar_Overall_Visible_State of ghoStatusPanel to False
-        End
-        If (iSize <> 0) Begin
-            Set Progress_Bar_Visible_State of ghoStatusPanel to True
-            Set piMaximum                  of ghoStatusPanel to iSize 
-            Set piAdvanceBy                of ghoStatusPanel to 1
-            Set Progress_Bar_Overall_Visible_State of ghoStatusPanel to True
-        End
-
-        Send EnableCancelButton     of ghoStatusPanel (pbEnableCancelButton(Self))
-        Send Initialize_StatusPanel of ghoStatusPanel ("   " + CS_DUF_WorkingUpdateText) sMessage sMessage2 
-        Send Update_StatusPanel of ghoStatusPanel ""
-        Send Start_StatusPanel of ghoStatusPanel
+        Send StartStatusPanel of ghoStatusPanel sMsg sMsg2 iSize iSize2        
     End_Procedure
     
     Procedure StopStatusPanel 
@@ -1890,6 +1862,7 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary
         End
 
         If (pbSilentMode(Self) = False and iDataFlexUsers > 1) Begin
+            Send StopStatusPanel
             Get YesNo_Box CS_DUF_DatabaseInUseShort to iRetval
             If (iRetval <> MBR_Yes) Begin
                 Send Exit_Application
@@ -1897,6 +1870,7 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary
         End
 
         If (bOK = False or (UserCount.iError <> 0) or (iUserCount > 1)) Begin
+            Send StopStatusPanel
             Send Stop_Box CS_DUF_DatabaseInUseText
             Send Exit_Application
         End

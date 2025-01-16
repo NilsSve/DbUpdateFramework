@@ -1,4 +1,4 @@
-// StatusPanelExample.src
+﻿// StatusPanelExample.src
 Use DfAllEnt.pkg
 Use cApplication.pkg
 
@@ -28,7 +28,7 @@ Object oStatusPanelExample is a ModalPanel
         Set Location to 95 75
         Set Label to "Start"
 
-        Procedure onClick
+        Procedure OnClick
             Integer x y z iCnt
             Boolean bStopIt
             Set Enabled_State to False
@@ -75,18 +75,14 @@ Object oStatusPanelExample is a ModalPanel
             //
         End_Procedure
 
-
-
         Procedure Update_Textbox String sVal
             Set Value of oInform_User to sVal
         End_Procedure
-
 
         Procedure Finish_Update String sVal
             Set Value of oInform_User to sVal
         End_Procedure
     End_Object
-
 
     Object oExit_Btn is a Button
         Set Location to 115 75
@@ -96,8 +92,8 @@ Object oStatusPanelExample is a ModalPanel
             Send Close_Panel of oStatusPanelExample
         End_Procedure
     End_Object
-End_Object
 
+End_Object
 
 Procedure Do_It
     Send Popup of oStatusPanelExample

@@ -1,4 +1,4 @@
-
+﻿
 Use Windows.pkg
 Use DFClient.pkg
 Use Dfline.pkg
@@ -7,7 +7,7 @@ Use cRDCButtonDPI.pkg
 Use cDbUpdateFunctionLibrary.pkg
 Use Dftreevw.pkg
 Use Working.pkg
-Use DUFStatusPanel.pkg
+Use RDCStatusPanel.pkg
 Use cCharTranslate.pkg
 
 Struct tFilelistDUF

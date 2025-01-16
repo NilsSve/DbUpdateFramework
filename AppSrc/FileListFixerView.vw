@@ -577,7 +577,7 @@ Object oFilelistFixerView is a dbView
                     Procedure_Return
                 End
                 
-                Get StepsSetupText bBackup to sSteps
+                Get HoToStepsText bBackup to sSteps
                 Get YesNo_Box ("Are you sure you want to change the collating sequence for database:" * sDatabase * "\nTo use the new collating sequence:\n" + sCollatingSequence + "\n\n" + sSteps + "\n\nStart making changes now?") to iRetval
                 If (iRetval <> MBR_Yes) Begin
                     Procedure_Return
@@ -595,10 +595,10 @@ Object oFilelistFixerView is a dbView
                 // Note: For unknown reason the result variable cannot be trusted. Instead it is 
                 //       checked if the collation was actually changed or not.
                 Get SqlDatabaseCollationChange of ghoDUF sDatabase sCollatingSequence False bBackup True to bOK
-                Send StopStatusPanel
 
                 Get SqlDatabaseCollationQuery of ghoDUF sDatabase to sCurrentCollatingSequence                
                 Move (sCurrentCollatingSequence = sCollatingSequence) to bOK
+                Send StopStatusPanel
                 If (bOK = True) Begin
                     Send Info_Box ("Success! The collating sequence was changed for database:" * sDatabase)
                 End
@@ -607,7 +607,7 @@ Object oFilelistFixerView is a dbView
                 End
             End_Procedure
             
-            Function StepsSetupText Boolean bBackup Returns String
+            Function HoToStepsText Boolean bBackup Returns String
                 String sSteps
                 If (bBackup = False) Begin
                     Append sSteps "NOTE: You have not selected the 'Create Database Backup' checkbox. Ensure you have a full database backup before proceeding!" CS_CRLF CS_CRLF
@@ -1345,16 +1345,21 @@ Object oFilelistFixerView is a dbView
         Integer iCount
         String sDataPath
         tFilelist[] FileListArray
+        Boolean bCancel
         
         Send OnCreate of oLocalError_Info_Object
         Get _UtilNumberOfFileListTables of ghoDUF to iCount
-        Send StartStatusPanel "Filling Filelist Struct Array" "" iCount
-
+        Send StartStatusPanel "Filling Filelist Struct Array" ("Number of tables:" * String(iCount)) iCount
+        
         // Note: Removes all cached files, else we don't open what we think we are.
         Get psDataPath of (phoWorkspace(ghoApplication)) to sDataPath
         EraseFile (sDataPath + "\*.cch") 
-
-        Send UtilFillFileListStruct of ghoDUF
+        
+        Move False to bCancel
+        Send UtilFillFileListStruct of ghoDUF (&bCancel)
+        If (bCancel = True) Begin
+            Procedure_Return
+        End
         Get pFileListArray of ghoDUF to FileListArray
         Set Value of oNumberOfFileListTables_fm to (SizeOfArray(FileListArray))
         Send ListRootDatFiles
@@ -3049,13 +3054,16 @@ Object oFilelistFixerView is a dbView
 
     // Helper procedures for status panel/progress bar
     Procedure StartStatusPanel String sMessage String sMessage2 Integer iSize
-        Send StartStatusPanel of ghoDUF sMessage sMessage2 iSize
-        Set Caption_text of ghoStatusPanel to "The Database Update Framework"
+        If (sMessage = "") Begin
+            Move "The Database Update Framework" to sMessage
+        End
+        Send StartStatusPanel of ghoStatusPanel sMessage sMessage2 iSize
         Set Progress_Bar_Overall_Visible_State of ghoStatusPanel to False
     End_Procedure
     
     Procedure StopStatusPanel
-        Send Stop_StatusPanel of ghoStatusPanel
+        Send Stop_StatusPanel of ghoStatusPanel 
+        Send Reset_StatusPanel of ghoStatusPanel
     End_Procedure
 
     Procedure UpdateStatusPanel String sMessage
