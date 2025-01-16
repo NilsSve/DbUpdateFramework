@@ -8,7 +8,7 @@ Use cCJGridColumn.pkg
 Use dfLine.pkg
 Use cRDCButton.pkg
 Use cDbUpdateFunctionLibrary.pkg
-Use DUFStatusPanel.pkg
+Use RDCStatusPanel.pkg
 Use seq_chnl.pkg
 Use vWin32fh.pkg
 Use cRDCHeaderGroup.pkg

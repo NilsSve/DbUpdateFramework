@@ -1345,16 +1345,21 @@ Object oFilelistFixerView is a dbView
         Integer iCount
         String sDataPath
         tFilelist[] FileListArray
+        Boolean bCancel
         
         Send OnCreate of oLocalError_Info_Object
         Get _UtilNumberOfFileListTables of ghoDUF to iCount
-        Send StartStatusPanel "Filling Filelist Struct Array" "" iCount
-
+        Send StartStatusPanel "Filling Filelist Struct Array" ("Number of tables:" * String(iCount)) iCount
+        
         // Note: Removes all cached files, else we don't open what we think we are.
         Get psDataPath of (phoWorkspace(ghoApplication)) to sDataPath
         EraseFile (sDataPath + "\*.cch") 
-
-        Send UtilFillFileListStruct of ghoDUF
+        
+        Move False to bCancel
+        Send UtilFillFileListStruct of ghoDUF (&bCancel)
+        If (bCancel = True) Begin
+            Procedure_Return
+        End
         Get pFileListArray of ghoDUF to FileListArray
         Set Value of oNumberOfFileListTables_fm to (SizeOfArray(FileListArray))
         Send ListRootDatFiles
@@ -3049,13 +3054,16 @@ Object oFilelistFixerView is a dbView
 
     // Helper procedures for status panel/progress bar
     Procedure StartStatusPanel String sMessage String sMessage2 Integer iSize
-        Send StartStatusPanel of ghoDUF sMessage sMessage2 iSize
-        Set Caption_text of ghoStatusPanel to "The Database Update Framework"
+        If (sMessage = "") Begin
+            Move "The Database Update Framework" to sMessage
+        End
+        Send StartStatusPanel of ghoStatusPanel sMessage sMessage2 iSize
         Set Progress_Bar_Overall_Visible_State of ghoStatusPanel to False
     End_Procedure
     
     Procedure StopStatusPanel
-        Send Stop_StatusPanel of ghoStatusPanel
+        Send Stop_StatusPanel of ghoStatusPanel 
+        Send Reset_StatusPanel of ghoStatusPanel
     End_Procedure
 
     Procedure UpdateStatusPanel String sMessage

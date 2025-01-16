@@ -17,7 +17,7 @@ Use seq_chnl.pkg
 Use GlobalFunctionsProcedures.pkg
 Use Datadict.pkg                        // Declaration of DF_FILE_SQL_TABLE_NAME
 Use Dfcursor.pkg
-Use DUFStatusPanel.pkg
+Use RDCStatusPanel.pkg
 Use cDbUpdateFunctionLibrary_Mixin.pkg  // Properties used by the cDbUpdateFunctionLibrary class.
 Use cSQLConnectionHandler.pkg
 Use vWin32fh.pkg
@@ -2239,7 +2239,7 @@ Class cBaseDbUpdateFuncLib is a cObject
     End_Procedure
     
     // This collects *all* filelist entries and sets the pFileListArray struct property.
-    Procedure UtilFillFileListStruct
+    Procedure UtilFillFileListStruct Boolean ByRef bCancel
         tFilelist[] Tables
         String sRootName sLogicalName sDisplayName sDriver sNoDriverRootname
         Handle hTable
@@ -2282,6 +2282,10 @@ Class cBaseDbUpdateFuncLib is a cObject
                 Get _IsAliasTable hTable to Tables[iItem].bIsAlias 
                 Move False to Err
                 Increment iItem
+            End 
+            Get Check_StatusPanel of ghoStatusPanel to bCancel
+            If (bCancel = True) Begin
+                Procedure_Return 
             End
         Until (hTable = 0)
         

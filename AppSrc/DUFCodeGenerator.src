@@ -9,7 +9,6 @@ Use Dferror.pkg
 Use Colr_dlg.pkg
 Use Cursor.pkg
 Use cDbUpdateHandler.pkg
-Use cMyApplication.pkg
 Use vWin32fh.pkg
 
 Object oHtmlHelp is a cHtmlHelp
@@ -23,6 +22,7 @@ Define CS_ThemeKeyWord          for "Theme"
      "Nope, that won't work. You need at least DataFlex 21.0 to compile/run this program."
 #ENDIF
 
+Use cMyApplication.pkg
 Object oApplication is a cMyApplication
     Set psCompany to "RDC Tools International"
     Set psProduct to "DUF - Code Generator"

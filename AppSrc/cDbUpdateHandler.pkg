@@ -141,8 +141,8 @@ Use VdfBase.pkg
 Use Dferror.pkg
 Use seq_chnl.pkg
 Use Datadict.pkg
+Use RDCStatusPanel.pkg
 Use DUFLanguageConstants.inc
-Use DUFStatusPanel.pkg
 Use cDbUpdateHandler.inc // Contains cDbUpdateHandler class constants, structs etc.
 Use cDbUpdateLogFile.pkg
 Use cDbUpdateVersion.pkg
