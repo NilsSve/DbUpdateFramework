@@ -26,7 +26,7 @@ End_Object
 Object oApplication is a cMyApplication
     Set peHelpType to htHtmlHelp
     Set pbPreserveEnvironment to True
-    Set psProduct to "Database Update Framework Lab"
+    Set psProduct to "DUF - Database Update Framework Test Lab"
     Set psCompany to "RDC Tools International" 
 
     Object oConnection is a cConnection
@@ -52,7 +52,7 @@ Use oDEOEditContextMenu17.pkg
 Use cSkinComboBoxCJMenuItem.pkg
 
 Object oMain is a Panel
-    Set Label to "Test Program - The Database Update Framework"
+    Set Label to (psProduct(ghoApplication))
     Set Location to 2 2
     Set Size to 309 493
     Set piMinSize to (Hi(Size(Self))) (Low(Size(Self)))
@@ -397,7 +397,7 @@ Object oMain is a Panel
         Use UtilFunctions.vw
 
         Procedure Activate_About
-            Send DoAbout "" "" ("Copyright 2016-2023" * psCompany(ghoApplication)) "Author: Nils Svedmyr" "TestTools.bmp" "E-mail: mailto:support@rdctools.com" "Web-site: www.rdctools.com" ("This tool was created with DataFlex" * String(C_DFVersion) * "from Data Access Worldwide. Please visit http://www.dataaccess.com for a free personal copy of DataFlex.")
+            Send DoAbout "" "" "" "Author: Nils Svedmyr" "TestTools.bmp" "E-mail: mailto:support@rdctools.com" "Web-site: www.rdctools.com" ("This tool was created with DataFlex" * String(C_DFVersion) * "from Data Access Worldwide. Please visit http://www.dataaccess.com for a free personal copy of DataFlex.")
         End_Procedure
 
         On_Key Key_Ctrl+Key_Tab           Send Switch_Prior_View

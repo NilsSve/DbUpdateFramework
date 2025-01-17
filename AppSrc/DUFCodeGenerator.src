@@ -616,7 +616,7 @@ Object oMain is a Panel
         Use StdAbout.pkg
         Use CompareDatabases.rv
         Procedure Activate_About
-            Send DoAbout "" "" ("Copyright 2016-2025" * psCompany(ghoApplication)) "Author: Nils Svedmyr" "DUFUpdateCodeGenerator64x64.bmp" "E-mail: mailto:support@rdctools.com" "Web-site: www.rdctools.com" ("This tool was created with DataFlex" * String(C_DFVersion) * "from Data Access Worldwide. Please visit http://www.dataaccess.com for a free personal copy of DataFlex.")
+            Send DoAbout "" "" "" "Author: Nils Svedmyr" "DUFUpdateCodeGenerator64x64.bmp" "E-mail: mailto:support@rdctools.com" "Web-site: www.rdctools.com" ("This tool was created with DataFlex" * String(C_DFVersion) * "from Data Access Worldwide. Please visit http://www.dataaccess.com for a free personal copy of DataFlex.")
         End_Procedure
 
         On_Key Key_Ctrl+Key_Tab           Send Switch_Next_View
