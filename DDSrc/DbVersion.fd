@@ -1,0 +1,3 @@
+#REPLACE FILE285 DbVersion
+#REPLACE DbVersion.Recnum |FN285,0
+#REPLACE DbVersion.DatabaseVersion |FN285,1

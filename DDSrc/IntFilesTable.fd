@@ -1,5 +1,5 @@
-#REPLACE FILE256 IntFilesTable
-#REPLACE IntFilesTable.Recnum |FN256,0
-#REPLACE IntFilesTable.ID |FN256,1
-#REPLACE IntFilesTable.IntFileName |FS256,2
-#REPLACE IntFilesTable.IntLineText |FS256,3
+#REPLACE FILE286 IntFilesTable
+#REPLACE IntFilesTable.Recnum |FN286,0
+#REPLACE IntFilesTable.ID |FN286,1
+#REPLACE IntFilesTable.IntFileName |FS286,2
+#REPLACE IntFilesTable.IntLineText |FS286,3
