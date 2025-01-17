@@ -37,16 +37,22 @@ Object oApplication is a cMyApplication
 End_Object
 
 Object oDbUpdateHandler is a cDbUpdateHandler
-    Set pbAutoCreateDbVersionTable to False
+    Set pbAutoCreateDbVersionTable to True
+    Set piDbVersionFileNumber  to 255
+    Set piDbVersionFieldNumber to 1
+    Set pbUseIntFilesBackup to True 
+    Set piIntFilesFileNumber to 256 
+    Set pbCheckIntFiles to False
+    
     Set pbExitIfDebuggerActive to False
     Set phoDbUpdateHandler of ghoApplication to Self
     // Note: Tell the SQL driver to *not* create cache-files (.cch):
     Set pbUseDriverCacheFiles to False
-    Set pbIgnoreDriverUcaseSupport to True
+//    Set pbIgnoreDriverUcaseSupport to True
 
-    Procedure OnCreate
-        Send SetupIgnoreUcaseSupport
-    End_Procedure
+//    Procedure OnCreate
+//        Send SetupIgnoreUcaseSupport
+//    End_Procedure
 
     Procedure SetupIgnoreUcaseSupport
         String sDriver
@@ -61,6 +67,10 @@ Object oDbUpdateHandler is a cDbUpdateHandler
     
     Procedure OnPreUpdate
     End_Procedure  
+
+    Object oDbUpdateVersion1_0 is a cDbUpdateVersion
+        Set pnVersionNumber to 1.0
+    End_Object
 
 End_Object
 
