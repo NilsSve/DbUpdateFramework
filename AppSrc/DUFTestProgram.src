@@ -61,10 +61,8 @@ Object oCJSkinFramework is a cCJSkinFramework
     Set pbLoadPreference to True
 End_Object
 
-Object oToolTipController is a cToolTipController
-    Set piDurationPopup to 10000
-    Set piMaxWidth to 500
-    Move Self to ghoToolTipController
+Use cRDCTooltipController.pkg
+Object oToolTipController is a cRDCTooltipController
 End_Object
 
 Use oEditContextMenu.pkg
