@@ -941,7 +941,7 @@ Class cSQLConnectionHandler is a cObject
                     Case Begin
                         Case (sDriverID = MSSQLDRV_ID)
                             Get ParseKeyWord sConnectionString (CS_SQLIniTrustedKeyword + "=") to sVal
-                            Move (If(Uppercase(sVal) = Uppercase(CS_SQLIniConnectionYes), True, False)) to bTrusted
+                            Move (If(Uppercase(sVal) = Uppercase(C_$Yes), True, False)) to bTrusted
                             Move bTrusted                                               to SQLConnection.bTrusted
                             Case Break
                         Case (sDriverID = DB2_DRV_ID)

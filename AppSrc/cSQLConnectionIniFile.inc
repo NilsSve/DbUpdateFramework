@@ -122,8 +122,6 @@ Define CS_SQLIniSilentLoginKeyword      for "Silent Login"
 Define CS_SQLIniDisabledKeyword         for "Disabled"      // For compatability with DF19.
 
 Define CS_SQLIniConnectionPWD           for "PWD"
-Define CS_SQLIniConnectionYes           for "Yes"
-Define CS_SQLIniConnectionNo            for "No"
 
 Struct tSQLConnection
     Boolean bEnabled                // 1. There can only be one active/enabled connection at a time.

@@ -447,7 +447,7 @@ Class cSQLConnectionIniFile is a cIniFile
             Set IniFileValue (CS_SQLIniSectionName + String(iCount + 1)) CS_SQLIniDFPWDKeyword          to sValue
 
             If (SQLConnectionsArray[iCount].bTrusted = True) Begin
-                Set IniFileValue (CS_SQLIniSectionName + String(iCount + 1)) CS_SQLIniTrustedKeyword    to CS_SQLIniConnectionYes
+                Set IniFileValue (CS_SQLIniSectionName + String(iCount + 1)) CS_SQLIniTrustedKeyword    to C_$Yes
             End
 
             Get ConstructShortConnectionString SQLConnectionsArray[iCount].sDriverID SQLConnectionsArray[iCount].sServer SQLConnectionsArray[iCount].sDatabase ;
