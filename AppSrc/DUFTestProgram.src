@@ -5,7 +5,6 @@ Use DFAllEnt.pkg
 Use cCJStandardCommandBarSystem.pkg
 Use cCJCommandBarSystem.pkg 
 Use cMyApplication.pkg
-Use cDbUpdateHandler.pkg
 
 Object oHtmlHelp is a cHtmlHelp
     Set pbAlwaysOnTop to False
@@ -37,25 +36,8 @@ Object oApplication is a cMyApplication
 
 End_Object   
 
-Object oDbUpdateHandler is a cDbUpdateHandler
-    Set pbAutoCreateDbVersionTable to True
-    Set piDbVersionFileNumber  to 255
-    Set piDbVersionFieldNumber to 1
-    Set pbUseIntFilesBackup    to True
-    Set piIntFilesFileNumber   to 256
-    Set pbCheckIntFiles to False
-
-    Set pbExitIfDebuggerActive to False
-    Set phoDbUpdateHandler of ghoApplication to Self 
-    
-    Procedure OnPreUpdate
-    End_Procedure  
-
-    Object oDbUpdateVersion1_0 is a cDbUpdateVersion
-        Set pnVersionNumber to 1.0
-    End_Object
-
-End_Object
+// cDbUpdateHandler main object including cDbUpdateVersion child objects.
+Use oDbUpdateHandler.pkg
 
 Object oCJSkinFramework is a cCJSkinFramework
     Set pbLoadPreference to True

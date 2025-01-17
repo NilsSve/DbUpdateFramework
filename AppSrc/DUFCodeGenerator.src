@@ -38,26 +38,10 @@ Object oApplication is a cMyApplication
     #ENDIF
 End_Object
 
-Object oDbUpdateHandler is a cDbUpdateHandler
-    Set pbAutoCreateDbVersionTable to True
-    Set piDbVersionFileNumber  to 255
-    Set piDbVersionFieldNumber to 1
-    Set pbUseIntFilesBackup    to True
-    Set piIntFilesFileNumber   to 256
-    Set pbCheckIntFiles to False
+// cDbUpdateHandler main object including cDbUpdateVersion child objects.
+Use oDbUpdateHandler.pkg
 
-    Set pbExitIfDebuggerActive to False
-    Set phoDbUpdateHandler of ghoApplication to Self 
-    
-    Procedure OnPreUpdate
-    End_Procedure  
-
-    Object oDbUpdateVersion1_0 is a cDbUpdateVersion
-        Set pnVersionNumber to 1.0
-    End_Object
-
-End_Object
-
+// The SetupIgnoreUcaseSupport message is in the .src file's cDbUpdateHandler object.
 Use cRDCTooltipController.pkg
 Object oToolTipController is a cRDCTooltipController
 End_Object

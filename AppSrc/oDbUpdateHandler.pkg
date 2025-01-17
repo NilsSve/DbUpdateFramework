@@ -1,0 +1,22 @@
+﻿Use cDbUpdateHandler.pkg
+
+Object oDbUpdateHandler is a cDbUpdateHandler
+    Set pbAutoCreateDbVersionTable to True
+    Set piDbVersionFileNumber  to 285
+    Set piDbVersionFieldNumber to 1
+    Set pbUseIntFilesBackup    to True
+    Set piIntFilesFileNumber   to 286
+    Set pbCheckIntFiles to False 
+    Set psDriverID to DATAFLEX_ID
+
+    Set pbExitIfDebuggerActive to False
+    Set phoDbUpdateHandler of ghoApplication to Self 
+    
+    Procedure OnPreUpdate
+    End_Procedure  
+
+    Object oDbUpdateVersion1_0 is a cDbUpdateVersion
+        Set pnVersionNumber to 1.0
+    End_Object
+
+End_Object

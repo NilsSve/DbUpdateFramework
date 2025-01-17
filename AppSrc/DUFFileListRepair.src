@@ -36,43 +36,46 @@ Object oApplication is a cMyApplication
 
 End_Object
 
-Object oDbUpdateHandler is a cDbUpdateHandler
-    Set pbAutoCreateDbVersionTable to True
-    Set piDbVersionFileNumber  to 255
-    Set piDbVersionFieldNumber to 1
-    Set pbUseIntFilesBackup to True 
-    Set piIntFilesFileNumber to 256 
-    Set pbCheckIntFiles to False
-    
-    Set pbExitIfDebuggerActive to False
-    Set phoDbUpdateHandler of ghoApplication to Self
-    // Note: Tell the SQL driver to *not* create cache-files (.cch):
-    Set pbUseDriverCacheFiles to False
-//    Set pbIgnoreDriverUcaseSupport to True
+// cDbUpdateHandler main object including cDbUpdateVersion child objects.
+Use oDbUpdateHandler.pkg
 
-//    Procedure OnCreate
-//        Send SetupIgnoreUcaseSupport
+//Object oDbUpdateHandler is a cDbUpdateHandler
+//    Set pbAutoCreateDbVersionTable to True
+//    Set piDbVersionFileNumber  to 255
+//    Set piDbVersionFieldNumber to 1
+//    Set pbUseIntFilesBackup to True 
+//    Set piIntFilesFileNumber to 256 
+//    Set pbCheckIntFiles to False
+//    
+//    Set pbExitIfDebuggerActive to False
+//    Set phoDbUpdateHandler of ghoApplication to Self
+//    // Note: Tell the SQL driver to *not* create cache-files (.cch):
+//    Set pbUseDriverCacheFiles to False
+////    Set pbIgnoreDriverUcaseSupport to True
+//
+////    Procedure OnCreate
+////        Send SetupIgnoreUcaseSupport
+////    End_Procedure
+//
+//    Procedure SetupIgnoreUcaseSupport
+//        String sDriver
+//        Integer iDriver
+//        Get psDriverID to sDriver
+//        Get DriverIndex sDriver to iDriver
+//        // Note: If Ignore_Ucase_Support is set to false, the Connectivity Kit will 
+//        //       behave the same as earlier driver versions.
+//        //       This means that "U_" columns will be kept during a restructure.
+//        Set_Attribute DF_DRIVER_IGNORE_UCASE_SUPPORT of iDriver to True
 //    End_Procedure
-
-    Procedure SetupIgnoreUcaseSupport
-        String sDriver
-        Integer iDriver
-        Get psDriverID to sDriver
-        Get DriverIndex sDriver to iDriver
-        // Note: If Ignore_Ucase_Support is set to false, the Connectivity Kit will 
-        //       behave the same as earlier driver versions.
-        //       This means that "U_" columns will be kept during a restructure.
-        Set_Attribute DF_DRIVER_IGNORE_UCASE_SUPPORT of iDriver to True
-    End_Procedure
-    
-    Procedure OnPreUpdate
-    End_Procedure  
-
-    Object oDbUpdateVersion1_0 is a cDbUpdateVersion
-        Set pnVersionNumber to 1.0
-    End_Object
-
-End_Object
+//    
+//    Procedure OnPreUpdate
+//    End_Procedure  
+//
+//    Object oDbUpdateVersion1_0 is a cDbUpdateVersion
+//        Set pnVersionNumber to 1.0
+//    End_Object
+//
+//End_Object
 
 Use cRDCTooltipController.pkg
 Object oToolTipController is a cRDCTooltipController
@@ -184,6 +187,52 @@ Object oMain is a Panel
 
             End_Object
 
+            Object oCompareToolItem is a cCJMenuItem
+//                Set peControlStyle to xtpButtonIconAndCaption
+//                Set psCaption to "&Connection" 
+                Set psToolTip to "Show SQL Settings dialog"
+                Set psImage to "SQLSettings.ico"
+                Set piShortCutKey to xtpKey_Alt VK_S
+                Set pbControlBeginGroup to True
+                Set pbActiveUpdate to True
+
+                Procedure OnExecute Variant vCommandBarControl
+                    tSQLConnection Connection
+                    String sFileListFrom sCurrentFilelist
+                    Handle hoFocus
+                    Boolean bExists bOK
+
+                    Move (Focus(Desktop)) to hoFocus
+
+                    // First change the "current" filelist depending on which
+                    // Filelist form is active.
+                    Get Value of hoFocus to sCurrentFilelist
+                    Get vFilePathExists sCurrentFilelist to bExists
+                    Get psFilelistFrom of ghoApplication to sFileListFrom
+                    If (sFileListFrom = "") Begin 
+                        Send Info_Box "You need to select a Filelist.cfg file with SQL tables first."
+                        Procedure_Return
+                    End
+                    If (bExists = True and sCurrentFilelist <> "") Begin
+                        Get ChangeFilelistPathing of ghoApplication sCurrentFilelist to bOK
+                        Get psFilelistFrom of ghoApplication to sFileListFrom
+                    End
+
+                    If (sFileListFrom <> "") Begin
+                        Get pSQLConnection of ghoSQLConnectionHandler to Connection
+                    End
+
+                    Send Activate_ReadOnlySQLMaintainConnections_dg of (Client_Id(ghoCommandBars)) Connection
+                End_Procedure  
+                
+                Function IsEnabled Returns Boolean
+                    tSQLConnection Connection
+                    Get pSQLConnection of ghoSQLConnectionHandler to Connection
+                    Function_Return (Connection.sDriverID <> DATAFLEX_ID and Connection.sDriverID <> "")
+                End_Function
+
+            End_Object
+
             Object oAddToStudio_MenuItem is a cCJMenuItem
                 Set psCaption to "Add to Studio"
                 Set psDescription to "Add to Studio"
@@ -278,6 +327,7 @@ Object oMain is a Panel
     End_Object
 
     Object oClientArea is a ClientArea
+        Use ManageSQLConnections.dg
         Use AddToStudio.dg     
         Use FileListFixerView.vw
 

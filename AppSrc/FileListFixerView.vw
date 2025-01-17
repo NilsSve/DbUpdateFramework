@@ -3219,10 +3219,20 @@ Object oFilelistFixerView is a dbView
         End
         Send ShowSQLTablesCount 
         // This is to make sure the uppercase support for the driver is set properly.
-        // The SetupIgnoreUcaseSupport message is in the .src file's cDbUpdateHandler object.
-        Send SetupIgnoreUcaseSupport of ghoDUF
+        Send SetupIgnoreUcaseSupport
         Send ShowFileListData
     End_Procedure  
+    
+    Procedure SetupIgnoreUcaseSupport
+        String sDriver
+        Integer iDriver
+        Get psDriverID of ghoDUF to sDriver
+        Get DriverIndex of ghoDUF sDriver to iDriver
+        // Note: If Ignore_Ucase_Support is set to false, the Connectivity Kit will 
+        //       behave the same as earlier driver versions.
+        //       This means that "U_" columns will be kept during a restructure.
+        Set_Attribute DF_DRIVER_IGNORE_UCASE_SUPPORT of iDriver to True
+    End_Procedure
     
     Procedure ClearData
         Set psConnId to ""
