@@ -14,6 +14,7 @@ Declare_Datafile IntFilesTable
 Object oApplication is a cMyApplication
     Set peHelpType to htHtmlHelp
     Set psProgram to "DUFFileListRepair"
+    Set psCompany to "RDC Tools International"
     Set psProduct to "DUF - FileList Repairer"
 
     Property Handle phoFilelistFixerView
@@ -333,7 +334,7 @@ Object oMain is a Panel
 
         Use StdAbout.pkg
         Procedure Activate_About
-            Send DoAbout "" "" ("Copyright 2016-2025" * psCompany(ghoApplication)) "Author: Nils Svedmyr" "DUFFilelistRepairer48.bmp" "E-mail: mailto:support@rdctools.com" "Web-site: www.rdctools.com" ("This tool was created with DataFlex" * String(C_DFVersion) * "from Data Access Worldwide. Please visit http://www.dataaccess.com for a free personal copy of DataFlex.")
+            Send DoAbout "" "" "" "Author: Nils Svedmyr" "DUFFilelistRepairer48.bmp" "E-mail: mailto:support@rdctools.com" "Web-site: www.rdctools.com" ("This tool was created with DataFlex" * String(C_DFVersion) * "from Data Access Worldwide. Please visit http://www.dataaccess.com for a free personal copy of DataFlex.")
         End_Procedure
 
     End_Object
