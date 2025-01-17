@@ -1,8 +1,11 @@
 Object
+    Set pbAutoCreateDbVersionTable to True  // Automatically creates the DbVersion table when the program is started.
     Set piDbVersionFileNumber  to
     Set piDbVersionFieldNumber to 1
-    Set pbAutoCreateDbVersionTable to True  // Automatically creates the DbVersion table when the program is started.
-    //Set psCollation to "Latin1_General_CS_AS"
+    Set pbUseIntFilesBackup to True
+    Set piIntFilesFileNumber to  
+    Set pbCheckIntFiles to False
+    //Set psCollation to "Latin1_General_CI_AS"
    
     // To check for correct the driver and db client versions, when the program starts (each-time it is started!)
     Procedure OnCreate
@@ -46,7 +49,8 @@ Object
 //            Send ApiTableConvertALLToSql 
 
 //            Get piDbVersionFileNumber to hTable
-//            Get ApiTableConvertToSQL  hTable to bOK
+//            Get ApiTableConvertToSQL  hTable to bOK 
+              // Convert CodeMast and CodeType
 //            Get ApiTableConvertToSQL  253 to bOK
 //            Get ApiTableConvertToSQL  254 to bOK
         End_Procedure

@@ -173,7 +173,9 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary
         // For MS-SQL See: https://docs.microsoft.com/en-us/sql/t-sql/statements/windows-collation-name-transact-sql?view=sql-server-2017
         // Good read about which collation to select:
         // https://social.msdn.microsoft.com/Forums/sqlserver/en-US/bfdc32d3-3d36-4d63-8d87-6ee972fd8130/on-sqllatin1generalcp1cias-sql-server-2008-default-collation?forum=transactsql
-        { InitialValue="Latin1_General_CS_AS" EnumList="Latin1_General_CS_AS, Latin1_General_CI_AS, SQL_Latin1_General_Cp1_CS_AS" }
+        // Tip: Run the DUFFilelistRepair.src program and use the "Select Collation" lookup list,
+        //      to see which collations are supported for the current SQL Server.
+        { InitialValue="Latin1_General_CI_AS" EnumList="Latin1_General_CS_AS, Latin1_General_CI_AS, SQL_Latin1_General_Cp1_CS_AS" }
         Property String psCollation "Latin1_General_CI_AS" //"SQL_Latin1_General_Cp1_CS_AS"
 
         // Struct array that will contain pnVersionNumbers & object id's of
@@ -208,7 +210,7 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary
 
         { Visibility=Public }
         Property Boolean pbCheckIntFiles False   
-        { MethodType=Property Category="Check int. Files" InitialValue=False }
+        { MethodType=Property Category="Check int. Files" InitialValue=-1 }
         Property Integer piIntFilesFileNumber -1
         { Visibility=Private }
         Property Boolean pbRestoreIntFilesNow False   
@@ -1733,12 +1735,12 @@ Class cDbUpdateHandler is a cDbUpdateFunctionLibrary
         Function_Return (Private.piDbVersionFileNumber(Self))
     End_Function
 
-    { MethodType=Property Category="DbVersion Table" InitialValue=-1 }
+    { MethodType=Property Category="DbVersion Table" InitialValue=1 }
     Procedure Set piDbVersionFieldNumber Integer iFieldNumber
         Set Private.piDbVersionFieldNumber to iFieldNumber
     End_Procedure                                         
     
-    { MethodType=Property Category="DbVersion Table" InitialValue=-1 }
+    { MethodType=Property Category="DbVersion Table" InitialValue=1 }
     Function piDbVersionFieldNumber Returns Integer
         Function_Return (Private.piDbVersionFieldNumber(Self))
     End_Function
