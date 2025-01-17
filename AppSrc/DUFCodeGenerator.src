@@ -58,13 +58,8 @@ Object oDbUpdateHandler is a cDbUpdateHandler
 
 End_Object
 
-Object oToolTipController is a cToolTipController
-    Move Self to ghoToolTipController
-    Set pbBalloonStyle to False
-    Set piIcon to TTI_INFO
-    Set psTitle to "Information"
-    Set piMaxWidth to 400
-    Set piDurationPopup to 14000    // 14 seconds, needed for long tooltips.
+Use cRDCTooltipController.pkg
+Object oToolTipController is a cRDCTooltipController
 End_Object
 
 Use oEditContextMenu.pkg
