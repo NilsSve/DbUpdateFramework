@@ -3,7 +3,7 @@
         {
             "source": "https://github.com/NilsSve/Library-RDCToolsLib.git",
             "sws": "RDCToolsLibLibrary26.0.sws",
-            "version": "c055dfb7df5f895e31ee7b36af36bfa1ebc3b63b"
+            "version": "e8c3253decf27ffdd91deaf1ec778aa197d823ce"
         },
         {
             "source": "https://github.com/NilsSve/Library-DFAbout.git",
@@ -13,7 +13,7 @@
         {
             "source": "https://github.com/NilsSve/Library-vwin32fh.git",
             "sws": "StudioLibrary/vWin32fh-Library-DF26.0.sws",
-            "version": "7609ea9b4a89098ee059672a8b54738e340d60cc"
+            "version": "5432741c37c80be755e78f5f9d45ba8329fddcaf"
         }
     ],
     "df": 26.0,
