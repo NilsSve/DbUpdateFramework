@@ -2228,6 +2228,12 @@ Class cDbUpdateFunctionLibrary is a cBaseDbUpdateFuncLib
         Function_Return asReturnArray
     End_Function
 
+    Function SQLUtilEnumerateTables String sDriverID String sDataBase String sSchema Returns String[]
+        String[] asDataTables
+        Get _SQLUtilEnumerateTables sDriverID sDataBase sSchema to asDataTables
+        Function_Return asDataTables
+    End_Function
+
     // Returns all databases as a string array for the passed driver id.
     Function SqlUtilEnumerateDatabases String sDriverID Returns String[]
         String[] asReturnArray
